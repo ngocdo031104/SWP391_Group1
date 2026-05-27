@@ -1,6 +1,4 @@
-========================
 GIT WORKING RULES - SWP PROJECT
-========================
 
 1. KHÔNG COMMIT CODE LỖI
 - Không commit code đang bị lỗi compile/runtime
@@ -80,9 +78,8 @@ Code của mình
 Code của người khác
 >>>>>>> branch-name
 
-========================
+
 GIT FLOW ĐỀ XUẤT
-========================
 
 main
  └── develop
@@ -91,9 +88,8 @@ main
       ├── feature/report
       └── bugfix/...
 
-========================
+
 QUY TRÌNH LÀM VIỆC
-========================
 
 Bước 1:
 git checkout develop
@@ -111,5 +107,3 @@ git push origin feature/function-name
 
 Bước 5:
 Tạo Pull Request để merge vào develop
-
-========================
