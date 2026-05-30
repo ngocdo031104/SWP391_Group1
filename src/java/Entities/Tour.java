@@ -17,6 +17,20 @@ public class Tour implements Serializable {
     private int maxParticipants;
     private String status;
     private boolean isFeatured;
+    
+    // New fields matching the updated DB schema
+    private String languages;
+    private int groupSizeMin;
+    private int groupSizeMax;
+    private String departureCity;
+    private Double latitude;
+    private Double longitude;
+    private String videoUrl;
+    
+    // Derived fields
+    private double rating = 4.8;
+    private int reviewsCount = 45;
+
     private Integer createdBy;
     private Timestamp createdAt;
     private Timestamp updatedAt;
@@ -25,26 +39,11 @@ public class Tour implements Serializable {
     private TourCategory category;
     private List<TourSchedule> schedules;
     private List<TourMedia> mediaList;
+    private List<TourItinerary> itineraries;
+    private List<TourInclusion> inclusions;
+    private List<TourFAQ> faqs;
 
     public Tour() {
-    }
-
-    public Tour(int tourId, int categoryId, String tourName, String description, String destination, int durationDays, String itinerary, String difficultyLevel, double basePrice, int maxParticipants, String status, boolean isFeatured, Integer createdBy, Timestamp createdAt, Timestamp updatedAt) {
-        this.tourId = tourId;
-        this.categoryId = categoryId;
-        this.tourName = tourName;
-        this.description = description;
-        this.destination = destination;
-        this.durationDays = durationDays;
-        this.itinerary = itinerary;
-        this.difficultyLevel = difficultyLevel;
-        this.basePrice = basePrice;
-        this.maxParticipants = maxParticipants;
-        this.status = status;
-        this.isFeatured = isFeatured;
-        this.createdBy = createdBy;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
     }
 
     public int getTourId() {
@@ -143,6 +142,78 @@ public class Tour implements Serializable {
         this.isFeatured = isFeatured;
     }
 
+    public String getLanguages() {
+        return languages;
+    }
+
+    public void setLanguages(String languages) {
+        this.languages = languages;
+    }
+
+    public int getGroupSizeMin() {
+        return groupSizeMin;
+    }
+
+    public void setGroupSizeMin(int groupSizeMin) {
+        this.groupSizeMin = groupSizeMin;
+    }
+
+    public int getGroupSizeMax() {
+        return groupSizeMax;
+    }
+
+    public void setGroupSizeMax(int groupSizeMax) {
+        this.groupSizeMax = groupSizeMax;
+    }
+
+    public String getDepartureCity() {
+        return departureCity;
+    }
+
+    public void setDepartureCity(String departureCity) {
+        this.departureCity = departureCity;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getVideoUrl() {
+        return videoUrl;
+    }
+
+    public void setVideoUrl(String videoUrl) {
+        this.videoUrl = videoUrl;
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
+
+    public int getReviewsCount() {
+        return reviewsCount;
+    }
+
+    public void setReviewsCount(int reviewsCount) {
+        this.reviewsCount = reviewsCount;
+    }
+
     public Integer getCreatedBy() {
         return createdBy;
     }
@@ -189,5 +260,29 @@ public class Tour implements Serializable {
 
     public void setMediaList(List<TourMedia> mediaList) {
         this.mediaList = mediaList;
+    }
+
+    public List<TourItinerary> getItineraries() {
+        return itineraries;
+    }
+
+    public void setItineraries(List<TourItinerary> itineraries) {
+        this.itineraries = itineraries;
+    }
+
+    public List<TourInclusion> getInclusions() {
+        return inclusions;
+    }
+
+    public void setInclusions(List<TourInclusion> inclusions) {
+        this.inclusions = inclusions;
+    }
+
+    public List<TourFAQ> getFaqs() {
+        return faqs;
+    }
+
+    public void setFaqs(List<TourFAQ> faqs) {
+        this.faqs = faqs;
     }
 }

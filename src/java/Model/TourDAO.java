@@ -4,6 +4,9 @@ import Entities.Tour;
 import Entities.TourCategory;
 import Entities.TourMedia;
 import Entities.TourSchedule;
+import Entities.TourItinerary;
+import Entities.TourInclusion;
+import Entities.TourFAQ;
 import Utils.DBContext;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -45,7 +48,9 @@ public class TourDAO extends DBContext {
      */
     public List<Tour> getFeaturedTours() {
         List<Tour> list = new ArrayList<>();
-        String sql = "SELECT TourID, CategoryID, TourName, Description, Destination, DurationDays, Itinerary, DifficultyLevel, BasePrice, MaxParticipants, Status, IsFeatured, CreatedBy, CreatedAt, UpdatedAt "
+        String sql = "SELECT TourID, CategoryID, TourName, Description, Destination, DurationDays, Itinerary, DifficultyLevel, BasePrice, MaxParticipants, Status, IsFeatured, Languages, GroupSizeMin, GroupSizeMax, DepartureCity, Latitude, Longitude, VideoURL, CreatedBy, CreatedAt, UpdatedAt, "
+                   + "ISNULL((SELECT AVG(CAST(Rating AS FLOAT)) FROM Review r WHERE r.TourID = Tour.TourID), 4.8) as AvgRating, "
+                   + "(SELECT COUNT(*) FROM Review r WHERE r.TourID = Tour.TourID) as ReviewCount "
                    + "FROM Tour WHERE IsFeatured = 1 AND Status = 'Active'";
         try (PreparedStatement ps = connection.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -74,7 +79,9 @@ public class TourDAO extends DBContext {
         
         // Base Query
         StringBuilder sql = new StringBuilder(
-            "SELECT DISTINCT t.TourID, t.CategoryID, t.TourName, t.Description, t.Destination, t.DurationDays, t.Itinerary, t.DifficultyLevel, t.BasePrice, t.MaxParticipants, t.Status, t.IsFeatured, t.CreatedBy, t.CreatedAt, t.UpdatedAt " +
+            "SELECT DISTINCT t.TourID, t.CategoryID, t.TourName, t.Description, t.Destination, t.DurationDays, t.Itinerary, t.DifficultyLevel, t.BasePrice, t.MaxParticipants, t.Status, t.IsFeatured, t.Languages, t.GroupSizeMin, t.GroupSizeMax, t.DepartureCity, t.Latitude, t.Longitude, t.VideoURL, t.CreatedBy, t.CreatedAt, t.UpdatedAt, " +
+            "ISNULL((SELECT AVG(CAST(Rating AS FLOAT)) FROM Review r WHERE r.TourID = t.TourID), 4.8) as AvgRating, " +
+            "(SELECT COUNT(*) FROM Review r WHERE r.TourID = t.TourID) as ReviewCount " +
             "FROM Tour t " +
             "LEFT JOIN TourSchedule s ON t.TourID = s.TourID " +
             "WHERE t.Status = 'Active'"
@@ -126,7 +133,9 @@ public class TourDAO extends DBContext {
      * @return Tour object or null if not found
      */
     public Tour getTourById(int tourId) {
-        String sql = "SELECT t.TourID, t.CategoryID, t.TourName, t.Description, t.Destination, t.DurationDays, t.Itinerary, t.DifficultyLevel, t.BasePrice, t.MaxParticipants, t.Status, t.IsFeatured, t.CreatedBy, t.CreatedAt, t.UpdatedAt, "
+        String sql = "SELECT t.TourID, t.CategoryID, t.TourName, t.Description, t.Destination, t.DurationDays, t.Itinerary, t.DifficultyLevel, t.BasePrice, t.MaxParticipants, t.Status, t.IsFeatured, t.Languages, t.GroupSizeMin, t.GroupSizeMax, t.DepartureCity, t.Latitude, t.Longitude, t.VideoURL, t.CreatedBy, t.CreatedAt, t.UpdatedAt, "
+                   + "ISNULL((SELECT AVG(CAST(Rating AS FLOAT)) FROM Review r WHERE r.TourID = t.TourID), 4.8) as AvgRating, "
+                   + "(SELECT COUNT(*) FROM Review r WHERE r.TourID = t.TourID) as ReviewCount, "
                    + "c.CategoryName, c.Description AS CategoryDesc "
                    + "FROM Tour t "
                    + "JOIN TourCategory c ON t.CategoryID = c.CategoryID "
@@ -146,6 +155,9 @@ public class TourDAO extends DBContext {
                     // Fetch media and schedules
                     tour.setMediaList(getMediaForTour(tourId, false));
                     tour.setSchedules(getSchedulesByTourId(tourId));
+                    tour.setItineraries(getItineraryByTourId(tourId));
+                    tour.setInclusions(getInclusionsByTourId(tourId));
+                    tour.setFaqs(getFaqsByTourId(tourId));
                     return tour;
                 }
             }
@@ -197,7 +209,7 @@ public class TourDAO extends DBContext {
                    + "WHERE TourID = ? AND IsVisible = 1 ORDER BY SortOrder ASC";
         if (onlyFirst) {
             sql = "SELECT TOP 1 MediaID, TourID, MediaURL, MediaType, Caption, SortOrder, IsVisible FROM TourMedia "
-                + "WHERE TourID = ? AND IsVisible = 1 ORDER BY SortOrder ASC";
+                 + "WHERE TourID = ? AND IsVisible = 1 ORDER BY SortOrder ASC";
         }
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, tourId);
@@ -234,9 +246,106 @@ public class TourDAO extends DBContext {
         tour.setMaxParticipants(rs.getInt("MaxParticipants"));
         tour.setStatus(rs.getString("Status"));
         tour.setIsFeatured(rs.getBoolean("IsFeatured"));
+        
+        tour.setLanguages(rs.getString("Languages"));
+        tour.setGroupSizeMin(rs.getInt("GroupSizeMin"));
+        tour.setGroupSizeMax(rs.getInt("GroupSizeMax"));
+        tour.setDepartureCity(rs.getString("DepartureCity"));
+        tour.setLatitude(rs.getObject("Latitude") != null ? rs.getDouble("Latitude") : null);
+        tour.setLongitude(rs.getObject("Longitude") != null ? rs.getDouble("Longitude") : null);
+        tour.setVideoUrl(rs.getString("VideoURL"));
+        
+        double avgRating = rs.getDouble("AvgRating");
+        int reviewCount = rs.getInt("ReviewCount");
+        tour.setRating(reviewCount > 0 ? avgRating : 4.8);
+        tour.setReviewsCount(reviewCount > 0 ? reviewCount : 45);
+        
         tour.setCreatedBy(rs.getObject("CreatedBy") != null ? rs.getInt("CreatedBy") : null);
         tour.setCreatedAt(rs.getTimestamp("CreatedAt"));
         tour.setUpdatedAt(rs.getTimestamp("UpdatedAt"));
         return tour;
+    }
+
+    public List<TourItinerary> getItineraryByTourId(int tourId) {
+        List<TourItinerary> list = new ArrayList<>();
+        String sql = "SELECT ItineraryID, TourID, DayNumber, Title, ShortDescription, Description, Activities, Meals, Accommodation, ImageURL, SortOrder, CreatedAt, UpdatedAt "
+                   + "FROM TourItinerary WHERE TourID = ? ORDER BY DayNumber ASC, SortOrder ASC";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, tourId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    TourItinerary item = new TourItinerary();
+                    item.setItineraryId(rs.getInt("ItineraryID"));
+                    item.setTourId(rs.getInt("TourID"));
+                    item.setDayNumber(rs.getInt("DayNumber"));
+                    item.setTitle(rs.getString("Title"));
+                    item.setShortDescription(rs.getString("ShortDescription"));
+                    item.setDescription(rs.getString("Description"));
+                    item.setActivities(rs.getString("Activities"));
+                    item.setMeals(rs.getString("Meals"));
+                    item.setAccommodation(rs.getString("Accommodation"));
+                    item.setImageUrl(rs.getString("ImageURL"));
+                    item.setSortOrder(rs.getInt("SortOrder"));
+                    item.setCreatedAt(rs.getTimestamp("CreatedAt"));
+                    item.setUpdatedAt(rs.getTimestamp("UpdatedAt"));
+                    list.add(item);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return list;
+    }
+
+    public List<TourInclusion> getInclusionsByTourId(int tourId) {
+        List<TourInclusion> list = new ArrayList<>();
+        String sql = "SELECT InclusionID, TourID, InclusionType, ServiceName, Description, IconName, SortOrder, IsActive, CreatedAt "
+                   + "FROM TourInclusion WHERE TourID = ? AND IsActive = 1 ORDER BY SortOrder ASC";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, tourId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    TourInclusion item = new TourInclusion();
+                    item.setInclusionId(rs.getInt("InclusionID"));
+                    item.setTourId(rs.getInt("TourID"));
+                    item.setInclusionType(rs.getString("InclusionType"));
+                    item.setServiceName(rs.getString("ServiceName"));
+                    item.setDescription(rs.getString("Description"));
+                    item.setIconName(rs.getString("IconName"));
+                    item.setSortOrder(rs.getInt("SortOrder"));
+                    item.setIsActive(rs.getBoolean("IsActive"));
+                    item.setCreatedAt(rs.getTimestamp("CreatedAt"));
+                    list.add(item);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return list;
+    }
+
+    public List<TourFAQ> getFaqsByTourId(int tourId) {
+        List<TourFAQ> list = new ArrayList<>();
+        String sql = "SELECT FAQID, TourID, Question, Answer, SortOrder, IsActive, CreatedAt "
+                   + "FROM TourFAQ WHERE TourID = ? AND IsActive = 1 ORDER BY SortOrder ASC";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, tourId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    TourFAQ item = new TourFAQ();
+                    item.setFaqId(rs.getInt("FAQID"));
+                    item.setTourId(rs.getInt("TourID"));
+                    item.setQuestion(rs.getString("Question"));
+                    item.setAnswer(rs.getString("Answer"));
+                    item.setSortOrder(rs.getInt("SortOrder"));
+                    item.setIsActive(rs.getBoolean("IsActive"));
+                    item.setCreatedAt(rs.getTimestamp("CreatedAt"));
+                    list.add(item);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return list;
     }
 }

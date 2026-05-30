@@ -24,7 +24,7 @@
             <h1>Kiến Tạo Những Kỷ Niệm <span>Đáng Nhớ</span></h1>
             <p>Khám phá tour cao cấp, trải nghiệm văn hóa đậm chất và những điểm đến tuyệt đẹp khắp Việt Nam — được thiết kế riêng cho bạn.</p>
             <div class="hero-ctas">
-                <a href="explore.html" class="btn btn-primary" id="hero-explore-btn">Khám Phá Tour <i data-lucide="arrow-right"></i></a>
+                <a href="${pageContext.request.contextPath}/tourdiscovery" class="btn btn-primary" id="hero-explore-btn">Khám Phá Tour <i data-lucide="arrow-right"></i></a>
                 <a href="#promotions" class="btn btn-secondary" id="hero-book-btn">Xem Ưu Đãi</a>
             </div>
         </div>
@@ -137,11 +137,22 @@
                             else if (tour.getCategoryId() == 4) catClass = "adventure";
                             else if (tour.getCategoryId() == 5) catClass = "family";
                             
-                            // Image URL
-                            String imageUrl = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80";
+                            // Determine image
+                            String imgUrl = "assets/images/tour_halong.png"; // Fallback
                             if (tour.getMediaList() != null && !tour.getMediaList().isEmpty()) {
-                                imageUrl = tour.getMediaList().get(0).getMediaUrl();
+                                imgUrl = tour.getMediaList().get(0).getMediaUrl();
+                            } else {
+                                String dest = tour.getDestination().toLowerCase();
+                                if (dest.contains("đà nẵng")) imgUrl = "assets/images/tour_danang.png";
+                                else if (dest.contains("phú quốc")) imgUrl = "assets/images/tour_phuquoc.png";
+                                else if (dest.contains("hạ long")) imgUrl = "assets/images/tour_halong.png";
+                                else if (dest.contains("hội an")) imgUrl = "assets/images/tour_hoian.png";
+                                else if (dest.contains("đà lạt")) imgUrl = "assets/images/tour_dalat.png";
+                                else if (dest.contains("sa pa") || dest.contains("sapa")) imgUrl = "assets/images/tour_sapa.png";
+                                else if (dest.contains("nha trang")) imgUrl = "assets/images/tour_nhatrang.png";
+                                else if (dest.contains("hà giang")) imgUrl = "assets/images/tour_hagiang.png";
                             }
+                            String imageUrl = request.getContextPath() + "/" + imgUrl;
                             
                             // Remaining seats and progress
                             int availableSeats = 10;
@@ -175,7 +186,7 @@
                         <div class="tour-meta">
                             <div class="tour-rating">
                                 <i data-lucide="star"></i>
-                                <span>4.9 (142 đánh giá)</span>
+                                <span><%= tour.getRating() %> (<%= tour.getReviewsCount() %> đánh giá)</span>
                             </div>
                             <div class="tour-duration">
                                 <i data-lucide="clock"></i>
@@ -199,7 +210,7 @@
                                 <span class="price-label">Giá mỗi khách</span>
                                 <span class="price-val"><%= formattedPrice.replace(" ₫", "") %> <span>₫</span></span>
                             </div>
-                            <button class="btn btn-primary btn-sm" onclick="window.location.href='detail.html?id=<%= tour.getTourId() %>'">Xem Chi Tiết</button>
+                            <button class="btn btn-primary btn-sm" onclick="window.location.href='${pageContext.request.contextPath}/detail?id=<%= tour.getTourId() %>'">Xem Chi Tiết</button>
                         </div>
                     </div>
                 </div>
@@ -221,7 +232,7 @@
             </div>
 
             <div class="destinations-grid">
-                <div class="dest-card" id="dest-danang-card" onclick="window.location.href='explore.html?dest=Đà Nẵng'">
+                <div class="dest-card" id="dest-danang-card" onclick="window.location.href='${pageContext.request.contextPath}/tourdiscovery?dest=Đà Nẵng'">
                     <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80" alt="Đà Nẵng — Cầu Vàng và biển Mỹ Khê" class="dest-img">
                     <div class="dest-content">
                         <h3 class="dest-name">Đà Nẵng</h3>
@@ -229,7 +240,7 @@
                     </div>
                 </div>
 
-                <div class="dest-card" id="dest-phuquoc-card" onclick="window.location.href='explore.html?dest=Phú Quốc'">
+                <div class="dest-card" id="dest-phuquoc-card" onclick="window.location.href='${pageContext.request.contextPath}/tourdiscovery?dest=Phú Quốc'">
                     <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80" alt="Phú Quốc — biển trong xanh" class="dest-img">
                     <div class="dest-content">
                         <h3 class="dest-name">Phú Quốc</h3>
@@ -237,7 +248,7 @@
                     </div>
                 </div>
 
-                <div class="dest-card" id="dest-halong-card" onclick="window.location.href='explore.html?dest=Hạ Long'">
+                <div class="dest-card" id="dest-halong-card" onclick="window.location.href='${pageContext.request.contextPath}/tourdiscovery?dest=Hạ Long'">
                     <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80" alt="Vịnh Hạ Long" class="dest-img">
                     <div class="dest-content">
                         <h3 class="dest-name">Hạ Long</h3>
@@ -245,7 +256,7 @@
                     </div>
                 </div>
 
-                <div class="dest-card" id="dest-hoian-card" onclick="window.location.href='explore.html?dest=Hội An'">
+                <div class="dest-card" id="dest-hoian-card" onclick="window.location.href='${pageContext.request.contextPath}/tourdiscovery?dest=Hội An'">
                     <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80" alt="Phố cổ Hội An" class="dest-img">
                     <div class="dest-content">
                         <h3 class="dest-name">Hội An</h3>
@@ -369,4 +380,5 @@
         </section>
     </div>
 
+<% request.setAttribute("extraScript", "js/homepage.js"); %>
 <jsp:include page="../common/footer.jsp" />

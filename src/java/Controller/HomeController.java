@@ -42,7 +42,7 @@ public class HomeController extends HttpServlet {
         }
         
         // Forward request to the HomePage view JSP
-        request.getRequestDispatcher("HomePage/HomePage.jsp").forward(request, response);
+        request.getRequestDispatcher("JSP/HomePage.jsp").forward(request, response);
     }
 
     @Override
