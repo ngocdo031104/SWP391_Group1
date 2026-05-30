@@ -35,13 +35,40 @@ public class Tour implements Serializable {
     private Timestamp createdAt;
     private Timestamp updatedAt;
 
-    // Linked Entities
+    // --- CÁC THỰC THỂ LIÊN KẾT (RELATIONAL ENTITIES) ---
+    // Lý do khai báo các trường này:
+    // - Tour đóng vai trò là thực thể cha (Aggregate Root). Việc khai báo các thực thể liên kết này giúp
+    //   đóng gói tất cả thông tin liên quan của một chuyến đi vào cùng một đối tượng Java.
+    // - Khi DetailController gọi TourDAO.getTourById(id), toàn bộ các danh sách này sẽ được nạp từ các bảng
+    //   tương ứng trong Database và gán vào đối tượng Tour, giúp trang detail.jsp có đầy đủ dữ liệu để kết xuất giao diện.
+
+    // Danh mục của tour du lịch (ví dụ: Nghỉ dưỡng, Bãi biển, Thử thách trekking...)
+    // Liên kết: Tham chiếu tới bảng TourCategory qua khóa ngoại CategoryID.
     private TourCategory category;
+
+    // Danh sách các lịch khởi hành sắp tới của tour (ngày đi, ngày về, số chỗ trống, giá vé...)
+    // Liên kết: Nạp từ bảng TourSchedule dựa theo TourID, dùng để hiển thị hộp đặt tour ở sidebar bên phải trang detail.jsp.
     private List<TourSchedule> schedules;
+
+    // Danh sách hình ảnh và video quảng bá cho tour
+    // Liên kết: Nạp từ bảng TourMedia, dùng để kết xuất slideshow ảnh đẹp ở phần đầu trang detail.jsp.
     private List<TourMedia> mediaList;
+
+    // Lịch trình chi tiết từng ngày của tour (ngày 1 đi đâu làm gì, ngày 2 đi đâu...)
+    // Liên kết: Nạp từ bảng TourItinerary, dùng để vẽ Timeline lịch trình động (bằng JS/HTML) ở thân giữa trang detail.jsp.
     private List<TourItinerary> itineraries;
+
+    // Danh sách các dịch vụ đi kèm bao gồm (Included) và không bao gồm (Excluded)
+    // Liên kết: Nạp từ bảng TourInclusion, hiển thị dạng hai cột trong thẻ dịch vụ ở thân trang detail.jsp.
     private List<TourInclusion> inclusions;
+
+    // Các câu hỏi và giải đáp thắc mắc thường gặp liên quan đến tour này
+    // Liên kết: Nạp từ bảng TourFAQ, hiển thị dưới dạng Accordion bấm để thả câu trả lời ở gần cuối trang detail.jsp.
     private List<TourFAQ> faqs;
+    // Danh sách các đánh giá (Reviews) của Tour du lịch này (Tạm thời đóng lại khi xóa screen TourDetail).
+    /*
+    private List<Review> reviews;
+    */
 
     public Tour() {
     }
@@ -285,4 +312,15 @@ public class Tour implements Serializable {
     public void setFaqs(List<TourFAQ> faqs) {
         this.faqs = faqs;
     }
+
+    // Lấy ra danh sách Đánh giá của Tour (Tạm thời đóng lại khi xóa screen TourDetail)
+    /*
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
+    }
+    */
 }

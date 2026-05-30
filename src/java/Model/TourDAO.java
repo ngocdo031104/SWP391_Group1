@@ -7,11 +7,13 @@ import Entities.TourSchedule;
 import Entities.TourItinerary;
 import Entities.TourInclusion;
 import Entities.TourFAQ;
+// import Entities.Review; (Tạm thời đóng lại khi xóa screen TourDetail)
 import Entities.DestinationInfo;
 import Utils.DBContext;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -153,12 +155,23 @@ public class TourDAO extends DBContext {
                     cat.setDescription(rs.getString("CategoryDesc"));
                     tour.setCategory(cat);
                     
-                    // Fetch media and schedules
+                    // Nạp danh sách hình ảnh/video của tour từ bảng TourMedia để cấp cho slideshow ảnh ở đầu trang detail.jsp.
                     tour.setMediaList(getMediaForTour(tourId, false));
+                    
+                    // Nạp danh sách các đợt khởi hành còn chỗ trong tương lai từ bảng TourSchedule để tính toán số ghế trống và giá ở sidebar.
                     tour.setSchedules(getSchedulesByTourId(tourId));
+                    
+                    // Nạp lịch trình đi cụ thể từng ngày từ bảng TourItinerary để hiển thị sơ đồ Timeline động ở thân trang.
                     tour.setItineraries(getItineraryByTourId(tourId));
+                    
+                    // Nạp danh sách dịch vụ bao gồm (Included) và loại trừ (Excluded) từ bảng TourInclusion.
                     tour.setInclusions(getInclusionsByTourId(tourId));
+                    
+                    // Nạp danh sách câu hỏi thường gặp FAQ từ bảng TourFAQ phục vụ Accordion ở cuối trang.
                     tour.setFaqs(getFaqsByTourId(tourId));
+                    
+                    // Nạp tất cả các bình luận, đánh giá và số sao thực tế từ khách hàng từ bảng Review để hiển thị lên khung nhận xét (Tạm thời đóng lại khi xóa screen TourDetail).
+                    // tour.setReviews(getReviewsByTourId(tourId));
                     return tour;
                 }
             }
@@ -267,8 +280,19 @@ public class TourDAO extends DBContext {
         return tour;
     }
 
+    /**
+     * TRUY VẤN LỊCH TRÌNH CHI TIẾT TỪNG NGÀY (ITINERARY) CỦA TOUR
+     * Lý do tại sao phải viết hàm này:
+     * - Để lấy lộ trình đi thực tế của tour (ví dụ: Ngày 1 đi đâu làm gì, Ngày 2 đi đâu...) thay vì dùng dữ liệu tĩnh.
+     * - Dữ liệu này sẽ được DetailController nạp, đưa sang detail.jsp và chuyển đổi sang dạng mảng JS window.itinerariesData.
+     * - JS (detail.js) sẽ đọc mảng này để vẽ sơ đồ Timeline (trục hành trình) và hiệu ứng đóng mở Accordion tương tác.
+     *
+     * @param tourId ID của tour cần lấy lịch trình
+     * @return Danh sách đối tượng TourItinerary sắp xếp tăng dần theo DayNumber và SortOrder
+     */
     public List<TourItinerary> getItineraryByTourId(int tourId) {
         List<TourItinerary> list = new ArrayList<>();
+        // Thực hiện SELECT tất cả cột của bảng TourItinerary theo TourID tương ứng
         String sql = "SELECT ItineraryID, TourID, DayNumber, Title, ShortDescription, Description, Activities, Meals, Accommodation, ImageURL, SortOrder, CreatedAt, UpdatedAt "
                    + "FROM TourItinerary WHERE TourID = ? ORDER BY DayNumber ASC, SortOrder ASC";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -298,8 +322,20 @@ public class TourDAO extends DBContext {
         return list;
     }
 
+    /**
+     * TRUY VẤN CÁC DỊCH VỤ ĐI KÈM TOUR (INCLUSIONS/EXCLUSIONS)
+     * Lý do tại sao phải viết hàm này:
+     * - Mỗi tour có các dịch vụ bao gồm (ví dụ: Bảo hiểm, hướng dẫn viên, vé tham quan)
+     *   và không bao gồm (ví dụ: Chi phí cá nhân, tiền tip) khác nhau.
+     * - Dữ liệu này hiển thị trực quan dưới dạng thẻ (Tab) ở giữa trang detail.jsp.
+     * - Phép lọc `IsActive = 1` đảm bảo chỉ hiển thị các dịch vụ đang được cung cấp.
+     *
+     * @param tourId ID của tour cần lấy dịch vụ
+     * @return Danh sách các đối tượng TourInclusion của tour
+     */
     public List<TourInclusion> getInclusionsByTourId(int tourId) {
         List<TourInclusion> list = new ArrayList<>();
+        // Thực hiện SELECT các dịch vụ hoạt động, sắp xếp theo thứ tự hiển thị SortOrder
         String sql = "SELECT InclusionID, TourID, InclusionType, ServiceName, Description, IconName, SortOrder, IsActive, CreatedAt "
                    + "FROM TourInclusion WHERE TourID = ? AND IsActive = 1 ORDER BY SortOrder ASC";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -325,6 +361,15 @@ public class TourDAO extends DBContext {
         return list;
     }
 
+    /**
+     * TRUY VẤN BỘ CÂU HỎI THƯỜNG GẶP (FAQs) CỦA TOUR
+     * Lý do tại sao phải viết hàm này:
+     * - Giúp giải đáp ngay thắc mắc của khách hàng về chuyến đi (ví dụ: chính sách hủy tour, trẻ em đi kèm...).
+     * - Dữ liệu này hiển thị dưới dạng Accordion (click để thả nội dung trả lời) ở góc dưới detail.jsp.
+     *
+     * @param tourId ID của tour
+     * @return Danh sách các câu hỏi & câu trả lời (TourFAQ) đang hoạt động (IsActive = 1)
+     */
     public List<TourFAQ> getFaqsByTourId(int tourId) {
         List<TourFAQ> list = new ArrayList<>();
         String sql = "SELECT FAQID, TourID, Question, Answer, SortOrder, IsActive, CreatedAt "
@@ -392,4 +437,159 @@ public class TourDAO extends DBContext {
         }
         return list;
     }
+
+    /* (Tạm thời đóng lại khi xóa screen TourDetail)
+    public List<Review> getReviewsByTourId(int tourId) {
+        List<Review> list = new ArrayList<>();
+        String sql = "SELECT r.ReviewID, r.TourID, r.BookingID, r.CustomerID, r.Rating, r.Content, r.IsVisible, r.CreatedAt, r.UpdatedAt, "
+                   + "u.FullName, p.AvatarURL, "
+                   + "CASE WHEN b.Status = 'Completed' THEN 1 ELSE 0 END as IsVerified "
+                   + "FROM Review r "
+                   + "JOIN [User] u ON r.CustomerID = u.UserID "
+                   + "LEFT JOIN UserProfile p ON u.UserID = p.UserID "
+                   + "LEFT JOIN Booking b ON r.BookingID = b.BookingID "
+                   + "WHERE r.TourID = ? AND r.IsVisible = 1 "
+                   + "ORDER BY r.CreatedAt DESC";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, tourId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Review rev = new Review();
+                    rev.setReviewId(rs.getInt("ReviewID"));
+                    rev.setTourId(rs.getInt("TourID"));
+                    rev.setBookingId(rs.getInt("BookingID"));
+                    rev.setCustomerId(rs.getInt("CustomerID"));
+                    rev.setRating(rs.getInt("Rating"));
+                    rev.setContent(rs.getString("Content"));
+                    rev.setIsVisible(rs.getBoolean("IsVisible"));
+                    rev.setCreatedAt(rs.getTimestamp("CreatedAt"));
+                    rev.setUpdatedAt(rs.getTimestamp("UpdatedAt"));
+                    rev.setCustomerName(rs.getString("FullName"));
+                    rev.setCustomerAvatar(rs.getString("AvatarURL"));
+                    rev.setIsVerified(rs.getBoolean("IsVerified"));
+                    list.add(rev);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return list;
+    }
+
+    public boolean insertReview(String name, String email, int tourId, int rating, String content) {
+        int userId = -1;
+        String findUserSql = "SELECT UserID FROM [User] WHERE Email = ?";
+        try (PreparedStatement ps = connection.prepareStatement(findUserSql)) {
+            ps.setString(1, email);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    userId = rs.getInt("UserID");
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        if (userId == -1) {
+            String insertUserSql = "INSERT INTO [User] (RoleID, Email, PasswordHash, FullName, PhoneNumber, IsActive, IsVerified) VALUES (4, ?, 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855', ?, '', 1, 1)";
+            try (PreparedStatement ps = connection.prepareStatement(insertUserSql, Statement.RETURN_GENERATED_KEYS)) {
+                ps.setString(1, email);
+                ps.setString(2, name);
+                ps.executeUpdate();
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        userId = rs.getInt(1);
+                    }
+                }
+                
+                String insertProfileSql = "INSERT INTO UserProfile (UserID, AvatarURL) VALUES (?, 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80')";
+                try (PreparedStatement ps2 = connection.prepareStatement(insertProfileSql)) {
+                    ps2.setInt(1, userId);
+                    ps2.executeUpdate();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
+            }
+        }
+        
+        int bookingId = -1;
+        String findBookingSql = "SELECT BookingID FROM Booking b JOIN TourSchedule s ON b.ScheduleID = s.ScheduleID WHERE b.CustomerID = ? AND s.TourID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(findBookingSql)) {
+            ps.setInt(1, userId);
+            ps.setInt(2, tourId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    bookingId = rs.getInt("BookingID");
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        if (bookingId == -1) {
+            String fallbackBookingSql = "SELECT TOP 1 BookingID FROM Booking b JOIN TourSchedule s ON b.ScheduleID = s.ScheduleID WHERE s.TourID = ?";
+            try (PreparedStatement ps = connection.prepareStatement(fallbackBookingSql)) {
+                ps.setInt(1, tourId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        bookingId = rs.getInt("BookingID");
+                    }
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        if (bookingId == -1) {
+            int scheduleId = -1;
+            String findScheduleSql = "SELECT TOP 1 ScheduleID FROM TourSchedule WHERE TourID = ?";
+            try (PreparedStatement ps = connection.prepareStatement(findScheduleSql)) {
+                ps.setInt(1, tourId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        scheduleId = rs.getInt("ScheduleID");
+                    }
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            if (scheduleId != -1) {
+                String insertBookingSql = "INSERT INTO Booking (BookingCode, ScheduleID, CustomerID, NumParticipants, BaseAmount, VATAmount, DiscountAmount, TotalAmount, Status) VALUES (?, ?, ?, 1, 0, 0, 0, 0, 'Completed')";
+                try (PreparedStatement ps = connection.prepareStatement(insertBookingSql, Statement.RETURN_GENERATED_KEYS)) {
+                    ps.setString(1, "BK_DUMMY_" + (System.currentTimeMillis() % 100000));
+                    ps.setInt(2, scheduleId);
+                    ps.setInt(3, userId);
+                    ps.executeUpdate();
+                    try (ResultSet rs = ps.getGeneratedKeys()) {
+                        if (rs.next()) {
+                            bookingId = rs.getInt(1);
+                        }
+                    }
+                } catch (SQLException ex) {
+                    Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+        
+        if (bookingId == -1) {
+            return false;
+        }
+        
+        String insertReviewSql = "INSERT INTO Review (TourID, BookingID, CustomerID, Rating, Content, IsVisible) VALUES (?, ?, ?, ?, ?, 1)";
+        try (PreparedStatement ps = connection.prepareStatement(insertReviewSql)) {
+            ps.setInt(1, tourId);
+            ps.setInt(2, bookingId);
+            ps.setInt(3, userId);
+            ps.setInt(4, rating);
+            ps.setString(5, content);
+            int rows = ps.executeUpdate();
+            return rows > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+    */
 }

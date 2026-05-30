@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"Controller"},{"l":"Entities"},{"l":"Model"},{"l":"Utils"}];updateSearchResults();
