@@ -2,6 +2,7 @@ package Controller;
 
 import Entities.Tour;
 import Entities.TourCategory;
+import Entities.DestinationInfo;
 import Model.TourDAO;
 import java.io.IOException;
 import java.util.List;
@@ -23,6 +24,7 @@ public class HomeController extends HttpServlet {
             tourDAO = new TourDAO();
             List<TourCategory> categories = tourDAO.getAllCategories();
             List<Tour> featuredTours = tourDAO.getFeaturedTours();
+            List<DestinationInfo> destinations = tourDAO.getTopDestinations();
             
             // Populate schedules for each featured tour to determine available seats dynamically
             if (featuredTours != null) {
@@ -33,6 +35,7 @@ public class HomeController extends HttpServlet {
             
             request.setAttribute("categories", categories);
             request.setAttribute("featuredTours", featuredTours);
+            request.setAttribute("destinations", destinations);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

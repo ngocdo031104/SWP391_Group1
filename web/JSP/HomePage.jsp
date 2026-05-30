@@ -3,6 +3,7 @@
 <%@ page import="Entities.Tour" %>
 <%@ page import="Entities.TourCategory" %>
 <%@ page import="Entities.TourSchedule" %>
+<%@ page import="Entities.DestinationInfo" %>
 <%
     if (request.getAttribute("categories") == null) {
         String uri = request.getRequestURI();
@@ -232,37 +233,29 @@
             </div>
 
             <div class="destinations-grid">
-                <div class="dest-card" id="dest-danang-card" onclick="window.location.href='${pageContext.request.contextPath}/tourdiscovery?dest=Đà Nẵng'">
-                    <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80" alt="Đà Nẵng — Cầu Vàng và biển Mỹ Khê" class="dest-img">
+                <% 
+                    List<DestinationInfo> destinations = (List<DestinationInfo>) request.getAttribute("destinations");
+                    if (destinations != null && !destinations.isEmpty()) {
+                        for (int i = 0; i < destinations.size(); i++) {
+                            DestinationInfo dest = destinations.get(i);
+                            String contextPath = request.getContextPath();
+                            String imgPath = contextPath + "/" + dest.getImageUrl();
+                %>
+                <div class="dest-card" onclick="window.location.href='<%= contextPath %>/tourdiscovery?dest=<%= java.net.URLEncoder.encode(dest.getName(), "UTF-8") %>'">
+                    <img src="<%= imgPath %>" alt="<%= dest.getName() %>" class="dest-img">
                     <div class="dest-content">
-                        <h3 class="dest-name">Đà Nẵng</h3>
-                        <div class="dest-count"><i data-lucide="compass"></i> 24+ Tour</div>
+                        <h3 class="dest-name"><%= dest.getName() %></h3>
+                        <div class="dest-count"><i data-lucide="compass"></i> <%= dest.getTourCount() %> Tour</div>
                     </div>
                 </div>
-
-                <div class="dest-card" id="dest-phuquoc-card" onclick="window.location.href='${pageContext.request.contextPath}/tourdiscovery?dest=Phú Quốc'">
-                    <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80" alt="Phú Quốc — biển trong xanh" class="dest-img">
-                    <div class="dest-content">
-                        <h3 class="dest-name">Phú Quốc</h3>
-                        <div class="dest-count"><i data-lucide="compass"></i> 18+ Tour</div>
-                    </div>
-                </div>
-
-                <div class="dest-card" id="dest-halong-card" onclick="window.location.href='${pageContext.request.contextPath}/tourdiscovery?dest=Hạ Long'">
-                    <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80" alt="Vịnh Hạ Long" class="dest-img">
-                    <div class="dest-content">
-                        <h3 class="dest-name">Hạ Long</h3>
-                        <div class="dest-count"><i data-lucide="compass"></i> 15+ Tour</div>
-                    </div>
-                </div>
-
-                <div class="dest-card" id="dest-hoian-card" onclick="window.location.href='${pageContext.request.contextPath}/tourdiscovery?dest=Hội An'">
-                    <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80" alt="Phố cổ Hội An" class="dest-img">
-                    <div class="dest-content">
-                        <h3 class="dest-name">Hội An</h3>
-                        <div class="dest-count"><i data-lucide="compass"></i> 12+ Tour</div>
-                    </div>
-                </div>
+                <% 
+                        }
+                    } else {
+                %>
+                <p>Không tìm thấy điểm đến nổi bật nào.</p>
+                <% 
+                    }
+                %>
             </div>
         </section>
 

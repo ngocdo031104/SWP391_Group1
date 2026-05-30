@@ -7,6 +7,7 @@ import Entities.TourSchedule;
 import Entities.TourItinerary;
 import Entities.TourInclusion;
 import Entities.TourFAQ;
+import Entities.DestinationInfo;
 import Utils.DBContext;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -341,6 +342,49 @@ public class TourDAO extends DBContext {
                     item.setIsActive(rs.getBoolean("IsActive"));
                     item.setCreatedAt(rs.getTimestamp("CreatedAt"));
                     list.add(item);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return list;
+    }
+
+    public List<DestinationInfo> getTopDestinations() {
+        List<DestinationInfo> list = new ArrayList<>();
+        String sql = "SELECT Destination, COUNT(*) as TourCount FROM Tour WHERE Status = 'Active' GROUP BY Destination";
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                String fullDest = rs.getString("Destination");
+                int count = rs.getInt("TourCount");
+                
+                String name = fullDest;
+                if (fullDest.contains(",")) {
+                    name = fullDest.split(",")[0].trim();
+                }
+                
+                String imgUrl = "assets/images/tour_halong.png";
+                String lowerName = name.toLowerCase();
+                if (lowerName.contains("đà nẵng")) imgUrl = "assets/images/tour_danang.png";
+                else if (lowerName.contains("phú quốc")) imgUrl = "assets/images/tour_phuquoc.png";
+                else if (lowerName.contains("hạ long")) imgUrl = "assets/images/tour_halong.png";
+                else if (lowerName.contains("hội an")) imgUrl = "assets/images/tour_hoian.png";
+                else if (lowerName.contains("đà lạt")) imgUrl = "assets/images/tour_dalat.png";
+                else if (lowerName.contains("sa pa") || lowerName.contains("sapa")) imgUrl = "assets/images/tour_sapa.png";
+                else if (lowerName.contains("nha trang")) imgUrl = "assets/images/tour_nhatrang.png";
+                else if (lowerName.contains("hà giang")) imgUrl = "assets/images/tour_hagiang.png";
+                
+                boolean exists = false;
+                for (DestinationInfo d : list) {
+                    if (d.getName().equalsIgnoreCase(name)) {
+                        d.setTourCount(d.getTourCount() + count);
+                        exists = true;
+                        break;
+                    }
+                }
+                if (!exists) {
+                    list.add(new DestinationInfo(name, count, imgUrl));
                 }
             }
         } catch (SQLException ex) {
