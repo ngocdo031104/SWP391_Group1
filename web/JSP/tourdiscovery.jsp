@@ -5,6 +5,7 @@
 <%@ page import="Entities.TourSchedule" %>
 <%
     request.setAttribute("extraCss", "css/tourdiscovery.css");
+    request.setAttribute("bodyClass", "explore-page");
 %>
 <jsp:include page="../common/header.jsp" />
 

@@ -14,6 +14,7 @@
     // - activeTour: Đối tượng Tour chính được Servlet DetailController.java nạp từ DB (bằng tourDAO.getTourById(id))
     //   và đẩy vào request attribute để JSP này hiển thị thông tin động.
     request.setAttribute("extraCss", "css/detail.css");
+    request.setAttribute("bodyClass", "detail-page");
     Tour activeTour = (Tour) request.getAttribute("tour");
 %>
 <!-- Nhúng header dùng chung cho toàn bộ website, nằm trong thư mục web/common/ -->

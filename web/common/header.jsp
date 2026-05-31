@@ -22,9 +22,13 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/homepage.css">
     <% 
         }
+        String bodyClass = (String) request.getAttribute("bodyClass");
+        if (bodyClass == null) {
+            bodyClass = "";
+        }
     %>
 </head>
-<body>
+<body class="<%= bodyClass %>">
 
     <header class="header" id="navbar">
         <div class="container navbar">

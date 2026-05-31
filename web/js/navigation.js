@@ -10,17 +10,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const header = document.getElementById('navbar') || document.getElementById('header');
     if (header) {
         // Run once on load in case page is already scrolled
-        if (window.scrollY > 50) {
+        if (window.scrollY > 50 || document.body.classList.contains('explore-page') || document.body.classList.contains('detail-page') || document.body.classList.contains('wishlist-page')) {
             header.classList.add('scrolled');
-        } else if (!document.body.classList.contains('explore-page') && !document.body.classList.contains('detail-page') && !document.body.classList.contains('wishlist-page')) {
-            // Only remove scrolled on homepage if scrollY is 0
+        } else {
             header.classList.remove('scrolled');
         }
 
         window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
+            if (window.scrollY > 50 || document.body.classList.contains('explore-page') || document.body.classList.contains('detail-page') || document.body.classList.contains('wishlist-page')) {
                 header.classList.add('scrolled');
-            } else if (!document.body.classList.contains('explore-page') && !document.body.classList.contains('detail-page') && !document.body.classList.contains('wishlist-page')) {
+            } else {
                 header.classList.remove('scrolled');
             }
         });
