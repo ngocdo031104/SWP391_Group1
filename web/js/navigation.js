@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (newsletterForm) {
         newsletterForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            alert('Đăng ký nhận tin thành công! Cảm ơn bạn đã theo dõi Mirai Travels.');
+            alert('Đăng ký nhận tin thành công! Cảm ơn bạn đã theo dõi TourBuddy.');
             newsletterForm.reset();
         });
     }

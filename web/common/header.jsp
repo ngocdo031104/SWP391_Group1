@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mirai Travels | Đặt Tour Du Lịch Cao Cấp Việt Nam</title>
-    <meta name="description" content="Khám phá tour du lịch cao cấp, resort sang trọng và ưu đãi hấp dẫn khắp Việt Nam. Đặt hành trình đáng nhớ cùng Mirai Travels ngay hôm nay.">
+    <title>TourBuddy | Đặt Tour Du Lịch Cao Cấp Việt Nam</title>
+    <meta name="description" content="Khám phá tour du lịch cao cấp, resort sang trọng và ưu đãi hấp dẫn khắp Việt Nam. Đặt hành trình đáng nhớ cùng TourBuddy ngay hôm nay.">
     <!-- Using Lucide CDN for icons reliability -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
@@ -33,8 +33,8 @@
     <header class="header" id="navbar">
         <div class="container navbar">
             <a href="${pageContext.request.contextPath}/home" class="logo" id="nav-logo">
-                <div class="logo-icon">M</div>
-                <span>Mirai</span>
+                <div class="logo-icon">T</div>
+                <span>TourBuddy</span>
             </a>
 
             <div class="nav-search" id="nav-search-bar">

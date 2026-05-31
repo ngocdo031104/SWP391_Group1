@@ -462,7 +462,7 @@
                         %>
                         <div class="faq-item">
                             <div class="faq-question">
-                                <h4>Chính sách hủy tour du lịch của Mirai Travels như thế nào?</h4>
+                                <h4>Chính sách hủy tour du lịch của TourBuddy như thế nào?</h4>
                                 <i data-lucide="chevron-down" class="faq-arrow"></i>
                             </div>
                             <div class="faq-answer">
@@ -536,7 +536,7 @@
                                 <span id="bill-subtotal-val">0 đ</span>
                             </div>
                             <div class="bill-line text-discount" id="promo-discount-line" style="display: none;">
-                                <span>Mã giảm giá (MIRAI2026)</span>
+                                <span>Mã giảm giá (TOURBUDDY2026)</span>
                                 <span id="bill-discount-val">-0 đ</span>
                             </div>
                             <div class="bill-line">
@@ -551,7 +551,7 @@
                         </div>
 
                         <div class="booking-coupon-wrapper">
-                            <input type="text" id="promo-code-input" placeholder="Nhập mã giảm giá (MIRAI2026)">
+                            <input type="text" id="promo-code-input" placeholder="Nhập mã giảm giá (TOURBUDDY2026)">
                             <button type="button" class="btn btn-secondary" id="apply-promo-btn">Áp dụng</button>
                         </div>
                         <div class="promo-success-message" id="promo-message-txt"></div>

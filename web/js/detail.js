@@ -199,14 +199,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const reviewsData = window.reviewsData || {
         6: [
             { name: "Phạm Minh Hoàng", rating: 5, date: "15/05/2026", text: "Chuyến trekking Fansipan thực sự là trải nghiệm để đời! Đường leo dốc tuy mệt nhưng phong cảnh ruộng bậc thang Sa Pa lộng gió quá đẹp. Đỉnh núi mây mù giăng lối sương lạnh buốt chạm tay vào chóp cảm giác tự hào vô cùng. Hướng dẫn viên Tủa rất chu đáo, nhiệt tình hỗ trợ đoàn.", isVerified: true, avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80", image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=400&q=80" },
-            { name: "Nguyễn Thùy Chi", rating: 5, date: "02/05/2026", text: "Du lịch Sa Pa dịch vụ của Mirai rất xuất sắc. Khách sạn 5 sao có bồn tắm nước nóng ngắm thung lũng, đồ ăn buffet ngon miệng phong phú. Trải nghiệm tắm lá thuốc Dao đỏ ở bản Tả Phìn vô cùng thư giãn, đỡ mỏi hẳn sau ngày trekking dốc núi.", isVerified: true, avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=80&q=80" },
+            { name: "Nguyễn Thùy Chi", rating: 5, date: "02/05/2026", text: "Du lịch Sa Pa dịch vụ của TourBuddy rất xuất sắc. Khách sạn 5 sao có bồn tắm nước nóng ngắm thung lũng, đồ ăn buffet ngon miệng phong phú. Trải nghiệm tắm lá thuốc Dao đỏ ở bản Tả Phìn vô cùng thư giãn, đỡ mỏi hẳn sau ngày trekking dốc núi.", isVerified: true, avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=80&q=80" },
             { name: "Lê Quốc Bảo", rating: 4, date: "24/04/2026", text: "Phong cảnh thung lũng Mường Hoa rất thơ mộng. Dịch vụ ăn uống ngon nhưng lịch trình ngày 2 leo Fansipan đi bộ hơi mỏi chân chút. Cáp treo rất hiện đại, cabin kính rộng lớn. Đáng tiền trải nghiệm!", isVerified: true, avatar: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=80&q=80" }
         ]
     };
 
     // Fallback reviews for tours that don't have specified review lists
     const defaultReviews = [
-        { name: "Trần Anh Tuấn", rating: 5, date: "20/05/2026", text: "Dịch vụ đẳng cấp chuyên nghiệp! Đưa đón đúng giờ, hướng dẫn viên nhiệt tình vui tính. Các điểm tham quan cực đẹp, khách sạn resort ở siêu thích. Chắc chắn sẽ tiếp tục ủng hộ Mirai trong các hành trình du lịch tiếp theo.", isVerified: true, avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=80&q=80" },
+        { name: "Trần Anh Tuấn", rating: 5, date: "20/05/2026", text: "Dịch vụ đẳng cấp chuyên nghiệp! Đưa đón đúng giờ, hướng dẫn viên nhiệt tình vui tính. Các điểm tham quan cực đẹp, khách sạn resort ở siêu thích. Chắc chắn sẽ tiếp tục ủng hộ TourBuddy trong các hành trình du lịch tiếp theo.", isVerified: true, avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=80&q=80" },
         { name: "Lê Minh Thư", rating: 5, date: "14/05/2026", text: "Trải nghiệm du lịch 5 sao đáng tiền từng xu. Thức ăn siêu ngon đa dạng, lịch trình sắp xếp cực kỳ khoa học không gây cảm giác mệt mỏi. Gia đình tôi đều rất hài lòng.", isVerified: true, avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=80&q=80" }
     ];
 
@@ -442,7 +442,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (applyPromoBtn) {
         applyPromoBtn.addEventListener('click', () => {
             const code = promoCodeInput.value.trim().toUpperCase();
-            if (code === "MIRAI2026") {
+            if (code === "TOURBUDDY2026") {
                 isPromoApplied = true;
                 promoMessageTxt.style.color = "#16a34a";
                 promoMessageTxt.textContent = "Áp dụng mã giảm giá 20% thành công!";
@@ -590,7 +590,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (playVideoBtn) {
         playVideoBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            alert("Đang tải video giới thiệu hành trình du lịch cao cấp của Mirai Travels...");
+            alert("Đang tải video giới thiệu hành trình du lịch cao cấp của TourBuddy...");
         });
     }
 

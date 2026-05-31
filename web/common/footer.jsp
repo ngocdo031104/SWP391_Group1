@@ -3,8 +3,8 @@
         <div class="container footer-main">
             <div class="footer-col footer-brand">
                 <a href="${pageContext.request.contextPath}/home" class="logo">
-                    <div class="logo-icon">M</div>
-                    <span>Mirai</span>
+                    <div class="logo-icon">T</div>
+                    <span>TourBuddy</span>
                 </a>
                 <p class="footer-desc">Kiến tạo hành trình du lịch cao cấp và lịch trình nghỉ dưỡng đặt riêng tại những điểm đến tuyệt đẹp khắp Việt Nam từ năm 2021.</p>
                 <div class="social-links">
@@ -37,7 +37,7 @@
 
             <div class="footer-col footer-newsletter">
                 <h3>Đăng Ký Nhận Tin</h3>
-                <p>Cập nhật mã giảm giá, flash sale và hành trình mới nhất từ Mirai Travels.</p>
+                <p>Cập nhật mã giảm giá, flash sale và hành trình mới nhất từ TourBuddy.</p>
                 <form class="newsletter-form" id="newsletter-subscription-form">
                     <input type="email" placeholder="Email của bạn" id="newsletter-email" required>
                     <button type="submit" id="newsletter-submit-btn">Đăng Ký</button>
@@ -46,7 +46,7 @@
         </div>
 
         <div class="container footer-bottom">
-            <p>&copy; 2026 Mirai Travels Ltd. Bảo lưu mọi quyền. Thiết kế theo tiêu chuẩn du lịch cao cấp.</p>
+            <p>&copy; 2026 TourBuddy Ltd. Bảo lưu mọi quyền. Thiết kế theo tiêu chuẩn du lịch cao cấp.</p>
             <div class="footer-selectors">
                 <div class="selector-wrapper">
                     <select id="lang-select" aria-label="Chọn ngôn ngữ">

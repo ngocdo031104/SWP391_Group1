@@ -124,7 +124,7 @@
         <section class="section-padding" id="tours">
             <div class="section-header">
                 <h2>Tour Nổi Bật</h2>
-                <p>Các hành trình cao cấp được chọn lọc bởi đội ngũ chuyên gia du lịch Mirai.</p>
+                <p>Các hành trình cao cấp được chọn lọc bởi đội ngũ chuyên gia du lịch TourBuddy.</p>
             </div>
 
             <div class="tours-grid" id="tours-grid-container">
@@ -309,7 +309,7 @@
 
                 <%
                     List<Coupon> activeCoupons = (List<Coupon>) request.getAttribute("activeCoupons");
-                    String promoCode = "MIRAI2026"; // Fallback
+                    String promoCode = "TOURBUDDY2026"; // Fallback
                     String promoDesc = "Giảm thêm 1.000.000₫ cho lần đặt tour đầu tiên."; // Fallback
                     if (activeCoupons != null && !activeCoupons.isEmpty()) {
                         Coupon firstCoupon = activeCoupons.get(0);
@@ -338,7 +338,7 @@
 
         <section class="section-padding" id="testimonials">
             <div class="section-header">
-                <h2>Du Khách Nói Gì Về Mirai</h2>
+                <h2>Du Khách Nói Gì Về TourBuddy</h2>
                 <p>Trải nghiệm thực tế từ những người đã đồng hành cùng chúng tôi.</p>
             </div>
 
@@ -387,14 +387,14 @@
                         <div class="testimonial-rating">
                             <i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i>
                         </div>
-                        <p class="testimonial-quote">"Tour du lịch tuyệt vời! Dịch vụ chăm sóc khách hàng vô cùng chuyên nghiệp. Chắc chắn sẽ quay lại cùng Mirai Travels."</p>
+                        <p class="testimonial-quote">"Tour du lịch tuyệt vời! Dịch vụ chăm sóc khách hàng vô cùng chuyên nghiệp. Chắc chắn sẽ quay lại cùng TourBuddy Travels."</p>
                         <div class="testimonial-author">
                             <div class="author-avatar">
                                 <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=120&q=80" alt="Khách hàng">
                             </div>
                             <div class="author-info">
                                 <div class="author-name">Khách hàng ẩn danh</div>
-                                <div class="author-role">Thành viên Mirai</div>
+                                <div class="author-role">Thành viên TourBuddy</div>
                             </div>
                         </div>
                     </div>
