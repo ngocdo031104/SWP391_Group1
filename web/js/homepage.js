@@ -122,10 +122,30 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Show/hide "Xem thêm" button based on matchingCount
-        if (viewMoreWrapper) {
-            if (matchingCount > 9 && !isExpanded) {
+        // Show/hide "Xem thêm" / "Thu gọn" button based on matchingCount
+        if (viewMoreWrapper && viewMoreBtn) {
+            if (matchingCount > 9) {
                 viewMoreWrapper.style.display = 'flex';
+                
+                const btnLabel = viewMoreBtn.querySelector('.btn-label');
+                const iconContainer = document.getElementById('btn-view-more-icon');
+                
+                if (isExpanded) {
+                    if (btnLabel) btnLabel.textContent = 'Thu gọn';
+                    if (iconContainer) {
+                        iconContainer.innerHTML = '<i data-lucide="chevron-up"></i>';
+                    }
+                } else {
+                    if (btnLabel) btnLabel.textContent = 'Xem thêm tour';
+                    if (iconContainer) {
+                        iconContainer.innerHTML = '<i data-lucide="chevron-down"></i>';
+                    }
+                }
+                
+                // Re-process icons using Lucide
+                if (window.lucide) {
+                    lucide.createIcons();
+                }
             } else {
                 viewMoreWrapper.style.display = 'none';
             }
@@ -151,8 +171,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // View More click handler
     if (viewMoreBtn) {
         viewMoreBtn.addEventListener('click', () => {
-            isExpanded = true;
+            isExpanded = !isExpanded;
             updateTourVisibility();
+            
+            // If collapsed, scroll the user back to the top of the tours section smoothly
+            if (!isExpanded) {
+                const toursSection = document.getElementById('tours');
+                if (toursSection) {
+                    toursSection.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
         });
     }
 
