@@ -239,7 +239,7 @@
                 <p>Những địa danh được du khách tìm kiếm nhiều nhất hiện nay.</p>
             </div>
 
-            <div class="destinations-grid">
+            <div class="destinations-grid" id="destinations-grid-container">
                 <% 
                     List<DestinationInfo> destinations = (List<DestinationInfo>) request.getAttribute("destinations");
                     if (destinations != null && !destinations.isEmpty()) {
@@ -263,6 +263,13 @@
                 <% 
                     }
                 %>
+            </div>
+
+            <div class="view-more-container" id="view-more-dests-wrapper" style="display: none;">
+                <button type="button" class="btn btn-secondary" id="btn-view-more-dests">
+                    <span class="btn-label">Xem thêm điểm đến</span>
+                    <span id="btn-view-more-dests-icon"><i data-lucide="chevron-down"></i></span>
+                </button>
             </div>
         </section>
 

@@ -318,4 +318,70 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
+
+    /* ==========================================================================
+       DYNAMIC TRENDING DESTINATIONS LIMIT & TOGGLE
+       ========================================================================== */
+    const destCards = document.querySelectorAll('.dest-card');
+    const viewMoreDestsWrapper = document.getElementById('view-more-dests-wrapper');
+    const viewMoreDestsBtn = document.getElementById('btn-view-more-dests');
+    
+    let isDestsExpanded = false;
+
+    function updateDestVisibility() {
+        destCards.forEach((card, index) => {
+            if (!isDestsExpanded && index >= 6) {
+                card.style.display = 'none';
+            } else {
+                card.style.display = '';
+            }
+        });
+
+        // Show/hide button based on count
+        if (viewMoreDestsWrapper && viewMoreDestsBtn) {
+            if (destCards.length > 6) {
+                viewMoreDestsWrapper.style.display = 'flex';
+                
+                const btnLabel = viewMoreDestsBtn.querySelector('.btn-label');
+                const iconContainer = document.getElementById('btn-view-more-dests-icon');
+                
+                if (isDestsExpanded) {
+                    if (btnLabel) btnLabel.textContent = 'Thu gọn';
+                    if (iconContainer) {
+                        iconContainer.innerHTML = '<i data-lucide="chevron-up"></i>';
+                    }
+                } else {
+                    if (btnLabel) btnLabel.textContent = 'Xem thêm điểm đến';
+                    if (iconContainer) {
+                        iconContainer.innerHTML = '<i data-lucide="chevron-down"></i>';
+                    }
+                }
+                
+                if (window.lucide) {
+                    lucide.createIcons();
+                }
+            } else {
+                viewMoreDestsWrapper.style.display = 'none';
+            }
+        }
+    }
+
+    // Initialize destinations on load
+    updateDestVisibility();
+
+    // View More Destinations click handler
+    if (viewMoreDestsBtn) {
+        viewMoreDestsBtn.addEventListener('click', () => {
+            isDestsExpanded = !isDestsExpanded;
+            updateDestVisibility();
+            
+            // Scroll back to destinations section smoothly if collapsed
+            if (!isDestsExpanded) {
+                const destsSection = document.getElementById('destinations');
+                if (destsSection) {
+                    destsSection.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        });
+    }
 });
