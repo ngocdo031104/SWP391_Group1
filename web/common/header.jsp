@@ -15,11 +15,11 @@
         String extraCss = (String) request.getAttribute("extraCss");
         if (extraCss != null && !extraCss.trim().isEmpty()) {
     %>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/<%= extraCss %>">
+    <link class="page-css" rel="stylesheet" href="${pageContext.request.contextPath}/<%= extraCss %>?v=1.1">
     <% 
         } else {
     %>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/homepage.css">
+    <link class="page-css" rel="stylesheet" href="${pageContext.request.contextPath}/css/homepage.css?v=1.1">
     <% 
         }
         String bodyClass = (String) request.getAttribute("bodyClass");
