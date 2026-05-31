@@ -12,6 +12,7 @@ import Entities.DestinationInfo;
 import Entities.GuideProfile;
 import Entities.User;
 import Entities.UserProfile;
+import Entities.Coupon;
 import Utils.DBContext;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -676,5 +677,84 @@ public class TourDAO extends DBContext {
             Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
+    }
+
+    /**
+     * Lấy danh sách các đánh giá hàng đầu (Rating >= 4) từ cơ sở dữ liệu để hiển thị ở trang chủ.
+     * Thực hiện JOIN với bảng User để lấy FullName và UserProfile để lấy AvatarURL.
+     */
+    public List<Review> getTopReviews(int limit) {
+        List<Review> list = new ArrayList<>();
+        String sql = "SELECT TOP (?) r.ReviewID, r.TourID, r.BookingID, r.CustomerID, r.Rating, r.Content, r.CreatedAt, "
+                   + "u.FullName, p.AvatarURL "
+                   + "FROM Review r "
+                   + "INNER JOIN [User] u ON r.CustomerID = u.UserID "
+                   + "LEFT JOIN UserProfile p ON u.UserID = p.UserID "
+                   + "WHERE r.IsVisible = 1 AND r.Rating >= 4 "
+                   + "ORDER BY r.CreatedAt DESC";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, limit);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Review r = new Review();
+                    r.setReviewId(rs.getInt("ReviewID"));
+                    r.setTourId(rs.getInt("TourID"));
+                    r.setBookingId(rs.getInt("BookingID"));
+                    r.setCustomerId(rs.getInt("CustomerID"));
+                    r.setRating(rs.getInt("Rating"));
+                    r.setContent(rs.getString("Content"));
+                    r.setCreatedAt(rs.getTimestamp("CreatedAt"));
+                    r.setCustomerName(rs.getString("FullName"));
+                    r.setCustomerAvatar(rs.getString("AvatarURL"));
+                    list.add(r);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return list;
+    }
+
+    /**
+     * Lấy danh sách các mã giảm giá đang hoạt động và còn thời hạn từ cơ sở dữ liệu.
+     */
+    public List<Coupon> getActiveCoupons(int limit) {
+        List<Coupon> list = new ArrayList<>();
+        String sql = "SELECT TOP (?) CouponID, CouponCode, DiscountType, DiscountValue, MinOrderAmount, MaxUses, UsedCount, StartDate, EndDate, IsActive, CreatedBy, CreatedAt "
+                   + "FROM Coupon "
+                   + "WHERE IsActive = 1 "
+                   + "AND StartDate <= CAST(GETDATE() AS DATE) "
+                   + "AND EndDate >= CAST(GETDATE() AS DATE) "
+                   + "ORDER BY CreatedAt DESC";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, limit);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Coupon c = new Coupon();
+                    c.setCouponId(rs.getInt("CouponID"));
+                    c.setCouponCode(rs.getString("CouponCode"));
+                    c.setDiscountType(rs.getString("DiscountType"));
+                    c.setDiscountValue(rs.getDouble("DiscountValue"));
+                    c.setMinOrderAmount(rs.getDouble("MinOrderAmount"));
+                    
+                    int maxUses = rs.getInt("MaxUses");
+                    c.setMaxUses(rs.wasNull() ? null : maxUses);
+                    
+                    c.setUsedCount(rs.getInt("UsedCount"));
+                    c.setStartDate(rs.getDate("StartDate"));
+                    c.setEndDate(rs.getDate("EndDate"));
+                    c.setIsActive(rs.getBoolean("IsActive"));
+                    
+                    int createdBy = rs.getInt("CreatedBy");
+                    c.setCreatedBy(rs.wasNull() ? null : createdBy);
+                    
+                    c.setCreatedAt(rs.getTimestamp("CreatedAt"));
+                    list.add(c);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return list;
     }
 }

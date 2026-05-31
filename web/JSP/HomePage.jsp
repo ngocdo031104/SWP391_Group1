@@ -4,6 +4,8 @@
 <%@ page import="Entities.TourCategory" %>
 <%@ page import="Entities.TourSchedule" %>
 <%@ page import="Entities.DestinationInfo" %>
+<%@ page import="Entities.Review" %>
+<%@ page import="Entities.Coupon" %>
 <%
     if (request.getAttribute("categories") == null) {
         String uri = request.getRequestURI();
@@ -305,11 +307,31 @@
                     </div>
                 </div>
 
+                <%
+                    List<Coupon> activeCoupons = (List<Coupon>) request.getAttribute("activeCoupons");
+                    String promoCode = "MIRAI2026"; // Fallback
+                    String promoDesc = "Giảm thêm 1.000.000₫ cho lần đặt tour đầu tiên."; // Fallback
+                    if (activeCoupons != null && !activeCoupons.isEmpty()) {
+                        Coupon firstCoupon = activeCoupons.get(0);
+                        promoCode = firstCoupon.getCouponCode();
+                        
+                        // Format discount description dynamically
+                        String valStr = "";
+                        if ("Percentage".equals(firstCoupon.getDiscountType())) {
+                            valStr = String.format("%.0f%%", firstCoupon.getDiscountValue());
+                        } else {
+                            valStr = String.format("%,.0fđ", firstCoupon.getDiscountValue()).replace(',', '.');
+                        }
+                        
+                        String minStr = String.format("%,.0fđ", firstCoupon.getMinOrderAmount()).replace(',', '.');
+                        promoDesc = "Giảm ngay " + valStr + " cho đơn hàng từ " + minStr + ". Hạn dùng đến " + firstCoupon.getEndDate() + ".";
+                    }
+                %>
                 <div class="promo-code-card" id="promo-card">
                     <div class="category-icon-wrapper"><i data-lucide="gift"></i></div>
                     <span class="promo-code-label">Nhập mã khi thanh toán</span>
-                    <div class="promo-code-value" id="promo-coupon-code">MIRAI2026</div>
-                    <p>Nhấn để sao chép mã. Giảm thêm 1.000.000₫ cho lần đặt tour đầu tiên.</p>
+                    <div class="promo-code-value" id="promo-coupon-code"><%= promoCode %></div>
+                    <p>Nhấn để sao chép mã. <%= promoDesc %></p>
                 </div>
             </div>
         </section>
@@ -322,53 +344,63 @@
 
             <div class="testimonials-slider-container">
                 <div class="testimonials-slider" id="testimonial-slider-track">
+                    <%
+                        List<Review> topReviews = (List<Review>) request.getAttribute("topReviews");
+                        if (topReviews != null && !topReviews.isEmpty()) {
+                            for (Review rev : topReviews) {
+                                String avatar = rev.getCustomerAvatar();
+                                if (avatar == null || avatar.trim().isEmpty()) {
+                                    avatar = "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80"; // Fallback avatar
+                                }
+                    %>
+                    <div class="testimonial-card">
+                        <div class="testimonial-rating">
+                            <% for (int s = 0; s < rev.getRating(); s++) { %>
+                            <i data-lucide="star"></i>
+                            <% } %>
+                        </div>
+                        <%
+                             String content = rev.getContent();
+                             if (content == null) {
+                                 content = "";
+                             } else {
+                                 content = content.replace("\"", "&quot;").replace("<", "&lt;").replace(">", "&gt;");
+                             }
+                         %>
+                        <p class="testimonial-quote">"<%= content %>"</p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">
+                                <img src="<%= avatar %>" alt="<%= rev.getCustomerName() %>">
+                            </div>
+                            <div class="author-info">
+                                <div class="author-name"><%= rev.getCustomerName() %></div>
+                                <div class="author-role">Khách du lịch thành viên</div>
+                            </div>
+                        </div>
+                    </div>
+                    <%
+                            }
+                        } else {
+                    %>
+                    <!-- Fallback if no reviews seeded -->
                     <div class="testimonial-card">
                         <div class="testimonial-rating">
                             <i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i>
                         </div>
-                        <p class="testimonial-quote">"Tour Phú Quốc vượt mọi mong đợi! Đội ngũ phục vụ chu đáo, bữa ăn hải sản tươi ngon và hoàng hôn trên biển thật tuyệt vời. Chắc chắn sẽ đặt thêm tour qua Mirai."</p>
+                        <p class="testimonial-quote">"Tour du lịch tuyệt vời! Dịch vụ chăm sóc khách hàng vô cùng chuyên nghiệp. Chắc chắn sẽ quay lại cùng Mirai Travels."</p>
                         <div class="testimonial-author">
                             <div class="author-avatar">
-                                <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=120&q=80" alt="Nguyễn Minh Anh">
+                                <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=120&q=80" alt="Khách hàng">
                             </div>
                             <div class="author-info">
-                                <div class="author-name">Nguyễn Minh Anh</div>
-                                <div class="author-role">Giám đốc sáng tạo, TP.HCM</div>
+                                <div class="author-name">Khách hàng ẩn danh</div>
+                                <div class="author-role">Thành viên Mirai</div>
                             </div>
                         </div>
                     </div>
-
-                    <div class="testimonial-card">
-                        <div class="testimonial-rating">
-                            <i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i>
-                        </div>
-                        <p class="testimonial-quote">"Hành trình Hội An — thả đèn hoa đăng trên sông Hoài thật lãng mạn. Hướng dẫn viên kể chuyện lịch sử rất hay, quy trình đặt tour trên web cũng rất nhanh gọn."</p>
-                        <div class="testimonial-author">
-                            <div class="author-avatar">
-                                <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=120&q=80" alt="Trần Thu Hà">
-                            </div>
-                            <div class="author-info">
-                                <div class="author-name">Trần Thu Hà</div>
-                                <div class="author-role">Chuyên viên dự án, Hà Nội</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="testimonial-card">
-                        <div class="testimonial-rating">
-                            <i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i>
-                        </div>
-                        <p class="testimonial-quote">"Du thuyền Hạ Long lúc bình minh là khoảnh khắc đáng nhớ nhất đời tôi. Mọi thứ được sắp xếp chu đáo — từ đón khách, lên tàu đến bữa tiệc trên boong!"</p>
-                        <div class="testimonial-author">
-                            <div class="author-avatar">
-                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80" alt="Lê Quốc Bảo">
-                            </div>
-                            <div class="author-info">
-                                <div class="author-name">Lê Quốc Bảo</div>
-                                <div class="author-role">Nhiếp ảnh gia du lịch, Đà Nẵng</div>
-                            </div>
-                        </div>
-                    </div>
+                    <%
+                        }
+                    %>
                 </div>
 
                 <button class="btn-icon slider-btn prev" id="test-prev" aria-label="Đánh giá trước">
@@ -379,9 +411,19 @@
                 </button>
 
                 <div class="slider-dots" id="slider-dots-container">
+                    <%
+                        if (topReviews != null && !topReviews.isEmpty()) {
+                            for (int i = 0; i < topReviews.size(); i++) {
+                    %>
+                    <div class="slider-dot<%= (i == 0) ? " active" : "" %>" data-index="<%= i %>"></div>
+                    <%
+                            }
+                        } else {
+                    %>
                     <div class="slider-dot active" data-index="0"></div>
-                    <div class="slider-dot" data-index="1"></div>
-                    <div class="slider-dot" data-index="2"></div>
+                    <%
+                        }
+                    %>
                 </div>
             </div>
         </section>
