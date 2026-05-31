@@ -65,10 +65,13 @@ public class Tour implements Serializable {
     // Các câu hỏi và giải đáp thắc mắc thường gặp liên quan đến tour này
     // Liên kết: Nạp từ bảng TourFAQ, hiển thị dưới dạng Accordion bấm để thả câu trả lời ở gần cuối trang detail.jsp.
     private List<TourFAQ> faqs;
-    // Danh sách các đánh giá (Reviews) của Tour du lịch này (Tạm thời đóng lại khi xóa screen TourDetail).
-    /*
+    // Danh sách các đánh giá (Reviews) của Tour du lịch này.
+    // Lý do cần thiết lập thuộc tính này: 
+    // - Tour là thực thể gốc (Aggregate Root), chứa thông tin chung của chuyến đi.
+    // - Việc khai báo thêm List<Review> giúp đối tượng Tour đóng gói trọn vẹn cả dữ liệu
+    //   đánh giá của nó, tạo điều kiện thuận lợi khi đẩy dữ liệu sang detail.jsp.
+    // Liên kết: Nạp từ bảng Review trong DB thông qua TourDAO.getReviewsByTourId.
     private List<Review> reviews;
-    */
 
     public Tour() {
     }
@@ -313,14 +316,13 @@ public class Tour implements Serializable {
         this.faqs = faqs;
     }
 
-    // Lấy ra danh sách Đánh giá của Tour (Tạm thời đóng lại khi xóa screen TourDetail)
-    /*
+    // Lấy ra danh sách Đánh giá của Tour (detail.jsp sẽ đọc thông qua biểu thức activeTour.getReviews())
     public List<Review> getReviews() {
         return reviews;
     }
 
+    // Thiết lập danh sách Đánh giá cho Tour (thực hiện ở tầng TourDAO khi gọi getTourById)
     public void setReviews(List<Review> reviews) {
         this.reviews = reviews;
     }
-    */
 }

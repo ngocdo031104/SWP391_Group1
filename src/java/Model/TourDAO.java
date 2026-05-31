@@ -7,7 +7,7 @@ import Entities.TourSchedule;
 import Entities.TourItinerary;
 import Entities.TourInclusion;
 import Entities.TourFAQ;
-// import Entities.Review; (Tạm thời đóng lại khi xóa screen TourDetail)
+import Entities.Review;
 import Entities.DestinationInfo;
 import Utils.DBContext;
 import java.sql.PreparedStatement;
@@ -170,8 +170,8 @@ public class TourDAO extends DBContext {
                     // Nạp danh sách câu hỏi thường gặp FAQ từ bảng TourFAQ phục vụ Accordion ở cuối trang.
                     tour.setFaqs(getFaqsByTourId(tourId));
                     
-                    // Nạp tất cả các bình luận, đánh giá và số sao thực tế từ khách hàng từ bảng Review để hiển thị lên khung nhận xét (Tạm thời đóng lại khi xóa screen TourDetail).
-                    // tour.setReviews(getReviewsByTourId(tourId));
+                    // Nạp tất cả các bình luận, đánh giá và số sao thực tế từ khách hàng từ bảng Review để hiển thị lên khung nhận xét.
+                    tour.setReviews(getReviewsByTourId(tourId));
                     return tour;
                 }
             }
@@ -438,7 +438,17 @@ public class TourDAO extends DBContext {
         return list;
     }
 
-    /* (Tạm thời đóng lại khi xóa screen TourDetail)
+    /**
+     * Truy vấn danh sách đánh giá (Reviews) của một Tour cụ thể từ cơ sở dữ liệu.
+     * Lý do làm như vậy:
+     * - Để lấy được cả tên khách hàng (`FullName` từ bảng `User`) và ảnh đại diện (`AvatarURL` từ bảng `UserProfile`)
+     *   qua phép `JOIN`, giúp trang `detail.jsp` hiển thị đầy đủ thông tin trực quan.
+     * - `CASE WHEN b.Status = 'Completed' THEN 1 ELSE 0 END as IsVerified`: Dùng để xác nhận khách hàng đã hoàn tất chuyến đi
+     *   (trạng thái Completed), từ đó hiển thị nhãn "Đã trải nghiệm" trên giao diện giúp tăng tính tin cậy của đánh giá.
+     * 
+     * @param tourId ID của tour cần lấy đánh giá
+     * @return danh sách các đối tượng Review của tour đó, sắp xếp theo thời gian mới nhất lên đầu.
+     */
     public List<Review> getReviewsByTourId(int tourId) {
         List<Review> list = new ArrayList<>();
         String sql = "SELECT r.ReviewID, r.TourID, r.BookingID, r.CustomerID, r.Rating, r.Content, r.IsVisible, r.CreatedAt, r.UpdatedAt, "
@@ -476,7 +486,27 @@ public class TourDAO extends DBContext {
         return list;
     }
 
+    /**
+     * Thêm mới một Đánh giá của khách hàng vào database.
+     * Lý do phải thiết kế logic phức tạp như dưới đây:
+     * 1. Bảng `Review` có ràng buộc khóa ngoại tham chiếu tới `CustomerID` và `BookingID` (không được NULL).
+     * 2. Khi một khách điền form đánh giá ngoài trang web, họ chỉ nhập Họ tên và Email.
+     * 3. Do đó, hệ thống cần tự động tìm xem Email đó đã tồn tại trong bảng `User` chưa:
+     *    - Nếu chưa, tự động tạo mới tài khoản User (Role 4 - Customer) và hồ sơ UserProfile để tránh lỗi vi phạm khóa ngoại.
+     * 4. Tiếp theo, hệ thống tìm xem User này đã từng đặt tour này chưa (tìm `BookingID` hoàn thành tương ứng):
+     *    - Nếu có, liên kết trực tiếp để đánh giá này được dán nhãn "Đã trải nghiệm".
+     *    - Nếu không có, tìm một Booking bất kỳ của tour đó làm dự phòng (vì cột BookingID trong DB thiết lập NOT NULL).
+     *    - Nếu tour mới hoàn toàn chưa có ai đặt, hệ thống sẽ tự sinh ra một mã đặt chỗ ảo ở trạng thái `Completed` để thỏa mãn ràng buộc khóa ngoại của DB.
+     *
+     * @param name Họ tên người đánh giá nhập vào form
+     * @param email Email người đánh giá nhập vào form
+     * @param tourId ID của tour đang được đánh giá
+     * @param rating Số sao (từ 1 đến 5)
+     * @param content Nội dung bình luận
+     * @return true nếu lưu thành công, ngược lại trả về false.
+     */
     public boolean insertReview(String name, String email, int tourId, int rating, String content) {
+        // Bước 1: Tìm ID người dùng dựa trên Email nhập vào form
         int userId = -1;
         String findUserSql = "SELECT UserID FROM [User] WHERE Email = ?";
         try (PreparedStatement ps = connection.prepareStatement(findUserSql)) {
@@ -490,18 +520,22 @@ public class TourDAO extends DBContext {
             Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+        // Nếu là email mới (chưa có tài khoản), tiến hành tạo tài khoản Customer mới tự động
         if (userId == -1) {
+            // Chèn tài khoản khách hàng mới vào bảng User
             String insertUserSql = "INSERT INTO [User] (RoleID, Email, PasswordHash, FullName, PhoneNumber, IsActive, IsVerified) VALUES (4, ?, 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855', ?, '', 1, 1)";
             try (PreparedStatement ps = connection.prepareStatement(insertUserSql, Statement.RETURN_GENERATED_KEYS)) {
                 ps.setString(1, email);
                 ps.setString(2, name);
                 ps.executeUpdate();
+                // Lấy ra UserID vừa được sinh tự tăng trong SQL Server
                 try (ResultSet rs = ps.getGeneratedKeys()) {
                     if (rs.next()) {
                         userId = rs.getInt(1);
                     }
                 }
                 
+                // Khởi tạo hồ sơ đi kèm trong bảng UserProfile với avatar mặc định (link ảnh phong cảnh từ Unsplash)
                 String insertProfileSql = "INSERT INTO UserProfile (UserID, AvatarURL) VALUES (?, 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80')";
                 try (PreparedStatement ps2 = connection.prepareStatement(insertProfileSql)) {
                     ps2.setInt(1, userId);
@@ -513,7 +547,9 @@ public class TourDAO extends DBContext {
             }
         }
         
+        // Bước 2: Tìm BookingID hợp lệ để liên kết với Review
         int bookingId = -1;
+        // Ưu tiên tìm hóa đơn đặt chỗ của chính User này cho Tour này
         String findBookingSql = "SELECT BookingID FROM Booking b JOIN TourSchedule s ON b.ScheduleID = s.ScheduleID WHERE b.CustomerID = ? AND s.TourID = ?";
         try (PreparedStatement ps = connection.prepareStatement(findBookingSql)) {
             ps.setInt(1, userId);
@@ -527,6 +563,7 @@ public class TourDAO extends DBContext {
             Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+        // Dự phòng 1: Nếu User này chưa từng đặt tour, tìm bất kỳ Booking nào có sẵn của Tour này trong DB để mượn ID liên kết
         if (bookingId == -1) {
             String fallbackBookingSql = "SELECT TOP 1 BookingID FROM Booking b JOIN TourSchedule s ON b.ScheduleID = s.ScheduleID WHERE s.TourID = ?";
             try (PreparedStatement ps = connection.prepareStatement(fallbackBookingSql)) {
@@ -541,8 +578,10 @@ public class TourDAO extends DBContext {
             }
         }
         
+        // Dự phòng 2: Nếu chưa từng có ai đặt Tour này, tiến hành tạo một Booking ảo ở trạng thái Completed
         if (bookingId == -1) {
             int scheduleId = -1;
+            // Tìm ScheduleID (Lịch đi) bất kỳ của Tour
             String findScheduleSql = "SELECT TOP 1 ScheduleID FROM TourSchedule WHERE TourID = ?";
             try (PreparedStatement ps = connection.prepareStatement(findScheduleSql)) {
                 ps.setInt(1, tourId);
@@ -555,6 +594,7 @@ public class TourDAO extends DBContext {
                 Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, null, ex);
             }
             
+            // Nếu có lịch đi, tạo hóa đơn Completed ảo để liên kết
             if (scheduleId != -1) {
                 String insertBookingSql = "INSERT INTO Booking (BookingCode, ScheduleID, CustomerID, NumParticipants, BaseAmount, VATAmount, DiscountAmount, TotalAmount, Status) VALUES (?, ?, ?, 1, 0, 0, 0, 0, 'Completed')";
                 try (PreparedStatement ps = connection.prepareStatement(insertBookingSql, Statement.RETURN_GENERATED_KEYS)) {
@@ -573,10 +613,12 @@ public class TourDAO extends DBContext {
             }
         }
         
+        // Nếu không thể tìm hay tạo nổi Booking ID, dừng lưu trữ để tránh lỗi DB Crash
         if (bookingId == -1) {
             return false;
         }
         
+        // Bước 3: Chèn bản ghi Review mới vào cơ sở dữ liệu
         String insertReviewSql = "INSERT INTO Review (TourID, BookingID, CustomerID, Rating, Content, IsVisible) VALUES (?, ?, ?, ?, ?, 1)";
         try (PreparedStatement ps = connection.prepareStatement(insertReviewSql)) {
             ps.setInt(1, tourId);
@@ -585,11 +627,10 @@ public class TourDAO extends DBContext {
             ps.setInt(4, rating);
             ps.setString(5, content);
             int rows = ps.executeUpdate();
-            return rows > 0;
+            return rows > 0; // Trả về true nếu chèn thành công 1 dòng
         } catch (SQLException ex) {
             Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
     }
-    */
 }
