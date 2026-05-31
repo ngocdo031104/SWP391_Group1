@@ -16,6 +16,27 @@
     request.setAttribute("extraCss", "css/detail.css");
     request.setAttribute("bodyClass", "detail-page");
     Tour activeTour = (Tour) request.getAttribute("tour");
+    
+    List<Review> tourReviews = activeTour != null ? activeTour.getReviews() : null;
+    int totalReviews = (tourReviews != null) ? tourReviews.size() : 0;
+    double avgRating = 0.0;
+    int[] starCounts = new int[6]; // index 1 to 5
+    int[] starPercentages = new int[6]; // index 1 to 5
+    
+    if (totalReviews > 0) {
+        double sumRating = 0;
+        for (Review rev : tourReviews) {
+            int rating = rev.getRating();
+            sumRating += rating;
+            if (rating >= 1 && rating <= 5) {
+                starCounts[rating]++;
+            }
+        }
+        avgRating = sumRating / totalReviews;
+        for (int i = 1; i <= 5; i++) {
+            starPercentages[i] = (int) Math.round(((double) starCounts[i] / totalReviews) * 100);
+        }
+    }
 %>
 <!-- Nhúng header dùng chung cho toàn bộ website, nằm trong thư mục web/common/ -->
 <jsp:include page="../common/header.jsp" />
@@ -260,41 +281,91 @@
                     
                     <div class="reviews-scorecard">
                         <div class="scorecard-left">
-                            <span class="big-score" id="scorecard-avg">0.0</span>
-                            <div class="stars-row"><i data-lucide="star" class="star-filled"></i><i data-lucide="star" class="star-filled"></i><i data-lucide="star" class="star-filled"></i><i data-lucide="star" class="star-filled"></i><i data-lucide="star" class="star-filled"></i></div>
-                            <span class="reviews-count-label" id="scorecard-total">Dựa trên 0 đánh giá</span>
+                            <span class="big-score" id="scorecard-avg"><%= String.format(java.util.Locale.US, "%.1f", avgRating) %></span>
+                            <div class="stars-row">
+                                <%
+                                    int fullStars = (int) Math.round(avgRating);
+                                    for (int i = 1; i <= 5; i++) {
+                                %>
+                                <i data-lucide="star" class="<%= (i <= fullStars) ? "star-filled" : "" %>"></i>
+                                <%
+                                    }
+                                %>
+                            </div>
+                            <span class="reviews-count-label" id="scorecard-total">Dựa trên <%= totalReviews %> đánh giá</span>
                         </div>
                         <div class="scorecard-right">
-                            <div class="rating-bar-item" data-star="5">
-                                <span>5 ★</span>
-                                <div class="rating-bar-bg"><div class="rating-bar-fill" style="width: 0%;"></div></div>
-                                <span class="rating-percent">0%</span>
+                            <%
+                                for (int star = 5; star >= 1; star--) {
+                                    int percent = starPercentages[star];
+                            %>
+                            <div class="rating-bar-item" data-star="<%= star %>">
+                                <span><%= star %> ★</span>
+                                <div class="rating-bar-bg"><div class="rating-bar-fill" style="width: <%= percent %>%;"></div></div>
+                                <span class="rating-percent"><%= percent %>%</span>
                             </div>
-                            <div class="rating-bar-item" data-star="4">
-                                <span>4 ★</span>
-                                <div class="rating-bar-bg"><div class="rating-bar-fill" style="width: 0%;"></div></div>
-                                <span class="rating-percent">0%</span>
-                            </div>
-                            <div class="rating-bar-item" data-star="3">
-                                <span>3 ★</span>
-                                <div class="rating-bar-bg"><div class="rating-bar-fill" style="width: 0%;"></div></div>
-                                <span class="rating-percent">0%</span>
-                            </div>
-                            <div class="rating-bar-item" data-star="2">
-                                <span>2 ★</span>
-                                <div class="rating-bar-bg"><div class="rating-bar-fill" style="width: 0%;"></div></div>
-                                <span class="rating-percent">0%</span>
-                            </div>
-                            <div class="rating-bar-item" data-star="1">
-                                <span>1 ★</span>
-                                <div class="rating-bar-bg"><div class="rating-bar-fill" style="width: 0%;"></div></div>
-                                <span class="rating-percent">0%</span>
-                            </div>
+                            <%
+                                }
+                            %>
                         </div>
                     </div>
 
                     <div class="reviews-list-container" id="reviews-list-container">
-                        <!-- Rendered by detail.js -->
+                        <%
+                            if (tourReviews != null && !tourReviews.isEmpty()) {
+                                for (Review rev : tourReviews) {
+                                    String avatar = rev.getCustomerAvatar();
+                                    if (avatar == null || avatar.trim().isEmpty()) {
+                                        avatar = "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80"; // Fallback avatar
+                                    }
+                                    java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
+                                    String dateStr = sdf.format(rev.getCreatedAt());
+                                    
+                                    String content = rev.getContent();
+                                    if (content == null) {
+                                        content = "";
+                                    } else {
+                                        content = content.replace("\"", "&quot;").replace("<", "&lt;").replace(">", "&gt;");
+                                    }
+                        %>
+                        <div class="review-comment-card">
+                            <div class="review-comment-header">
+                                <div class="reviewer-info">
+                                    <img src="<%= avatar %>" alt="<%= rev.getCustomerName() %>" class="reviewer-avatar">
+                                    <div class="reviewer-meta">
+                                        <span class="reviewer-name"><%= rev.getCustomerName() %></span>
+                                        <span class="reviewer-date">Đăng ngày: <%= dateStr %></span>
+                                    </div>
+                                </div>
+                                <div class="reviewer-actions">
+                                    <div class="reviewer-stars-row">
+                                        <% for (int s = 1; s <= 5; s++) { %>
+                                        <i data-lucide="star" class="<%= (s <= rev.getRating()) ? "star-filled" : "" %>"></i>
+                                        <% } %>
+                                    </div>
+                                    <% if (rev.isIsVerified()) { %>
+                                    <div class="verified-badge">
+                                        <i data-lucide="shield-check"></i>
+                                        <span>Đã trải nghiệm</span>
+                                    </div>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <div class="review-comment-body">
+                                <p><%= content %></p>
+                            </div>
+                        </div>
+                        <%
+                                }
+                            } else {
+                        %>
+                        <div class="no-reviews-message" style="text-align: center; padding: 40px; color: var(--text-light); width: 100%;">
+                            <i data-lucide="message-square" style="width: 48px; height: 48px; margin-bottom: 12px; color: var(--border-color); display: block; margin-left: auto; margin-right: auto;"></i>
+                            <p>Chưa có đánh giá nào cho hành trình này. Hãy là người đầu tiên chia sẻ cảm nhận!</p>
+                        </div>
+                        <%
+                            }
+                        %>
                     </div>
 
                     <!-- BIỂU MẪU ĐĂNG KÝ BÌNH LUẬN / ĐÁNH GIÁ (ADD REVIEW FORM)
@@ -624,8 +695,8 @@
             image: "${pageContext.request.contextPath}/<%= imgUrl %>",
             departure: "<%= departureCity %>",
             tourType: "group",
-            rating: <%= t.getRating() %>,
-            reviews: <%= t.getReviewsCount() %>,
+            rating: <%= (t.getTourId() == activeTour.getTourId()) ? avgRating : t.getRating() %>,
+            reviews: <%= (t.getTourId() == activeTour.getTourId()) ? totalReviews : t.getReviewsCount() %>,
             priceVND: <%= t.getBasePrice() %>,
             duration: <%= t.getDurationDays() %>,
             difficulty: "<%= diffStr %>",
@@ -782,67 +853,7 @@
         }
     %>
 
-    // LÝ DO VÀ CHỨC NĂNG CỦA ĐOẠN ĐÁNH GIÁ (REVIEWS):
-    // - Dữ liệu đánh giá thật trong cơ sở dữ liệu được nạp lên và đưa vào thuộc tính reviews của activeTour.
-    // - Ta cần kết xuất danh sách này sang JSON (gán vào thuộc tính của window.reviewsData) để detail.js có thể vẽ
-    //   lưới đánh giá động (Reviews list) và scorecard tính điểm trung bình thật.
-    // - Nếu DB của tour này chưa có ai viết review, hệ thống tự động in ra các review mẫu (fallback) tương thích với tour
-    //   để giữ giao diện chuyên nghiệp.
-    window.reviewsData = {
-        <%
-            if (activeTour != null) {
-                List<Review> revs = activeTour.getReviews();
-        %>
-        <%= activeTour.getTourId() %>: [
-            <%
-                if (revs != null && !revs.isEmpty()) {
-                    for (int k = 0; k < revs.size(); k++) {
-                        Review r = revs.get(k);
-                        // Định dạng ngày đăng theo kiểu Việt Nam dd/MM/yyyy
-                        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
-                        String dateStr = sdf.format(r.getCreatedAt());
-                        String name = r.getCustomerName() != null ? r.getCustomerName() : "Khách hàng";
-                        // Link ảnh đại diện mặc định nếu khách hàng không tải avatar lên
-                        String avatar = r.getCustomerAvatar() != null ? r.getCustomerAvatar() : "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80";
-            %>
-            {
-                name: "<%= name.replace("\"", "\\\"") %>",
-                rating: <%= r.getRating() %>,
-                date: "<%= dateStr %>",
-                text: "<%= r.getContent().replace("\"", "\\\"").replace("\r", "").replace("\n", " ") %>",
-                isVerified: <%= r.isIsVerified() %>,
-                avatar: "<%= avatar %>"
-            }<%= (k < revs.size() - 1) ? "," : "" %>
-            <%
-                    }
-                } else {
-                    // Trường hợp DB chưa có review nào cho tour, in ra reviews mẫu dựa theo ID của Tour
-                    if (activeTour.getTourId() == 1) {
-            %>
-            { name: "Phạm Minh Hoàng", rating: 5, date: "15/05/2026", text: "Chuyến đi Vịnh Hạ Long tuyệt vời! Du thuyền sang trọng, cabin sạch sẽ rộng rãi. Đồ ăn hải sản tươi ngon phong phú, nhân viên phục vụ tận tình chu đáo. Trải nghiệm chèo thuyền kayak qua hang Luồn rất thú vị, cảnh quan thiên nhiên tráng lệ đáng để trải nghiệm.", isVerified: true, avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80" },
-            { name: "Lê Minh Thư", rating: 5, date: "14/05/2026", text: "Dịch vụ của Mirai Travels cực kỳ chuyên nghiệp. Đón trả khách đúng giờ, hướng dẫn viên nhiệt tình vui vẻ am hiểu lịch sử địa phương. Khách sạn/Du thuyền chất lượng đúng chuẩn 5 sao, gia đình tôi đã có kỳ nghỉ vô cùng ý nghĩa.", isVerified: true, avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=80&q=80" }
-            <%
-                    } else if (activeTour.getTourId() == 2) {
-            %>
-            { name: "Lê Minh Thư", rating: 5, date: "14/05/2026", text: "Trải nghiệm tuyệt vời tại Đà Nẵng và Hội An. Check-in Cầu Vàng sáng sớm trời mát mẻ chụp hình siêu đẹp. Phố cổ Hội An lung linh sắc đèn lồng về đêm, trải nghiệm thả hoa đăng sông Hoài thơ mộng. Đồ ăn buffet trên Bà Nà Hills rất ngon và đa dạng.", isVerified: true, avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=80&q=80" }
-            <%
-                    } else if (activeTour.getTourId() == 3) {
-            %>
-            { name: "Phạm Minh Hoàng", rating: 4, date: "15/05/2026", text: "Sapa mây mù giăng lối rất đẹp, khách sạn view thung lũng Mường Hoa thơ mộng. Chinh phục đỉnh Fansipan bằng cáp treo rất nhanh chóng, đứng trên nóc nhà Đông Dương cảm giác tự hào ngập tràn. Trekking bản Cát Cát hơi mỏi chân nhưng cảnh sắc rất hoang sơ bình yên.", isVerified: true, avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80" }
-            <%
-                    } else {
-            %>
-            { name: "Trần Anh Tuấn", rating: 5, date: "20/05/2026", text: "Dịch vụ đẳng cấp chuyên nghiệp! Đưa đón đúng giờ, hướng dẫn viên nhiệt tình vui tính. Các điểm tham quan cực đẹp, khách sạn resort ở siêu thích. Chắc chắn sẽ tiếp tục ủng hộ Mirai trong các hành trình du lịch tiếp theo.", isVerified: true, avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=80&q=80" },
-            { name: "Lê Minh Thư", rating: 5, date: "14/05/2026", text: "Trải nghiệm du lịch 5 sao đáng tiền từng xu. Thức ăn siêu ngon đa dạng, lịch trình sắp xếp cực kỳ khoa học không gây cảm giác mệt mỏi. Gia đình tôi đều rất hài lòng.", isVerified: true, avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=80&q=80" }
-            <%
-                    }
-                }
-            %>
-        ]
-        <%
-            }
-        %>
-    };
+    // Đánh giá đã được nạp và kết xuất trực tiếp bằng mã nguồn JSP ở phía trên, không sử dụng javascript.
 </script>
 
 <%

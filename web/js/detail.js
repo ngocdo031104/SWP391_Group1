@@ -597,100 +597,11 @@ document.addEventListener('DOMContentLoaded', () => {
     /* ==========================================================================
        REVIEWS SECTION RENDER & ADD COMMENT FORM
        ========================================================================== */
-    const reviewsListContainer = document.getElementById('reviews-list-container');
-    const scorecardAvg = document.getElementById('scorecard-avg');
-    const scorecardTotal = document.getElementById('scorecard-total');
     const newReviewForm = document.getElementById('new-review-form');
     const starsSelector = document.getElementById('stars-selector');
     
     // Reviews state
-    let activeReviews = reviewsData[activeTour.id] || [...defaultReviews];
     let selectedRatingVal = 5; // Default 5 stars selected
-
-    function renderReviews() {
-        if (!reviewsListContainer) return;
-        reviewsListContainer.innerHTML = '';
-        
-        let totalSum = 0;
-        let starCounts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
-        
-        activeReviews.forEach(rev => {
-            totalSum += rev.rating;
-            const r = Math.round(rev.rating);
-            if (starCounts[r] !== undefined) {
-                starCounts[r]++;
-            }
-            
-            const card = document.createElement('div');
-            card.className = 'review-comment-card';
-
-            let starsHtml = '';
-            for (let i = 1; i <= 5; i++) {
-                starsHtml += `<i data-lucide="star" class="${i <= rev.rating ? 'star-filled' : ''}"></i>`;
-            }
-
-            let verifiedHtml = rev.isVerified ? `
-                <div class="verified-badge">
-                    <i data-lucide="shield-check"></i>
-                    <span>Đã trải nghiệm</span>
-                </div>
-            ` : '';
-
-            let imgHtml = rev.image ? `
-                <div class="review-comment-image-wrapper">
-                    <img src="${rev.image}" alt="Ảnh hành khách chụp" class="review-comment-img" onclick="window.open('${rev.image}', '_blank')">
-                </div>
-            ` : '';
-
-            card.innerHTML = `
-                <div class="review-comment-header">
-                    <div class="reviewer-info">
-                        <img src="${rev.avatar}" alt="${rev.name}" class="reviewer-avatar">
-                        <div class="reviewer-meta">
-                            <span class="reviewer-name">${rev.name}</span>
-                            <span class="reviewer-date">Đăng ngày: ${rev.date}</span>
-                        </div>
-                    </div>
-                    <div class="reviewer-actions">
-                        <div class="reviewer-stars-row">
-                            ${starsHtml}
-                        </div>
-                        ${verifiedHtml}
-                    </div>
-                </div>
-                <div class="review-comment-body">
-                    <p>${rev.text}</p>
-                    ${imgHtml}
-                </div>
-            `;
-
-            reviewsListContainer.appendChild(card);
-        });
-
-        // Update Scorecard Avg
-        const totalReviews = activeReviews.length;
-        const avg = totalSum / (totalReviews || 1);
-        scorecardAvg.textContent = avg.toFixed(1);
-        scorecardTotal.textContent = `Dựa trên ${totalReviews} đánh giá khách hàng`;
-
-        // Update Scorecard Distribution Bars
-        for (let star = 1; star <= 5; star++) {
-            const count = starCounts[star] || 0;
-            const percent = totalReviews > 0 ? Math.round((count / totalReviews) * 100) : 0;
-            
-            const barItem = document.querySelector(`.rating-bar-item[data-star="${star}"]`);
-            if (barItem) {
-                const fillElement = barItem.querySelector('.rating-bar-fill');
-                const percentText = barItem.querySelector('.rating-percent');
-                
-                if (fillElement) fillElement.style.width = `${percent}%`;
-                if (percentText) percentText.textContent = `${percent}%`;
-            }
-        }
-
-        lucide.createIcons();
-    }
-    renderReviews();
 
     // Star selector event using event delegation to support Lucide SVG replacement
     if (starsSelector) {
@@ -823,7 +734,6 @@ document.addEventListener('DOMContentLoaded', () => {
             renderStaticPrices();
             runCalculations();
             renderRelatedTours();
-            renderReviews(); // Stars/Prices formatting helper
         });
     }
 
