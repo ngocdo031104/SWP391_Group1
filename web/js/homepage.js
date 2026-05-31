@@ -93,31 +93,68 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* ==========================================================================
-       DYNAMIC TOUR CATEGORIES FILTERING
+       DYNAMIC TOUR CATEGORIES FILTERING & VIEW MORE LIMIT
        ========================================================================== */
     const categoryCards = document.querySelectorAll('.category-card');
     const tourCards = document.querySelectorAll('.tour-card');
+    const viewMoreWrapper = document.getElementById('view-more-tours-wrapper');
+    const viewMoreBtn = document.getElementById('btn-view-more-tours');
+    
+    let isExpanded = false;
+    let activeCategory = 'all';
 
+    function updateTourVisibility() {
+        let matchingCount = 0;
+        
+        tourCards.forEach(tour => {
+            const tourCategory = tour.getAttribute('data-tour-category');
+            const matchesCategory = (activeCategory === 'all' || tourCategory === activeCategory);
+            
+            if (matchesCategory) {
+                matchingCount++;
+                if (!isExpanded && matchingCount > 9) {
+                    tour.style.display = 'none';
+                } else {
+                    tour.style.display = 'flex';
+                }
+            } else {
+                tour.style.display = 'none';
+            }
+        });
+
+        // Show/hide "Xem thêm" button based on matchingCount
+        if (viewMoreWrapper) {
+            if (matchingCount > 9 && !isExpanded) {
+                viewMoreWrapper.style.display = 'flex';
+            } else {
+                viewMoreWrapper.style.display = 'none';
+            }
+        }
+    }
+
+    // Initialize visibility on page load
+    updateTourVisibility();
+
+    // Category click handler
     categoryCards.forEach(card => {
         card.addEventListener('click', () => {
             // Set active category tab styling
             categoryCards.forEach(c => c.classList.remove('active'));
             card.classList.add('active');
 
-            const categoryFilter = card.getAttribute('data-category');
-
-            // Filter tour cards list
-            tourCards.forEach(tour => {
-                const tourCategory = tour.getAttribute('data-tour-category');
-                
-                if (categoryFilter === 'all' || tourCategory === categoryFilter) {
-                    tour.style.display = 'flex';
-                } else {
-                    tour.style.display = 'none';
-                }
-            });
+            activeCategory = card.getAttribute('data-category');
+            isExpanded = false; // Reset expansion when changing category
+            updateTourVisibility();
         });
     });
+
+    // View More click handler
+    if (viewMoreBtn) {
+        viewMoreBtn.addEventListener('click', () => {
+            isExpanded = true;
+            updateTourVisibility();
+        });
+    }
 
     /* ==========================================================================
        WISHLIST INTERACTIVE TOGGLE

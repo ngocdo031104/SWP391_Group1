@@ -528,6 +528,13 @@ input[type="range"].budget-slider::-webkit-slider-thumb:hover {
     color: var(--slate-600);
 }
 
+/* View More Button for Featured Tours */
+.view-more-container {
+    display: flex;
+    justify-content: center;
+    margin-top: var(--space-xl);
+}
+
 /* ==========================================================================
    TRENDING DESTINATIONS
    ========================================================================== */

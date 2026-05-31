@@ -224,6 +224,13 @@
                     }
                 %>
             </div>
+
+            <div class="view-more-container" id="view-more-tours-wrapper" style="display: none;">
+                <button type="button" class="btn btn-secondary" id="btn-view-more-tours">
+                    <span>Xem thêm tour</span>
+                    <i data-lucide="chevron-down"></i>
+                </button>
+            </div>
         </section>
 
         <section class="section-padding" id="destinations">
