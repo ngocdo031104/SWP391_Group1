@@ -1,0 +1,7 @@
+# Build and deployment folders
+/build/
+/dist/
+/nbproject/private/
+
+# CodeGraph local indexes
+/.codegraph/

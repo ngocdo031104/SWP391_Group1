@@ -260,7 +260,7 @@
                     <div class="reviews-scorecard">
                         <div class="scorecard-left">
                             <span class="big-score" id="scorecard-avg">0.0</span>
-                            <div class="stars-row"><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i></div>
+                            <div class="stars-row"><i data-lucide="star" class="star-filled"></i><i data-lucide="star" class="star-filled"></i><i data-lucide="star" class="star-filled"></i><i data-lucide="star" class="star-filled"></i><i data-lucide="star" class="star-filled"></i></div>
                             <span class="reviews-count-label" id="scorecard-total">Dựa trên 0 đánh giá</span>
                         </div>
                         <div class="scorecard-right">
@@ -316,11 +316,11 @@
                             <div class="form-rating-selector">
                                 <span>Đánh giá của bạn:</span>
                                 <div class="stars-selector-row" id="stars-selector">
-                                    <i data-lucide="star" class="star-select" data-rating="1"></i>
-                                    <i data-lucide="star" class="star-select" data-rating="2"></i>
-                                    <i data-lucide="star" class="star-select" data-rating="3"></i>
-                                    <i data-lucide="star" class="star-select" data-rating="4"></i>
-                                    <i data-lucide="star" class="star-select" data-rating="5"></i>
+                                    <span class="star-select" data-rating="1"><i data-lucide="star"></i></span>
+                                    <span class="star-select" data-rating="2"><i data-lucide="star"></i></span>
+                                    <span class="star-select" data-rating="3"><i data-lucide="star"></i></span>
+                                    <span class="star-select" data-rating="4"><i data-lucide="star"></i></span>
+                                    <span class="star-select" data-rating="5"><i data-lucide="star"></i></span>
                                 </div>
                             </div>
                             

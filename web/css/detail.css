@@ -1,4 +1,4 @@
-﻿/* ==========================================================================
+/* ==========================================================================
    TOUR DETAIL PAGE â€” PREMIUM LAYOUT
    ========================================================================== */
 .tour-detail-head-section {
@@ -594,16 +594,30 @@
 }
 
 .star-select {
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.star-select i,
+.star-select svg {
     width: 1.5rem;
     height: 1.5rem;
     color: var(--slate-300);
-    cursor: pointer;
-    transition: color 0.15s ease;
+    transition: color 0.15s ease, fill 0.15s ease;
 }
 
-.star-select.active {
+.star-select.active i,
+.star-select.active svg {
     color: #f59e0b;
     fill: #f59e0b;
+}
+
+.star-filled,
+svg.star-filled {
+    color: #f59e0b !important;
+    fill: #f59e0b !important;
 }
 
 .form-grid {
