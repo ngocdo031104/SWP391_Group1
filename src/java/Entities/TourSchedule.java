@@ -23,6 +23,7 @@ public class TourSchedule implements Serializable {
     private String tourStatus;    // Trạng thái tour thực tế (Scheduled, InProgress, Completed, Cancelled)
     private User guide;           // Đối tượng HDV chứa thông tin chi tiết (FullName, Avatar...)
     private Tour tour;            // Đối tượng Tour tương ứng với lịch khởi hành này
+    private GuideProfile guideProfile; // Hồ sơ chi tiết của Hướng dẫn viên
 
     public TourSchedule() {
     }
@@ -168,5 +169,13 @@ public class TourSchedule implements Serializable {
 
     public void setTour(Tour tour) {
         this.tour = tour;
+    }
+
+    public GuideProfile getGuideProfile() {
+        return guideProfile;
+    }
+
+    public void setGuideProfile(GuideProfile guideProfile) {
+        this.guideProfile = guideProfile;
     }
 }

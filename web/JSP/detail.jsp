@@ -155,8 +155,8 @@
                         <img src="" alt="Hướng dẫn viên" class="guide-big-avatar" id="guide-avatar-img">
                         <div class="guide-profile-details">
                             <h4 id="guide-name-txt">Đang tải...</h4>
-                            <p class="guide-rating-row"><i data-lucide="star"></i> <strong>4.9★</strong> (42 tour đã dẫn)</p>
-                            <p class="guide-bio">"Xin chào! Tôi có hơn 5 năm kinh nghiệm dẫn đoàn trekking và thám hiểm tại Việt Nam. Tôi rất đam mê chia sẻ kiến thức văn hóa địa phương và hỗ trợ an toàn tối đa cho chuyến đi của bạn."</p>
+                            <p class="guide-rating-row"><i data-lucide="star"></i> <strong id="guide-rating-txt">4.9★</strong> (<span id="guide-tours-txt">42</span> tour đã dẫn)</p>
+                            <p class="guide-bio" id="guide-bio-txt">"Đang tải giới thiệu..."</p>
                         </div>
                     </div>
                 </div>
@@ -264,30 +264,30 @@
                             <span class="reviews-count-label" id="scorecard-total">Dựa trên 0 đánh giá</span>
                         </div>
                         <div class="scorecard-right">
-                            <div class="rating-bar-item">
+                            <div class="rating-bar-item" data-star="5">
                                 <span>5 ★</span>
-                                <div class="rating-bar-bg"><div class="rating-bar-fill" style="width: 85%;"></div></div>
-                                <span>85%</span>
+                                <div class="rating-bar-bg"><div class="rating-bar-fill" style="width: 0%;"></div></div>
+                                <span class="rating-percent">0%</span>
                             </div>
-                            <div class="rating-bar-item">
+                            <div class="rating-bar-item" data-star="4">
                                 <span>4 ★</span>
-                                <div class="rating-bar-bg"><div class="rating-bar-fill" style="width: 12%;"></div></div>
-                                <span>12%</span>
+                                <div class="rating-bar-bg"><div class="rating-bar-fill" style="width: 0%;"></div></div>
+                                <span class="rating-percent">0%</span>
                             </div>
-                            <div class="rating-bar-item">
+                            <div class="rating-bar-item" data-star="3">
                                 <span>3 ★</span>
-                                <div class="rating-bar-bg"><div class="rating-bar-fill" style="width: 3%;"></div></div>
-                                <span>3%</span>
+                                <div class="rating-bar-bg"><div class="rating-bar-fill" style="width: 0%;"></div></div>
+                                <span class="rating-percent">0%</span>
                             </div>
-                            <div class="rating-bar-item">
+                            <div class="rating-bar-item" data-star="2">
                                 <span>2 ★</span>
                                 <div class="rating-bar-bg"><div class="rating-bar-fill" style="width: 0%;"></div></div>
-                                <span>0%</span>
+                                <span class="rating-percent">0%</span>
                             </div>
-                            <div class="rating-bar-item">
+                            <div class="rating-bar-item" data-star="1">
                                 <span>1 ★</span>
                                 <div class="rating-bar-bg"><div class="rating-bar-fill" style="width: 0%;"></div></div>
-                                <span>0%</span>
+                                <span class="rating-percent">0%</span>
                             </div>
                         </div>
                     </div>
@@ -587,15 +587,33 @@
                 else if (destName.contains("Huế")) { lat = "38%"; lng = "46%"; }
                 else if (destName.contains("Hà Nội")) { lat = "15%"; lng = "38%"; }
                 
-                // Mock guides
-                String guideName = "Nguyễn Văn Hùng";
-                String guideAvatar = "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=80&q=80";
-                if (t.getTourId() % 3 == 1) {
-                    guideName = "Trần Minh Tâm";
-                    guideAvatar = "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=80&q=80";
-                } else if (t.getTourId() % 3 == 2) {
-                    guideName = "Lê Hoàng Nam";
-                    guideAvatar = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=80&q=80";
+                // Lấy thông tin Hướng dẫn viên thực tế từ lịch khởi hành đầu tiên của Tour
+                String guideName = "Chưa phân công";
+                String guideAvatar = "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80";
+                double guideRating = 4.8;
+                int guideToursLed = 15;
+                int guideExp = 3;
+                String guideBio = "Hướng dẫn viên chuyên nghiệp sẽ đồng hành và hỗ trợ bạn suốt hành trình khám phá.";
+                
+                if (t.getSchedules() != null && !t.getSchedules().isEmpty()) {
+                    TourSchedule sched = t.getSchedules().get(0);
+                    if (sched.getGuide() != null) {
+                        guideName = sched.getGuide().getFullName();
+                        if (sched.getGuide().getProfile() != null && sched.getGuide().getProfile().getAvatarUrl() != null) {
+                            guideAvatar = sched.getGuide().getProfile().getAvatarUrl();
+                            if (!guideAvatar.startsWith("http") && !guideAvatar.startsWith("/")) {
+                                guideAvatar = request.getContextPath() + "/" + guideAvatar;
+                            }
+                        }
+                        if (sched.getGuideProfile() != null) {
+                            guideRating = sched.getGuideProfile().getRating();
+                            guideToursLed = sched.getGuideProfile().getTotalToursLed();
+                            guideExp = sched.getGuideProfile().getYearsOfExperience();
+                            if (sched.getGuideProfile().getBio() != null && !sched.getGuideProfile().getBio().trim().isEmpty()) {
+                                guideBio = sched.getGuideProfile().getBio();
+                            }
+                        }
+                    }
                 }
         %>
         {
@@ -613,7 +631,14 @@
             category: "<%= catStr %>",
             seatsLeft: <%= seatsLeft %>,
             seatsTotal: <%= seatsTotal %>,
-            guide: { name: "<%= guideName %>", avatar: "<%= guideAvatar %>" },
+            guide: { 
+                name: "<%= guideName %>", 
+                avatar: "<%= guideAvatar %>",
+                rating: <%= guideRating %>,
+                toursLed: <%= guideToursLed %>,
+                expYears: <%= guideExp %>,
+                bio: "<%= guideBio.replace("\"", "\\\"").replace("\n", " ").replace("\r", "") %>"
+            },
             lat: "<%= lat %>",
             lng: "<%= lng %>",
             location: "<%= t.getDestination().split(",")[0] %>"

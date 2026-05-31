@@ -9,6 +9,9 @@ import Entities.TourInclusion;
 import Entities.TourFAQ;
 import Entities.Review;
 import Entities.DestinationInfo;
+import Entities.GuideProfile;
+import Entities.User;
+import Entities.UserProfile;
 import Utils.DBContext;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -188,8 +191,18 @@ public class TourDAO extends DBContext {
      */
     public List<TourSchedule> getSchedulesByTourId(int tourId) {
         List<TourSchedule> list = new ArrayList<>();
-        String sql = "SELECT ScheduleID, TourID, DepartureDate, ReturnDate, TotalSeats, AvailableSeats, PriceAdult, PriceChild, PriceInfant, Transportation, Status, CreatedAt "
-                   + "FROM TourSchedule WHERE TourID = ? AND DepartureDate >= CAST(GETDATE() AS DATE) ORDER BY DepartureDate ASC";
+        String sql = "SELECT ts.ScheduleID, ts.TourID, ts.DepartureDate, ts.ReturnDate, ts.TotalSeats, ts.AvailableSeats, "
+                   + "ts.PriceAdult, ts.PriceChild, ts.PriceInfant, ts.Transportation, ts.Status, ts.CreatedAt, "
+                   + "ts.GuideID, ts.TourStatus, "
+                   + "u.Email, u.FullName, u.PhoneNumber, "
+                   + "up.AvatarURL, "
+                   + "gp.YearsOfExperience, gp.TotalToursLed, gp.Rating, gp.Bio "
+                   + "FROM TourSchedule ts "
+                   + "LEFT JOIN [User] u ON ts.GuideID = u.UserID "
+                   + "LEFT JOIN UserProfile up ON u.UserID = up.UserID "
+                   + "LEFT JOIN GuideProfile gp ON u.UserID = gp.UserID "
+                   + "WHERE ts.TourID = ? AND ts.DepartureDate >= CAST(GETDATE() AS DATE) "
+                   + "ORDER BY ts.DepartureDate ASC";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, tourId);
             try (ResultSet rs = ps.executeQuery()) {
@@ -208,6 +221,37 @@ public class TourDAO extends DBContext {
                         rs.getString("Status"),
                         rs.getTimestamp("CreatedAt")
                     );
+                    
+                    int guideId = rs.getInt("GuideID");
+                    if (!rs.wasNull()) {
+                        sched.setGuideId(guideId);
+                        sched.setTourStatus(rs.getString("TourStatus"));
+                        
+                        User u = new User();
+                        u.setUserId(guideId);
+                        u.setEmail(rs.getString("Email"));
+                        u.setFullName(rs.getString("FullName"));
+                        u.setPhoneNumber(rs.getString("PhoneNumber"));
+                        
+                        UserProfile up = new UserProfile();
+                        up.setUserId(guideId);
+                        up.setAvatarUrl(rs.getString("AvatarURL"));
+                        u.setProfile(up);
+                        
+                        sched.setGuide(u);
+                        
+                        int yearsOfExp = rs.getInt("YearsOfExperience");
+                        if (!rs.wasNull()) {
+                            GuideProfile gp = new GuideProfile();
+                            gp.setUserId(guideId);
+                            gp.setYearsOfExperience(yearsOfExp);
+                            gp.setTotalToursLed(rs.getInt("TotalToursLed"));
+                            gp.setRating(rs.getDouble("Rating"));
+                            gp.setBio(rs.getString("Bio"));
+                            
+                            sched.setGuideProfile(gp);
+                        }
+                    }
                     list.add(sched);
                 }
             }

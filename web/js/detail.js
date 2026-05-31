@@ -308,6 +308,15 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('guide-avatar-img').src = activeTour.guide.avatar;
     document.getElementById('guide-avatar-img').alt = activeTour.guide.name;
     document.getElementById('guide-name-txt').textContent = activeTour.guide.name;
+    if (activeTour.guide.rating) {
+        document.getElementById('guide-rating-txt').textContent = `${activeTour.guide.rating}★`;
+    }
+    if (activeTour.guide.toursLed) {
+        document.getElementById('guide-tours-txt').textContent = activeTour.guide.toursLed;
+    }
+    if (activeTour.guide.bio) {
+        document.getElementById('guide-bio-txt').textContent = `"${activeTour.guide.bio}"`;
+    }
 
     // Load description
     document.getElementById('tour-detail-desc').textContent = activeTour.description;
@@ -603,8 +612,15 @@ document.addEventListener('DOMContentLoaded', () => {
         reviewsListContainer.innerHTML = '';
         
         let totalSum = 0;
+        let starCounts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+        
         activeReviews.forEach(rev => {
             totalSum += rev.rating;
+            const r = Math.round(rev.rating);
+            if (starCounts[r] !== undefined) {
+                starCounts[r]++;
+            }
+            
             const card = document.createElement('div');
             card.className = 'review-comment-card';
 
@@ -652,32 +668,53 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Update Scorecard Avg
-        const avg = totalSum / (activeReviews.length || 1);
+        const totalReviews = activeReviews.length;
+        const avg = totalSum / (totalReviews || 1);
         scorecardAvg.textContent = avg.toFixed(1);
-        scorecardTotal.textContent = `Dựa trên ${activeReviews.length} đánh giá khách hàng`;
+        scorecardTotal.textContent = `Dựa trên ${totalReviews} đánh giá khách hàng`;
+
+        // Update Scorecard Distribution Bars
+        for (let star = 1; star <= 5; star++) {
+            const count = starCounts[star] || 0;
+            const percent = totalReviews > 0 ? Math.round((count / totalReviews) * 100) : 0;
+            
+            const barItem = document.querySelector(`.rating-bar-item[data-star="${star}"]`);
+            if (barItem) {
+                const fillElement = barItem.querySelector('.rating-bar-fill');
+                const percentText = barItem.querySelector('.rating-percent');
+                
+                if (fillElement) fillElement.style.width = `${percent}%`;
+                if (percentText) percentText.textContent = `${percent}%`;
+            }
+        }
+
         lucide.createIcons();
     }
     renderReviews();
 
-    // Star selector event
+    // Star selector event using event delegation to support Lucide SVG replacement
     if (starsSelector) {
-        const starIcons = starsSelector.querySelectorAll('.star-select');
-        starIcons.forEach(star => {
-            star.addEventListener('click', () => {
-                const rating = parseInt(star.getAttribute('data-rating'));
-                selectedRatingVal = rating;
-                starIcons.forEach(s => {
-                    const r = parseInt(s.getAttribute('data-rating'));
-                    if (r <= rating) {
-                        s.classList.add('active');
-                    } else {
-                        s.classList.remove('active');
-                    }
-                });
+        starsSelector.addEventListener('click', (e) => {
+            const star = e.target.closest('.star-select');
+            if (!star) return;
+            const rating = parseInt(star.getAttribute('data-rating'));
+            selectedRatingVal = rating;
+            
+            const starIcons = starsSelector.querySelectorAll('.star-select');
+            starIcons.forEach(s => {
+                const r = parseInt(s.getAttribute('data-rating'));
+                if (r <= rating) {
+                    s.classList.add('active');
+                } else {
+                    s.classList.remove('active');
+                }
             });
         });
         // Init 5 stars selected visually
-        starIcons.forEach(s => s.classList.add('active'));
+        setTimeout(() => {
+            const starIcons = starsSelector.querySelectorAll('.star-select');
+            starIcons.forEach(s => s.classList.add('active'));
+        }, 150);
     }
 
     // Simulator Upload image
