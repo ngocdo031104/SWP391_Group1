@@ -2,6 +2,14 @@
 /build/
 /dist/
 /nbproject/private/
+/target/
+
+# IDE files
+/.idea/
+/*.iml
+/.settings/
+/.classpath
+/.project
 
 # CodeGraph local indexes
 /.codegraph/
