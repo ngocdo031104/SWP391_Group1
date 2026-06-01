@@ -4,12 +4,21 @@
 /nbproject/private/
 /target/
 
+# Compilation / package outputs
+*.class
+*.jar
+*.war
+
 # IDE files
 /.idea/
 /*.iml
 /.settings/
 /.classpath
 /.project
+/.vscode/
 
 # CodeGraph local indexes
 /.codegraph/
+
+# Env files
+.env
