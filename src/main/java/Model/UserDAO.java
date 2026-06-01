@@ -188,24 +188,52 @@ public class UserDAO extends DBContext {
     }
 
     /**
-     * Updates profile details of a user.
+     * Updates profile and user details within a transaction.
+     * @param user user details to update
      * @param profile profile details to update
      * @return true if updated successfully, false otherwise
      */
-    public boolean updateProfile(UserProfile profile) {
-        String sql = "UPDATE UserProfile SET AvatarURL = ?, Biography = ?, DateOfBirth = ?, Gender = ?, Address = ?, TravelInterests = ?, UpdatedAt = SYSDATETIME() "
-                   + "WHERE UserID = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, profile.getAvatarUrl());
-            ps.setString(2, profile.getBiography());
-            ps.setDate(3, profile.getDateOfBirth());
-            ps.setString(4, profile.getGender());
-            ps.setString(5, profile.getAddress());
-            ps.setString(6, profile.getTravelInterests());
-            ps.setInt(7, profile.getUserId());
-            return ps.executeUpdate() > 0;
+    public boolean updateProfile(User user, UserProfile profile) {
+        String updateUserSql = "UPDATE [User] SET FullName = ?, PhoneNumber = ?, UpdatedAt = SYSDATETIME() WHERE UserID = ?";
+        String updateProfileSql = "UPDATE UserProfile SET AvatarURL = ?, Biography = ?, DateOfBirth = ?, Gender = ?, Address = ?, TravelInterests = ?, UpdatedAt = SYSDATETIME() WHERE UserID = ?";
+        try {
+            connection.setAutoCommit(false); // Start Transaction
+            
+            try (PreparedStatement psUser = connection.prepareStatement(updateUserSql)) {
+                psUser.setString(1, user.getFullName());
+                psUser.setString(2, user.getPhoneNumber());
+                psUser.setInt(3, user.getUserId());
+                psUser.executeUpdate();
+            }
+            
+            try (PreparedStatement psProfile = connection.prepareStatement(updateProfileSql)) {
+                psProfile.setString(1, profile.getAvatarUrl());
+                psProfile.setString(2, profile.getBiography());
+                psProfile.setDate(3, profile.getDateOfBirth());
+                psProfile.setString(4, profile.getGender());
+                psProfile.setString(5, profile.getAddress());
+                psProfile.setString(6, profile.getTravelInterests());
+                psProfile.setInt(7, profile.getUserId());
+                psProfile.executeUpdate();
+            }
+            
+            connection.commit(); // Commit Transaction
+            return true;
         } catch (SQLException ex) {
+            try {
+                if (connection != null) {
+                    connection.rollback(); // Rollback on error
+                }
+            } catch (SQLException rollbackEx) {
+                Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, rollbackEx);
+            }
             Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException ex) {
+                Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         return false;
     }
