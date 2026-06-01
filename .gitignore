@@ -1,12 +1,20 @@
+# Java / Spring Build artifacts
 target/
-
 *.class
 *.jar
 *.war
 
+# IDE settings
 .vscode/
 .idea/
-
 nbproject/private/
 
+# Environment variables
 .env
+
+# Build and deployment folders
+/build/
+/dist/
+
+# CodeGraph local indexes
+/.codegraph/
