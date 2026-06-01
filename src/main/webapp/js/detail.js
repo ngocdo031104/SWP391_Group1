@@ -141,54 +141,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /* ==========================================================================
        DỮ LIỆU LỊCH TRÌNH CHI TIẾT TỪNG NGÀY (DAILY ITINERARIES)
-       Lý do tại sao lại sử dụng window.itinerariesData:
-       - Để nhận dữ liệu động được kết xuất từ cơ sở dữ liệu ở cuối trang detail.jsp.
-       - Toán tử || (hoặc) giúp đảm bảo nếu biến window.itinerariesData trống (ví dụ chạy offline tĩnh)
-         thì hệ thống sẽ tự động sử dụng mảng dữ liệu mặc định bên dưới làm dự phòng (fallback).
        ========================================================================== */
-    const itinerariesData = window.itinerariesData || {
-        1: [
-            { day: 1, title: "Đón đoàn - Di chuyển đi Bà Nà Hills - Trải nghiệm Làng Pháp", desc: "Đón khách tại sân bay Đà Nẵng. Di chuyển lên đỉnh Bà Nà bằng hệ thống cáp treo đạt nhiều kỷ lục. Khám phá lâu đài cổ kính kiểu Pháp, lâu đài tâm linh và thưởng thức buffet trưa thịnh soạn.", icon: "cable-car" },
-            { day: 2, title: "Check-in Cầu Vàng huyền ảo - Tham quan hầm rượu cổ Debay & Chùa Linh Ứng", desc: "Đón bình minh sớm trên Cầu Vàng (Golden Bridge) tuyệt đẹp không bóng người. Khám phá Vườn hoa Le Jardin D'Amour rực rỡ, hầm rượu cổ sâu trong lòng đất và chùa Linh Ứng uy nghiêm.", icon: "camera" },
-            { day: 3, title: "Khám phá danh thắng Ngũ Hành Sơn - Mua sắm đặc sản - Tiễn đoàn", desc: "Xuống cáp treo, di chuyển tham quan quần thể Ngũ Hành Sơn kỳ bí, ghé thăm làng đá mỹ nghệ Non Nước. Tự do mua sắm quà lưu niệm và xe tiễn đoàn ra sân bay Đà Nẵng kết thúc chuyến đi.", icon: "plane" }
-        ],
-        2: [
-            { day: 1, title: "Chào đón Phú Quốc - Khám phá Dinh Cậu & Chợ đêm ẩm thực", desc: "Đón du khách tại sân bay Phú Quốc, nhận phòng resort 5 sao sát biển. Chiều tham quan Dinh Cậu tâm linh và ngắm hoàng hôn đỏ lịm. Tối dạo chơi tự do và thưởng thức hải sản tại Chợ đêm Đảo Ngọc.", icon: "palmtree" },
-            { day: 2, title: "Lên Du thuyền sang trọng - Câu cá & Lặn ngắm san hô Hòn Móng Tay", desc: "Lên tàu cao cấp du ngoạn 4 đảo phía Nam. Trải nghiệm câu cá giải trí, bơi lặn ngắm san hô tự nhiên tại Hòn Móng Tay, Hòn Gầm Ghì, Hòn Mây Rút. Thưởng thức bữa trưa hải sản thịnh soạn chế biến trực tiếp trên tàu.", icon: "ship" },
-            { day: 3, title: "Tham quan Safari hoang dã - Khám phá siêu quần thể Grand World", desc: "Ghé thăm Công viên bảo tồn động vật bán hoang dã Vinpearl Safari lớn nhất Việt Nam. Chiều tối hòa mình vào không gian lễ hội Châu Âu thu nhỏ của siêu dự án Grand World không ngủ.", icon: "sparkles" },
-            { day: 4, title: "Ghé thăm Nhà thùng Nước mắm truyền thống - Tiễn sân bay", desc: "Tìm hiểu quy trình ủ nước mắm cá cơm Phú Quốc nổi tiếng tại nhà thùng cổ truyền. Ghé mua sắm đặc sản tiêu sọ, ngọc trai Phú Quốc làm quà và xe đưa ra sân bay tiễn đoàn.", icon: "plane" }
-        ],
-        3: [
-            { day: 1, title: "Đón Cảng Tuần Châu - Lên Du thuyền 5 sao - Khám phá Hang Sửng Sốt", desc: "Đoàn làm thủ tục lên tàu tại Cảng Tuần Châu. Thưởng thức đồ uống chào mừng, nghe phổ biến an toàn. Tàu nhổ neo xuyên vịnh, tham quan Hang Sửng Sốt - hang động lớn và đẹp nhất vịnh Hạ Long với thạch nhũ lấp lánh.", icon: "ship" },
-            { day: 2, title: "Chèo kayak Hang Luồn - Chinh phục đảo Ti Tốp - Trở về cảng", desc: "Đón ngày mới với bài tập Thái Cực Quyền trên boong tàu. Chèo thuyền Kayak xuyên qua vách đá Hang Luồn kỳ bí. Chinh phục đỉnh núi đảo Ti Tốp ngắm toàn cảnh Vịnh Hạ Long từ trên cao trước khi tàu cập bến cảng Tuần Châu.", icon: "mountain" }
-        ],
-        4: [
-            { day: 1, title: "Chào Hội An cổ kính - Khám phá thánh địa Mỹ Sơn kỳ bí", desc: "Đoàn di chuyển tham quan Thánh địa Mỹ Sơn - thủ đô đền tháp của vương triều Chăm Pa xưa cổ. Chiều tối nhận phòng khách sạn, tản bộ ngắm phố cổ Hội An lên đèn lung linh huyền ảo.", icon: "landmark" },
-            { day: 2, title: "Trải nghiệm đi thuyền gỗ thả đèn hoa đăng sông Hoài - Học làm đèn lồng", desc: "Tự tay làm một chiếc đèn lồng Hội An nhỏ xinh dưới sự hướng dẫn của nghệ nhân. Chiều mát lên thuyền thả đèn hoa đăng lung linh dọc dòng sông Hoài thơ mộng cầu an lành.", icon: "heart" }
-        ],
-        5: [
-            { day: 1, title: "Đón sân bay Liên Khương - Check-in Đà Lạt mộng mơ - Chợ đêm", desc: "Xe đón đoàn di chuyển lên cao nguyên Đà Lạt trong lành. Nhận phòng khách sạn, chiều tham quan ga xe lửa cổ Đà Lạt và check-in quảng trường Lâm Viên. Tối tự do ăn uống lẩu gà lá é và dạo chợ đêm.", icon: "map-pin" },
-            { day: 2, title: "Săn mây bình minh Đồi chè Cầu Đất - Chinh phục Langbiang huyền thoại", desc: "Thức dậy sớm di chuyển săn mây bồng bềnh tại cầu gỗ đồi chè Cầu Đất. Chiều trekking/đi xe jeep chinh phục đỉnh Langbiang huyền thoại ngắm dòng sông Vàng từ đỉnh núi sương mù.", icon: "mountain" },
-            { day: 3, title: "Thăm vườn dâu tây công nghệ cao - Thác Datanla - Trở về", desc: "Ghé thăm vườn dâu tây tươi hái tại vườn. Trải nghiệm máng trượt xuyên thác nước Datanla kỳ vĩ trước khi xe tiễn đoàn ra sân bay Liên Khương kết thúc tour.", icon: "plane" }
-        ],
-        6: [
-            { day: 1, title: "Đón Sa Pa - Trekking Bản Cát Cát hoang sơ - Thung lũng Mường Hoa", desc: "Xe giường nằm đón du khách đến thị trấn Sa Pa mù sương. Buổi chiều trekking tản bộ dọc theo bản Cát Cát xinh đẹp của người đồng bào H'Mông, ngắm ruộng bậc thang trải dài và thác nước Cát Cát thơ mộng.", icon: "activity" },
-            { day: 2, title: "Chinh phục Đỉnh núi Fansipan bằng Cáp treo - Cột mốc Nóc nhà Đông Dương", desc: "Di chuyển bằng tàu hỏa leo núi Mường Hoa, sau đó lên Cáp treo Fansipan vượt qua thung lũng mây kỳ vĩ. Chinh phục 600 bậc đá để chạm tay vào chóp inox 3.143m huyền thoại - Nóc nhà của Đông Dương.", icon: "mountain" },
-            { day: 3, title: "Thăm Bản Tả Phìn yên bình - Trải nghiệm tắm lá thuốc Dao Đỏ - Trở về Hà Nội", desc: "Ghé thăm bản Tả Phìn nguyên sơ, tự do trải nghiệm tắm lá thuốc thảo mộc của người Dao Đỏ để xua tan mệt mỏi. Trưa mua sắm nông sản hạt dẻ, nấm hương trước khi lên xe về lại Hà Nội.", icon: "plane" }
-        ],
-        7: [
-            { day: 1, title: "Chào Nha Trang nắng vàng - Khám phá Chùa Long Sơn & Tháp Bà Ponagar", desc: "Xe đón khách đưa đi tham quan di tích lịch sử vương triều Chăm cổ Tháp Bà Ponagar, chiêm ngưỡng tượng Phật trắng chùa Long Sơn. Nhận phòng khách sạn cao cấp sát biển Nha Trang.", icon: "landmark" },
-            { day: 2, title: "Lên ca-nô cao tốc - Đi bộ dưới đại dương ngắm san hô Hòn Mun", desc: "Trải nghiệm lặn biển và đi bộ dưới đáy biển (Sea Walk) ngắm san hô, cá màu rực rỡ tại khu bảo tồn biển Hòn Mun bằng mũ dưỡng khí công nghệ cao. Trưa ăn trưa dã ngoại hải sản trên Bè nổi.", icon: "anchor" },
-            { day: 3, title: "Vui chơi thả ga VinWonders đảo Hòn Tre", desc: "Dành trọn vẹn 1 ngày vui chơi tại thiên đường giải trí VinWonders Nha Trang với cáp treo vượt biển, công viên nước khổng lồ và các show diễn thực cảnh Tata Show triệu đô đầy choáng ngợp.", icon: "sparkles" },
-            { day: 4, title: "Mua sắm hải sản Chợ Đầm - Xe tiễn sân bay Cam Ranh", desc: "Mua sắm đặc sản yến sào, mực khô, nem nướng tại Chợ Đầm lịch sử. Xe tiễn đoàn ra sân bay Cam Ranh kết thúc chuyến du lịch biển tuyệt vời.", icon: "plane" }
-        ],
-        8: [
-            { day: 1, title: "Hành trình Hà Nội - Hà Giang - Cổng trời Quản Bạ - Rừng thông Yên Minh", desc: "Khởi hành từ Hà Nội đi Hà Giang. Dừng chân check-in Dốc Bắc Sum quanh co và Cổng trời Quản Bạ ngắm núi đôi Cô Tiên. Chiều đi qua rừng thông Yên Minh xanh mát, nhận phòng homestay người Tày.", icon: "activity" },
-            { day: 2, title: "Cột cờ Lũng Cú địa đầu - Dinh thự Vua Mèo cổ kính - Phố cổ Đồng Văn", desc: "Check-in Cột cờ quốc gia Lũng Cú cực kỳ tự hào. Tham quan kiến trúc cổ kính giao thoa Pháp-Hoa của Dinh thự Vua Mèo Vương Chính Đức. Tối dạo chơi uống cafe Phố cổ Đồng Văn trong gió lạnh vùng cao.", icon: "landmark" },
-            { day: 3, title: "Chinh phục Đệ nhất hùng đèo Mã Pí Lèng - Du thuyền hẻm vực sông Nho Quế", desc: "Vượt qua những khúc cua ngoạn mục đèo Mã Pí Lèng kỳ vĩ bậc nhất Việt Nam. Xuống bến thuyền tản bộ dọc hẻm Tu Sản sâu nhất Đông Nam Á và đi thuyền trên dòng sông Nho Quế xanh biếc thơ mộng.", icon: "mountain" },
-            { day: 4, title: "Check-in Dốc Thẩm Mã huyền thoại - Mua sắm sản vật - Hà Nội", desc: "Chụp ảnh lưu niệm tại Dốc Thẩm Mã - con dốc nổi tiếng nhất Hà Giang với những em bé dân tộc đeo gùi hoa. Ghé mua mật ong bạc hà đặc sản trước khi xe chạy xuyên đêm tiễn về lại Hà Nội.", icon: "plane" }
-        ]
-    };
+    const itinerariesData = window.itinerariesData || {};
 
     /* ==========================================================================
        DỮ LIỆU ĐÁNH GIÁ MẪU CHO TỪNG TOUR (SAMPLE REVIEWS)
@@ -210,67 +164,6 @@ document.addEventListener('DOMContentLoaded', () => {
         { name: "Lê Minh Thư", rating: 5, date: "14/05/2026", text: "Trải nghiệm du lịch 5 sao đáng tiền từng xu. Thức ăn siêu ngon đa dạng, lịch trình sắp xếp cực kỳ khoa học không gây cảm giác mệt mỏi. Gia đình tôi đều rất hài lòng.", isVerified: true, avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=80&q=80" }
     ];
 
-    /* ==========================================================================
-       DỮ LIỆU BỘ ẢNH SLIDESHOW CHI TIẾT TỪNG TOUR (GALLERY IMAGES SETS)
-       ========================================================================== */
-    const galleryImages = {
-        1: [
-            "https://images.unsplash.com/photo-1559592413-7cec4d0c8ab8?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1200&q=80"
-        ],
-        2: [
-            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1439066615861-d1af74d74000?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=1200&q=80"
-        ],
-        3: [
-            "https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1524230572899-a752b3835840?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1200&q=80"
-        ],
-        4: [
-            "https://images.unsplash.com/photo-1528183429752-a97d0bf99f5c?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=1200&q=80"
-        ],
-        5: [
-            "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1200&q=80"
-        ],
-        6: [
-            "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1524230572899-a752b3835840?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1200&q=80"
-        ],
-        7: [
-            "https://images.unsplash.com/photo-1528183429752-a97d0bf99f5c?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=1200&q=80"
-        ],
-        8: [
-            "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80",
-            "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1200&q=80"
-        ]
-    };
 
     /* ==========================================================================
        DYNAMIC TARGET TOUR LOADING
@@ -283,7 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const activeTour = toursData.find(t => t.id === tourId) || toursData[5]; // Default to Sa Pa
     
     // Dynamic array of photos for lightbox
-    const photosList = galleryImages[activeTour.id] || galleryImages[6];
+    const photosList = activeTour.photos || [activeTour.image];
     let currentPhotoIndex = 0;
     
     // Set dynamic HTML headers
@@ -304,20 +197,6 @@ document.addEventListener('DOMContentLoaded', () => {
     else if (activeTour.category === "adventure") categoryText = "Thám hiểm Mạo hiểm";
     document.getElementById('detail-category-badge').textContent = categoryText;
 
-    // Load Guide Details
-    document.getElementById('guide-avatar-img').src = activeTour.guide.avatar;
-    document.getElementById('guide-avatar-img').alt = activeTour.guide.name;
-    document.getElementById('guide-name-txt').textContent = activeTour.guide.name;
-    if (activeTour.guide.rating) {
-        document.getElementById('guide-rating-txt').textContent = `${activeTour.guide.rating}★`;
-    }
-    if (activeTour.guide.toursLed) {
-        document.getElementById('guide-tours-txt').textContent = activeTour.guide.toursLed;
-    }
-    if (activeTour.guide.bio) {
-        document.getElementById('guide-bio-txt').textContent = `"${activeTour.guide.bio}"`;
-    }
-
     // Load description
     document.getElementById('tour-detail-desc').textContent = activeTour.description;
 
@@ -329,6 +208,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('hl-difficulty').textContent = difficultyText;
     document.getElementById('hl-duration').textContent = `${activeTour.duration} Ngày`;
     document.getElementById('hl-group-size').textContent = `${activeTour.seatsTotal} Khách`;
+    const hlLang = document.getElementById('hl-languages');
+    if (hlLang && activeTour.languages) {
+        hlLang.textContent = activeTour.languages;
+    }
 
     // Available seats progress sidebar
     const seatsPill = document.getElementById('booking-seats-left-pill');
@@ -342,11 +225,29 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Toggle single image layout class if there's only 1 photo
+    const galleryGrid = document.getElementById('photo-gallery-grid');
+    if (galleryGrid) {
+        if (photosList.length <= 1) {
+            galleryGrid.classList.add('single-image');
+        } else {
+            galleryGrid.classList.remove('single-image');
+        }
+    }
+
     // Load Thumbnails
     const subThumbnails = document.querySelectorAll('.gallery-thumb');
     subThumbnails.forEach((img, idx) => {
+        const subPhotoWrapper = img.closest('.sub-photo');
         if (photosList[idx + 1]) {
             img.src = photosList[idx + 1];
+            if (subPhotoWrapper) {
+                subPhotoWrapper.style.display = 'block';
+            }
+        } else {
+            if (subPhotoWrapper) {
+                subPhotoWrapper.style.display = 'none';
+            }
         }
     });
 
@@ -400,16 +301,34 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     let isPromoApplied = false;
+    let appliedCoupon = null;
 
     function runCalculations() {
         const travelers = parseInt(bookTravelersSelect.value);
         const basePriceVND = activeTour.priceVND;
         const subtotalVND = basePriceVND * travelers;
 
-        // Discount calculation (20% off)
+        // Discount calculation
         let discountVND = 0;
-        if (isPromoApplied) {
-            discountVND = subtotalVND * 0.20;
+        if (isPromoApplied && appliedCoupon) {
+            if (subtotalVND >= appliedCoupon.minOrderAmount) {
+                if (appliedCoupon.discountType.toLowerCase().includes('percent') || appliedCoupon.discountType.toLowerCase() === 'percentage') {
+                    discountVND = subtotalVND * (appliedCoupon.discountValue / 100.0);
+                } else {
+                    discountVND = appliedCoupon.discountValue;
+                }
+                // Discount cannot exceed subtotal
+                if (discountVND > subtotalVND) {
+                    discountVND = subtotalVND;
+                }
+            } else {
+                if (promoMessageTxt) {
+                    promoMessageTxt.style.color = "#dc2626";
+                    promoMessageTxt.textContent = `Đơn hàng chưa đạt tối thiểu ${formatPrice(appliedCoupon.minOrderAmount)}.`;
+                }
+                isPromoApplied = false;
+                appliedCoupon = null;
+            }
         }
 
         // Tax calculation (8% VAT)
@@ -420,16 +339,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const totalVND = taxableAmountVND + taxVND;
 
         // Render calculations
-        billCalcLabel.textContent = `${travelers} khách x ${formatPrice(basePriceVND)}`;
-        billSubtotalVal.textContent = formatPrice(subtotalVND);
-        billTaxVal.textContent = formatPrice(taxVND);
-        billTotalVal.textContent = formatPrice(totalVND);
+        if (billCalcLabel) billCalcLabel.textContent = `${travelers} khách x ${formatPrice(basePriceVND)}`;
+        if (billSubtotalVal) billSubtotalVal.textContent = formatPrice(subtotalVND);
+        if (billTaxVal) billTaxVal.textContent = formatPrice(taxVND);
+        if (billTotalVal) billTotalVal.textContent = formatPrice(totalVND);
 
-        if (isPromoApplied) {
-            promoDiscountLine.style.display = 'flex';
-            billDiscountVal.textContent = `-${formatPrice(discountVND)}`;
-        } else {
-            promoDiscountLine.style.display = 'none';
+        if (promoDiscountLine) {
+            if (isPromoApplied && appliedCoupon) {
+                promoDiscountLine.style.display = 'flex';
+                const codeLabel = document.getElementById('promo-applied-code-label');
+                if (codeLabel) {
+                    codeLabel.textContent = appliedCoupon.code;
+                }
+                if (billDiscountVal) billDiscountVal.textContent = `-${formatPrice(discountVND)}`;
+            } else {
+                promoDiscountLine.style.display = 'none';
+            }
         }
     }
 
@@ -442,19 +367,39 @@ document.addEventListener('DOMContentLoaded', () => {
     if (applyPromoBtn) {
         applyPromoBtn.addEventListener('click', () => {
             const code = promoCodeInput.value.trim().toUpperCase();
-            if (code === "TOURBUDDY2026") {
-                isPromoApplied = true;
-                promoMessageTxt.style.color = "#16a34a";
-                promoMessageTxt.textContent = "Áp dụng mã giảm giá 20% thành công!";
-                runCalculations();
-            } else if (code === "") {
+            if (code === "") {
                 isPromoApplied = false;
+                appliedCoupon = null;
                 promoMessageTxt.textContent = "";
                 runCalculations();
+                return;
+            }
+
+            const coupons = window.activeCoupons || [];
+            const found = coupons.find(c => c.code.toUpperCase() === code);
+
+            if (found) {
+                const travelers = parseInt(bookTravelersSelect.value);
+                const subtotal = activeTour.priceVND * travelers;
+                if (subtotal < found.minOrderAmount) {
+                    isPromoApplied = false;
+                    appliedCoupon = null;
+                    promoMessageTxt.style.color = "#dc2626";
+                    promoMessageTxt.textContent = `Mã yêu cầu đơn hàng tối thiểu từ ${formatPrice(found.minOrderAmount)}.`;
+                    runCalculations();
+                } else {
+                    isPromoApplied = true;
+                    appliedCoupon = found;
+                    promoMessageTxt.style.color = "#16a34a";
+                    const desc = found.discountType.toLowerCase().includes('percent') || found.discountType.toLowerCase() === 'percentage' ? `${found.discountValue}%` : formatPrice(found.discountValue);
+                    promoMessageTxt.textContent = `Áp dụng mã giảm giá ${desc} thành công!`;
+                    runCalculations();
+                }
             } else {
                 isPromoApplied = false;
+                appliedCoupon = null;
                 promoMessageTxt.style.color = "#dc2626";
-                promoMessageTxt.textContent = "Mã giảm giá không hợp lệ.";
+                promoMessageTxt.textContent = "Mã giảm giá không tồn tại hoặc đã hết hạn.";
                 runCalculations();
             }
         });
@@ -462,7 +407,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (submitBookingBtn) {
         submitBookingBtn.addEventListener('click', () => {
-            alert(`Đặt tour thành công!\nHành trình: ${activeTour.title}\nNgày khởi hành: ${bookDateInput.value}\nSố lượng khách: ${bookTravelersSelect.value} người.`);
+            window.location.href = "https://sandbox.vnpayment.vn/";
         });
     }
 
@@ -475,7 +420,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!timelineContainer) return;
         timelineContainer.innerHTML = '';
         
-        const itinerary = itinerariesData[activeTour.id] || itinerariesData[6];
+        const itinerary = itinerariesData[activeTour.id];
+        if (!itinerary || itinerary.length === 0) {
+            timelineContainer.innerHTML = '<p class="no-itinerary-msg" style="padding: 2rem; text-align: center; color: var(--slate-500);">Đang cập nhật lịch trình chi tiết cho tour này...</p>';
+            return;
+        }
 
         itinerary.forEach((item, idx) => {
             const step = document.createElement('div');

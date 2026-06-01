@@ -440,11 +440,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span><i data-lucide="clock"></i> ${tour.duration} ngày</span>
                         <span><i data-lucide="users"></i> Còn ${tour.seatsLeft} chỗ</span>
                     </div>
-                    
-                    <div class="tour-guide-badge">
-                        <img src="${tour.guide.avatar}" alt="${tour.guide.name}" class="guide-avatar">
-                        <span class="guide-name">HDV: <strong>${tour.guide.name}</strong></span>
-                    </div>
 
                     <div class="tour-seats-progress">
                         <div class="seats-info">

@@ -88,7 +88,6 @@
     <section class="tour-gallery-section">
         <div class="container">
             <div class="masonry-gallery" id="photo-gallery-grid">
-                <!-- Main big photo (Left) -->
                 <%
                     String mainImgUrl = "assets/images/tour_halong.png";
                     if (activeTour != null && activeTour.getMediaList() != null && !activeTour.getMediaList().isEmpty()) {
@@ -104,25 +103,63 @@
                         else if (dest.contains("nha trang")) mainImgUrl = "assets/images/tour_nhatrang.png";
                         else if (dest.contains("hà giang")) mainImgUrl = "assets/images/tour_hagiang.png";
                     }
+
+                    // Construct gallery images list
+                    List<TourMedia> mediaList = activeTour != null ? activeTour.getMediaList() : null;
+                    java.util.List<String> galleryImages = new java.util.ArrayList<>();
+                    if (mediaList != null && !mediaList.isEmpty()) {
+                        for (TourMedia m : mediaList) {
+                            String mUrl = m.getMediaUrl();
+                            if (!mUrl.startsWith("http") && !mUrl.startsWith("/")) {
+                                mUrl = request.getContextPath() + "/" + mUrl;
+                            }
+                            galleryImages.add(mUrl);
+                        }
+                    }
+                    if (galleryImages.isEmpty() && activeTour != null) {
+                        galleryImages.add(request.getContextPath() + "/" + mainImgUrl);
+                    }
+
+                    // Fallbacks to pad up to 5 images
+                    String[] defaultPool = {
+                        "assets/images/tour_halong.png",
+                        "assets/images/tour_phuquoc.png",
+                        "assets/images/hero_beach.png",
+                        "assets/images/tour_dalat.png",
+                        "assets/images/tour_danang.png",
+                        "assets/images/tour_hoian.png",
+                        "assets/images/tour_sapa.png",
+                        "assets/images/tour_nhatrang.png",
+                        "assets/images/tour_hagiang.png"
+                    };
+                    int poolIdx = 0;
+                    while (galleryImages.size() < 5 && poolIdx < defaultPool.length) {
+                        String fallbackUrl = request.getContextPath() + "/" + defaultPool[poolIdx];
+                        if (!galleryImages.contains(fallbackUrl)) {
+                            galleryImages.add(fallbackUrl);
+                        }
+                        poolIdx++;
+                    }
                 %>
+                <!-- Main big photo (Left) -->
                 <div class="gallery-item main-photo">
-                    <img src="${pageContext.request.contextPath}/<%= mainImgUrl %>" alt="Tour chính" id="gallery-main-img">
+                    <img src="<%= galleryImages.get(0) %>" alt="Tour chính" id="gallery-main-img">
                     <button class="btn-play-video" id="play-video-btn">
                         <i data-lucide="play"></i> Xem Video
                     </button>
                 </div>
                 <!-- Sub photos (Right grid) -->
                 <div class="gallery-item sub-photo sub-1">
-                    <img src="${pageContext.request.contextPath}/assets/images/tour_halong.png" alt="Ảnh phụ 1" class="gallery-thumb" data-index="1">
+                    <img src="<%= galleryImages.get(1) %>" alt="Ảnh phụ 1" class="gallery-thumb" data-index="1">
                 </div>
                 <div class="gallery-item sub-photo sub-2">
-                    <img src="${pageContext.request.contextPath}/assets/images/tour_phuquoc.png" alt="Ảnh phụ 2" class="gallery-thumb" data-index="2">
+                    <img src="<%= galleryImages.get(2) %>" alt="Ảnh phụ 2" class="gallery-thumb" data-index="2">
                 </div>
                 <div class="gallery-item sub-photo sub-3">
-                    <img src="${pageContext.request.contextPath}/assets/images/hero_beach.png" alt="Ảnh phụ 3" class="gallery-thumb" data-index="3">
+                    <img src="<%= galleryImages.get(3) %>" alt="Ảnh phụ 3" class="gallery-thumb" data-index="3">
                 </div>
                 <div class="gallery-item sub-photo sub-4">
-                    <img src="${pageContext.request.contextPath}/assets/images/tour_dalat.png" alt="Ảnh phụ 4" class="gallery-thumb" data-index="4">
+                    <img src="<%= galleryImages.get(4) %>" alt="Ảnh phụ 4" class="gallery-thumb" data-index="4">
                     <button class="btn-all-photos" id="view-all-photos-btn">
                         <i data-lucide="grid"></i> Xem Tất Cả Ảnh
                     </button>
@@ -170,18 +207,6 @@
                     </div>
                 </div>
 
-                <!-- Tour Guide Profile Widget -->
-                <div class="tour-guide-profile-widget">
-                    <h3>Hướng Dẫn Viên Đồng Hành</h3>
-                    <div class="guide-profile-flex">
-                        <img src="" alt="Hướng dẫn viên" class="guide-big-avatar" id="guide-avatar-img">
-                        <div class="guide-profile-details">
-                            <h4 id="guide-name-txt">Đang tải...</h4>
-                            <p class="guide-rating-row"><i data-lucide="star"></i> <strong id="guide-rating-txt">4.9★</strong> (<span id="guide-tours-txt">42</span> tour đã dẫn)</p>
-                            <p class="guide-bio" id="guide-bio-txt">"Đang tải giới thiệu..."</p>
-                        </div>
-                    </div>
-                </div>
 
                 <!-- Tour Description -->
                 <div class="tour-description-section">
@@ -501,14 +526,20 @@
             <div class="detail-main-right">
                 <div class="sticky-booking-sidebar" id="booking-sidebar">
                     <div class="booking-sidebar-card">
-                        
+
+                        <%
+                            int activeSeatsLeft = 10;
+                            if (activeTour != null && activeTour.getSchedules() != null && !activeTour.getSchedules().isEmpty()) {
+                                activeSeatsLeft = activeTour.getSchedules().get(0).getAvailableSeats();
+                            }
+                        %>
                         <div class="booking-card-price-header">
                             <div class="price-side-left">
                                 <span class="sidebar-price-label">Giá mỗi khách</span>
                                 <span class="sidebar-price-value" id="booking-base-price">0 đ</span>
                             </div>
-                            <div class="price-side-right" id="booking-seats-left-pill">
-                                <span>Chỉ còn 6 chỗ!</span>
+                            <div class="price-side-right<%= activeSeatsLeft <= 5 ? " warning-pill" : "" %>" id="booking-seats-left-pill">
+                                <span><%= activeSeatsLeft <= 5 ? "Chỉ còn " + activeSeatsLeft + " chỗ!" : "Còn " + activeSeatsLeft + " chỗ trống" %></span>
                             </div>
                         </div>
 
@@ -517,7 +548,6 @@
                                 <label for="book-date"><i data-lucide="calendar"></i> Ngày khởi hành</label>
                                 <input type="date" id="book-date" required>
                             </div>
-
                             <div class="booking-field-group">
                                 <label for="book-travelers"><i data-lucide="users"></i> Số lượng khách</label>
                                 <select id="book-travelers">
@@ -530,37 +560,28 @@
                             </div>
                         </div>
 
-                        <div class="booking-bill-calculations" id="booking-bill-row">
-                            <div class="bill-line">
-                                <span id="bill-calc-label">2 khách x 0 đ</span>
-                                <span id="bill-subtotal-val">0 đ</span>
+                        <div class="payment-section-box">
+                            <div class="payment-trust-badge">
+                                <span class="trust-dot"></span>
+                                <span>Cổng thanh toán trực tuyến chính thức</span>
                             </div>
-                            <div class="bill-line text-discount" id="promo-discount-line" style="display: none;">
-                                <span>Mã giảm giá (TOURBUDDY2026)</span>
-                                <span id="bill-discount-val">-0 đ</span>
-                            </div>
-                            <div class="bill-line">
-                                <span>Thuế du lịch (VAT 8%)</span>
-                                <span id="bill-tax-val">0 đ</span>
-                            </div>
-                            <hr class="bill-divider">
-                            <div class="bill-line total-price">
-                                <span>Tổng chi phí</span>
-                                <span id="bill-total-val">0 đ</span>
+                            <button type="button" class="btn btn-primary btn-payment-cta" id="go-payment-btn"
+                                    onclick="window.open('', '_blank')">
+                                <span class="btn-payment-text">
+                                    <i data-lucide="credit-card"></i>
+                                    Thanh toán tại đây
+                                </span>
+                                <i data-lucide="arrow-right" class="btn-payment-arrow"></i>
+                            </button>
+                            <div class="payment-trust-footer">
+                                <span class="trust-item"><i data-lucide="shield-check"></i> An toàn</span>
+                                <span class="trust-divider">•</span>
+                                <span class="trust-item"><i data-lucide="zap"></i> Nhanh chóng</span>
+                                <span class="trust-divider">•</span>
+                                <span class="trust-item"><i data-lucide="lock"></i> Bảo mật</span>
                             </div>
                         </div>
 
-                        <div class="booking-coupon-wrapper">
-                            <input type="text" id="promo-code-input" placeholder="Nhập mã giảm giá (TOURBUDDY2026)">
-                            <button type="button" class="btn btn-secondary" id="apply-promo-btn">Áp dụng</button>
-                        </div>
-                        <div class="promo-success-message" id="promo-message-txt"></div>
-
-                        <button type="button" class="btn btn-primary btn-block btn-booking-submit" id="submit-booking-btn">
-                            Đặt Ngay & Thanh Toán
-                        </button>
-                        
-                        <p class="booking-card-security-note"><i data-lucide="shield-check"></i> Đảm bảo hoàn tiền 100% | Thanh toán an toàn SSL</p>
                     </div>
                 </div>
             </div>
@@ -703,14 +724,35 @@
             category: "<%= catStr %>",
             seatsLeft: <%= seatsLeft %>,
             seatsTotal: <%= seatsTotal %>,
-            guide: { 
-                name: "<%= guideName %>", 
-                avatar: "<%= guideAvatar %>",
-                rating: <%= guideRating %>,
-                toursLed: <%= guideToursLed %>,
-                expYears: <%= guideExp %>,
-                bio: "<%= guideBio.replace("\"", "\\\"").replace("\n", " ").replace("\r", "") %>"
-            },
+            languages: "<%= t.getLanguages() != null && !t.getLanguages().trim().isEmpty() ? t.getLanguages().replace("\"", "\\\"") : "Tiếng Việt" %>",
+            photos: [
+                <%
+                if (t.getTourId() == activeTour.getTourId()) {
+                    for (int j = 0; j < galleryImages.size(); j++) {
+                %>
+                "<%= galleryImages.get(j) %>"<%= (j < galleryImages.size() - 1) ? "," : "" %>
+                <%
+                    }
+                } else {
+                    if (t.getMediaList() != null && !t.getMediaList().isEmpty()) {
+                        for (int j = 0; j < t.getMediaList().size(); j++) {
+                            TourMedia media = t.getMediaList().get(j);
+                            String mediaUrl = media.getMediaUrl();
+                            if (!mediaUrl.startsWith("http") && !mediaUrl.startsWith("/")) {
+                                mediaUrl = request.getContextPath() + "/" + mediaUrl;
+                            }
+                %>
+                "<%= mediaUrl %>"<%= (j < t.getMediaList().size() - 1) ? "," : "" %>
+                <%
+                        }
+                    } else {
+                %>
+                "${pageContext.request.contextPath}/<%= imgUrl %>"
+                <%
+                    }
+                }
+                %>
+            ],
             lat: "<%= lat %>",
             lng: "<%= lng %>",
             location: "<%= t.getDestination().split(",")[0] %>"
@@ -723,50 +765,7 @@
 </script>
 
 <script>
-    // Define daily itineraries data (with default fallbacks)
-    window.itinerariesData = {
-        1: [
-            { day: 1, title: "Đón đoàn - Di chuyển đi Bà Nà Hills - Trải nghiệm Làng Pháp", desc: "Đón khách tại sân bay Đà Nẵng. Di chuyển lên đỉnh Bà Nà bằng hệ thống cáp treo đạt nhiều kỷ lục. Khám phá lâu đài cổ kính kiểu Pháp, lâu đài tâm linh và thưởng thức buffet trưa thịnh soạn.", icon: "cable-car" },
-            { day: 2, title: "Check-in Cầu Vàng huyền ảo - Tham quan hầm rượu cổ Debay & Chùa Linh Ứng", desc: "Đón bình minh sớm trên Cầu Vàng (Golden Bridge) tuyệt đẹp không bóng người. Khám phá Vườn hoa Le Jardin D'Amour rực rỡ, hầm rượu cổ sâu trong lòng đất và chùa Linh Ứng uy nghiêm.", icon: "camera" },
-            { day: 3, title: "Khám phá danh thắng Ngũ Hành Sơn - Mua sắm đặc sản - Tiễn đoàn", desc: "Xuống cáp treo, di chuyển tham quan quần thể Ngũ Hành Sơn kỳ bí, ghé thăm làng đá mỹ nghệ Non Nước. Tự do mua sắm quà lưu niệm và xe tiễn đoàn ra sân bay Đà Nẵng kết thúc chuyến đi.", icon: "plane" }
-        ],
-        2: [
-            { day: 1, title: "Chào đón Phú Quốc - Khám phá Dinh Cậu & Chợ đêm ẩm thực", desc: "Đón du khách tại sân bay Phú Quốc, nhận phòng resort 5 sao sát biển. Chiều tham quan Dinh Cậu tâm linh và ngắm hoàng hôn đỏ lịm. Tối dạo chơi tự do và thưởng thức hải sản tại Chợ đêm Đảo Ngọc.", icon: "palmtree" },
-            { day: 2, title: "Lên Du thuyền sang trọng - Câu cá & Lặn ngắm san hô Hòn Móng Tay", desc: "Lên tàu cao cấp du ngoạn 4 đảo phía Nam. Trải nghiệm câu cá giải trí, bơi lặn ngắm san hô tự nhiên tại Hòn Móng Tay, Hòn Gầm Ghì, Hòn Mây Rút. Thưởng thức bữa trưa hải sản thịnh soạn chế biến trực tiếp trên tàu.", icon: "ship" },
-            { day: 3, title: "Tham quan Safari hoang dã - Khám phá siêu quần thể Grand World", desc: "Ghé thăm Công viên bảo tồn động vật bán hoang dã Vinpearl Safari lớn nhất Việt Nam. Chiều tối hòa mình vào không gian lễ hội Châu Âu thu nhỏ của siêu dự án Grand World không ngủ.", icon: "sparkles" },
-            { day: 4, title: "Ghé thăm Nhà thùng Nước mắm truyền thống - Tiễn sân bay", desc: "Tìm hiểu quy trình ủ nước mắm cá cơm Phú Quốc nổi tiếng tại nhà thùng cổ truyền. Ghé mua sắm đặc sản tiêu sọ, ngọc trai Phú Quốc làm quà và xe đưa ra sân bay tiễn đoàn.", icon: "plane" }
-        ],
-        3: [
-            { day: 1, title: "Đón Cảng Tuần Châu - Lên Du thuyền 5 sao - Khám phá Hang Sửng Sốt", desc: "Đoàn làm thủ tục lên tàu tại Cảng Tuần Châu. Thưởng thức đồ uống chào mừng, nghe phổ biến an toàn. Tàu nhổ neo xuyên vịnh, tham quan Hang Sửng Sốt - hang động lớn và đẹp nhất vịnh Hạ Long với thạch nhũ lấp lánh.", icon: "ship" },
-            { day: 2, title: "Chèo kayak Hang Luồn - Chinh phục đảo Ti Tốp - Trở về cảng", desc: "Đón ngày mới với bài tập Thái Cực Quyền trên boong tàu. Chèo thuyền Kayak xuyên qua vách đá Hang Luồn kỳ bí. Chinh phục đỉnh núi đảo Ti Tốp ngắm toàn cảnh Vịnh Hạ Long từ trên cao trước khi tàu cập bến cảng Tuần Châu.", icon: "mountain" }
-        ],
-        4: [
-            { day: 1, title: "Chào Hội An cổ kính - Khám phá thánh địa Mỹ Sơn kỳ bí", desc: "Đoàn di chuyển tham quan Thánh địa Mỹ Sơn - thủ đô đền tháp của vương triều Chăm Pa xưa cổ. Chiều tối nhận phòng khách sạn, tản bộ ngắm phố cổ Hội An lên đèn lung linh huyền ảo.", icon: "landmark" },
-            { day: 2, title: "Trải nghiệm đi thuyền gỗ thả đèn hoa đăng sông Hoài - Học làm đèn lồng", desc: "Tự tay làm một chiếc đèn lồng Hội An nhỏ xinh dưới sự hướng dẫn của nghệ nhân. Chiều mát lên thuyền thả đèn hoa đăng lung linh dọc dòng sông Hoài thơ mộng cầu an lành.", icon: "heart" }
-        ],
-        5: [
-            { day: 1, title: "Đón sân bay Liên Khương - Check-in Đà Lạt mộng mơ - Chợ đêm", desc: "Xe đón đoàn di chuyển lên cao nguyên Đà Lạt trong lành. Nhận phòng khách sạn, chiều tham quan ga xe lửa cổ Đà Lạt và check-in quảng trường Lâm Viên. Tối tự do ăn uống lẩu gà lá é và dạo chợ đêm.", icon: "map-pin" },
-            { day: 2, title: "Săn mây bình minh Đồi chè Cầu Đất - Chinh phục Langbiang huyền thoại", desc: "Thức dậy sớm di chuyển săn mây bồng bềnh tại cầu gỗ đồi chè Cầu Đất. Chiều trekking/đi xe jeep chinh phục đỉnh Langbiang huyền thoại ngắm dòng sông Vàng từ đỉnh núi sương mù.", icon: "mountain" },
-            { day: 3, title: "Thăm vườn dâu tây công nghệ cao - Thác Datanla - Trở về", desc: "Ghé thăm vườn dâu tây tươi hái tại vườn. Trải nghiệm máng trượt xuyên thác nước Datanla kỳ vĩ trước khi xe tiễn đoàn ra sân bay Liên Khương kết thúc tour.", icon: "plane" }
-        ],
-        6: [
-            { day: 1, title: "Đón Sa Pa - Trekking Bản Cát Cát hoang sơ - Thung lũng Mường Hoa", desc: "Xe giường nằm đón du khách đến thị trấn Sa Pa mù sương. Buổi chiều trekking tản bộ dọc theo bản Cát Cát xinh đẹp của người đồng bào H'Mông, ngắm ruộng bậc thang trải dài và thác nước Cát Cát thơ mộng.", icon: "activity" },
-            { day: 2, title: "Chinh phục Đỉnh núi Fansipan bằng Cáp treo - Cột mốc Nóc nhà Đông Dương", desc: "Di chuyển bằng tàu hỏa leo núi Mường Hoa, sau đó lên Cáp treo Fansipan vượt qua thung lũng mây kỳ vĩ. Chinh phục 600 bậc đá để chạm tay vào chóp inox 3.143m huyền thoại - Nóc nhà của Đông Dương.", icon: "mountain" },
-            { day: 3, title: "Thăm Bản Tả Phìn yên bình - Trải nghiệm tắm lá thuốc Dao Đỏ - Trở về Hà Nội", desc: "Ghé thăm bản Tả Phìn nguyên sơ, tự do trải nghiệm tắm lá thuốc thảo mộc của người Dao Đỏ để xua tan mệt mỏi. Trưa mua sắm nông sản hạt dẻ, nấm hương trước khi lên xe về lại Hà Nội.", icon: "plane" }
-        ],
-        7: [
-            { day: 1, title: "Chào Nha Trang nắng vàng - Khám phá Chùa Long Sơn & Tháp Bà Ponagar", desc: "Xe đón khách đưa đi tham quan di tích lịch sử vương triều Chăm cổ Tháp Bà Ponagar, chiêm ngưỡng tượng Phật trắng chùa Long Sơn. Nhận phòng khách sạn cao cấp sát biển Nha Trang.", icon: "landmark" },
-            { day: 2, title: "Lên ca-nô cao tốc - Đi bộ dưới đại dương ngắm san hô Hòn Mun", desc: "Trải nghiệm lặn biển và đi bộ dưới đáy biển (Sea Walk) ngắm san hô, cá màu rực rỡ tại khu bảo tồn biển Hòn Mun bằng mũ dưỡng khí công nghệ cao. Trưa ăn trưa dã ngoại hải sản trên Bè nổi.", icon: "anchor" },
-            { day: 3, title: "Vui chơi thả ga VinWonders đảo Hòn Tre", desc: "Dành trọn vẹn 1 ngày vui chơi tại thiên đường giải trí VinWonders Nha Trang với cáp treo vượt biển, công viên nước khổng lồ và các show diễn thực cảnh Tata Show triệu đô đầy choáng ngợp.", icon: "sparkles" },
-            { day: 4, title: "Mua sắm hải sản Chợ Đầm - Xe tiễn sân bay Cam Ranh", desc: "Mua sắm đặc sản yến sào, mực khô, nem nướng tại Chợ Đầm lịch sử. Xe tiễn đoàn ra sân bay Cam Ranh kết thúc chuyến du lịch biển tuyệt vời.", icon: "plane" }
-        ],
-        8: [
-            { day: 1, title: "Hành trình Hà Nội - Hà Giang - Cổng trời Quản Bạ - Rừng thông Yên Minh", desc: "Khởi hành từ Hà Nội đi Hà Giang. Dừng chân check-in Dốc Bắc Sum quanh co và Cổng trời Quản Bạ ngắm núi đôi Cô Tiên. Chiều đi qua rừng thông Yên Minh xanh mát, nhận phòng homestay người Tày.", icon: "activity" },
-            { day: 2, title: "Cột cờ Lũng Cú địa đầu - Dinh thự Vua Mèo cổ kính - Phố cổ Đồng Văn", desc: "Check-in Cột cờ quốc gia Lũng Cú cực kỳ tự hào. Tham quan kiến trúc cổ kính giao thoa Pháp-Hoa của Dinh thự Vua Mèo Vương Chính Đức. Tối dạo chơi uống cafe Phố cổ Đồng Văn trong gió lạnh vùng cao.", icon: "landmark" },
-            { day: 3, title: "Chinh phục Đệ nhất hùng đèo Mã Pí Lèng - Du thuyền hẻm vực sông Nho Quế", desc: "Vượt qua những khúc cua ngoạn mục đèo Mã Pí Lèng kỳ vĩ bậc nhất Việt Nam. Xuống bến thuyền tản bộ dọc hẻm Tu Sản sâu nhất Đông Nam Á và đi thuyền trên dòng sông Nho Quế xanh biếc thơ mộng.", icon: "mountain" },
-            { day: 4, title: "Check-in Dốc Thẩm Mã huyền thoại - Mua sắm sản vật - Hà Nội", desc: "Chụp ảnh lưu niệm tại Dốc Thẩm Mã - con dốc nổi tiếng nhất Hà Giang với những em bé dân tộc đeo gùi hoa. Ghé mua mật ong bạc hà đặc sản trước khi xe chạy xuyên đêm tiễn về lại Hà Nội.", icon: "plane" }
-        ]
-    };
+    window.itinerariesData = {};
 
     // LÝ DO VÀ CHỨC NĂNG CỦA ĐOẠN DƯỚI ĐÂY:
     // - Dữ liệu lịch trình (TourItinerary) cần được chuyển sang môi trường Client (JavaScript)
@@ -852,6 +851,10 @@
             }
         }
     %>
+
+
+    // Thanh toán được quản lý ngoài hệ thống.
+
 
     // Đánh giá đã được nạp và kết xuất trực tiếp bằng mã nguồn JSP ở phía trên, không sử dụng javascript.
 </script>

@@ -1,6 +1,7 @@
 package Controller;
 
 import Entities.Tour;
+import Entities.Coupon;
 import Model.TourDAO;
 import java.io.IOException;
 import java.util.List;
@@ -65,6 +66,10 @@ public class DetailController extends HttpServlet {
                 }
                 // Đưa danh sách tour gợi ý vào request attribute.
                 request.setAttribute("tours", tours);
+                
+                // Nạp danh sách các mã giảm giá hoạt động để sử dụng trong booking sidebar
+                List<Coupon> activeCoupons = tourDAO.getActiveCoupons(10);
+                request.setAttribute("activeCoupons", activeCoupons);
             } else {
                 // Nếu không tìm thấy Tour với ID tương ứng trong DB, chuyển hướng người dùng về Trang chủ.
                 response.sendRedirect(request.getContextPath() + "/home");

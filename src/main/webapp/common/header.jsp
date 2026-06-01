@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -15,7 +16,7 @@
         String extraCss = (String) request.getAttribute("extraCss");
         if (extraCss != null && !extraCss.trim().isEmpty()) {
     %>
-    <link class="page-css" rel="stylesheet" href="${pageContext.request.contextPath}/<%= extraCss %>?v=1.1">
+    <link class="page-css" rel="stylesheet" href="${pageContext.request.contextPath}/<%= extraCss %>?v=1.2">
     <% 
         } else {
     %>
@@ -51,31 +52,45 @@
             </ul>
 
             <div class="nav-actions">
-                <button class="btn btn-text btn-login-text" id="login-button">Đăng Nhập</button>
-                <button class="btn btn-primary" id="register-button">Đăng Ký</button>
-
-                <div class="notification-bell" id="notification-btn" aria-label="Thông báo">
-                    <i data-lucide="bell"></i>
-                    <span class="badge-count" id="notification-count">3</span>
-                </div>
-
-                <div class="user-avatar-wrapper">
-                    <div class="user-avatar" id="user-avatar-btn">
-                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Ảnh đại diện">
-                    </div>
-                    <div class="avatar-dropdown" id="user-dropdown-menu">
-                        <div class="dropdown-user-info">
-                            <div class="name">Sarah Jenkins</div>
-                            <div class="email">sarah.j@traveler.com</div>
+                <c:choose>
+                    <c:when test="${empty sessionUser}">
+                        <button class="btn btn-text btn-login-text" id="login-button" onclick="window.location.href='${pageContext.request.contextPath}/login'">Đăng Nhập</button>
+                        <button class="btn btn-primary" id="register-button" onclick="window.location.href='${pageContext.request.contextPath}/register'">Đăng Ký</button>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="notification-bell" id="notification-btn" aria-label="Thông báo">
+                            <i data-lucide="bell"></i>
+                            <span class="badge-count" id="notification-count">3</span>
                         </div>
-                        <a href="#" id="dropdown-profile-link"><i data-lucide="user"></i> Hồ Sơ Của Tôi</a>
-                        <a href="#" id="dropdown-bookings-link"><i data-lucide="compass"></i> Đơn Đặt Chỗ</a>
-                        <a href="wishlist.html" id="dropdown-wishlist-link"><i data-lucide="heart"></i> Yêu Thích</a>
-                        <a href="admin.html" id="dropdown-admin-link"><i data-lucide="shield-alert"></i> Quản Trị (Admin)</a>
-                        <a href="#" id="dropdown-settings-link"><i data-lucide="settings"></i> Cài Đặt</a>
-                        <a href="#" class="logout-btn" id="dropdown-logout-btn"><i data-lucide="log-out"></i> Đăng Xuất</a>
-                    </div>
-                </div>
+
+                        <div class="user-avatar-wrapper">
+                            <div class="user-avatar" id="user-avatar-btn">
+                                <c:choose>
+                                    <c:when test="${not empty sessionUser.profile.avatarUrl}">
+                                        <img src="${sessionUser.profile.avatarUrl}" alt="Ảnh đại diện">
+                                    </c:when>
+                                    <c:otherwise>
+                                        <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80" alt="Ảnh đại diện">
+                                    </c:otherwise>
+                                </c:choose>
+                            </div>
+                            <div class="avatar-dropdown" id="user-dropdown-menu">
+                                <div class="dropdown-user-info">
+                                    <div class="name">${not empty sessionUser.fullName ? sessionUser.fullName : 'Người dùng TourBuddy'}</div>
+                                    <div class="email">${sessionUser.email}</div>
+                                </div>
+                                <a href="${pageContext.request.contextPath}/profile" id="dropdown-profile-link"><i data-lucide="user"></i> Hồ Sơ Của Tôi</a>
+                                <a href="${pageContext.request.contextPath}/bookings" id="dropdown-bookings-link"><i data-lucide="compass"></i> Đơn Đặt Chỗ</a>
+                                <a href="#" id="dropdown-wishlist-link"><i data-lucide="heart"></i> Yêu Thích</a>
+                                <c:if test="${sessionUser.role.roleName eq 'Admin'}">
+                                    <a href="${pageContext.request.contextPath}/admin/dashboard" id="dropdown-admin-link"><i data-lucide="shield-alert"></i> Quản Trị (Admin)</a>
+                                </c:if>
+                                <a href="#" id="dropdown-settings-link"><i data-lucide="settings"></i> Cài Đặt</a>
+                                <a href="${pageContext.request.contextPath}/logout" class="logout-btn" id="dropdown-logout-btn"><i data-lucide="log-out"></i> Đăng Xuất</a>
+                            </div>
+                        </div>
+                    </c:otherwise>
+                </c:choose>
 
                 <button class="mobile-nav-toggle" id="mobile-menu-toggle" aria-label="Bật/Tắt menu">
                     <i data-lucide="menu"></i>

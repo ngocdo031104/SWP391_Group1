@@ -1,8 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ page import="java.util.List" %>
 <%@ page import="Entities.Tour" %>
 <%@ page import="Entities.TourCategory" %>
 <%@ page import="Entities.TourSchedule" %>
+<%@ page import="Entities.TourMedia" %>
 <%
     request.setAttribute("extraCss", "css/tourdiscovery.css");
     request.setAttribute("bodyClass", "explore-page");
@@ -18,14 +20,9 @@
                         <i data-lucide="map-pin" class="input-icon"></i>
                         <input type="text" placeholder="Đà Nẵng, Phú Quốc, Hạ Long..." id="search-destination" list="destination-list" value="<%= request.getAttribute("searchDest") != null ? request.getAttribute("searchDest") : "" %>">
                         <datalist id="destination-list">
-                            <option value="Đà Nẵng">
-                            <option value="Phú Quốc">
-                            <option value="Hạ Long">
-                            <option value="Hội An">
-                            <option value="Đà Lạt">
-                            <option value="Sa Pa">
-                            <option value="Nha Trang">
-                            <option value="Hà Giang">
+                            <c:forEach var="dest" items="${destinations}">
+                                <option value="${dest}">
+                            </c:forEach>
                         </datalist>
                     </div>
                 </div>
@@ -179,18 +176,12 @@
                 <div class="filter-group filter-card">
                     <h4>Điểm khởi hành</h4>
                     <div class="checkbox-list">
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="departure" value="Hà Nội" class="filter-checkbox">
-                            <span>Hà Nội</span>
-                        </label>
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="departure" value="TP. Hồ Chí Minh" class="filter-checkbox">
-                            <span>TP. Hồ Chí Minh</span>
-                        </label>
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="departure" value="Đà Nẵng" class="filter-checkbox">
-                            <span>Đà Nẵng</span>
-                        </label>
+                        <c:forEach var="city" items="${departureCities}">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="departure" value="${city}" class="filter-checkbox">
+                                <span>${city}</span>
+                            </label>
+                        </c:forEach>
                     </div>
                 </div>
 
@@ -343,16 +334,7 @@
                 else if (destName.contains("Huế")) { lat = "38%"; lng = "46%"; }
                 else if (destName.contains("Hà Nội")) { lat = "15%"; lng = "38%"; }
                 
-                // Mock guides
-                String guideName = "Nguyễn Văn Hùng";
-                String guideAvatar = "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=80&q=80";
-                if (t.getTourId() % 3 == 1) {
-                    guideName = "Trần Minh Tâm";
-                    guideAvatar = "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=80&q=80";
-                } else if (t.getTourId() % 3 == 2) {
-                    guideName = "Lê Hoàng Nam";
-                    guideAvatar = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=80&q=80";
-                }
+                // No mock guides needed
         %>
         {
             id: <%= t.getTourId() %>,
@@ -369,7 +351,26 @@
             category: "<%= catStr %>",
             seatsLeft: <%= seatsLeft %>,
             seatsTotal: <%= seatsTotal %>,
-            guide: { name: "<%= guideName %>", avatar: "<%= guideAvatar %>" },
+            photos: [
+                <%
+                if (t.getMediaList() != null && !t.getMediaList().isEmpty()) {
+                    for (int j = 0; j < t.getMediaList().size(); j++) {
+                        TourMedia media = t.getMediaList().get(j);
+                        String mediaUrl = media.getMediaUrl();
+                        if (!mediaUrl.startsWith("http") && !mediaUrl.startsWith("/")) {
+                            mediaUrl = request.getContextPath() + "/" + mediaUrl;
+                        }
+                %>
+                "<%= mediaUrl %>"<%= (j < t.getMediaList().size() - 1) ? "," : "" %>
+                <%
+                    }
+                } else {
+                %>
+                "${pageContext.request.contextPath}/<%= imgUrl %>"
+                <%
+                }
+                %>
+            ],
             lat: "<%= lat %>",
             lng: "<%= lng %>",
             location: "<%= t.getDestination().split(",")[0] %>"

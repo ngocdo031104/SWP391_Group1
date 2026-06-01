@@ -56,7 +56,7 @@ public class TourDAO extends DBContext {
     public List<Tour> getFeaturedTours() {
         List<Tour> list = new ArrayList<>();
         String sql = "SELECT TourID, CategoryID, TourName, Description, Destination, DurationDays, Itinerary, DifficultyLevel, BasePrice, MaxParticipants, Status, IsFeatured, Languages, GroupSizeMin, GroupSizeMax, DepartureCity, Latitude, Longitude, VideoURL, CreatedBy, CreatedAt, UpdatedAt, "
-                   + "ISNULL((SELECT AVG(CAST(Rating AS FLOAT)) FROM Review r WHERE r.TourID = Tour.TourID), 4.8) as AvgRating, "
+                   + "ISNULL((SELECT AVG(CAST(Rating AS FLOAT)) FROM Review r WHERE r.TourID = Tour.TourID), 0.0) as AvgRating, "
                    + "(SELECT COUNT(*) FROM Review r WHERE r.TourID = Tour.TourID) as ReviewCount "
                    + "FROM Tour WHERE IsFeatured = 1 AND Status = 'Active'";
         try (PreparedStatement ps = connection.prepareStatement(sql);
@@ -87,7 +87,7 @@ public class TourDAO extends DBContext {
         // Base Query
         StringBuilder sql = new StringBuilder(
             "SELECT DISTINCT t.TourID, t.CategoryID, t.TourName, t.Description, t.Destination, t.DurationDays, t.Itinerary, t.DifficultyLevel, t.BasePrice, t.MaxParticipants, t.Status, t.IsFeatured, t.Languages, t.GroupSizeMin, t.GroupSizeMax, t.DepartureCity, t.Latitude, t.Longitude, t.VideoURL, t.CreatedBy, t.CreatedAt, t.UpdatedAt, " +
-            "ISNULL((SELECT AVG(CAST(Rating AS FLOAT)) FROM Review r WHERE r.TourID = t.TourID), 4.8) as AvgRating, " +
+            "ISNULL((SELECT AVG(CAST(Rating AS FLOAT)) FROM Review r WHERE r.TourID = t.TourID), 0.0) as AvgRating, " +
             "(SELECT COUNT(*) FROM Review r WHERE r.TourID = t.TourID) as ReviewCount " +
             "FROM Tour t " +
             "LEFT JOIN TourSchedule s ON t.TourID = s.TourID " +
@@ -141,7 +141,7 @@ public class TourDAO extends DBContext {
      */
     public Tour getTourById(int tourId) {
         String sql = "SELECT t.TourID, t.CategoryID, t.TourName, t.Description, t.Destination, t.DurationDays, t.Itinerary, t.DifficultyLevel, t.BasePrice, t.MaxParticipants, t.Status, t.IsFeatured, t.Languages, t.GroupSizeMin, t.GroupSizeMax, t.DepartureCity, t.Latitude, t.Longitude, t.VideoURL, t.CreatedBy, t.CreatedAt, t.UpdatedAt, "
-                   + "ISNULL((SELECT AVG(CAST(Rating AS FLOAT)) FROM Review r WHERE r.TourID = t.TourID), 4.8) as AvgRating, "
+                   + "ISNULL((SELECT AVG(CAST(Rating AS FLOAT)) FROM Review r WHERE r.TourID = t.TourID), 0.0) as AvgRating, "
                    + "(SELECT COUNT(*) FROM Review r WHERE r.TourID = t.TourID) as ReviewCount, "
                    + "c.CategoryName, c.Description AS CategoryDesc "
                    + "FROM Tour t "
@@ -196,12 +196,10 @@ public class TourDAO extends DBContext {
                    + "ts.PriceAdult, ts.PriceChild, ts.PriceInfant, ts.Transportation, ts.Status, ts.CreatedAt, "
                    + "ts.GuideID, ts.TourStatus, "
                    + "u.Email, u.FullName, u.PhoneNumber, "
-                   + "up.AvatarURL, "
-                   + "gp.YearsOfExperience, gp.TotalToursLed, gp.Rating, gp.Bio "
+                   + "up.AvatarURL "
                    + "FROM TourSchedule ts "
                    + "LEFT JOIN [User] u ON ts.GuideID = u.UserID "
                    + "LEFT JOIN UserProfile up ON u.UserID = up.UserID "
-                   + "LEFT JOIN GuideProfile gp ON u.UserID = gp.UserID "
                    + "WHERE ts.TourID = ? AND ts.DepartureDate >= CAST(GETDATE() AS DATE) "
                    + "ORDER BY ts.DepartureDate ASC";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -240,18 +238,6 @@ public class TourDAO extends DBContext {
                         u.setProfile(up);
                         
                         sched.setGuide(u);
-                        
-                        int yearsOfExp = rs.getInt("YearsOfExperience");
-                        if (!rs.wasNull()) {
-                            GuideProfile gp = new GuideProfile();
-                            gp.setUserId(guideId);
-                            gp.setYearsOfExperience(yearsOfExp);
-                            gp.setTotalToursLed(rs.getInt("TotalToursLed"));
-                            gp.setRating(rs.getDouble("Rating"));
-                            gp.setBio(rs.getString("Bio"));
-                            
-                            sched.setGuideProfile(gp);
-                        }
                     }
                     list.add(sched);
                 }
@@ -316,8 +302,8 @@ public class TourDAO extends DBContext {
         
         double avgRating = rs.getDouble("AvgRating");
         int reviewCount = rs.getInt("ReviewCount");
-        tour.setRating(reviewCount > 0 ? avgRating : 4.8);
-        tour.setReviewsCount(reviewCount > 0 ? reviewCount : 45);
+        tour.setRating(reviewCount > 0 ? avgRating : 0.0);
+        tour.setReviewsCount(reviewCount);
         
         tour.setCreatedBy(rs.getObject("CreatedBy") != null ? rs.getInt("CreatedBy") : null);
         tour.setCreatedAt(rs.getTimestamp("CreatedAt"));
@@ -703,6 +689,84 @@ public class TourDAO extends DBContext {
                     
                     c.setCreatedAt(rs.getTimestamp("CreatedAt"));
                     list.add(c);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return list;
+    }
+
+    public Coupon getCouponByCode(String code) {
+        if (code == null || code.trim().isEmpty()) return null;
+        String sql = "SELECT CouponID, CouponCode, DiscountType, DiscountValue, MinOrderAmount, MaxUses, UsedCount, StartDate, EndDate, IsActive, CreatedBy, CreatedAt "
+                   + "FROM Coupon "
+                   + "WHERE CouponCode = ? AND IsActive = 1 "
+                   + "AND StartDate <= CAST(GETDATE() AS DATE) "
+                   + "AND EndDate >= CAST(GETDATE() AS DATE)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, code.trim());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Coupon c = new Coupon();
+                    c.setCouponId(rs.getInt("CouponID"));
+                    c.setCouponCode(rs.getString("CouponCode"));
+                    c.setDiscountType(rs.getString("DiscountType"));
+                    c.setDiscountValue(rs.getDouble("DiscountValue"));
+                    c.setMinOrderAmount(rs.getDouble("MinOrderAmount"));
+                    
+                    int maxUses = rs.getInt("MaxUses");
+                    c.setMaxUses(rs.wasNull() ? null : maxUses);
+                    
+                    c.setUsedCount(rs.getInt("UsedCount"));
+                    c.setStartDate(rs.getDate("StartDate"));
+                    c.setEndDate(rs.getDate("EndDate"));
+                    c.setIsActive(rs.getBoolean("IsActive"));
+                    
+                    int createdBy = rs.getInt("CreatedBy");
+                    c.setCreatedBy(rs.wasNull() ? null : createdBy);
+                    
+                    c.setCreatedAt(rs.getTimestamp("CreatedAt"));
+                    return c;
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    public List<String> getDistinctDestinations() {
+        List<String> list = new ArrayList<>();
+        String sql = "SELECT DISTINCT Destination FROM Tour WHERE Status = 'Active'";
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                String dest = rs.getString("Destination");
+                if (dest != null && !dest.trim().isEmpty()) {
+                    String clean = dest.split(",")[0].trim();
+                    if (!list.contains(clean)) {
+                        list.add(clean);
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return list;
+    }
+
+    public List<String> getDistinctDepartureCities() {
+        List<String> list = new ArrayList<>();
+        String sql = "SELECT DISTINCT DepartureCity FROM Tour WHERE Status = 'Active'";
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                String city = rs.getString("DepartureCity");
+                if (city != null && !city.trim().isEmpty()) {
+                    if (!list.contains(city)) {
+                        list.add(city);
+                    }
                 }
             }
         } catch (SQLException ex) {

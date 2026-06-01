@@ -52,6 +52,8 @@ public class TourDiscoveryController extends HttpServlet {
             request.setAttribute("searchDest", dest != null ? dest : "");
             request.setAttribute("searchDate", departureDate != null ? departureDate : "");
             request.setAttribute("searchBudget", budgetStr != null ? budgetStr : "");
+            request.setAttribute("destinations", tourDAO.getDistinctDestinations());
+            request.setAttribute("departureCities", tourDAO.getDistinctDepartureCities());
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

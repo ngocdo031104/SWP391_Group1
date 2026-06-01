@@ -155,7 +155,10 @@
                                 else if (dest.contains("nha trang")) imgUrl = "assets/images/tour_nhatrang.png";
                                 else if (dest.contains("hà giang")) imgUrl = "assets/images/tour_hagiang.png";
                             }
-                            String imageUrl = request.getContextPath() + "/" + imgUrl;
+                            // If URL is absolute (http/https), use directly; otherwise prefix with contextPath
+                            String imageUrl = (imgUrl.startsWith("http://") || imgUrl.startsWith("https://"))
+                                ? imgUrl
+                                : request.getContextPath() + "/" + imgUrl;
                             
                             // Remaining seats and progress
                             int availableSeats = 10;

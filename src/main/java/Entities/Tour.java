@@ -28,8 +28,8 @@ public class Tour implements Serializable {
     private String videoUrl;
     
     // Derived fields
-    private double rating = 4.8;
-    private int reviewsCount = 45;
+    private double rating = 0.0;
+    private int reviewsCount = 0;
 
     private Integer createdBy;
     private Timestamp createdAt;

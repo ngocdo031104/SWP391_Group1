@@ -774,6 +774,163 @@ svg.star-filled {
     box-shadow: 0 16px 48px rgba(15, 23, 42, 0.1);
 }
 
+/* ---- Payment CTA section ---- */
+.payment-section-box {
+    margin-top: 1.5rem;
+    padding: 1.25rem;
+    background: var(--slate-50);
+    border: 1px solid var(--slate-200);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    transition: all 0.3s ease;
+}
+
+.payment-trust-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.725rem;
+    font-weight: 600;
+    color: var(--slate-550, #5c6c80);
+}
+
+.trust-dot {
+    width: 6px;
+    height: 6px;
+    background-color: #22c55e;
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 8px #22c55e;
+    animation: dotPulse 1.5s infinite alternate;
+}
+
+.btn-payment-cta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.9rem 1.25rem;
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.01em;
+    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+}
+
+.btn-payment-cta::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.25),
+        transparent
+    );
+    transition: 0.5s;
+}
+
+.btn-payment-cta:hover::before {
+    left: 100%;
+    transition: 0.75s ease-in-out;
+}
+
+.btn-payment-text {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.btn-payment-text svg {
+    width: 18px;
+    height: 18px;
+    color: rgba(255, 255, 255, 0.95);
+    flex-shrink: 0;
+}
+
+.btn-payment-arrow {
+    width: 16px;
+    height: 16px;
+    color: rgba(255, 255, 255, 0.9);
+    transition: transform 0.25s ease;
+    flex-shrink: 0;
+}
+
+.btn-payment-cta:hover {
+    background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+}
+
+.btn-payment-cta:hover .btn-payment-arrow {
+    transform: translateX(4px);
+}
+
+.btn-payment-cta:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 10px rgba(99, 102, 241, 0.35);
+}
+
+.payment-trust-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    font-size: 0.7rem;
+    color: var(--slate-500);
+    margin-top: 0.15rem;
+}
+
+.trust-item {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+}
+
+.trust-item svg {
+    width: 11px;
+    height: 11px;
+    color: var(--slate-400);
+}
+
+.trust-divider {
+    color: var(--slate-300);
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.6;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes dotPulse {
+    0% {
+        transform: scale(0.9);
+        opacity: 0.7;
+    }
+    100% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
+}
+
+
 .booking-card-price-header {
     display: flex;
     justify-content: space-between;
@@ -1079,3 +1236,15 @@ svg.star-filled {
         grid-template-columns: 1fr;
     }
 }
+
+/* Adaptive Gallery: fallback for single image layout */
+.masonry-gallery.single-image {
+    display: block;
+    min-height: 450px;
+    height: 450px;
+}
+.masonry-gallery.single-image .main-photo {
+    width: 100%;
+    height: 100%;
+}
+
