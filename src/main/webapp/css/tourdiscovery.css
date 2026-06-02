@@ -1,4 +1,4 @@
-﻿/* ==========================================================================
+/* ==========================================================================
    EXPLORE PAGE STYLES (SPLIT VIEW + FILTERS + MAP)
    ========================================================================== */
 .explore-page {
@@ -609,23 +609,58 @@
 }
 
 .btn-cta-detail {
-    width: 100%;
-    padding: 0.7rem;
-    font-size: 0.875rem;
-    background: #f0fdf4;
-    color: #166534;
-    border: 1px solid #bbf7d0;
-    font-weight: 700;
-    transition: all 0.25s ease;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    background-color: var(--primary);
+    color: #ffffff;
+    border: none;
+    font-weight: 600;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     border-radius: var(--radius-md);
+    cursor: pointer;
+    box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
 }
 
 .btn-cta-detail:hover {
-    background: var(--primary);
+    background-color: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 12px -2px rgba(79, 70, 229, 0.3);
     color: #ffffff;
-    border-color: var(--primary);
-    box-shadow: 0 4px 10px rgba(2, 132, 199, 0.25);
-    transform: translateY(-2px);
+}
+
+/* Added styles for homepage card layout sync */
+.tour-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--slate-600);
+    margin-bottom: 0.5rem;
+}
+
+.tour-rating {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-weight: 600;
+    color: var(--slate-900);
+}
+
+.tour-rating i, .tour-rating svg {
+    color: var(--accent);
+    fill: var(--accent);
+}
+
+.tour-duration {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.tour-price .price-val span {
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: var(--slate-600);
 }
 
 /* 6. Collapsible Sidebar Map Section (Desktop 420px) */

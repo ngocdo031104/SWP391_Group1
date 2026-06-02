@@ -419,45 +419,55 @@ document.addEventListener('DOMContentLoaded', () => {
                 difficultyClass = "hard";
             }
 
+            let priceText = formatPrice(tour.priceVND);
+            let priceSpan = `<span>₫</span>`;
+            if (priceText.endsWith(' ₫')) {
+                priceText = priceText.replace(' ₫', '');
+            } else if (priceText.startsWith('$')) {
+                priceText = priceText.replace('$', '');
+                priceSpan = `<span>$</span>`;
+            }
+
             card.innerHTML = `
                 <div class="tour-img-wrapper">
                     <img src="${tour.image}" alt="${tour.title}" class="tour-img" loading="lazy">
                     <div class="tour-badge">
-                        <span class="badge badge-${difficultyClass}">${difficultyText}</span>
+                        <span class="badge badge-featured">${difficultyText}</span>
                     </div>
                     <button class="btn-wishlist" aria-label="Thêm vào yêu thích">
                         <i data-lucide="heart"></i>
                     </button>
                 </div>
                 <div class="tour-details">
-                    <div class="tour-location-badge">
-                        <i data-lucide="map-pin"></i>
-                        <span>${tour.location}</span>
+                    <div class="tour-meta">
+                        <div class="tour-rating">
+                            <i data-lucide="star"></i>
+                            <span>${tour.rating} (${tour.reviews} đánh giá)</span>
+                        </div>
+                        <div class="tour-duration">
+                            <i data-lucide="clock"></i>
+                            <span>${tour.duration} Ngày</span>
+                        </div>
                     </div>
                     <h3>${tour.title}</h3>
-                    <div class="tour-card-meta-row">
-                        <span><i data-lucide="star"></i> ${tour.rating} (${tour.reviews})</span>
-                        <span><i data-lucide="clock"></i> ${tour.duration} ngày</span>
-                        <span><i data-lucide="users"></i> Còn ${tour.seatsLeft} chỗ</span>
-                    </div>
-
                     <div class="tour-seats-progress">
                         <div class="seats-info">
-                            <span>Tình trạng chỗ</span>
-                            <span class="${isSeatsCritical ? 'seats-left' : ''}">${tour.seatsLeft}/${tour.seatsTotal}</span>
+                            <span>Chỗ trống</span>
+                            <span class="seats-left ${isSeatsCritical ? 'danger' : ''}">
+                                ${tour.seatsLeft > 0 ? "Còn " + tour.seatsLeft + " chỗ!" : "Hết chỗ!"}
+                            </span>
                         </div>
                         <div class="progress-bar-bg">
                             <div class="progress-bar-fill ${isSeatsCritical ? 'danger' : ''}" style="width: ${progressPercent}%;"></div>
                         </div>
                     </div>
-
                     <div class="tour-footer">
                         <div class="tour-price">
                             <span class="price-label">Giá mỗi khách</span>
-                            <span class="price-val">${formatPrice(tour.priceVND)}</span>
+                            <span class="price-val">${priceText} ${priceSpan}</span>
                         </div>
+                        <button class="btn btn-primary btn-sm btn-cta-detail" onclick="window.location.href='detail?id=${tour.id}'">Xem Chi Tiết</button>
                     </div>
-                    <button class="btn btn-primary btn-cta-detail" onclick="window.location.href='detail?id=${tour.id}'">Xem Chi Tiết</button>
                 </div>
             `;
 
