@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
-@WebServlet("/login")
+@WebServlet(urlPatterns = {"/login", "/logout"})
 public class LoginController extends HttpServlet {
 
     private final UserDAO userDAO = new UserDAO();
@@ -23,6 +23,28 @@ public class LoginController extends HttpServlet {
     protected void doGet(HttpServletRequest request,
                          HttpServletResponse response)
             throws ServletException, IOException {
+
+        String path = request.getServletPath();
+        if ("/logout".equals(path)) {
+            HttpSession session = request.getSession(false);
+            if (session != null) {
+                session.invalidate();
+            }
+            // Clear TB cookie if any
+            Cookie[] cookies = request.getCookies();
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if ("tb_email".equals(cookie.getName())) {
+                        cookie.setMaxAge(0);
+                        String cpath = request.getContextPath();
+                        cookie.setPath(cpath != null && !cpath.isEmpty() ? cpath : "/");
+                        response.addCookie(cookie);
+                    }
+                }
+            }
+            response.sendRedirect(request.getContextPath() + "/home");
+            return;
+        }
 
         HttpSession session = request.getSession(false);
 

@@ -1,4 +1,4 @@
-﻿-- ============================================================
+-- ============================================================
 -- TourBuddy - Online Tour Booking System
 -- Database Script for Microsoft SQL Server 2022
 -- SWP391 - FPT University - Group 1
@@ -8,15 +8,15 @@
 USE master;
 GO
 
-IF EXISTS (SELECT name FROM sys.databases WHERE name = N'TourBuddyDB')
-    DROP DATABASE TourBuddyDB;
+IF EXISTS (SELECT name FROM sys.databases WHERE name = N'TourBuddyDB21')
+    DROP DATABASE TourBuddyDB21;
 GO
 
-CREATE DATABASE TourBuddyDB
+CREATE DATABASE TourBuddyDB21
     COLLATE Vietnamese_CI_AS;
 GO
 
-USE TourBuddyDB;
+USE TourBuddyDB21;
 GO
 
 -- ============================================================
@@ -129,6 +129,13 @@ CREATE TABLE Tour (
                       Status          NVARCHAR(20)   NOT NULL DEFAULT 'Active'
                         CHECK (Status IN ('Active','Inactive','Draft')),
                       IsFeatured      BIT            NOT NULL DEFAULT 0,
+                      Languages       NVARCHAR(200)  NULL,
+                      GroupSizeMin    INT            DEFAULT 1,
+                      GroupSizeMax    INT            DEFAULT 20,
+                      DepartureCity   NVARCHAR(100)  NULL,
+                      Latitude        DECIMAL(10,8)  NULL,
+                      Longitude       DECIMAL(11,8)  NULL,
+                      VideoURL        NVARCHAR(500)  NULL,
                       CreatedBy       INT            NULL REFERENCES [User](UserID),
                       CreatedAt       DATETIME2      NOT NULL DEFAULT SYSDATETIME(),
                       UpdatedAt       DATETIME2      NOT NULL DEFAULT SYSDATETIME()
@@ -148,6 +155,7 @@ CREATE TABLE TourSchedule (
                               Transportation  NVARCHAR(100) NULL,
                               Status          NVARCHAR(20)  NOT NULL DEFAULT 'Open'
                         CHECK (Status IN ('Open','Full','Closed','Cancelled')),
+                              TourStatus      NVARCHAR(20)  DEFAULT 'Scheduled' CHECK (TourStatus IN ('Scheduled','InProgress','Completed','Cancelled')),
                               CreatedAt       DATETIME2     NOT NULL DEFAULT SYSDATETIME(),
                               CONSTRAINT CHK_AvailableSeats CHECK (AvailableSeats <= TotalSeats AND AvailableSeats >= 0),
                               CONSTRAINT CHK_ReturnAfterDepart CHECK (ReturnDate >= DepartureDate)
@@ -161,10 +169,56 @@ CREATE TABLE TourMedia (
                            MediaType   NVARCHAR(20)  NOT NULL DEFAULT 'Image'
                     CHECK (MediaType IN ('Image','Video')),
                            Caption     NVARCHAR(255) NULL,
+                           IsPrimary   BIT           NOT NULL DEFAULT 0,
                            SortOrder   INT           NOT NULL DEFAULT 0,
                            IsVisible   BIT           NOT NULL DEFAULT 1,
                            UploadedBy  INT           NULL REFERENCES [User](UserID),
                            UploadedAt  DATETIME2     NOT NULL DEFAULT SYSDATETIME()
+);
+GO
+
+-- ============================================================
+-- 3.5. TOUR DETAILS (Added for Maven support)
+-- ============================================================
+
+CREATE TABLE TourItinerary (
+    ItineraryID INT IDENTITY(1,1) PRIMARY KEY,
+    TourID INT NOT NULL REFERENCES Tour(TourID) ON DELETE CASCADE,
+    DayNumber INT NOT NULL CHECK (DayNumber > 0),
+    Title NVARCHAR(200) NOT NULL,
+    ShortDescription NVARCHAR(500) NULL,
+    Description NVARCHAR(MAX) NULL,
+    Activities NVARCHAR(MAX) NULL,
+    Meals NVARCHAR(100) NULL,
+    Accommodation NVARCHAR(200) NULL,
+    ImageURL NVARCHAR(500) NULL,
+    SortOrder INT DEFAULT 0,
+    CreatedAt DATETIME2 DEFAULT SYSDATETIME(),
+    UpdatedAt DATETIME2 DEFAULT SYSDATETIME()
+);
+GO
+
+CREATE TABLE TourInclusion (
+    InclusionID INT IDENTITY(1,1) PRIMARY KEY,
+    TourID INT NOT NULL REFERENCES Tour(TourID) ON DELETE CASCADE,
+    InclusionType NVARCHAR(20) NOT NULL CHECK (InclusionType IN ('INCLUDED', 'EXCLUDED')),
+    ServiceName NVARCHAR(200) NOT NULL,
+    Description NVARCHAR(500) NULL,
+    IconName NVARCHAR(50) NULL,
+    SortOrder INT DEFAULT 0,
+    IsActive BIT DEFAULT 1,
+    CreatedAt DATETIME2 DEFAULT SYSDATETIME()
+);
+GO
+
+CREATE TABLE TourFAQ (
+    FAQID INT IDENTITY(1,1) PRIMARY KEY,
+    TourID INT NOT NULL REFERENCES Tour(TourID) ON DELETE CASCADE,
+    Question NVARCHAR(500) NOT NULL,
+    Answer NVARCHAR(MAX) NOT NULL,
+    SortOrder INT DEFAULT 0,
+    IsActive BIT DEFAULT 1,
+    CreatedAt DATETIME2 DEFAULT SYSDATETIME()
 );
 GO
 
@@ -608,6 +662,9 @@ CREATE INDEX IX_Notification_IsRead ON Notification(IsRead);
 CREATE INDEX IX_ChatMessage_ConvID  ON ChatMessage(ConversationID);
 CREATE INDEX IX_Review_TourID       ON Review(TourID);
 CREATE INDEX IX_CommunityPost_Author ON CommunityPost(AuthorID);
+CREATE INDEX IX_TourItinerary_TourID ON TourItinerary(TourID);
+CREATE INDEX IX_TourInclusion_TourID ON TourInclusion(TourID);
+CREATE INDEX IX_TourFAQ_TourID ON TourFAQ(TourID);
 GO
 
 -- ============================================================

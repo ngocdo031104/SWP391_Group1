@@ -4,17 +4,21 @@ target/
 *.jar
 *.war
 
-# IDE settings
-.vscode/
-.idea/
-nbproject/private/
-
-# Environment variables
-.env
-
 # Build and deployment folders
 /build/
 /dist/
+nbproject/private/
+
+# IDE settings / files
+.vscode/
+.idea/
+/*.iml
+/.settings/
+/.classpath
+/.project
+
+# Environment variables & Env files
+.env
 
 # CodeGraph local indexes
 /.codegraph/

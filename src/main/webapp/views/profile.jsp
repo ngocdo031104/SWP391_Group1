@@ -7,7 +7,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hồ Sơ — TourBuddy</title>
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/tourbuddy.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/tourbuddy.css?v=1.4">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     .activity-item {
@@ -20,10 +20,10 @@
       display: flex; align-items: center; justify-content: center;
       font-size: .9rem;
     }
-    .activity-icon.booking  { background: rgba(26,107,107,.12); color: var(--clr-primary); }
-    .activity-icon.payment  { background: rgba(30,125,75,.12);  color: var(--clr-success); }
-    .activity-icon.review   { background: rgba(200,98,42,.12);  color: var(--clr-accent); }
-    .activity-icon.login    { background: rgba(107,107,107,.12);color: var(--clr-muted); }
+    .activity-icon.booking  { background: var(--clr-primary-l); color: var(--clr-primary); }
+    .activity-icon.payment  { background: rgba(34, 197, 94, 0.12);  color: var(--clr-success); }
+    .activity-icon.review   { background: var(--clr-accent-l);  color: var(--clr-accent); }
+    .activity-icon.login    { background: rgba(100, 116, 139, 0.12);color: var(--clr-muted); }
     .activity-info { flex: 1; }
     .activity-info p { font-size: .875rem; color: var(--clr-text); margin-bottom: 2px; }
     .activity-info time { font-size: .78rem; color: var(--clr-muted); }
@@ -37,7 +37,7 @@
       padding: 32px; text-align: center; cursor: pointer;
       transition: all var(--transition);
     }
-    .upload-zone:hover { border-color: var(--clr-primary); background: rgba(26,107,107,.03); }
+    .upload-zone:hover { border-color: var(--clr-primary); background: var(--clr-primary-l); }
     .upload-zone i { font-size: 2rem; color: var(--clr-muted); margin-bottom: 10px; }
     .upload-zone p { font-size: .875rem; color: var(--clr-muted); }
 
@@ -79,13 +79,13 @@
 
 <!-- Navbar -->
 <nav class="navbar">
-  <a class="navbar-brand" href="${pageContext.request.contextPath}/home">
-    <i class="fa-solid fa-compass"></i>
-    Tour<span class="logo-dot">Buddy</span>
+  <a href="${pageContext.request.contextPath}/home" class="logo" id="nav-logo">
+    <div class="logo-icon">T</div>
+    <span>TourBuddy</span>
   </a>
   <div class="navbar-nav">
     <a href="${pageContext.request.contextPath}/home">Trang Chủ</a>
-    <a href="${pageContext.request.contextPath}/tours">Tours</a>
+    <a href="${pageContext.request.contextPath}/tourdiscovery">Tours</a>
     <a href="${pageContext.request.contextPath}/bookings">Booking</a>
     <a href="${pageContext.request.contextPath}/profile" class="active">Hồ Sơ</a>
     <a href="${pageContext.request.contextPath}/logout" style="color:var(--clr-error)">

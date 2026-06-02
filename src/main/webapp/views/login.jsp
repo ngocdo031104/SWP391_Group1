@@ -6,20 +6,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Đăng Nhập — TourBuddy</title>
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/tourbuddy.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/tourbuddy.css?v=1.4">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 
 <!-- Navbar -->
 <nav class="navbar">
-  <a class="navbar-brand" href="${pageContext.request.contextPath}/home">
-    <i class="fa-solid fa-compass"></i>
-    Tour<span class="logo-dot">Buddy</span>
+  <a href="${pageContext.request.contextPath}/home" class="logo" id="nav-logo">
+    <div class="logo-icon">T</div>
+    <span>TourBuddy</span>
   </a>
   <div class="navbar-nav">
     <a href="${pageContext.request.contextPath}/home">Trang Chủ</a>
-    <a href="${pageContext.request.contextPath}/tours">Tours</a>
+    <a href="${pageContext.request.contextPath}/tourdiscovery">Tours</a>
     <a href="${pageContext.request.contextPath}/login" class="active">Đăng Nhập</a>
   </div>
 </nav>

@@ -6,7 +6,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Đăng Ký — TourBuddy</title>
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/tourbuddy.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/tourbuddy.css?v=1.4">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     /* Password strength indicator */
@@ -49,7 +49,7 @@
     .role-card:has(input:checked),
     .role-card.selected {
       border-color: var(--clr-primary);
-      background: rgba(26,107,107,.05);
+      background: var(--clr-primary-l);
     }
     .role-card i { font-size: 1.6rem; color: var(--clr-primary); margin-bottom: 8px; display: block; }
     .role-card strong { display: block; font-size: .875rem; color: var(--clr-text); }
@@ -59,9 +59,9 @@
 <body>
 
 <nav class="navbar">
-  <a class="navbar-brand" href="${pageContext.request.contextPath}/home">
-    <i class="fa-solid fa-compass"></i>
-    Tour<span class="logo-dot">Buddy</span>
+  <a href="${pageContext.request.contextPath}/home" class="logo" id="nav-logo">
+    <div class="logo-icon">T</div>
+    <span>TourBuddy</span>
   </a>
   <div class="navbar-nav">
     <a href="${pageContext.request.contextPath}/home">Trang Chủ</a>
