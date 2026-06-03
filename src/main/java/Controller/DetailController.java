@@ -85,7 +85,7 @@ public class DetailController extends HttpServlet {
         }
         
         // Chuyển tiếp yêu cầu (forward) sang trang giao diện detail.jsp nằm trong thư mục web/views/
-        request.getRequestDispatcher("views/detail.jsp").forward(request, response);
+        request.getRequestDispatcher("/views/detail.jsp").forward(request, response);
     }
 
     /**
