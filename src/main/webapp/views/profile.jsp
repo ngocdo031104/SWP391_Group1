@@ -105,9 +105,9 @@
     <div class="profile-header fade-up">
       <div class="avatar-wrap">
         <c:choose>
-          <c:when test="${not empty sessionUser.profile.avatarURL}">
+          <c:when test="${not empty sessionUser.profile.avatarUrl}">
             <img class="avatar"
-                 src="${sessionUser.profile.avatarURL}"
+                 src="${sessionUser.profile.avatarUrl}"
                  alt="${sessionUser.fullName}">
           </c:when>
           <c:otherwise>

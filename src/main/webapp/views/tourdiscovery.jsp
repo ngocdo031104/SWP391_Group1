@@ -293,12 +293,16 @@
                 }
                 
                 // Map category
-                String catStr = "luxury";
-                if (t.getCategoryId() == 1) catStr = "beach";
-                else if (t.getCategoryId() == 2) catStr = "hiking";
-                else if (t.getCategoryId() == 3) catStr = "cultural";
-                else if (t.getCategoryId() == 4) catStr = "adventure";
-                else if (t.getCategoryId() == 5) catStr = "luxury";
+                 String catStr = "luxury";
+                 if (t.getCategoryId() == 1) catStr = "beach";
+                 else if (t.getCategoryId() == 2) catStr = "hiking";
+                 else if (t.getCategoryId() == 3) catStr = "cultural";
+                 else if (t.getCategoryId() == 4) catStr = "adventure";
+                 else if (t.getCategoryId() == 5) catStr = "family";
+                 else if (t.getCategoryId() == 6) catStr = "adventure";
+                 else if (t.getCategoryId() == 7) catStr = "wellness";
+                 else if (t.getCategoryId() == 8) catStr = "food";
+                 else if (t.getCategoryId() == 9) catStr = "shopping";
                 
                 // Get seats and departure city
                 int seatsLeft = 10;

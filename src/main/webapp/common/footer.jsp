@@ -68,12 +68,12 @@
         </div>
     </footer>
 
-    <script src="${pageContext.request.contextPath}/js/navigation.js?v=1.1"></script>
+    <script src="${pageContext.request.contextPath}/js/navigation.js?v=1.5"></script>
     <% 
         String extraScript = (String) request.getAttribute("extraScript");
         if (extraScript != null && !extraScript.trim().isEmpty()) {
     %>
-    <script src="${pageContext.request.contextPath}/<%= extraScript %>?v=1.2"></script>
+    <script src="${pageContext.request.contextPath}/<%= extraScript %>?v=1.5"></script>
     <% 
         }
     %>

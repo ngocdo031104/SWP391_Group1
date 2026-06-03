@@ -9,18 +9,18 @@
     <meta name="description" content="Khám phá tour du lịch cao cấp, resort sang trọng và ưu đãi hấp dẫn khắp Việt Nam. Đặt hành trình đáng nhớ cùng TourBuddy ngay hôm nay.">
     <!-- Using Lucide CDN for icons reliability -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/header.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/footer.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=1.5">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/header.css?v=1.5">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/footer.css?v=1.5">
     <% 
         String extraCss = (String) request.getAttribute("extraCss");
         if (extraCss != null && !extraCss.trim().isEmpty()) {
     %>
-    <link class="page-css" rel="stylesheet" href="${pageContext.request.contextPath}/<%= extraCss %>?v=1.2">
+    <link class="page-css" rel="stylesheet" href="${pageContext.request.contextPath}/<%= extraCss %>?v=1.7">
     <% 
         } else {
     %>
-    <link class="page-css" rel="stylesheet" href="${pageContext.request.contextPath}/css/homepage.css?v=1.1">
+    <link class="page-css" rel="stylesheet" href="${pageContext.request.contextPath}/css/homepage.css?v=1.7">
     <% 
         }
         String bodyClass = (String) request.getAttribute("bodyClass");
@@ -82,7 +82,7 @@
                                 <a href="${pageContext.request.contextPath}/profile" id="dropdown-profile-link"><i data-lucide="user"></i> Hồ Sơ Của Tôi</a>
                                 <a href="${pageContext.request.contextPath}/bookings" id="dropdown-bookings-link"><i data-lucide="compass"></i> Đơn Đặt Chỗ</a>
                                 <a href="#" id="dropdown-wishlist-link"><i data-lucide="heart"></i> Yêu Thích</a>
-                                <c:if test="${sessionUser.role.roleName eq 'Admin'}">
+                                <c:if test="${sessionUser.roleId eq 1 || userRole eq 'Admin'}">
                                     <a href="${pageContext.request.contextPath}/admin/dashboard" id="dropdown-admin-link"><i data-lucide="shield-alert"></i> Quản Trị (Admin)</a>
                                 </c:if>
                                 <a href="#" id="dropdown-settings-link"><i data-lucide="settings"></i> Cài Đặt</a>

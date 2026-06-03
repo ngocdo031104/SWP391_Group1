@@ -2,17 +2,17 @@
 
 :root {
     /* Color Palette */
-    --primary: #4f46e5;
-    --primary-hover: #4338ca;
-    --primary-light: rgba(79, 70, 229, 0.1);
+    --primary: #5f3bf6;
+    --primary-hover: #4e2ad2;
+    --primary-light: rgba(95, 59, 246, 0.1);
     --accent: #f59e0b;
     --danger: #ef4444;
     --danger-hover: #dc2626;
     
-    /* Slate Neutrals */
-    --slate-50: #f8fafc;
-    --slate-100: #f1f5f9;
-    --slate-200: #e2e8f0;
+    /* Slate Neutrals (Soft Lavender-Gray Tinted) */
+    --slate-50: #f5f4fb;
+    --slate-100: #ededf8;
+    --slate-200: #e1def2;
     --slate-300: #cbd5e1;
     --slate-400: #94a3b8;
     --slate-500: #64748b;
@@ -22,9 +22,9 @@
     --slate-900: #0f172a;
     
     /* Dynamic UI Backgrounds */
-    --bg-glass: rgba(255, 255, 255, 0.75);
+    --bg-glass: rgba(245, 244, 251, 0.8);
     --bg-card: #ffffff;
-    --bg-body: #f8fafc;
+    --bg-body: #f5f4fb;
     
     /* Borders & Shadow */
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);

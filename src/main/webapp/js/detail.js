@@ -207,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     document.getElementById('hl-difficulty').textContent = difficultyText;
     document.getElementById('hl-duration').textContent = `${activeTour.duration} Ngày`;
-    document.getElementById('hl-group-size').textContent = `${activeTour.seatsTotal} Khách`;
+    document.getElementById('hl-group-size').textContent = `${activeTour.seatsLeft} Chỗ`;
     const hlLang = document.getElementById('hl-languages');
     if (hlLang && activeTour.languages) {
         hlLang.textContent = activeTour.languages;
@@ -272,7 +272,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Update prices on page load
     function renderStaticPrices() {
-        document.getElementById('booking-base-price').textContent = formatPrice(activeTour.priceVND);
+        const basePriceEl = document.getElementById('booking-base-price');
+        if (basePriceEl) {
+            basePriceEl.textContent = formatPrice(activeTour.priceVND);
+        }
     }
     renderStaticPrices();
 
@@ -534,15 +537,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'ArrowLeft') prevSlide();
     });
 
-    // Play video simulated alert
-    const playVideoBtn = document.getElementById('play-video-btn');
-    if (playVideoBtn) {
-        playVideoBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            alert("Đang tải video giới thiệu hành trình du lịch cao cấp của TourBuddy...");
-        });
-    }
-
     /* ==========================================================================
        REVIEWS SECTION RENDER & ADD COMMENT FORM
        ========================================================================== */
@@ -711,33 +705,4 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    /* ==========================================================================
-       MOBILE RESPONSIVE CONTROLS
-       ========================================================================== */
-    const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-    const navMenu = document.getElementById('nav-menu');
-
-    if (mobileMenuToggle && navMenu) {
-        mobileMenuToggle.addEventListener('click', () => {
-            if (navMenu.style.display === 'flex') {
-                navMenu.style.display = 'none';
-            } else {
-                navMenu.style.display = 'flex';
-                navMenu.style.flexDirection = 'column';
-                navMenu.style.position = 'absolute';
-                navMenu.style.top = '70px';
-                navMenu.style.left = '0';
-                navMenu.style.width = '100%';
-                navMenu.style.backgroundColor = 'var(--bg-glass)';
-                navMenu.style.backdropFilter = 'blur(12px)';
-                navMenu.style.padding = '1.5rem var(--space-md)';
-                navMenu.style.boxShadow = 'var(--shadow-lg)';
-                navMenu.style.gap = '1rem';
-                
-                navMenu.querySelectorAll('.nav-link').forEach(link => {
-                    link.style.color = 'var(--slate-800)';
-                });
-            }
-        });
-    }
 });

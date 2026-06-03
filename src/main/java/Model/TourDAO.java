@@ -305,6 +305,25 @@ public class TourDAO extends DBContext {
         tour.setRating(reviewCount > 0 ? avgRating : 0.0);
         tour.setReviewsCount(reviewCount);
         
+        try {
+            tour.setTotalSeats(rs.getInt("TotalSeats"));
+        } catch (SQLException e) {
+            tour.setTotalSeats(rs.getInt("MaxParticipants"));
+        }
+        
+        try {
+            tour.setAvailableSeats(rs.getInt("AvailableSeats"));
+        } catch (SQLException e) {
+            tour.setAvailableSeats(rs.getInt("MaxParticipants"));
+        }
+        
+        try {
+            java.sql.Date nextDep = rs.getDate("NextDeparture");
+            tour.setNextDeparture(nextDep != null ? nextDep.toString() : null);
+        } catch (SQLException e) {
+            tour.setNextDeparture(null);
+        }
+        
         tour.setCreatedBy(rs.getObject("CreatedBy") != null ? rs.getInt("CreatedBy") : null);
         tour.setCreatedAt(rs.getTimestamp("CreatedAt"));
         tour.setUpdatedAt(rs.getTimestamp("UpdatedAt"));
@@ -773,5 +792,314 @@ public class TourDAO extends DBContext {
             Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return list;
+    }
+
+    /**
+     * Inserts a new Tour into the database.
+     * @param tour Tour entity to insert
+     * @return generated TourID or -1 if failed
+     */
+    public int insertTour(Tour tour) {
+        String sql = "INSERT INTO Tour (CategoryID, TourName, Description, Destination, DurationDays, Itinerary, DifficultyLevel, BasePrice, MaxParticipants, Status, IsFeatured, Languages, GroupSizeMin, GroupSizeMax, DepartureCity, Latitude, Longitude, VideoURL, CreatedBy, CreatedAt, UpdatedAt) "
+                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, GETDATE(), GETDATE())";
+        try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setInt(1, tour.getCategoryId());
+            ps.setString(2, tour.getTourName());
+            ps.setString(3, tour.getDescription());
+            ps.setString(4, tour.getDestination());
+            ps.setInt(5, tour.getDurationDays());
+            ps.setString(6, tour.getItinerary());
+            ps.setString(7, tour.getDifficultyLevel());
+            ps.setDouble(8, tour.getBasePrice());
+            ps.setInt(9, tour.getMaxParticipants());
+            ps.setString(10, tour.getStatus() != null ? tour.getStatus() : "Draft");
+            ps.setBoolean(11, tour.isIsFeatured());
+            ps.setString(12, tour.getLanguages());
+            ps.setInt(13, tour.getGroupSizeMin());
+            ps.setInt(14, tour.getGroupSizeMax());
+            ps.setString(15, tour.getDepartureCity());
+            if (tour.getLatitude() != null) ps.setDouble(16, tour.getLatitude()); else ps.setNull(16, java.sql.Types.DOUBLE);
+            if (tour.getLongitude() != null) ps.setDouble(17, tour.getLongitude()); else ps.setNull(17, java.sql.Types.DOUBLE);
+            ps.setString(18, tour.getVideoUrl());
+            if (tour.getCreatedBy() != null) ps.setInt(19, tour.getCreatedBy()); else ps.setNull(19, java.sql.Types.INTEGER);
+            
+            int affected = ps.executeUpdate();
+            if (affected > 0) {
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        return rs.getInt(1);
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, "insertTour failed", ex);
+        }
+        return -1;
+    }
+
+    /**
+     * Updates an existing Tour in the database.
+     * @param tour Tour entity to update
+     * @return true if successful, false otherwise
+     */
+    public boolean updateTour(Tour tour) {
+        String sql = "UPDATE Tour SET CategoryID = ?, TourName = ?, Description = ?, Destination = ?, DurationDays = ?, Itinerary = ?, DifficultyLevel = ?, BasePrice = ?, MaxParticipants = ?, Status = ?, IsFeatured = ?, Languages = ?, GroupSizeMin = ?, GroupSizeMax = ?, DepartureCity = ?, Latitude = ?, Longitude = ?, VideoURL = ?, UpdatedAt = GETDATE() "
+                   + "WHERE TourID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, tour.getCategoryId());
+            ps.setString(2, tour.getTourName());
+            ps.setString(3, tour.getDescription());
+            ps.setString(4, tour.getDestination());
+            ps.setInt(5, tour.getDurationDays());
+            ps.setString(6, tour.getItinerary());
+            ps.setString(7, tour.getDifficultyLevel());
+            ps.setDouble(8, tour.getBasePrice());
+            ps.setInt(9, tour.getMaxParticipants());
+            ps.setString(10, tour.getStatus());
+            ps.setBoolean(11, tour.isIsFeatured());
+            ps.setString(12, tour.getLanguages());
+            ps.setInt(13, tour.getGroupSizeMin());
+            ps.setInt(14, tour.getGroupSizeMax());
+            ps.setString(15, tour.getDepartureCity());
+            if (tour.getLatitude() != null) ps.setDouble(16, tour.getLatitude()); else ps.setNull(16, java.sql.Types.DOUBLE);
+            if (tour.getLongitude() != null) ps.setDouble(17, tour.getLongitude()); else ps.setNull(17, java.sql.Types.DOUBLE);
+            ps.setString(18, tour.getVideoUrl());
+            ps.setInt(19, tour.getTourId());
+            
+            return ps.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, "updateTour failed", ex);
+        }
+        return false;
+    }
+
+    /**
+     * Deletes a Tour (hard delete).
+     * @param tourId ID of the tour to delete
+     * @return true if successful
+     */
+    public boolean deleteTour(int tourId) {
+        try {
+            connection.setAutoCommit(false);
+            
+            // 1. Delete reviews referencing TourID directly
+            try (PreparedStatement ps = connection.prepareStatement("DELETE FROM Review WHERE TourID = ?")) {
+                ps.setInt(1, tourId);
+                ps.executeUpdate();
+            }
+            
+            // 2. Delete media
+            try (PreparedStatement ps = connection.prepareStatement("DELETE FROM TourMedia WHERE TourID = ?")) {
+                ps.setInt(1, tourId);
+                ps.executeUpdate();
+            }
+            
+            // 3. Delete inclusion
+            try (PreparedStatement ps = connection.prepareStatement("DELETE FROM TourInclusion WHERE TourID = ?")) {
+                ps.setInt(1, tourId);
+                ps.executeUpdate();
+            }
+            
+            // 4. Delete faq
+            try (PreparedStatement ps = connection.prepareStatement("DELETE FROM TourFAQ WHERE TourID = ?")) {
+                ps.setInt(1, tourId);
+                ps.executeUpdate();
+            }
+            
+            // 5. Delete itinerary
+            try (PreparedStatement ps = connection.prepareStatement("DELETE FROM TourItinerary WHERE TourID = ?")) {
+                ps.setInt(1, tourId);
+                ps.executeUpdate();
+            }
+            
+            // 6. Delete attendance
+            try (PreparedStatement ps = connection.prepareStatement(
+                "DELETE FROM Attendance WHERE ScheduleID IN (SELECT ScheduleID FROM TourSchedule WHERE TourID = ?)")) {
+                ps.setInt(1, tourId);
+                ps.executeUpdate();
+            }
+            
+            // 7. Delete assignments
+            try (PreparedStatement ps = connection.prepareStatement(
+                "DELETE FROM TourAssignment WHERE ScheduleID IN (SELECT ScheduleID FROM TourSchedule WHERE TourID = ?)")) {
+                ps.setInt(1, tourId);
+                ps.executeUpdate();
+            }
+            
+            // 8. Delete payment
+            try (PreparedStatement ps = connection.prepareStatement(
+                "DELETE FROM Payment WHERE BookingID IN (SELECT BookingID FROM Booking WHERE ScheduleID IN (SELECT ScheduleID FROM TourSchedule WHERE TourID = ?))")) {
+                ps.setInt(1, tourId);
+                ps.executeUpdate();
+            }
+            
+            // 9. Delete booking-level reviews
+            try (PreparedStatement ps = connection.prepareStatement(
+                "DELETE FROM Review WHERE BookingID IN (SELECT BookingID FROM Booking WHERE ScheduleID IN (SELECT ScheduleID FROM TourSchedule WHERE TourID = ?))")) {
+                ps.setInt(1, tourId);
+                ps.executeUpdate();
+            }
+            
+            // 10. Delete booking participants
+            try (PreparedStatement ps = connection.prepareStatement(
+                "DELETE FROM BookingParticipant WHERE BookingID IN (SELECT BookingID FROM Booking WHERE ScheduleID IN (SELECT ScheduleID FROM TourSchedule WHERE TourID = ?))")) {
+                ps.setInt(1, tourId);
+                ps.executeUpdate();
+            }
+            
+            // 11. Delete bookings
+            try (PreparedStatement ps = connection.prepareStatement(
+                "DELETE FROM Booking WHERE ScheduleID IN (SELECT ScheduleID FROM TourSchedule WHERE TourID = ?)")) {
+                ps.setInt(1, tourId);
+                ps.executeUpdate();
+            }
+            
+            // 12. Delete schedules
+            try (PreparedStatement ps = connection.prepareStatement("DELETE FROM TourSchedule WHERE TourID = ?")) {
+                ps.setInt(1, tourId);
+                ps.executeUpdate();
+            }
+            
+            // 13. Delete Tour itself
+            boolean success = false;
+            try (PreparedStatement ps = connection.prepareStatement("DELETE FROM Tour WHERE TourID = ?")) {
+                ps.setInt(1, tourId);
+                success = ps.executeUpdate() > 0;
+            }
+            
+            connection.commit();
+            return success;
+        } catch (SQLException ex) {
+            try {
+                connection.rollback();
+            } catch (SQLException rollbackEx) {
+                Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, "rollback failed", rollbackEx);
+            }
+            Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, "deleteTour failed", ex);
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException ex) {
+                Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, "setAutoCommit failed", ex);
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Quick update status (Active, Draft, Disabled)
+     */
+    public boolean updateTourStatus(int tourId, String status) {
+        String sql = "UPDATE Tour SET Status = ?, UpdatedAt = GETDATE() WHERE TourID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, status);
+            ps.setInt(2, tourId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, "updateTourStatus failed", ex);
+        }
+        return false;
+    }
+
+    /**
+     * Get all tours for admin panel (including draft, disabled, active)
+     */
+    public List<Tour> getAllToursAdmin() {
+        List<Tour> list = new ArrayList<>();
+        String sql = "SELECT t.TourID, t.CategoryID, t.TourName, t.Description, t.Destination, t.DurationDays, t.Itinerary, t.DifficultyLevel, t.BasePrice, t.MaxParticipants, t.Status, t.IsFeatured, t.Languages, t.GroupSizeMin, t.GroupSizeMax, t.DepartureCity, t.Latitude, t.Longitude, t.VideoURL, t.CreatedBy, t.CreatedAt, t.UpdatedAt, "
+                   + "ISNULL((SELECT AVG(CAST(Rating AS FLOAT)) FROM Review r WHERE r.TourID = t.TourID), 0.0) as AvgRating, "
+                   + "(SELECT COUNT(*) FROM Review r WHERE r.TourID = t.TourID) as ReviewCount, "
+                   + "ISNULL((SELECT SUM(TotalSeats) FROM TourSchedule s WHERE s.TourID = t.TourID), t.MaxParticipants) as TotalSeats, "
+                   + "ISNULL((SELECT SUM(AvailableSeats) FROM TourSchedule s WHERE s.TourID = t.TourID), t.MaxParticipants) as AvailableSeats, "
+                   + "ISNULL((SELECT TOP 1 DepartureDate FROM TourSchedule s WHERE s.TourID = t.TourID AND s.DepartureDate >= CAST(GETDATE() AS DATE) ORDER BY DepartureDate ASC), "
+                   + "        (SELECT TOP 1 DepartureDate FROM TourSchedule s WHERE s.TourID = t.TourID ORDER BY DepartureDate ASC)) as NextDeparture, "
+                   + "c.CategoryName, c.Description AS CategoryDesc "
+                   + "FROM Tour t "
+                   + "JOIN TourCategory c ON t.CategoryID = c.CategoryID "
+                   + "ORDER BY t.TourID DESC";
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Tour tour = mapTour(rs);
+                TourCategory cat = new TourCategory();
+                cat.setCategoryId(rs.getInt("CategoryID"));
+                cat.setCategoryName(rs.getString("CategoryName"));
+                cat.setDescription(rs.getString("CategoryDesc"));
+                tour.setCategory(cat);
+                list.add(tour);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, "getAllToursAdmin failed", ex);
+        }
+        return list;
+    }
+
+    /**
+     * Get monthly revenue for the last 6 months dynamically from Booking table
+     */
+    public double[] getMonthlyRevenueLast6Months() {
+        double[] revenue = new double[6];
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        int currentMonth = cal.get(java.util.Calendar.MONTH) + 1;
+        int currentYear = cal.get(java.util.Calendar.YEAR);
+        
+        String sql = "SELECT MONTH(CreatedAt) as MonthVal, YEAR(CreatedAt) as YearVal, SUM(TotalAmount) as Total "
+                   + "FROM Booking "
+                   + "WHERE Status IN ('Confirmed', 'Completed') AND CreatedAt >= DATEADD(month, -5, GETDATE()) "
+                   + "GROUP BY YEAR(CreatedAt), MONTH(CreatedAt)";
+                   
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                int m = rs.getInt("MonthVal");
+                int y = rs.getInt("YearVal");
+                double total = rs.getDouble("Total");
+                
+                int diff = (currentYear - y) * 12 + (currentMonth - m);
+                if (diff >= 0 && diff < 6) {
+                    revenue[5 - diff] = total;
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, "getMonthlyRevenueLast6Months failed", ex);
+        }
+        return revenue;
+    }
+
+    /**
+     * Delete and insert batch of inclusions for a tour to synchronize them.
+     */
+    public boolean saveTourInclusions(int tourId, List<TourInclusion> inclusions) {
+        // 1. Delete existing inclusions
+        String deleteSql = "DELETE FROM TourInclusion WHERE TourID = ?";
+        try (PreparedStatement psDel = connection.prepareStatement(deleteSql)) {
+            psDel.setInt(1, tourId);
+            psDel.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, "delete existing inclusions failed", ex);
+            return false;
+        }
+        
+        // 2. Insert new inclusions if any
+        if (inclusions == null || inclusions.isEmpty()) {
+            return true;
+        }
+        
+        String insertSql = "INSERT INTO TourInclusion (TourID, InclusionType, ServiceName, IconName, SortOrder, IsActive, CreatedAt) VALUES (?, ?, ?, ?, ?, 1, GETDATE())";
+        try (PreparedStatement psIns = connection.prepareStatement(insertSql)) {
+            for (TourInclusion item : inclusions) {
+                psIns.setInt(1, tourId);
+                psIns.setString(2, item.getInclusionType());
+                psIns.setString(3, item.getServiceName());
+                psIns.setString(4, item.getIconName() != null ? item.getIconName() : "sparkles");
+                psIns.setInt(5, item.getSortOrder());
+                psIns.addBatch();
+            }
+            psIns.executeBatch();
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, "insert batch inclusions failed", ex);
+            return false;
+        }
     }
 }

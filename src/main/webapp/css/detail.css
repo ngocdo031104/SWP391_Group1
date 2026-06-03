@@ -1,6 +1,16 @@
 /* ==========================================================================
-   TOUR DETAIL PAGE â€” PREMIUM LAYOUT
+   TOUR DETAIL PAGE — PREMIUM LAYOUT
    ========================================================================== */
+body.detail-page {
+    padding-top: 95px; /* Offset for the 80px fixed header with spacing */
+}
+
+@media (max-width: 768px) {
+    body.detail-page {
+        padding-top: 80px; /* Offset for the 70px fixed header on mobile with spacing */
+    }
+}
+
 .tour-detail-head-section {
     padding: 1.5rem 0 0.5rem;
 }
@@ -115,23 +125,6 @@
 
 .gallery-item.main-photo {
     grid-row: span 2;
-}
-
-.btn-play-video {
-    position: absolute;
-    bottom: 1.25rem;
-    left: 1.25rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.65rem 1.15rem;
-    background: rgba(15, 23, 42, 0.75);
-    backdrop-filter: blur(8px);
-    color: #fff;
-    border-radius: var(--radius-full);
-    font-weight: 600;
-    font-size: 0.875rem;
-    z-index: 2;
 }
 
 .btn-all-photos {
@@ -812,7 +805,7 @@ svg.star-filled {
     justify-content: space-between;
     width: 100%;
     padding: 0.9rem 1.25rem;
-    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    background: linear-gradient(135deg, #8b5cf6 0%, #5f3bf6 100%);
     color: #fff;
     border: none;
     border-radius: 12px;
@@ -870,7 +863,7 @@ svg.star-filled {
 }
 
 .btn-payment-cta:hover {
-    background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+    background: linear-gradient(135deg, #5f3bf6 0%, #3724a6 100%);
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
 }
