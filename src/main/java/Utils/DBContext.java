@@ -17,7 +17,7 @@ public class DBContext {
             // Change security settings or credentials as per your local SQL Server instance setup
             String user = "sa";
             String pass = "123456"; 
-            String url = "jdbc:sqlserver://localhost:1433;databaseName=TourBuddyDB21;encrypt=true;trustServerCertificate=true;characterEncoding=UTF-8";
+            String url = "jdbc:sqlserver://localhost:1433;databaseName=TourBuddyDB;encrypt=true;trustServerCertificate=true;characterEncoding=UTF-8";
             
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             connection = DriverManager.getConnection(url, user, pass);

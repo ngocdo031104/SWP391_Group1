@@ -235,4 +235,25 @@ public class BookingDAO extends DBContext {
         b.setUpdatedAt(rs.getTimestamp("UpdatedAt"));
         return b;
     }
+
+    // Dương làm đoạn này: cập nhật lại phần tiền của booking sau khi khách nhập coupon ở màn hình thanh toán.
+    // Method này chỉ thay đổi các cột tài chính, không đụng tới lịch khởi hành hay danh sách người tham gia.
+    public boolean updateBookingFinancials(int bookingId, double discountAmount, double vatAmount, double totalAmount, Integer couponId) {
+        String sql = "UPDATE Booking SET DiscountAmount = ?, VATAmount = ?, TotalAmount = ?, CouponID = ?, UpdatedAt = SYSDATETIME() WHERE BookingID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setDouble(1, discountAmount);
+            ps.setDouble(2, vatAmount);
+            ps.setDouble(3, totalAmount);
+            if (couponId != null) {
+                ps.setInt(4, couponId);
+            } else {
+                ps.setNull(4, java.sql.Types.INTEGER);
+            }
+            ps.setInt(5, bookingId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(BookingDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
 }
