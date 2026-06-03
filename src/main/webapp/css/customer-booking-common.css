@@ -1,0 +1,236 @@
+/*
+ * Người làm: Dương
+ * Thời gian tạo: 04/06/2026
+ * Chức năng: CSS dùng chung cho toàn bộ luồng booking của Customer.
+ * Ý nghĩa: Gom layout nền, thanh tiến trình, nút chính, thông báo lỗi và các thành phần dùng lặp lại giữa create/review/payment/success.
+ */
+
+/* Nền riêng của các màn booking để tách thị giác khỏi các trang public khác. */
+.booking-page {
+    background: #f4f7fb;
+}
+
+/* Khung ngoài giới hạn chiều rộng nội dung để các màn booking có cùng khoảng cách hai bên. */
+.booking-shell {
+    width: min(1180px, calc(100% - 32px));
+    margin: 32px auto 64px;
+}
+
+/* Thanh tiến trình 4 bước dùng chung: create, review, payment và success. */
+.booking-progress {
+    display: grid;
+    grid-template-columns: 1fr 48px 1fr 48px 1fr 48px 1fr;
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid #d9e2ef;
+    border-radius: 8px;
+    padding: 18px 22px;
+    margin-bottom: 24px;
+}
+
+/* Mỗi step hiển thị số bước, tên nghiệp vụ và mô tả tiếng Anh dưới nhỏ. */
+.progress-step {
+    display: grid;
+    justify-items: center;
+    gap: 4px;
+    color: #8a98ad;
+    text-align: center;
+}
+
+/* Vòng tròn số bước giúp người dùng nhận biết thứ tự xử lý trong flow. */
+.progress-step span {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #eef3f8;
+    color: #708197;
+    font-weight: 700;
+}
+
+.progress-step strong {
+    font-size: 0.9rem;
+    color: #26384f;
+}
+
+.progress-step small {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+}
+
+/* Step active/done được tô xanh để biểu thị bước hiện tại hoặc đã hoàn thành. */
+.progress-step.active span,
+.progress-step.done span {
+    background: #0ea5e9;
+    color: #ffffff;
+}
+
+/* Đường nối giữa các bước, ẩn đi trên mobile ở media query cuối file. */
+.progress-line {
+    height: 2px;
+    background: #dbe5f0;
+}
+
+/* Nhóm panel/card dùng chung cùng nền trắng, viền và bóng nhẹ để đồng bộ UI. */
+.booking-main-panel,
+.summary-card,
+.review-tour-card,
+.review-payment-card,
+.payment-methods,
+.coupon-card,
+.payment-summary-card {
+    background: #ffffff;
+    border: 1px solid #d9e2ef;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+}
+
+/* Panel chính chứa nội dung nghiệp vụ của từng màn. */
+.booking-main-panel {
+    padding: 24px;
+}
+
+/* Heading trang gồm nhãn nhỏ, tiêu đề chính và mô tả ngắn. */
+.booking-heading {
+    margin-bottom: 22px;
+}
+
+.booking-heading p {
+    margin: 0 0 4px;
+    color: #0ea5e9;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 0.78rem;
+}
+
+.booking-heading h1 {
+    margin: 0 0 8px;
+    font-size: clamp(1.5rem, 2vw, 2rem);
+    color: #102033;
+    letter-spacing: 0;
+}
+
+.booking-heading span {
+    color: #617086;
+}
+
+/* Section là khối nghiệp vụ nhỏ trong form, ví dụ chọn lịch hoặc danh sách người đi. */
+.booking-section {
+    border: 1px solid #e0e8f2;
+    border-radius: 8px;
+    padding: 18px;
+    margin-bottom: 18px;
+}
+
+/* Tiêu đề section kèm số thứ tự/biểu tượng để người dùng dễ quét nội dung. */
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    color: #1f334d;
+}
+
+.section-title span {
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #dff3ff;
+    color: #0284c7;
+    font-weight: 800;
+    font-size: 0.8rem;
+}
+
+/* Nút chính dùng cho các hành động chuyển bước hoặc submit thanh toán. */
+.booking-primary-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 44px;
+    border: 0;
+    border-radius: 8px;
+    padding: 0 18px;
+    background: #0284c7;
+    color: #ffffff;
+    font-weight: 800;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.booking-primary-btn:hover {
+    background: #0369a1;
+}
+
+.booking-primary-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+/* Modifier cho nút hoặc thành phần cần chiếm toàn bộ chiều ngang container. */
+.full-width {
+    width: 100%;
+}
+
+/* Hộp lỗi server-side, đặt đầu panel khi controller trả errorMessage. */
+.booking-alert {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    border: 1px solid #fecaca;
+    background: #fef2f2;
+    color: #991b1b;
+    border-radius: 8px;
+    margin-bottom: 18px;
+}
+
+/* Input chung cho coupon và các ô cần style thống nhất trong luồng booking. */
+.booking-input {
+    width: 100%;
+    height: 40px;
+    border: 1px solid #b9c8db;
+    border-radius: 6px;
+    padding: 0 10px;
+    color: #17243a;
+    background: #ffffff;
+}
+
+/* Vùng lỗi inline nằm ngay dưới input, được JS hoặc JSP cập nhật nội dung. */
+.field-error {
+    display: block;
+    min-height: 18px;
+    margin-top: 5px;
+    color: #dc2626;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+/* Class đánh dấu input không hợp lệ để khách nhìn thấy lỗi tại đúng ô nhập. */
+.input-invalid {
+    border-color: #dc2626 !important;
+    background: #fff7f7 !important;
+}
+
+/* Trạng thái rỗng dùng khi tour chưa có lịch khởi hành. */
+.empty-state {
+    padding: 16px;
+    border-radius: 8px;
+    background: #f8fafc;
+    color: #617086;
+}
+
+/* Responsive: trên mobile, thanh tiến trình chuyển thành danh sách dọc và bỏ đường nối. */
+@media (max-width: 900px) {
+    .booking-progress {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .progress-line {
+        display: none;
+    }
+}
