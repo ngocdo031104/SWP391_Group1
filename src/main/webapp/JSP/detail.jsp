@@ -141,12 +141,8 @@
                         poolIdx++;
                     }
                 %>
-                <!-- Main big photo (Left) -->
                 <div class="gallery-item main-photo">
                     <img src="<%= galleryImages.get(0) %>" alt="Tour chính" id="gallery-main-img">
-                    <button class="btn-play-video" id="play-video-btn">
-                        <i data-lucide="play"></i> Xem Video
-                    </button>
                 </div>
                 <!-- Sub photos (Right grid) -->
                 <div class="gallery-item sub-photo sub-1">
@@ -594,7 +590,7 @@
         <div class="container">
             <div class="section-header" style="text-align: left; margin-left: 0; margin-bottom: 2.5rem;">
                 <h2>Hành Trình Tương Tự Bạn Sẽ Thích</h2>
-                <p>Khám phá thêm các địa danh du lịch kỳ thú có thể bạn sẽ muốn thêm vào danh sách tiếp theo.</p>
+                <p style="margin-left: 0; margin-right: auto;">Khám phá thêm các địa danh du lịch kỳ thú có thể bạn sẽ muốn thêm vào danh sách tiếp theo.</p>
             </div>
             
             <div class="tours-grid" id="related-tours-grid-container">

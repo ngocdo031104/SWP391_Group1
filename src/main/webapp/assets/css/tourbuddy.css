@@ -4,9 +4,9 @@
 :root {
   --clr-bg:        #f8fafc;
   --clr-surface:   #FFFFFF;
-  --clr-primary:   #4f46e5;   /* Indigo */
-  --clr-primary-d: #4338ca;
-  --clr-primary-l: rgba(79, 70, 229, 0.08);
+  --clr-primary:   #5f3bf6;   /* Royal Blue-Purple */
+  --clr-primary-d: #4e2ad2;
+  --clr-primary-l: rgba(95, 59, 246, 0.08);
   --clr-accent:    #f59e0b;   /* Amber Accent */
   --clr-accent-l:  rgba(245, 158, 11, 0.15);
   --clr-text:      #0f172a;   /* slate-900 */
@@ -266,7 +266,7 @@ button { cursor: pointer; font-family: inherit; }
 }
 .profile-cover {
   height: 220px;
-  background: linear-gradient(135deg, var(--clr-primary) 0%, #4338ca 50%, var(--clr-accent) 100%);
+  background: linear-gradient(135deg, var(--clr-primary) 0%, #4e2ad2 50%, var(--clr-accent) 100%);
   position: relative; overflow: hidden;
 }
 .profile-cover::after {
