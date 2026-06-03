@@ -535,13 +535,13 @@
                         <div class="payment-section-box" style="margin-top: 0;">
                             <div class="payment-trust-badge">
                                 <span class="trust-dot"></span>
-                                <span>Cổng thanh toán trực tuyến chính thức</span>
+                                <span>Cổng đăng ký trực tuyến chính thức</span>
                             </div>
                             <button type="button" class="btn btn-primary btn-payment-cta" id="go-payment-btn"
                                     onclick="window.open('https://sandbox.vnpayment.vn/', '_blank')">
                                 <span class="btn-payment-text">
                                     <i data-lucide="compass"></i>
-                                    Đăng ký tham gia ngay tại đây
+                                    Đăng ký tham gia ngay
                                 </span>
                                 <i data-lucide="arrow-right" class="btn-payment-arrow"></i>
                             </button>
