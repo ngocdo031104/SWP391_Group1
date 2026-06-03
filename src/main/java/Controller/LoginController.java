@@ -17,8 +17,6 @@ import java.io.IOException;
 @WebServlet(urlPatterns = {"/login", "/logout"})
 public class LoginController extends HttpServlet {
 
-    private final UserDAO userDAO = new UserDAO();
-
     @Override
     protected void doGet(HttpServletRequest request,
                          HttpServletResponse response)
@@ -67,6 +65,7 @@ public class LoginController extends HttpServlet {
             throws ServletException, IOException {
 
         request.setCharacterEncoding("UTF-8");
+        UserDAO userDAO = new UserDAO();
 
         String email = request.getParameter("email");
         String password = request.getParameter("password");

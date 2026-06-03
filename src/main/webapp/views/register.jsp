@@ -114,7 +114,7 @@
         <div class="step-line" id="sl2"></div>
         <div>
           <div class="step-dot" id="sd3">3</div>
-          <div class="step-name">Vai trò</div>
+          <div class="step-name">Xác nhận</div>
         </div>
       </div>
 
@@ -203,7 +203,8 @@
                        class="form-control ${not empty phoneError ? 'is-invalid' : ''}"
                        placeholder="09xxxxxxxx"
                        value="${not empty param.phone ? param.phone : ''}"
-                       pattern="[0-9]{9,11}" maxlength="11">
+                       pattern="0[0-9]{9}" maxlength="10"
+                       title="Số điện thoại gồm 10 chữ số và bắt đầu bằng 0">
               </div>
             </div>
             <div class="form-group">
@@ -239,23 +240,7 @@
         <!-- STEP 3: Role -->
         <div class="step-block" id="step3">
 
-          <div class="form-group">
-            <label class="form-label">Bạn muốn tham gia với tư cách *</label>
-            <div class="role-cards">
-              <label class="role-card" id="rc-customer">
-                <input type="radio" name="role" value="Customer" required checked>
-                <i class="fa fa-user-tie"></i>
-                <strong>Khách hàng</strong>
-                <span>Đặt tour, khám phá điểm đến</span>
-              </label>
-              <label class="role-card" id="rc-guide">
-                <input type="radio" name="role" value="Guide">
-                <i class="fa fa-map"></i>
-                <strong>Hướng dẫn viên</strong>
-                <span>Dẫn tour, quản lý đoàn khách</span>
-              </label>
-            </div>
-          </div>
+          <input type="hidden" name="role" value="Customer">
 
           <div class="form-group">
             <div class="form-check">
@@ -387,14 +372,7 @@ function togglePwd(inputId, iconId) {
   icon.classList.toggle('fa-eye-slash');
 }
 
-/* ── Role card selection ── */
-document.querySelectorAll('.role-card input[type=radio]').forEach(radio => {
-  radio.addEventListener('change', function() {
-    document.querySelectorAll('.role-card').forEach(c => c.classList.remove('selected'));
-    this.closest('.role-card').classList.add('selected');
-  });
-});
-document.getElementById('rc-customer').classList.add('selected');
+document.getElementById('dob').max = new Date().toISOString().split("T")[0];
 
 /* ── Final submit ── */
 document.getElementById('regForm').addEventListener('submit', function(e) {
