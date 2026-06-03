@@ -37,6 +37,11 @@
             starPercentages[i] = (int) Math.round(((double) starCounts[i] / totalReviews) * 100);
         }
     }
+    
+    int activeSeatsLeft = 10;
+    if (activeTour != null && activeTour.getSchedules() != null && !activeTour.getSchedules().isEmpty()) {
+        activeSeatsLeft = activeTour.getSchedules().get(0).getAvailableSeats();
+    }
 %>
 <!-- Nhúng header dùng chung cho toàn bộ website, nằm trong thư mục web/common/ -->
 <jsp:include page="../common/header.jsp" />
@@ -183,8 +188,8 @@
                     <div class="highlight-item">
                         <div class="icon-wrapper"><i data-lucide="users"></i></div>
                         <div class="item-text">
-                            <span class="label">Số người tối đa</span>
-                            <strong id="hl-group-size">15 Khách</strong>
+                            <span class="label">Số slot còn lại</span>
+                            <strong id="hl-group-size"><%= activeSeatsLeft %> Chỗ</strong>
                         </div>
                     </div>
                     <div class="highlight-item">
@@ -523,49 +528,20 @@
                 <div class="sticky-booking-sidebar" id="booking-sidebar">
                     <div class="booking-sidebar-card">
 
-                        <%
-                            int activeSeatsLeft = 10;
-                            if (activeTour != null && activeTour.getSchedules() != null && !activeTour.getSchedules().isEmpty()) {
-                                activeSeatsLeft = activeTour.getSchedules().get(0).getAvailableSeats();
-                            }
-                        %>
-                        <div class="booking-card-price-header">
-                            <div class="price-side-left">
-                                <span class="sidebar-price-label">Giá mỗi khách</span>
-                                <span class="sidebar-price-value" id="booking-base-price">0 đ</span>
-                            </div>
-                            <div class="price-side-right<%= activeSeatsLeft <= 5 ? " warning-pill" : "" %>" id="booking-seats-left-pill">
-                                <span><%= activeSeatsLeft <= 5 ? "Chỉ còn " + activeSeatsLeft + " chỗ!" : "Còn " + activeSeatsLeft + " chỗ trống" %></span>
-                            </div>
-                        </div>
+                        <!-- Hidden inputs to prevent detail.js script failures -->
+                        <input type="hidden" id="book-date" value="">
+                        <input type="hidden" id="book-travelers" value="1">
 
-                        <div class="booking-form-fields-wrapper">
-                            <div class="booking-field-group">
-                                <label for="book-date"><i data-lucide="calendar"></i> Ngày khởi hành</label>
-                                <input type="date" id="book-date" required>
-                            </div>
-                            <div class="booking-field-group">
-                                <label for="book-travelers"><i data-lucide="users"></i> Số lượng khách</label>
-                                <select id="book-travelers">
-                                    <option value="1">1 Người lớn</option>
-                                    <option value="2" selected>2 Người lớn</option>
-                                    <option value="3">3 Người lớn</option>
-                                    <option value="4">4 Người lớn</option>
-                                    <option value="5">5+ Người lớn</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="payment-section-box">
+                        <div class="payment-section-box" style="margin-top: 0;">
                             <div class="payment-trust-badge">
                                 <span class="trust-dot"></span>
                                 <span>Cổng thanh toán trực tuyến chính thức</span>
                             </div>
                             <button type="button" class="btn btn-primary btn-payment-cta" id="go-payment-btn"
-                                    onclick="window.open('', '_blank')">
+                                    onclick="window.open('https://sandbox.vnpayment.vn/', '_blank')">
                                 <span class="btn-payment-text">
-                                    <i data-lucide="credit-card"></i>
-                                    Thanh toán tại đây
+                                    <i data-lucide="compass"></i>
+                                    Đăng ký tham gia ngay tại đây
                                 </span>
                                 <i data-lucide="arrow-right" class="btn-payment-arrow"></i>
                             </button>

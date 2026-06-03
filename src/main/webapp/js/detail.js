@@ -207,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     document.getElementById('hl-difficulty').textContent = difficultyText;
     document.getElementById('hl-duration').textContent = `${activeTour.duration} Ngày`;
-    document.getElementById('hl-group-size').textContent = `${activeTour.seatsTotal} Khách`;
+    document.getElementById('hl-group-size').textContent = `${activeTour.seatsLeft} Chỗ`;
     const hlLang = document.getElementById('hl-languages');
     if (hlLang && activeTour.languages) {
         hlLang.textContent = activeTour.languages;
@@ -272,7 +272,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Update prices on page load
     function renderStaticPrices() {
-        document.getElementById('booking-base-price').textContent = formatPrice(activeTour.priceVND);
+        const basePriceEl = document.getElementById('booking-base-price');
+        if (basePriceEl) {
+            basePriceEl.textContent = formatPrice(activeTour.priceVND);
+        }
     }
     renderStaticPrices();
 
