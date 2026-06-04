@@ -105,9 +105,9 @@
     <div class="profile-header fade-up">
       <div class="avatar-wrap">
         <c:choose>
-          <c:when test="${not empty sessionUser.profile.avatarURL}">
+          <c:when test="${not empty sessionUser.profile.avatarUrl}">
             <img class="avatar"
-                 src="${sessionUser.profile.avatarURL}"
+                 src="${sessionUser.profile.avatarUrl}"
                  alt="${sessionUser.fullName}">
           </c:when>
           <c:otherwise>
@@ -245,7 +245,7 @@
                   <input type="tel" id="phone" name="phone"
                          class="form-control"
                          value="${not empty sessionUser.phoneNumber ? sessionUser.phoneNumber : ''}"
-                         pattern="[0-9]{9,11}" maxlength="11" oninput="calcCompletion()">
+                         pattern="0[0-9]{9}" maxlength="10" title="Số điện thoại gồm 10 chữ số và bắt đầu bằng 0" oninput="calcCompletion()">
                 </div>
               </div>
 
@@ -602,6 +602,11 @@ function toggleTag(el) {
   el.classList.toggle('selected');
   const selected = [...document.querySelectorAll('.tag.selected')].map(t => t.dataset.val);
   document.getElementById('interestInput').value = selected.join(',');
+}
+
+const dobInputProfile = document.getElementById('dob');
+if (dobInputProfile) {
+  dobInputProfile.max = new Date().toISOString().split("T")[0];
 }
 
 /* ── Password strength (profile) ── */

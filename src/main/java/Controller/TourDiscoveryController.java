@@ -62,7 +62,7 @@ public class TourDiscoveryController extends HttpServlet {
             }
         }
         
-        request.getRequestDispatcher("views/tourdiscovery.jsp").forward(request, response);
+        request.getRequestDispatcher("/views/tourdiscovery.jsp").forward(request, response);
     }
 
     @Override

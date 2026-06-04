@@ -123,9 +123,6 @@
         <button class="btn btn-outline btn-block" onclick="alert('Tính năng Google đang phát triển')">
           <i class="fa-brands fa-google"></i> Google
         </button>
-        <button class="btn btn-outline btn-block" onclick="alert('Tính năng Facebook đang phát triển')">
-          <i class="fa-brands fa-facebook"></i> Facebook
-        </button>
       </div>
 
       <div class="auth-footer-links">

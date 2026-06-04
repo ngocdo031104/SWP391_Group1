@@ -13,13 +13,12 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.sql.Date;
+import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @WebServlet(name = "RegisterController", urlPatterns = {"/register"})
 public class RegisterController extends HttpServlet {
-
-    private final UserDAO userDAO = new UserDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -30,49 +29,165 @@ public class RegisterController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         request.setCharacterEncoding("UTF-8");
 
-        String email = request.getParameter("email");
+        UserDAO userDAO = new UserDAO();
+
+        String email = trim(request.getParameter("email"));
         String password = request.getParameter("password");
         String confirmPassword = request.getParameter("confirmPassword");
-        String fullName = request.getParameter("fullName");
-        String phone = request.getParameter("phone");
-        String dob = request.getParameter("dob");
-        String gender = request.getParameter("gender");
-        String role = request.getParameter("role");
+        String fullName = trim(request.getParameter("fullName"));
+        String phone = trim(request.getParameter("phone"));
+        String dob = trim(request.getParameter("dob"));
+        String gender = trim(request.getParameter("gender"));
+        String role = trim(request.getParameter("role"));
 
         boolean hasError = false;
 
-        // Validation logic
-        if (email == null || email.trim().isEmpty() || !email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
-            request.setAttribute("emailError", "Email không hợp lệ");
+        // ==========================
+        // Validate Email
+        // ==========================
+        if (email == null || email.isEmpty()) {
+            request.setAttribute("emailError", "Email không được để trống");
+            hasError = true;
+        } else if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+            request.setAttribute("emailError", "Định dạng email không hợp lệ");
             hasError = true;
         } else if (userDAO.checkEmailExists(email)) {
-            request.setAttribute("emailError", "Email này đã được sử dụng");
+            request.setAttribute("emailError", "Email đã được đăng ký");
             hasError = true;
         }
 
-        if (password == null || password.length() < 8) {
-            request.setAttribute("passwordError", "Mật khẩu phải từ 8 ký tự trở lên");
+        // ==========================
+        // Validate Password
+        // ==========================
+        if (password == null || password.isEmpty()) {
+            request.setAttribute("passwordError", "Mật khẩu không được để trống");
             hasError = true;
-        } else if (!password.equals(confirmPassword)) {
-            request.setAttribute("confirmError", "Mật khẩu xác nhận không khớp");
+        } else if (password.length() < 8) {
+            request.setAttribute("passwordError", "Mật khẩu phải có ít nhất 8 ký tự");
             hasError = true;
-        }
-
-        if (fullName == null || fullName.trim().isEmpty()) {
-            request.setAttribute("nameError", "Họ và tên không được để trống");
-            hasError = true;
-        }
-
-        if (phone != null && !phone.trim().isEmpty() && !phone.matches("^[0-9]{9,11}$")) {
-            request.setAttribute("phoneError", "Số điện thoại phải từ 9 đến 11 số");
+        } else if (!password.matches(".*[A-Za-z].*")
+                || !password.matches(".*[0-9].*")) {
+            request.setAttribute("passwordError",
+                    "Mật khẩu phải chứa ít nhất 1 chữ cái và 1 chữ số");
             hasError = true;
         }
 
+        // ==========================
+        // Validate Confirm Password
+        // ==========================
+        if (confirmPassword == null || confirmPassword.isEmpty()) {
+            request.setAttribute("confirmError",
+                    "Vui lòng nhập lại mật khẩu");
+            hasError = true;
+        } else if (password != null && !password.equals(confirmPassword)) {
+            request.setAttribute("confirmError",
+                    "Mật khẩu xác nhận không khớp");
+            hasError = true;
+        }
+
+        // ==========================
+        // Validate Full Name
+        // ==========================
+        if (fullName == null || fullName.isEmpty()) {
+            request.setAttribute("nameError",
+                    "Họ và tên không được để trống");
+            hasError = true;
+        } else if (fullName.length() < 2 || fullName.length() > 100) {
+            request.setAttribute("nameError",
+                    "Họ và tên phải từ 2 đến 100 ký tự");
+            hasError = true;
+        } else if (!fullName.matches("^[\\p{L} .'-]+$")) {
+            request.setAttribute("nameError",
+                    "Họ và tên chỉ được chứa chữ cái và khoảng trắng");
+            hasError = true;
+        }
+
+        // ==========================
+        // Validate Phone
+        // ==========================
+        if (phone == null || phone.isEmpty()) {
+            request.setAttribute("phoneError",
+                    "Số điện thoại không được để trống");
+            hasError = true;
+        } else if (!phone.matches("^0[0-9]{9}$")) {
+            request.setAttribute("phoneError",
+                    "Số điện thoại phải gồm 10 chữ số và bắt đầu bằng 0");
+            hasError = true;
+        }
+
+        // ==========================
+        // Validate DOB
+        // ==========================
+        if (dob == null || dob.isEmpty()) {
+            request.setAttribute("dobError",
+                    "Ngày sinh không được để trống");
+            hasError = true;
+        } else {
+            try {
+                Date parsedDob = Date.valueOf(dob);
+                Date today = new Date(System.currentTimeMillis());
+
+                if (parsedDob.after(today)) {
+                    request.setAttribute("dobError",
+                            "Ngày sinh không được ở tương lai");
+                    hasError = true;
+                } else {
+                    Calendar cal = Calendar.getInstance();
+                    cal.add(Calendar.YEAR, -13);
+
+                    if (parsedDob.after(new Date(cal.getTimeInMillis()))) {
+                        request.setAttribute("dobError",
+                                "Bạn phải từ 13 tuổi trở lên để đăng ký");
+                        hasError = true;
+                    }
+                }
+
+            } catch (IllegalArgumentException e) {
+                request.setAttribute("dobError",
+                        "Định dạng ngày sinh không hợp lệ");
+                hasError = true;
+            }
+        }
+
+        // ==========================
+        // Validate Gender
+        // ==========================
+        if (gender == null || gender.isEmpty()) {
+            request.setAttribute("genderError",
+                    "Vui lòng chọn giới tính");
+            hasError = true;
+        } else if (!gender.equals("Male")
+                && !gender.equals("Female")
+                && !gender.equals("Other")) {
+
+            request.setAttribute("genderError",
+                    "Giới tính không hợp lệ");
+            hasError = true;
+        }
+
+        // ==========================
+        // Validate Role
+        // ==========================
+        if (role == null || role.isEmpty()) {
+            request.setAttribute("roleError",
+                    "Vui lòng chọn vai trò");
+            hasError = true;
+        } else if (!role.equals("Customer")
+                && !role.equals("Guide")) {
+
+            request.setAttribute("roleError",
+                    "Vai trò không hợp lệ");
+            hasError = true;
+        }
+
+        // ==========================
+        // Nếu có lỗi
+        // ==========================
         if (hasError) {
-            request.setAttribute("errorMessage", "Vui lòng kiểm tra lại thông tin đăng ký");
-            // Set params back to JSP so user doesn't lose inputs
+
             request.setAttribute("paramEmail", email);
             request.setAttribute("paramFullName", fullName);
             request.setAttribute("paramPhone", phone);
@@ -80,54 +195,71 @@ public class RegisterController extends HttpServlet {
             request.setAttribute("paramGender", gender);
             request.setAttribute("paramRole", role);
 
-            request.getRequestDispatcher("/views/register.jsp").forward(request, response);
+            request.getRequestDispatcher("/views/register.jsp")
+                    .forward(request, response);
             return;
         }
 
         try {
-            // Hash password
+
             String passwordHash = PasswordUtil.hashPassword(password);
 
-            // Create User entity
             User user = new User();
             user.setEmail(email);
             user.setPasswordHash(passwordHash);
             user.setFullName(fullName);
             user.setPhoneNumber(phone);
-            
-            // Resolve RoleID from database
-            if (role == null || role.trim().isEmpty()) {
-                role = "Customer";
-            }
+
             int roleId = userDAO.getRoleIdByName(role);
             user.setRoleId(roleId);
 
-            // Create UserProfile entity
             UserProfile profile = new UserProfile();
             profile.setGender(gender);
-            if (dob != null && !dob.trim().isEmpty()) {
-                try {
-                    profile.setDateOfBirth(Date.valueOf(dob));
-                } catch (IllegalArgumentException e) {
-                    // Ignore
-                }
-            }
-            // Set default avatar depending on gender or role
-            profile.setAvatarUrl("https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80");
+            profile.setDateOfBirth(Date.valueOf(dob));
+
+            profile.setAvatarUrl(
+                    "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80"
+            );
 
             boolean success = userDAO.register(user, profile);
+
             if (success) {
-                request.setAttribute("successMessage", "Đăng ký tài khoản thành công! Vui lòng đăng nhập.");
-                request.getRequestDispatcher("/views/login.jsp").forward(request, response);
+
+                request.setAttribute(
+                        "successMessage",
+                        "Đăng ký tài khoản thành công! Vui lòng đăng nhập."
+                );
+
+                request.getRequestDispatcher("/views/login.jsp")
+                        .forward(request, response);
+
             } else {
-                request.setAttribute("errorMessage", "Đăng ký không thành công. Vui lòng thử lại.");
-                request.getRequestDispatcher("/views/register.jsp").forward(request, response);
+
+                request.setAttribute(
+                        "errorMessage",
+                        "Đăng ký không thành công. Vui lòng thử lại."
+                );
+
+                request.getRequestDispatcher("/views/register.jsp")
+                        .forward(request, response);
             }
 
         } catch (Exception ex) {
-            Logger.getLogger(RegisterController.class.getName()).log(Level.SEVERE, null, ex);
-            request.setAttribute("errorMessage", "Lỗi hệ thống khi đăng ký");
-            request.getRequestDispatcher("/views/register.jsp").forward(request, response);
+
+            Logger.getLogger(RegisterController.class.getName())
+                    .log(Level.SEVERE, null, ex);
+
+            request.setAttribute(
+                    "errorMessage",
+                    "Lỗi hệ thống khi đăng ký. Vui lòng thử lại sau."
+            );
+
+            request.getRequestDispatcher("/views/register.jsp")
+                    .forward(request, response);
         }
+    }
+
+    private String trim(String s) {
+        return s == null ? null : s.trim();
     }
 }
