@@ -305,24 +305,9 @@ public class TourDAO extends DBContext {
         tour.setRating(reviewCount > 0 ? avgRating : 0.0);
         tour.setReviewsCount(reviewCount);
         
-        try {
-            tour.setTotalSeats(rs.getInt("TotalSeats"));
-        } catch (SQLException e) {
-            tour.setTotalSeats(rs.getInt("MaxParticipants"));
-        }
-        
-        try {
-            tour.setAvailableSeats(rs.getInt("AvailableSeats"));
-        } catch (SQLException e) {
-            tour.setAvailableSeats(rs.getInt("MaxParticipants"));
-        }
-        
-        try {
-            java.sql.Date nextDep = rs.getDate("NextDeparture");
-            tour.setNextDeparture(nextDep != null ? nextDep.toString() : null);
-        } catch (SQLException e) {
-            tour.setNextDeparture(null);
-        }
+        // Dương làm đoạn này: Không map TotalSeats, AvailableSeats và NextDeparture vào Tour vì các dữ liệu này thuộc bảng TourSchedule.
+        // Khi cần số ghế hoặc ngày khởi hành, màn hình sẽ lấy từ danh sách TourSchedule của tour để tránh sai mô hình dữ liệu.
+
         
         tour.setCreatedBy(rs.getObject("CreatedBy") != null ? rs.getInt("CreatedBy") : null);
         tour.setCreatedAt(rs.getTimestamp("CreatedAt"));
