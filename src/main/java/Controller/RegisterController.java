@@ -243,7 +243,9 @@ public class RegisterController extends HttpServlet {
                 try {
                     EmailUtil.sendOTP(email, otp);
                 } catch (Exception e) {
+                    e.printStackTrace();
                     Logger.getLogger(RegisterController.class.getName()).log(Level.SEVERE, "Failed to send email", e);
+                    request.getSession().setAttribute("emailError", "Lỗi gửi mail: " + e.getMessage() + " - " + e.getClass().getName());
                 }
                 
                 response.sendRedirect(request.getContextPath() + "/verify");

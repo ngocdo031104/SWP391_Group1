@@ -154,6 +154,13 @@
                 </div>
             </c:if>
 
+            <c:if test="${not empty sessionScope.emailError}">
+                <div class="alert alert-error">
+                    <i class="fa fa-exclamation-triangle"></i> Lỗi hệ thống gửi mail: ${sessionScope.emailError}
+                    <br><small>(Vui lòng chụp lại thông báo này gửi cho tôi để tôi khắc phục!)</small>
+                </div>
+            </c:if>
+
             <form action="${pageContext.request.contextPath}/verify" method="POST">
                 <div class="form-group">
                     <label class="form-label" for="otp">Mã xác nhận (OTP)</label>

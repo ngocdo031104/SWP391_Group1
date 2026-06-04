@@ -12,8 +12,8 @@ import java.util.Properties;
 public class EmailUtil {
 
     // REPLACE WITH YOUR ACTUAL EMAIL AND APP PASSWORD
-    private static final String SENDER_EMAIL = "your.email@gmail.com"; 
-    private static final String SENDER_PASSWORD = "your-app-password";
+    private static final String SENDER_EMAIL = "ngocdo031104@gmail.com"; 
+    private static final String SENDER_PASSWORD = "okgswxvuxeafspvr";
 
     public static void sendOTP(String recipientEmail, String otp) throws Exception {
         Properties props = new Properties();
