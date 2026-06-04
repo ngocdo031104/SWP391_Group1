@@ -124,7 +124,7 @@
       <div class="divider fade-up fade-up-4">hoặc tiếp tục với</div>
 
       <div style="display:flex;gap:10px" class="fade-up fade-up-4">
-        <button class="btn btn-outline btn-block" onclick="alert('Tính năng Google đang phát triển')">
+        <button type="button" class="btn btn-outline btn-block" onclick="window.location.href='https://accounts.google.com/o/oauth2/auth?scope=email%20profile&redirect_uri=http://localhost:9999/TourBuddy/google-callback&response_type=code&client_id=125212965450-ksqfbqjnltlv8nqbc3ok0gtetc5551gr.apps.googleusercontent.com'">
           <i class="fa-brands fa-google"></i> Google
         </button>
       </div>
