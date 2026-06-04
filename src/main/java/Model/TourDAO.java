@@ -352,6 +352,108 @@ public class TourDAO extends DBContext {
     }
 
     /**
+     * Đồng bộ hóa dữ liệu lịch trình chi tiết từng ngày (TourItinerary) từ chuỗi văn bản Outline.
+     * Phương thức này sẽ xóa các dòng cũ và phân tích chuỗi văn bản dòng-by-dòng để lưu mới.
+     * @param tourId ID của tour cần đồng bộ
+     * @param itineraryText Chuỗi văn bản mô tả lịch trình (tách biệt bằng dấu xuống dòng)
+     */
+    public void syncTourItineraryFromText(int tourId, String itineraryText) {
+        // 1. Xóa tất cả các bản ghi lịch trình cũ của TourID này
+        String deleteSql = "DELETE FROM TourItinerary WHERE TourID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(deleteSql)) {
+            ps.setInt(1, tourId);
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, "syncTourItineraryFromText delete failed", ex);
+        }
+
+        if (itineraryText == null || itineraryText.trim().isEmpty()) {
+            return;
+        }
+
+        // 2. Phân tích chuỗi văn bản và chèn các dòng lịch trình mới
+        String[] lines = itineraryText.split("\\n");
+        String insertSql = "INSERT INTO TourItinerary (TourID, DayNumber, Title, ShortDescription, Description, Activities, Meals, Accommodation, ImageURL, SortOrder) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        
+        java.util.regex.Pattern dayPattern = java.util.regex.Pattern.compile("^(?:ngày|day)\\s+(\\d+)", java.util.regex.Pattern.CASE_INSENSITIVE);
+        int dayCount = 1;
+        
+        for (int i = 0; i < lines.length; i++) {
+            String line = lines[i].trim();
+            if (line.isEmpty()) {
+                continue;
+            }
+
+            int currentDay = dayCount;
+            java.util.regex.Matcher matcher = dayPattern.matcher(line);
+            if (matcher.find()) {
+                try {
+                    currentDay = Integer.parseInt(matcher.group(1));
+                    line = line.substring(matcher.end()).trim();
+                    if (line.startsWith(":") || line.startsWith("-")) {
+                        line = line.substring(1).trim();
+                    }
+                } catch (NumberFormatException e) {
+                    // Fallback sử dụng số thứ tự tăng dần
+                }
+            }
+
+            String title = line;
+            String desc = "";
+            
+            // Tách Tiêu đề và Mô tả qua dấu hai chấm (:) hoặc gạch ngang (-)
+            if (line.contains(":")) {
+                int colonIdx = line.indexOf(":");
+                title = line.substring(0, colonIdx).trim();
+                desc = line.substring(colonIdx + 1).trim();
+            } else if (line.contains("-")) {
+                int dashIdx = line.indexOf("-");
+                title = line.substring(0, dashIdx).trim();
+                desc = line.substring(dashIdx + 1).trim();
+            }
+
+            // Quy tắc tự động gán Tên Icon dựa theo từ khóa trong tiêu đề hoặc mô tả
+            String iconName = "activity";
+            String tL = title.toLowerCase();
+            String dL = desc.toLowerCase();
+            if (tL.contains("bay") || tL.contains("plane") || tL.contains("tiễn") || tL.contains("sân bay") || dL.contains("sân bay")) {
+                iconName = "plane";
+            } else if (tL.contains("tàu") || tL.contains("boat") || tL.contains("cruise") || tL.contains("du thuyền") || tL.contains("canô") || dL.contains("du thuyền")) {
+                iconName = "ship";
+            } else if (tL.contains("leo") || tL.contains("trek") || tL.contains("chinh phục") || tL.contains("đỉnh") || tL.contains("núi") || dL.contains("leo núi")) {
+                iconName = "mountain";
+            } else if (tL.contains("khách sạn") || tL.contains("hotel") || tL.contains("resort") || tL.contains("nhận phòng") || dL.contains("khách sạn")) {
+                iconName = "hotel";
+            } else if (tL.contains("chụp ảnh") || tL.contains("check") || tL.contains("quay") || dL.contains("chụp ảnh")) {
+                iconName = "camera";
+            } else if (tL.contains("tự do") || tL.contains("free") || tL.contains("vui chơi") || dL.contains("vui chơi")) {
+                iconName = "sparkles";
+            } else if (tL.contains("đón") || tL.contains("chào")) {
+                iconName = "map-pin";
+            }
+
+            try (PreparedStatement ps = connection.prepareStatement(insertSql)) {
+                ps.setInt(1, tourId);
+                ps.setInt(2, currentDay);
+                ps.setString(3, title);
+                ps.setString(4, null); // ShortDescription
+                ps.setString(5, desc);  // Description
+                ps.setString(6, null); // Activities
+                ps.setString(7, null); // Meals
+                ps.setString(8, null); // Accommodation
+                ps.setString(9, iconName); // ImageURL (Được dùng làm tên icon trong detail.jsp)
+                ps.setInt(10, i); // SortOrder
+                
+                ps.executeUpdate();
+            } catch (SQLException ex) {
+                Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, "syncTourItineraryFromText insert failed", ex);
+            }
+            
+            dayCount++;
+        }
+    }
+
+    /**
      * TRUY VẤN CÁC DỊCH VỤ ĐI KÈM TOUR (INCLUSIONS/EXCLUSIONS)
      * @param tourId ID của tour cần lấy dịch vụ
      * @return Danh sách các đối tượng TourInclusion của tour
@@ -463,7 +565,7 @@ public class TourDAO extends DBContext {
      */
     public List<Review> getReviewsByTourId(int tourId) {
         List<Review> list = new ArrayList<>();
-        String sql = "SELECT r.ReviewID, r.TourID, r.BookingID, r.CustomerID, r.Rating, r.Content, r.IsVisible, r.CreatedAt, r.UpdatedAt, "
+        String sql = "SELECT r.ReviewID, r.TourID, r.BookingID, r.CustomerID, r.Rating, r.Content, r.IsVisible, r.CreatedAt, r.UpdatedAt, r.ImageURL, "
                    + "u.FullName, p.AvatarURL, "
                    + "CASE WHEN b.Status = 'Completed' THEN 1 ELSE 0 END as IsVerified "
                    + "FROM Review r "
@@ -486,6 +588,7 @@ public class TourDAO extends DBContext {
                     rev.setIsVisible(rs.getBoolean("IsVisible"));
                     rev.setCreatedAt(rs.getTimestamp("CreatedAt"));
                     rev.setUpdatedAt(rs.getTimestamp("UpdatedAt"));
+                    rev.setImageUrl(rs.getString("ImageURL"));
                     rev.setCustomerName(rs.getString("FullName"));
                     rev.setCustomerAvatar(rs.getString("AvatarURL"));
                     rev.setIsVerified(rs.getBoolean("IsVerified"));
@@ -508,6 +611,10 @@ public class TourDAO extends DBContext {
      * @return true nếu lưu thành công, ngược lại trả về false.
      */
     public boolean insertReview(String name, String email, int tourId, int rating, String content) {
+        return insertReview(name, email, tourId, rating, content, null);
+    }
+
+    public boolean insertReview(String name, String email, int tourId, int rating, String content, String imageUrl) {
         int userId = -1;
         String findUserSql = "SELECT UserID FROM [User] WHERE Email = ?";
         try (PreparedStatement ps = connection.prepareStatement(findUserSql)) {
@@ -587,7 +694,7 @@ public class TourDAO extends DBContext {
             }
             
             if (scheduleId != -1) {
-                String insertBookingSql = "INSERT INTO Booking (BookingCode, ScheduleID, CustomerID, NumParticipants, BaseAmount, VATAmount, DiscountAmount, TotalAmount, Status) VALUES (?, ?, ?, 1, 0, 0, 0, 0, 'Completed')";
+                String insertBookingSql = "INSERT INTO Booking (BookingCode, ScheduleID, CustomerID, NumParticipants, BaseAmount, VATAmount, DiscountAmount, TotalAmount, Status, CreatedAt, UpdatedAt) VALUES (?, ?, ?, 1, 0, 0, 0, 0, 'Completed', SYSDATETIME(), SYSDATETIME())";
                 try (PreparedStatement ps = connection.prepareStatement(insertBookingSql, Statement.RETURN_GENERATED_KEYS)) {
                     ps.setString(1, "BK_DUMMY_" + (System.currentTimeMillis() % 100000));
                     ps.setInt(2, scheduleId);
@@ -608,13 +715,14 @@ public class TourDAO extends DBContext {
             return false;
         }
         
-        String insertReviewSql = "INSERT INTO Review (TourID, BookingID, CustomerID, Rating, Content, IsVisible) VALUES (?, ?, ?, ?, ?, 1)";
+        String insertReviewSql = "INSERT INTO Review (TourID, BookingID, CustomerID, Rating, Content, IsVisible, CreatedAt, UpdatedAt, ImageURL) VALUES (?, ?, ?, ?, ?, 1, SYSDATETIME(), SYSDATETIME(), ?)";
         try (PreparedStatement ps = connection.prepareStatement(insertReviewSql)) {
             ps.setInt(1, tourId);
             ps.setInt(2, bookingId);
             ps.setInt(3, userId);
             ps.setInt(4, rating);
             ps.setString(5, content);
+            ps.setString(6, imageUrl);
             int rows = ps.executeUpdate();
             return rows > 0;
         } catch (SQLException ex) {

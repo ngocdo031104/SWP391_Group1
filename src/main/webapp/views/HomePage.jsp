@@ -8,14 +8,17 @@
 <%@ page import="Entities.Coupon" %>
 <%
     if (request.getAttribute("categories") == null) {
-        String uri = request.getRequestURI();
-        if (uri != null && !uri.contains("/home") && !uri.contains("/HomeController")) {
-            response.sendRedirect(request.getContextPath() + "/home");
-            return;
+        // Prevent redirect loop if the request is a forward from HomeController
+        if (request.getAttribute("jakarta.servlet.forward.request_uri") == null) {
+            String uri = request.getRequestURI();
+            if (uri != null && !uri.contains("/home") && !uri.contains("/HomeController")) {
+                response.sendRedirect(request.getContextPath() + "/home");
+                return;
+            }
         }
     }
 %>
-<jsp:include page="../common/header.jsp" />
+<jsp:include page="/common/header.jsp" />
 
     <section class="hero" id="hero">
         <div class="hero-slideshow" id="hero-slideshow">
@@ -433,4 +436,4 @@
     </div>
 
 <% request.setAttribute("extraScript", "js/homepage.js"); %>
-<jsp:include page="../common/footer.jsp" />
+<jsp:include page="/common/footer.jsp" />

@@ -2,6 +2,7 @@ package Controller;
 
 import Entities.Tour;
 import Entities.Coupon;
+import Entities.User;
 import Model.TourDAO;
 import java.io.IOException;
 import java.util.List;
@@ -95,15 +96,20 @@ public class DetailController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Thiết lập mã hóa UTF-8 để nhận đúng các ký tự tiếng Việt có dấu do người dùng nhập vào Form bình luận.
         request.setCharacterEncoding("UTF-8");
         
-        // Đọc các giá trị gửi lên từ thẻ input trong Form (qua thuộc tính name của thẻ)
-        String name = request.getParameter("name"); // Họ và tên người đánh giá
-        String email = request.getParameter("email"); // Địa chỉ email
-        String content = request.getParameter("content"); // Nội dung bình luận chi tiết
-        String ratingStr = request.getParameter("rating"); // Số sao đánh giá (1-5), nhận giá trị từ input ẩn do JS thiết lập
-        String tourIdStr = request.getParameter("tourId"); // ID của tour đang được đánh giá (để lưu và quay lại đúng trang)
+        jakarta.servlet.http.HttpSession session = request.getSession(false);
+        User sessionUser = (session != null) ? (User) session.getAttribute("sessionUser") : null;
+        if (sessionUser == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+        
+        String name = sessionUser.getFullName(); // Use secure credentials from session
+        String email = sessionUser.getEmail();   // Use secure credentials from session
+        String content = request.getParameter("content"); 
+        String ratingStr = request.getParameter("rating"); 
+        String tourIdStr = request.getParameter("tourId"); 
         
         int tourId = 1;
         int rating = 5;

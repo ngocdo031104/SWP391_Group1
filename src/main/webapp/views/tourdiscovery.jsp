@@ -9,7 +9,7 @@
     request.setAttribute("extraCss", "css/tourdiscovery.css");
     request.setAttribute("bodyClass", "explore-page");
 %>
-<jsp:include page="../common/header.jsp" />
+<jsp:include page="/common/header.jsp" />
 
     <section class="explore-search-section">
         <div class="container">
@@ -383,4 +383,4 @@
 </script>
 
 <% request.setAttribute("extraScript", "js/tourdiscovery.js"); %>
-<jsp:include page="../common/footer.jsp" />
+<jsp:include page="/common/footer.jsp" />

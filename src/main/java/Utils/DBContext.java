@@ -23,8 +23,10 @@ public class DBContext {
             connection = DriverManager.getConnection(url, user, pass);
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, "SQL Server Driver not found!", ex);
+            throw new RuntimeException("SQL Server Driver not found! Make sure the JDBC driver jar is in the classpath.", ex);
         } catch (SQLException ex) {
             Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, "Database connection failed!", ex);
+            throw new RuntimeException("Database connection failed! Check your connection URL, username, and password.", ex);
         }
     }
 

@@ -170,23 +170,36 @@ document.addEventListener('DOMContentLoaded', () => {
        ========================================================================== */
     // Parse query params for ID
     const urlParams = new URLSearchParams(window.location.search);
-    const tourId = parseInt(urlParams.get('id')) || 6; // Default to Sa Pa (id: 6) which matches "nui"
+    const tourId = window.activeTourId || parseInt(urlParams.get('id')) || 1;
 
     // Load active tour data
-    const activeTour = toursData.find(t => t.id === tourId) || toursData[5]; // Default to Sa Pa
+    const activeTour = toursData.find(t => t.id === tourId) || toursData[0] || {};
     
     // Dynamic array of photos for lightbox
     const photosList = activeTour.photos || [activeTour.image];
     let currentPhotoIndex = 0;
     
     // Set dynamic HTML headers
-    document.getElementById('breadcrumb-active').textContent = activeTour.title;
-    document.getElementById('detail-title').textContent = activeTour.title;
-    document.getElementById('detail-rating').textContent = activeTour.rating.toFixed(1);
-    document.getElementById('detail-reviews-count').textContent = `(${activeTour.reviews} đánh giá)`;
-    document.getElementById('detail-location-name').textContent = activeTour.location;
-    document.getElementById('gallery-main-img').src = activeTour.image;
-    document.getElementById('gallery-main-img').alt = activeTour.title;
+    const breadcrumbActive = document.getElementById('breadcrumb-active');
+    if (breadcrumbActive) breadcrumbActive.textContent = activeTour.title;
+    
+    const detailTitle = document.getElementById('detail-title');
+    if (detailTitle) detailTitle.textContent = activeTour.title;
+    
+    const detailRating = document.getElementById('detail-rating');
+    if (detailRating) detailRating.textContent = activeTour.rating.toFixed(1);
+    
+    const detailReviewsCount = document.getElementById('detail-reviews-count');
+    if (detailReviewsCount) detailReviewsCount.textContent = `(${activeTour.reviews} đánh giá)`;
+    
+    const detailLocationName = document.getElementById('detail-location-name');
+    if (detailLocationName) detailLocationName.textContent = activeTour.location;
+    
+    const galleryMainImg = document.getElementById('gallery-main-img');
+    if (galleryMainImg) {
+        galleryMainImg.src = activeTour.image;
+        galleryMainImg.alt = activeTour.title;
+    }
 
     // Load category translation
     let categoryText = "Premium";
@@ -195,19 +208,27 @@ document.addEventListener('DOMContentLoaded', () => {
     else if (activeTour.category === "hiking") categoryText = "Trekking Thử thách";
     else if (activeTour.category === "cultural") categoryText = "Văn hóa Hoài cổ";
     else if (activeTour.category === "adventure") categoryText = "Thám hiểm Mạo hiểm";
-    document.getElementById('detail-category-badge').textContent = categoryText;
+    
+    const detailCategoryBadge = document.getElementById('detail-category-badge');
+    if (detailCategoryBadge) detailCategoryBadge.textContent = categoryText;
 
     // Load description
-    document.getElementById('tour-detail-desc').textContent = activeTour.description;
+    const tourDetailDesc = document.getElementById('tour-detail-desc');
+    if (tourDetailDesc) tourDetailDesc.textContent = activeTour.description;
 
     // Highlights translation
     let difficultyText = "Nhẹ nhàng";
     if (activeTour.difficulty === "medium") difficultyText = "Trung bình";
     else if (activeTour.difficulty === "hard") difficultyText = "Thử thách mạnh";
     
-    document.getElementById('hl-difficulty').textContent = difficultyText;
-    document.getElementById('hl-duration').textContent = `${activeTour.duration} Ngày`;
-    document.getElementById('hl-group-size').textContent = `${activeTour.seatsTotal} Khách`;
+    const hlDifficulty = document.getElementById('hl-difficulty');
+    if (hlDifficulty) hlDifficulty.textContent = difficultyText;
+    
+    const hlDuration = document.getElementById('hl-duration');
+    if (hlDuration) hlDuration.textContent = `${activeTour.duration} Ngày`;
+    
+    const hlGroupSize = document.getElementById('hl-group-size');
+    if (hlGroupSize) hlGroupSize.textContent = `${activeTour.seatsLeft} Chỗ`;
     const hlLang = document.getElementById('hl-languages');
     if (hlLang && activeTour.languages) {
         hlLang.textContent = activeTour.languages;
@@ -272,7 +293,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Update prices on page load
     function renderStaticPrices() {
-        document.getElementById('booking-base-price').textContent = formatPrice(activeTour.priceVND);
+        const bookingBasePrice = document.getElementById('booking-base-price');
+        if (bookingBasePrice) {
+            bookingBasePrice.textContent = formatPrice(activeTour.priceVND);
+        }
     }
     renderStaticPrices();
 
@@ -304,6 +328,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let appliedCoupon = null;
 
     function runCalculations() {
+        if (!bookTravelersSelect) return;
         const travelers = parseInt(bookTravelersSelect.value);
         const basePriceVND = activeTour.priceVND;
         const subtotalVND = basePriceVND * travelers;
@@ -483,18 +508,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function openLightbox(index) {
         currentPhotoIndex = index;
-        expandedImg.src = photosList[currentPhotoIndex];
-        captionTxt.textContent = `Hình ảnh ${currentPhotoIndex + 1} / ${photosList.length} - ${activeTour.title}`;
-        lightbox.classList.add('active');
+        if (expandedImg) expandedImg.src = photosList[currentPhotoIndex];
+        if (captionTxt) captionTxt.textContent = `Hình ảnh ${currentPhotoIndex + 1} / ${photosList.length} - ${activeTour.title}`;
+        if (lightbox) lightbox.classList.add('active');
     }
 
     // Main photo click
-    document.getElementById('gallery-main-img').addEventListener('click', () => openLightbox(0));
+    const mainImg = document.getElementById('gallery-main-img');
+    if (mainImg) {
+        mainImg.addEventListener('click', () => openLightbox(0));
+    }
 
     // Thumbnails click
-    subThumbnails.forEach((img, idx) => {
-        img.addEventListener('click', () => openLightbox(idx + 1));
-    });
+    if (subThumbnails) {
+        subThumbnails.forEach((img, idx) => {
+            img.addEventListener('click', () => openLightbox(idx + 1));
+        });
+    }
 
     // View all button click
     const viewAllBtn = document.getElementById('view-all-photos-btn');
@@ -512,15 +542,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // Next Slide
     function nextSlide() {
         currentPhotoIndex = (currentPhotoIndex + 1) % photosList.length;
-        expandedImg.src = photosList[currentPhotoIndex];
-        captionTxt.textContent = `Hình ảnh ${currentPhotoIndex + 1} / ${photosList.length} - ${activeTour.title}`;
+        if (expandedImg) expandedImg.src = photosList[currentPhotoIndex];
+        if (captionTxt) captionTxt.textContent = `Hình ảnh ${currentPhotoIndex + 1} / ${photosList.length} - ${activeTour.title}`;
     }
 
     // Prev Slide
     function prevSlide() {
         currentPhotoIndex = (currentPhotoIndex - 1 + photosList.length) % photosList.length;
-        expandedImg.src = photosList[currentPhotoIndex];
-        captionTxt.textContent = `Hình ảnh ${currentPhotoIndex + 1} / ${photosList.length} - ${activeTour.title}`;
+        if (expandedImg) expandedImg.src = photosList[currentPhotoIndex];
+        if (captionTxt) captionTxt.textContent = `Hình ảnh ${currentPhotoIndex + 1} / ${photosList.length} - ${activeTour.title}`;
     }
 
     if (nextLightboxBtn) nextLightboxBtn.addEventListener('click', nextSlide);
@@ -528,7 +558,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Keyboard support for Lightbox
     document.addEventListener('keydown', (e) => {
-        if (!lightbox.classList.contains('active')) return;
+        if (!lightbox || !lightbox.classList.contains('active')) return;
         if (e.key === 'Escape') lightbox.classList.remove('active');
         if (e.key === 'ArrowRight') nextSlide();
         if (e.key === 'ArrowLeft') prevSlide();
@@ -711,33 +741,4 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    /* ==========================================================================
-       MOBILE RESPONSIVE CONTROLS
-       ========================================================================== */
-    const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-    const navMenu = document.getElementById('nav-menu');
-
-    if (mobileMenuToggle && navMenu) {
-        mobileMenuToggle.addEventListener('click', () => {
-            if (navMenu.style.display === 'flex') {
-                navMenu.style.display = 'none';
-            } else {
-                navMenu.style.display = 'flex';
-                navMenu.style.flexDirection = 'column';
-                navMenu.style.position = 'absolute';
-                navMenu.style.top = '70px';
-                navMenu.style.left = '0';
-                navMenu.style.width = '100%';
-                navMenu.style.backgroundColor = 'var(--bg-glass)';
-                navMenu.style.backdropFilter = 'blur(12px)';
-                navMenu.style.padding = '1.5rem var(--space-md)';
-                navMenu.style.boxShadow = 'var(--shadow-lg)';
-                navMenu.style.gap = '1rem';
-                
-                navMenu.querySelectorAll('.nav-link').forEach(link => {
-                    link.style.color = 'var(--slate-800)';
-                });
-            }
-        });
-    }
 });
