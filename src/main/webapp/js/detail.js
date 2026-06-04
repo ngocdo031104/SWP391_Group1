@@ -170,10 +170,10 @@ document.addEventListener('DOMContentLoaded', () => {
        ========================================================================== */
     // Parse query params for ID
     const urlParams = new URLSearchParams(window.location.search);
-    const tourId = parseInt(urlParams.get('id')) || 6; // Default to Sa Pa (id: 6) which matches "nui"
+    const tourId = window.activeTourId || parseInt(urlParams.get('id')) || 1;
 
     // Load active tour data
-    const activeTour = toursData.find(t => t.id === tourId) || toursData[5]; // Default to Sa Pa
+    const activeTour = toursData.find(t => t.id === tourId) || toursData[0] || {};
     
     // Dynamic array of photos for lightbox
     const photosList = activeTour.photos || [activeTour.image];
@@ -207,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     document.getElementById('hl-difficulty').textContent = difficultyText;
     document.getElementById('hl-duration').textContent = `${activeTour.duration} Ngày`;
-    document.getElementById('hl-group-size').textContent = `${activeTour.seatsTotal} Khách`;
+    document.getElementById('hl-group-size').textContent = `${activeTour.seatsLeft} Chỗ`;
     const hlLang = document.getElementById('hl-languages');
     if (hlLang && activeTour.languages) {
         hlLang.textContent = activeTour.languages;

@@ -8,6 +8,7 @@
 <%@ page import="Entities.TourInclusion" %>
 <%@ page import="Entities.TourFAQ" %>
 <%@ page import="Entities.Review" %>
+<%@ page import="Entities.User" %>
 <%
     // LÝ DO VÀ CHỨC NĂNG CỦA ĐOẠN CODE NÀY:
     // - extraCss: Thuộc tính này được header.jsp đọc để nhúng file CSS detail.css tương ứng (tạo giao diện riêng cho trang chi tiết).
@@ -403,52 +404,66 @@
                            Servlet đọc bằng request.getParameter(). -->
                     <div class="add-review-card">
                         <h4>Chia Sẻ Trải Nghiệm Của Bạn</h4>
-                        <p>Ý kiến của bạn giúp cộng đồng du lịch có thêm những quyết định đúng đắn.</p>
-                        
-                        <form class="add-review-form" id="new-review-form" action="${pageContext.request.contextPath}/detail" method="POST">
-                            <!-- Lưu ID của Tour để Controller biết cần gán review này cho tour nào -->
-                            <input type="hidden" name="tourId" value="<%= activeTour != null ? activeTour.getTourId() : 1 %>">
-                            <!-- Lưu số sao đánh giá (sẽ được cập nhật bằng JS khi người dùng click vào các ngôi sao bên dưới) -->
-                            <input type="hidden" name="rating" id="review-rating-input" value="5">
+                        <% 
+                            boolean isLoggedIn = (session.getAttribute("sessionUser") != null);
+                            User currentUser = isLoggedIn ? (User) session.getAttribute("sessionUser") : null;
+                            if (isLoggedIn && currentUser != null) {
+                        %>
+                            <p>Ý kiến của bạn giúp cộng đồng du lịch có thêm những quyết định đúng đắn.</p>
                             
-                            <div class="form-rating-selector">
-                                <span>Đánh giá của bạn:</span>
-                                <div class="stars-selector-row" id="stars-selector">
-                                    <span class="star-select" data-rating="1"><i data-lucide="star"></i></span>
-                                    <span class="star-select" data-rating="2"><i data-lucide="star"></i></span>
-                                    <span class="star-select" data-rating="3"><i data-lucide="star"></i></span>
-                                    <span class="star-select" data-rating="4"><i data-lucide="star"></i></span>
-                                    <span class="star-select" data-rating="5"><i data-lucide="star"></i></span>
+                            <form class="add-review-form" id="new-review-form" action="${pageContext.request.contextPath}/detail" method="POST">
+                                <!-- Lưu ID của Tour để Controller biết cần gán review này cho tour nào -->
+                                <input type="hidden" name="tourId" value="<%= activeTour != null ? activeTour.getTourId() : 1 %>">
+                                <!-- Lưu số sao đánh giá (sẽ được cập nhật bằng JS khi người dùng click vào các ngôi sao bên dưới) -->
+                                <input type="hidden" name="rating" id="review-rating-input" value="5">
+                                
+                                <div class="form-rating-selector">
+                                    <span>Đánh giá của bạn:</span>
+                                    <div class="stars-selector-row" id="stars-selector">
+                                        <span class="star-select" data-rating="1"><i data-lucide="star"></i></span>
+                                        <span class="star-select" data-rating="2"><i data-lucide="star"></i></span>
+                                        <span class="star-select" data-rating="3"><i data-lucide="star"></i></span>
+                                        <span class="star-select" data-rating="4"><i data-lucide="star"></i></span>
+                                        <span class="star-select" data-rating="5"><i data-lucide="star"></i></span>
+                                    </div>
                                 </div>
-                            </div>
-                            
-                            <div class="form-grid">
+                                
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label for="rev-name">Họ & Tên *</label>
+                                        <input type="text" id="rev-name" name="name" value="<%= currentUser.getFullName() %>" readonly style="background-color: var(--slate-100); cursor: not-allowed;" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="rev-email">Email (Sẽ được ẩn) *</label>
+                                        <input type="email" id="rev-email" name="email" value="<%= currentUser.getEmail() %>" readonly style="background-color: var(--slate-100); cursor: not-allowed;" required>
+                                    </div>
+                                </div>
+
                                 <div class="form-group">
-                                    <label for="rev-name">Họ & Tên *</label>
-                                    <input type="text" id="rev-name" name="name" placeholder="Ví dụ: Nguyễn Văn A" required>
+                                    <label for="rev-text">Bình luận chi tiết *</label>
+                                    <textarea id="rev-text" name="content" rows="4" placeholder="Chia sẻ về lịch trình, dịch vụ ăn uống, hướng dẫn viên và phương tiện di chuyển..." required></textarea>
                                 </div>
+
                                 <div class="form-group">
-                                    <label for="rev-email">Email (Sẽ được ẩn) *</label>
-                                    <input type="email" id="rev-email" name="email" placeholder="example@mail.com" required>
+                                    <label>Tải lên hình ảnh chuyến đi</label>
+                                    <div class="upload-simulator-btn" id="upload-sim-btn">
+                                        <i data-lucide="camera"></i>
+                                        <span>Tải ảnh lên (Mô phỏng)</span>
+                                    </div>
+                                    <div class="uploaded-images-preview" id="uploaded-images-preview-row"></div>
                                 </div>
-                            </div>
 
-                            <div class="form-group">
-                                <label for="rev-text">Bình luận chi tiết *</label>
-                                <textarea id="rev-text" name="content" rows="4" placeholder="Chia sẻ về lịch trình, dịch vụ ăn uống, hướng dẫn viên và phương tiện di chuyển..." required></textarea>
+                                <button type="submit" class="btn btn-primary">Gửi Đánh Giá</button>
+                            </form>
+                        <% } else { %>
+                            <div class="login-to-review-wrapper" style="text-align: center; padding: 2rem 1rem;">
+                                <i data-lucide="message-square" style="width: 3rem; height: 3rem; color: var(--slate-400); margin-bottom: 1rem; display: block; margin-left: auto; margin-right: auto;"></i>
+                                <p style="margin-bottom: 1.5rem; color: var(--slate-600);">Vui lòng đăng nhập tài khoản để gửi đánh giá và chia sẻ trải nghiệm chuyến đi của bạn.</p>
+                                <a href="${pageContext.request.contextPath}/login" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; border-radius: 8px;">
+                                    <i data-lucide="log-in" style="width: 1.25rem; height: 1.25rem;"></i> Đăng Nhập Để Đánh Giá
+                                </a>
                             </div>
-
-                            <div class="form-group">
-                                <label>Tải lên hình ảnh chuyến đi</label>
-                                <div class="upload-simulator-btn" id="upload-sim-btn">
-                                    <i data-lucide="camera"></i>
-                                    <span>Tải ảnh lên (Mô phỏng)</span>
-                                </div>
-                                <div class="uploaded-images-preview" id="uploaded-images-preview-row"></div>
-                            </div>
-
-                            <button type="submit" class="btn btn-primary">Gửi Đánh Giá</button>
-                        </form>
+                        <% } %>
                     </div>
                 </div>
 
@@ -587,6 +602,7 @@
     </div>
 
 <script>
+    window.activeTourId = <%= activeTour != null ? activeTour.getTourId() : 1 %>;
     window.toursData = [
         <% 
         List<Tour> tours = (List<Tour>) request.getAttribute("tours");

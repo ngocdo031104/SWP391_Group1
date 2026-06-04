@@ -587,7 +587,7 @@ public class TourDAO extends DBContext {
             }
             
             if (scheduleId != -1) {
-                String insertBookingSql = "INSERT INTO Booking (BookingCode, ScheduleID, CustomerID, NumParticipants, BaseAmount, VATAmount, DiscountAmount, TotalAmount, Status) VALUES (?, ?, ?, 1, 0, 0, 0, 0, 'Completed')";
+                String insertBookingSql = "INSERT INTO Booking (BookingCode, ScheduleID, CustomerID, NumParticipants, BaseAmount, VATAmount, DiscountAmount, TotalAmount, Status, CreatedAt, UpdatedAt) VALUES (?, ?, ?, 1, 0, 0, 0, 0, 'Completed', SYSDATETIME(), SYSDATETIME())";
                 try (PreparedStatement ps = connection.prepareStatement(insertBookingSql, Statement.RETURN_GENERATED_KEYS)) {
                     ps.setString(1, "BK_DUMMY_" + (System.currentTimeMillis() % 100000));
                     ps.setInt(2, scheduleId);
@@ -608,7 +608,7 @@ public class TourDAO extends DBContext {
             return false;
         }
         
-        String insertReviewSql = "INSERT INTO Review (TourID, BookingID, CustomerID, Rating, Content, IsVisible) VALUES (?, ?, ?, ?, ?, 1)";
+        String insertReviewSql = "INSERT INTO Review (TourID, BookingID, CustomerID, Rating, Content, IsVisible, CreatedAt, UpdatedAt) VALUES (?, ?, ?, ?, ?, 1, SYSDATETIME(), SYSDATETIME())";
         try (PreparedStatement ps = connection.prepareStatement(insertReviewSql)) {
             ps.setInt(1, tourId);
             ps.setInt(2, bookingId);
