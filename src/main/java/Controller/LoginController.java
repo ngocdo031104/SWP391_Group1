@@ -124,6 +124,17 @@ public class LoginController extends HttpServlet {
                 return;
             }
 
+            if (!user.isIsVerified()) {
+                request.setAttribute(
+                        "errorMessage",
+                        "Tài khoản chưa được xác thực. Vui lòng kiểm tra email của bạn để lấy mã xác nhận."
+                );
+
+                request.getRequestDispatcher("/views/login.jsp")
+                        .forward(request, response);
+                return;
+            }
+
             // Tạo Session
             HttpSession session =
                     request.getSession(true);

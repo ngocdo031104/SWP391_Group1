@@ -145,6 +145,57 @@ public class UserDAO extends DBContext {
      * @param userId user ID
      * @return User object or null if not found
      */
+    public User getUserByEmail(String email) {
+        String sql = "SELECT u.UserID, u.RoleID, u.Email, u.FullName, u.PhoneNumber, u.IsActive, u.IsVerified, u.CreatedAt, u.UpdatedAt, u.LastLoginAt, "
+                   + "r.RoleName, r.Description AS RoleDesc, "
+                   + "p.ProfileID, p.AvatarURL, p.Biography, p.DateOfBirth, p.Gender, p.Address, p.TravelInterests "
+                   + "FROM [User] u "
+                   + "JOIN Role r ON u.RoleID = r.RoleID "
+                   + "LEFT JOIN UserProfile p ON u.UserID = p.UserID "
+                   + "WHERE u.Email = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, email);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    User user = new User();
+                    user.setUserId(rs.getInt("UserID"));
+                    user.setRoleId(rs.getInt("RoleID"));
+                    user.setEmail(rs.getString("Email"));
+                    user.setFullName(rs.getString("FullName"));
+                    user.setPhoneNumber(rs.getString("PhoneNumber"));
+                    user.setIsActive(rs.getBoolean("IsActive"));
+                    user.setIsVerified(rs.getBoolean("IsVerified"));
+                    user.setCreatedAt(rs.getTimestamp("CreatedAt"));
+                    user.setUpdatedAt(rs.getTimestamp("UpdatedAt"));
+                    user.setLastLoginAt(rs.getTimestamp("LastLoginAt"));
+
+                    Role role = new Role();
+                    role.setRoleId(rs.getInt("RoleID"));
+                    role.setRoleName(rs.getString("RoleName"));
+                    role.setDescription(rs.getString("RoleDesc"));
+                    user.setRole(role);
+
+                    if (rs.getInt("ProfileID") != 0) {
+                        UserProfile profile = new UserProfile();
+                        profile.setProfileId(rs.getInt("ProfileID"));
+                        profile.setUserId(rs.getInt("UserID"));
+                        profile.setAvatarUrl(rs.getString("AvatarURL"));
+                        profile.setBiography(rs.getString("Biography"));
+                        profile.setDateOfBirth(rs.getDate("DateOfBirth"));
+                        profile.setGender(rs.getString("Gender"));
+                        profile.setAddress(rs.getString("Address"));
+                        profile.setTravelInterests(rs.getString("TravelInterests"));
+                        user.setProfile(profile);
+                    }
+                    return user;
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
     public User getUserById(int userId) {
         String sql = "SELECT u.UserID, u.RoleID, u.Email, u.FullName, u.PhoneNumber, u.IsActive, u.IsVerified, u.CreatedAt, u.UpdatedAt, u.LastLoginAt, "
                    + "r.RoleName, r.Description AS RoleDesc, "
@@ -331,5 +382,17 @@ public class UserDAO extends DBContext {
             Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return logs;
+    }
+
+    public boolean verifyUser(String email) {
+        String sql = "UPDATE [User] SET IsVerified = 1 WHERE Email = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, email);
+            int rows = ps.executeUpdate();
+            return rows > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
     }
 }
