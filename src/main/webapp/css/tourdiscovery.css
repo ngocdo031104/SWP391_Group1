@@ -2,7 +2,7 @@
    EXPLORE PAGE STYLES (SPLIT VIEW + FILTERS + MAP)
    ========================================================================== */
 .explore-page {
-    background-color: var(--bg-body);
+    background-color: #f4f7f6;
 }
 
 /* 1. Header Search Section (Sticky Search Bar) */
@@ -1153,7 +1153,8 @@
 /* ==========================================================================
    EXPLORE PAGE â€” LAYOUT FIXES & PREMIUM OVERRIDES
    ========================================================================== */
-.explore-page {
+.explore-page,
+.detail-page {
     padding-top: 70px;
     background: linear-gradient(180deg, #f0f9ff 0%, #f8fafc 35%, #ffffff 100%);
 }

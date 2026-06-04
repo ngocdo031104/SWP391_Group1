@@ -42,6 +42,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Mobile navigation controls & elements (declared at top to prevent Temporal Dead Zone / ReferenceError issues)
     const mapToggleBtn = document.getElementById('map-toggle-btn');
     const mapCloseBtn = document.getElementById('map-close-btn');
+    const avatarBtn = document.getElementById('user-avatar-btn');
+    const dropdownMenu = document.getElementById('user-dropdown-menu');
+    const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+    const navMenu = document.getElementById('nav-menu');
 
     /* ==========================================================================
        DỮ LIỆU TOUR VIỆT NAM (100% BẢN ĐỊA HÓA - SỬ DỤNG ẢNH NỘI BỘ ĐÃ GENERATE)
@@ -799,7 +803,50 @@ document.addEventListener('DOMContentLoaded', () => {
         mapCloseBtn.addEventListener('click', () => setMapOpen(false));
     }
 
+    /* ==========================================================================
+       NAVBAR PROFILE DROPDOWN
+       ========================================================================== */
+    // (avatarBtn and dropdownMenu are declared at the top level of DOMContentLoaded)
 
+    if (avatarBtn && dropdownMenu) {
+        avatarBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdownMenu.classList.toggle('active');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!avatarBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                dropdownMenu.classList.remove('active');
+            }
+        });
+    }
+
+    // Mobile Navbar Hamburguer toggle
+    // (mobileMenuToggle and navMenu are declared at the top level of DOMContentLoaded)
+
+    if (mobileMenuToggle && navMenu) {
+        mobileMenuToggle.addEventListener('click', () => {
+            if (navMenu.style.display === 'flex') {
+                navMenu.style.display = 'none';
+            } else {
+                navMenu.style.display = 'flex';
+                navMenu.style.flexDirection = 'column';
+                navMenu.style.position = 'absolute';
+                navMenu.style.top = '70px';
+                navMenu.style.left = '0';
+                navMenu.style.width = '100%';
+                navMenu.style.backgroundColor = 'var(--bg-glass)';
+                navMenu.style.backdropFilter = 'blur(12px)';
+                navMenu.style.padding = '1.5rem var(--space-md)';
+                navMenu.style.boxShadow = 'var(--shadow-lg)';
+                navMenu.style.gap = '1rem';
+                
+                navMenu.querySelectorAll('.nav-link').forEach(link => {
+                    link.style.color = 'var(--slate-800)';
+                });
+            }
+        });
+    }
 
     /* ==========================================================================
        RECOMMENDATION SECTION POPULATING (Tour dành cho bạn)

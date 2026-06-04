@@ -99,21 +99,12 @@
                             } else if (catName.toLowerCase().contains("văn hóa") || catName.toLowerCase().contains("di sản") || catName.toLowerCase().contains("cultural")) {
                                 icon = "landmark";
                                 dataCategory = "cultural";
-                            } else if (catName.toLowerCase().contains("city") || catName.toLowerCase().contains("mạo hiểm") || catName.toLowerCase().contains("adventure")) {
+                            } else if (catName.toLowerCase().contains("city") || catName.toLowerCase().contains("mạo hiểm")) {
                                 icon = "map";
                                 dataCategory = "adventure";
-                            } else if (catName.toLowerCase().contains("mice") || catName.toLowerCase().contains("sự kiện") || catName.toLowerCase().contains("gia đình")) {
+                            } else if (catName.toLowerCase().contains("mice") || catName.toLowerCase().contains("gia đình")) {
                                 icon = "briefcase";
                                 dataCategory = "family";
-                            } else if (catName.toLowerCase().contains("wellness") || catName.toLowerCase().contains("spa") || catName.toLowerCase().contains("dưỡng")) {
-                                icon = "heart";
-                                dataCategory = "wellness";
-                            } else if (catName.toLowerCase().contains("ẩm thực") || catName.toLowerCase().contains("food") || catName.toLowerCase().contains("culinary")) {
-                                icon = "utensils";
-                                dataCategory = "food";
-                            } else if (catName.toLowerCase().contains("mua sắm") || catName.toLowerCase().contains("shopping")) {
-                                icon = "shopping-bag";
-                                dataCategory = "shopping";
                             } else if (catName.toLowerCase().contains("cao cấp") || catName.toLowerCase().contains("luxury")) {
                                 icon = "gem";
                                 dataCategory = "luxury";
@@ -148,10 +139,6 @@
                             else if (tour.getCategoryId() == 3) catClass = "cultural";
                             else if (tour.getCategoryId() == 4) catClass = "adventure";
                             else if (tour.getCategoryId() == 5) catClass = "family";
-                            else if (tour.getCategoryId() == 6) catClass = "adventure";
-                            else if (tour.getCategoryId() == 7) catClass = "wellness";
-                            else if (tour.getCategoryId() == 8) catClass = "food";
-                            else if (tour.getCategoryId() == 9) catClass = "shopping";
                             
                             // Determine image
                             String imgUrl = "assets/images/tour_halong.png"; // Fallback

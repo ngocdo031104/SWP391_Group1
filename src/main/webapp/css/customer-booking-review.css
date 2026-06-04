@@ -1,0 +1,120 @@
+/*
+ * Người làm: Dương
+ * Thời gian tạo: 04/06/2026
+ * Chức năng: CSS cho màn Customer xác nhận chi tiết đơn đặt tour.
+ * Ý nghĩa: Tạo bố cục giống màn review mẫu gồm card tour, danh sách người đi và khung tổng kết thanh toán.
+ */
+@import url('customer-booking-common.css');
+
+/* Layout 2 cột: nội dung review bên trái và tổng kết tiền bên phải. */
+.booking-layout,
+.booking-review-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 330px;
+    gap: 24px;
+    align-items: start;
+}
+
+/* Card tour và card thanh toán dùng viền đậm để giống khung xác nhận trong mẫu. */
+.review-tour-card,
+.review-payment-card {
+    border: 1px solid #1f2d44;
+    overflow: hidden;
+}
+
+/* Ảnh cover tour có lớp phủ tối để chữ tên tour đọc rõ trên nền ảnh. */
+.review-tour-cover {
+    min-height: 220px;
+    display: grid;
+    align-content: end;
+    gap: 6px;
+    padding: 22px;
+    color: #ffffff;
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.15), rgba(15, 23, 42, 0.82)), url('../assets/images/hero_beach.png') center/cover;
+}
+
+.review-tour-cover span {
+    width: max-content;
+    border-radius: 999px;
+    background: #059669;
+    padding: 5px 10px;
+    font-weight: 800;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+}
+
+.review-tour-cover h2,
+.review-tour-cover p {
+    margin: 0;
+}
+
+/* Grid thông tin lịch trình gồm ngày khởi hành và phương thức di chuyển. */
+.review-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 18px;
+}
+
+.review-info-grid div,
+.participant-review-item {
+    border: 1px solid #e0e8f2;
+    border-radius: 8px;
+    padding: 14px;
+    background: #f8fbff;
+}
+
+.review-info-grid small,
+.review-payment-card dt {
+    display: block;
+    color: #66768d;
+    margin-bottom: 5px;
+}
+
+/* Danh sách người đi và danh sách dòng tiền được xếp dọc để dễ đọc. */
+.participant-review-list,
+.review-payment-card dl {
+    display: grid;
+    gap: 10px;
+}
+
+.participant-review-item span,
+.participant-review-item small {
+    display: block;
+    color: #66768d;
+    margin-top: 5px;
+}
+
+/* Card tổng kết tiền và nút chuyển sang thanh toán. */
+.review-payment-card {
+    padding: 18px;
+}
+
+.review-payment-card dl div {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+/* Tổng tiền cuối card được nhấn màu xanh để khách biết số tiền cần thanh toán. */
+.summary-total.light {
+    margin: 16px 0;
+    padding-top: 16px;
+    border-top: 1px solid #17243a;
+    color: #17243a;
+}
+
+.summary-total.light strong {
+    display: block;
+    color: #0369a1;
+    font-size: 1.45rem;
+}
+
+/* Responsive: các cột review chuyển thành một cột trên màn nhỏ. */
+@media (max-width: 900px) {
+    .booking-layout,
+    .booking-review-layout,
+    .review-info-grid {
+        grid-template-columns: 1fr;
+    }
+}

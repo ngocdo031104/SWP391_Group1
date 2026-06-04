@@ -14,34 +14,7 @@
     // - activeTour: Đối tượng Tour chính được Servlet DetailController.java nạp từ DB (bằng tourDAO.getTourById(id))
     //   và đẩy vào request attribute để JSP này hiển thị thông tin động.
     request.setAttribute("extraCss", "css/detail.css");
-    request.setAttribute("bodyClass", "detail-page");
     Tour activeTour = (Tour) request.getAttribute("tour");
-    
-    List<Review> tourReviews = activeTour != null ? activeTour.getReviews() : null;
-    int totalReviews = (tourReviews != null) ? tourReviews.size() : 0;
-    double avgRating = 0.0;
-    int[] starCounts = new int[6]; // index 1 to 5
-    int[] starPercentages = new int[6]; // index 1 to 5
-    
-    if (totalReviews > 0) {
-        double sumRating = 0;
-        for (Review rev : tourReviews) {
-            int rating = rev.getRating();
-            sumRating += rating;
-            if (rating >= 1 && rating <= 5) {
-                starCounts[rating]++;
-            }
-        }
-        avgRating = sumRating / totalReviews;
-        for (int i = 1; i <= 5; i++) {
-            starPercentages[i] = (int) Math.round(((double) starCounts[i] / totalReviews) * 100);
-        }
-    }
-    
-    int activeSeatsLeft = 10;
-    if (activeTour != null && activeTour.getSchedules() != null && !activeTour.getSchedules().isEmpty()) {
-        activeSeatsLeft = activeTour.getSchedules().get(0).getAvailableSeats();
-    }
 %>
 <!-- Nhúng header dùng chung cho toàn bộ website, nằm trong thư mục web/common/ -->
 <jsp:include page="../common/header.jsp" />
@@ -93,6 +66,7 @@
     <section class="tour-gallery-section">
         <div class="container">
             <div class="masonry-gallery" id="photo-gallery-grid">
+                <!-- Main big photo (Left) -->
                 <%
                     String mainImgUrl = "assets/images/tour_halong.png";
                     if (activeTour != null && activeTour.getMediaList() != null && !activeTour.getMediaList().isEmpty()) {
@@ -108,59 +82,25 @@
                         else if (dest.contains("nha trang")) mainImgUrl = "assets/images/tour_nhatrang.png";
                         else if (dest.contains("hà giang")) mainImgUrl = "assets/images/tour_hagiang.png";
                     }
-
-                    // Construct gallery images list
-                    List<TourMedia> mediaList = activeTour != null ? activeTour.getMediaList() : null;
-                    java.util.List<String> galleryImages = new java.util.ArrayList<>();
-                    if (mediaList != null && !mediaList.isEmpty()) {
-                        for (TourMedia m : mediaList) {
-                            String mUrl = m.getMediaUrl();
-                            if (!mUrl.startsWith("http") && !mUrl.startsWith("/")) {
-                                mUrl = request.getContextPath() + "/" + mUrl;
-                            }
-                            galleryImages.add(mUrl);
-                        }
-                    }
-                    if (galleryImages.isEmpty() && activeTour != null) {
-                        galleryImages.add(request.getContextPath() + "/" + mainImgUrl);
-                    }
-
-                    // Fallbacks to pad up to 5 images
-                    String[] defaultPool = {
-                        "assets/images/tour_halong.png",
-                        "assets/images/tour_phuquoc.png",
-                        "assets/images/hero_beach.png",
-                        "assets/images/tour_dalat.png",
-                        "assets/images/tour_danang.png",
-                        "assets/images/tour_hoian.png",
-                        "assets/images/tour_sapa.png",
-                        "assets/images/tour_nhatrang.png",
-                        "assets/images/tour_hagiang.png"
-                    };
-                    int poolIdx = 0;
-                    while (galleryImages.size() < 5 && poolIdx < defaultPool.length) {
-                        String fallbackUrl = request.getContextPath() + "/" + defaultPool[poolIdx];
-                        if (!galleryImages.contains(fallbackUrl)) {
-                            galleryImages.add(fallbackUrl);
-                        }
-                        poolIdx++;
-                    }
                 %>
                 <div class="gallery-item main-photo">
-                    <img src="<%= galleryImages.get(0) %>" alt="Tour chính" id="gallery-main-img">
+                    <img src="${pageContext.request.contextPath}/<%= mainImgUrl %>" alt="Tour chính" id="gallery-main-img">
+                    <button class="btn-play-video" id="play-video-btn">
+                        <i data-lucide="play"></i> Xem Video
+                    </button>
                 </div>
                 <!-- Sub photos (Right grid) -->
                 <div class="gallery-item sub-photo sub-1">
-                    <img src="<%= galleryImages.get(1) %>" alt="Ảnh phụ 1" class="gallery-thumb" data-index="1">
+                    <img src="${pageContext.request.contextPath}/assets/images/tour_halong.png" alt="Ảnh phụ 1" class="gallery-thumb" data-index="1">
                 </div>
                 <div class="gallery-item sub-photo sub-2">
-                    <img src="<%= galleryImages.get(2) %>" alt="Ảnh phụ 2" class="gallery-thumb" data-index="2">
+                    <img src="${pageContext.request.contextPath}/assets/images/tour_phuquoc.png" alt="Ảnh phụ 2" class="gallery-thumb" data-index="2">
                 </div>
                 <div class="gallery-item sub-photo sub-3">
-                    <img src="<%= galleryImages.get(3) %>" alt="Ảnh phụ 3" class="gallery-thumb" data-index="3">
+                    <img src="${pageContext.request.contextPath}/assets/images/hero_beach.png" alt="Ảnh phụ 3" class="gallery-thumb" data-index="3">
                 </div>
                 <div class="gallery-item sub-photo sub-4">
-                    <img src="<%= galleryImages.get(4) %>" alt="Ảnh phụ 4" class="gallery-thumb" data-index="4">
+                    <img src="${pageContext.request.contextPath}/assets/images/tour_dalat.png" alt="Ảnh phụ 4" class="gallery-thumb" data-index="4">
                     <button class="btn-all-photos" id="view-all-photos-btn">
                         <i data-lucide="grid"></i> Xem Tất Cả Ảnh
                     </button>
@@ -188,8 +128,8 @@
                     <div class="highlight-item">
                         <div class="icon-wrapper"><i data-lucide="users"></i></div>
                         <div class="item-text">
-                            <span class="label">Số slot còn lại</span>
-                            <strong id="hl-group-size"><%= activeSeatsLeft %> Chỗ</strong>
+                            <span class="label">Số người tối đa</span>
+                            <strong id="hl-group-size">15 Khách</strong>
                         </div>
                     </div>
                     <div class="highlight-item">
@@ -208,6 +148,18 @@
                     </div>
                 </div>
 
+                <!-- Tour Guide Profile Widget -->
+                <div class="tour-guide-profile-widget">
+                    <h3>Hướng Dẫn Viên Đồng Hành</h3>
+                    <div class="guide-profile-flex">
+                        <img src="" alt="Hướng dẫn viên" class="guide-big-avatar" id="guide-avatar-img">
+                        <div class="guide-profile-details">
+                            <h4 id="guide-name-txt">Đang tải...</h4>
+                            <p class="guide-rating-row"><i data-lucide="star"></i> <strong>4.9★</strong> (42 tour đã dẫn)</p>
+                            <p class="guide-bio">"Xin chào! Tôi có hơn 5 năm kinh nghiệm dẫn đoàn trekking và thám hiểm tại Việt Nam. Tôi rất đam mê chia sẻ kiến thức văn hóa địa phương và hỗ trợ an toàn tối đa cho chuyến đi của bạn."</p>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Tour Description -->
                 <div class="tour-description-section">
@@ -307,91 +259,41 @@
                     
                     <div class="reviews-scorecard">
                         <div class="scorecard-left">
-                            <span class="big-score" id="scorecard-avg"><%= String.format(java.util.Locale.US, "%.1f", avgRating) %></span>
-                            <div class="stars-row">
-                                <%
-                                    int fullStars = (int) Math.round(avgRating);
-                                    for (int i = 1; i <= 5; i++) {
-                                %>
-                                <i data-lucide="star" class="<%= (i <= fullStars) ? "star-filled" : "" %>"></i>
-                                <%
-                                    }
-                                %>
-                            </div>
-                            <span class="reviews-count-label" id="scorecard-total">Dựa trên <%= totalReviews %> đánh giá</span>
+                            <span class="big-score" id="scorecard-avg">0.0</span>
+                            <div class="stars-row"><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i></div>
+                            <span class="reviews-count-label" id="scorecard-total">Dựa trên 0 đánh giá</span>
                         </div>
                         <div class="scorecard-right">
-                            <%
-                                for (int star = 5; star >= 1; star--) {
-                                    int percent = starPercentages[star];
-                            %>
-                            <div class="rating-bar-item" data-star="<%= star %>">
-                                <span><%= star %> ★</span>
-                                <div class="rating-bar-bg"><div class="rating-bar-fill" style="width: <%= percent %>%;"></div></div>
-                                <span class="rating-percent"><%= percent %>%</span>
+                            <div class="rating-bar-item">
+                                <span>5 ★</span>
+                                <div class="rating-bar-bg"><div class="rating-bar-fill" style="width: 85%;"></div></div>
+                                <span>85%</span>
                             </div>
-                            <%
-                                }
-                            %>
+                            <div class="rating-bar-item">
+                                <span>4 ★</span>
+                                <div class="rating-bar-bg"><div class="rating-bar-fill" style="width: 12%;"></div></div>
+                                <span>12%</span>
+                            </div>
+                            <div class="rating-bar-item">
+                                <span>3 ★</span>
+                                <div class="rating-bar-bg"><div class="rating-bar-fill" style="width: 3%;"></div></div>
+                                <span>3%</span>
+                            </div>
+                            <div class="rating-bar-item">
+                                <span>2 ★</span>
+                                <div class="rating-bar-bg"><div class="rating-bar-fill" style="width: 0%;"></div></div>
+                                <span>0%</span>
+                            </div>
+                            <div class="rating-bar-item">
+                                <span>1 ★</span>
+                                <div class="rating-bar-bg"><div class="rating-bar-fill" style="width: 0%;"></div></div>
+                                <span>0%</span>
+                            </div>
                         </div>
                     </div>
 
                     <div class="reviews-list-container" id="reviews-list-container">
-                        <%
-                            if (tourReviews != null && !tourReviews.isEmpty()) {
-                                for (Review rev : tourReviews) {
-                                    String avatar = rev.getCustomerAvatar();
-                                    if (avatar == null || avatar.trim().isEmpty()) {
-                                        avatar = "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80"; // Fallback avatar
-                                    }
-                                    java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
-                                    String dateStr = sdf.format(rev.getCreatedAt());
-                                    
-                                    String content = rev.getContent();
-                                    if (content == null) {
-                                        content = "";
-                                    } else {
-                                        content = content.replace("\"", "&quot;").replace("<", "&lt;").replace(">", "&gt;");
-                                    }
-                        %>
-                        <div class="review-comment-card">
-                            <div class="review-comment-header">
-                                <div class="reviewer-info">
-                                    <img src="<%= avatar %>" alt="<%= rev.getCustomerName() %>" class="reviewer-avatar">
-                                    <div class="reviewer-meta">
-                                        <span class="reviewer-name"><%= rev.getCustomerName() %></span>
-                                        <span class="reviewer-date">Đăng ngày: <%= dateStr %></span>
-                                    </div>
-                                </div>
-                                <div class="reviewer-actions">
-                                    <div class="reviewer-stars-row">
-                                        <% for (int s = 1; s <= 5; s++) { %>
-                                        <i data-lucide="star" class="<%= (s <= rev.getRating()) ? "star-filled" : "" %>"></i>
-                                        <% } %>
-                                    </div>
-                                    <% if (rev.isIsVerified()) { %>
-                                    <div class="verified-badge">
-                                        <i data-lucide="shield-check"></i>
-                                        <span>Đã trải nghiệm</span>
-                                    </div>
-                                    <% } %>
-                                </div>
-                            </div>
-                            <div class="review-comment-body">
-                                <p><%= content %></p>
-                            </div>
-                        </div>
-                        <%
-                                }
-                            } else {
-                        %>
-                        <div class="no-reviews-message" style="text-align: center; padding: 40px; color: var(--text-light); width: 100%;">
-                            <i data-lucide="message-square" style="width: 48px; height: 48px; margin-bottom: 12px; color: var(--border-color); display: block; margin-left: auto; margin-right: auto;"></i>
-                            <p>Chưa có đánh giá nào cho hành trình này. Hãy là người đầu tiên chia sẻ cảm nhận!</p>
-                        </div>
-                        <%
-                            }
-                        %>
+                        <!-- Rendered by detail.js -->
                     </div>
 
                     <!-- BIỂU MẪU ĐĂNG KÝ BÌNH LUẬN / ĐÁNH GIÁ (ADD REVIEW FORM)
@@ -414,11 +316,11 @@
                             <div class="form-rating-selector">
                                 <span>Đánh giá của bạn:</span>
                                 <div class="stars-selector-row" id="stars-selector">
-                                    <span class="star-select" data-rating="1"><i data-lucide="star"></i></span>
-                                    <span class="star-select" data-rating="2"><i data-lucide="star"></i></span>
-                                    <span class="star-select" data-rating="3"><i data-lucide="star"></i></span>
-                                    <span class="star-select" data-rating="4"><i data-lucide="star"></i></span>
-                                    <span class="star-select" data-rating="5"><i data-lucide="star"></i></span>
+                                    <i data-lucide="star" class="star-select" data-rating="1"></i>
+                                    <i data-lucide="star" class="star-select" data-rating="2"></i>
+                                    <i data-lucide="star" class="star-select" data-rating="3"></i>
+                                    <i data-lucide="star" class="star-select" data-rating="4"></i>
+                                    <i data-lucide="star" class="star-select" data-rating="5"></i>
                                 </div>
                             </div>
                             
@@ -488,7 +390,7 @@
                         %>
                         <div class="faq-item">
                             <div class="faq-question">
-                                <h4>Chính sách hủy tour du lịch của TourBuddy như thế nào?</h4>
+                                <h4>Chính sách hủy tour du lịch của Mirai Travels như thế nào?</h4>
                                 <i data-lucide="chevron-down" class="faq-arrow"></i>
                             </div>
                             <div class="faq-answer">
@@ -527,33 +429,66 @@
             <div class="detail-main-right">
                 <div class="sticky-booking-sidebar" id="booking-sidebar">
                     <div class="booking-sidebar-card">
-
-                        <!-- Hidden inputs to prevent detail.js script failures -->
-                        <input type="hidden" id="book-date" value="">
-                        <input type="hidden" id="book-travelers" value="1">
-
-                        <div class="payment-section-box" style="margin-top: 0;">
-                            <div class="payment-trust-badge">
-                                <span class="trust-dot"></span>
-                                <span>Cổng đăng ký trực tuyến chính thức</span>
+                        
+                        <div class="booking-card-price-header">
+                            <div class="price-side-left">
+                                <span class="sidebar-price-label">Giá mỗi khách</span>
+                                <span class="sidebar-price-value" id="booking-base-price">0 đ</span>
                             </div>
-                            <button type="button" class="btn btn-primary btn-payment-cta" id="go-payment-btn"
-                                    onclick="window.location.href='${pageContext.request.contextPath}/customer/booking/create?tourId=<%= activeTour != null ? activeTour.getTourId() : 1 %>'">
-                                <span class="btn-payment-text">
-                                    <i data-lucide="compass"></i>
-                                    Đăng ký tham gia ngay
-                                </span>
-                                <i data-lucide="arrow-right" class="btn-payment-arrow"></i>
-                            </button>
-                            <div class="payment-trust-footer">
-                                <span class="trust-item"><i data-lucide="shield-check"></i> An toàn</span>
-                                <span class="trust-divider">•</span>
-                                <span class="trust-item"><i data-lucide="zap"></i> Nhanh chóng</span>
-                                <span class="trust-divider">•</span>
-                                <span class="trust-item"><i data-lucide="lock"></i> Bảo mật</span>
+                            <div class="price-side-right" id="booking-seats-left-pill">
+                                <span>Chỉ còn 6 chỗ!</span>
                             </div>
                         </div>
 
+                        <div class="booking-form-fields-wrapper">
+                            <div class="booking-field-group">
+                                <label for="book-date"><i data-lucide="calendar"></i> Ngày khởi hành</label>
+                                <input type="date" id="book-date" required>
+                            </div>
+
+                            <div class="booking-field-group">
+                                <label for="book-travelers"><i data-lucide="users"></i> Số lượng khách</label>
+                                <select id="book-travelers">
+                                    <option value="1">1 Người lớn</option>
+                                    <option value="2" selected>2 Người lớn</option>
+                                    <option value="3">3 Người lớn</option>
+                                    <option value="4">4 Người lớn</option>
+                                    <option value="5">5+ Người lớn</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="booking-bill-calculations" id="booking-bill-row">
+                            <div class="bill-line">
+                                <span id="bill-calc-label">2 khách x 0 đ</span>
+                                <span id="bill-subtotal-val">0 đ</span>
+                            </div>
+                            <div class="bill-line text-discount" id="promo-discount-line" style="display: none;">
+                                <span>Mã giảm giá (MIRAI2026)</span>
+                                <span id="bill-discount-val">-0 đ</span>
+                            </div>
+                            <div class="bill-line">
+                                <span>Thuế du lịch (VAT 8%)</span>
+                                <span id="bill-tax-val">0 đ</span>
+                            </div>
+                            <hr class="bill-divider">
+                            <div class="bill-line total-price">
+                                <span>Tổng chi phí</span>
+                                <span id="bill-total-val">0 đ</span>
+                            </div>
+                        </div>
+
+                        <div class="booking-coupon-wrapper">
+                            <input type="text" id="promo-code-input" placeholder="Nhập mã giảm giá (MIRAI2026)">
+                            <button type="button" class="btn btn-secondary" id="apply-promo-btn">Áp dụng</button>
+                        </div>
+                        <div class="promo-success-message" id="promo-message-txt"></div>
+
+                        <button type="button" class="btn btn-primary btn-block btn-booking-submit" id="submit-booking-btn">
+                            Đặt Ngay & Thanh Toán
+                        </button>
+                        
+                        <p class="booking-card-security-note"><i data-lucide="shield-check"></i> Đảm bảo hoàn tiền 100% | Thanh toán an toàn SSL</p>
                     </div>
                 </div>
             </div>
@@ -566,7 +501,7 @@
         <div class="container">
             <div class="section-header" style="text-align: left; margin-left: 0; margin-bottom: 2.5rem;">
                 <h2>Hành Trình Tương Tự Bạn Sẽ Thích</h2>
-                <p style="margin-left: 0; margin-right: auto;">Khám phá thêm các địa danh du lịch kỳ thú có thể bạn sẽ muốn thêm vào danh sách tiếp theo.</p>
+                <p>Khám phá thêm các địa danh du lịch kỳ thú có thể bạn sẽ muốn thêm vào danh sách tiếp theo.</p>
             </div>
             
             <div class="tours-grid" id="related-tours-grid-container">
@@ -652,33 +587,15 @@
                 else if (destName.contains("Huế")) { lat = "38%"; lng = "46%"; }
                 else if (destName.contains("Hà Nội")) { lat = "15%"; lng = "38%"; }
                 
-                // Lấy thông tin Hướng dẫn viên thực tế từ lịch khởi hành đầu tiên của Tour
-                String guideName = "Chưa phân công";
-                String guideAvatar = "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80";
-                double guideRating = 4.8;
-                int guideToursLed = 15;
-                int guideExp = 3;
-                String guideBio = "Hướng dẫn viên chuyên nghiệp sẽ đồng hành và hỗ trợ bạn suốt hành trình khám phá.";
-                
-                if (t.getSchedules() != null && !t.getSchedules().isEmpty()) {
-                    TourSchedule sched = t.getSchedules().get(0);
-                    if (sched.getGuide() != null) {
-                        guideName = sched.getGuide().getFullName();
-                        if (sched.getGuide().getProfile() != null && sched.getGuide().getProfile().getAvatarUrl() != null) {
-                            guideAvatar = sched.getGuide().getProfile().getAvatarUrl();
-                            if (!guideAvatar.startsWith("http") && !guideAvatar.startsWith("/")) {
-                                guideAvatar = request.getContextPath() + "/" + guideAvatar;
-                            }
-                        }
-                        if (sched.getGuideProfile() != null) {
-                            guideRating = sched.getGuideProfile().getRating();
-                            guideToursLed = sched.getGuideProfile().getTotalToursLed();
-                            guideExp = sched.getGuideProfile().getYearsOfExperience();
-                            if (sched.getGuideProfile().getBio() != null && !sched.getGuideProfile().getBio().trim().isEmpty()) {
-                                guideBio = sched.getGuideProfile().getBio();
-                            }
-                        }
-                    }
+                // Mock guides
+                String guideName = "Nguyễn Văn Hùng";
+                String guideAvatar = "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=80&q=80";
+                if (t.getTourId() % 3 == 1) {
+                    guideName = "Trần Minh Tâm";
+                    guideAvatar = "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=80&q=80";
+                } else if (t.getTourId() % 3 == 2) {
+                    guideName = "Lê Hoàng Nam";
+                    guideAvatar = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=80&q=80";
                 }
         %>
         {
@@ -688,43 +605,15 @@
             image: "${pageContext.request.contextPath}/<%= imgUrl %>",
             departure: "<%= departureCity %>",
             tourType: "group",
-            rating: <%= (t.getTourId() == activeTour.getTourId()) ? avgRating : t.getRating() %>,
-            reviews: <%= (t.getTourId() == activeTour.getTourId()) ? totalReviews : t.getReviewsCount() %>,
+            rating: <%= t.getRating() %>,
+            reviews: <%= t.getReviewsCount() %>,
             priceVND: <%= t.getBasePrice() %>,
             duration: <%= t.getDurationDays() %>,
             difficulty: "<%= diffStr %>",
             category: "<%= catStr %>",
             seatsLeft: <%= seatsLeft %>,
             seatsTotal: <%= seatsTotal %>,
-            languages: "<%= t.getLanguages() != null && !t.getLanguages().trim().isEmpty() ? t.getLanguages().replace("\"", "\\\"") : "Tiếng Việt" %>",
-            photos: [
-                <%
-                if (t.getTourId() == activeTour.getTourId()) {
-                    for (int j = 0; j < galleryImages.size(); j++) {
-                %>
-                "<%= galleryImages.get(j) %>"<%= (j < galleryImages.size() - 1) ? "," : "" %>
-                <%
-                    }
-                } else {
-                    if (t.getMediaList() != null && !t.getMediaList().isEmpty()) {
-                        for (int j = 0; j < t.getMediaList().size(); j++) {
-                            TourMedia media = t.getMediaList().get(j);
-                            String mediaUrl = media.getMediaUrl();
-                            if (!mediaUrl.startsWith("http") && !mediaUrl.startsWith("/")) {
-                                mediaUrl = request.getContextPath() + "/" + mediaUrl;
-                            }
-                %>
-                "<%= mediaUrl %>"<%= (j < t.getMediaList().size() - 1) ? "," : "" %>
-                <%
-                        }
-                    } else {
-                %>
-                "${pageContext.request.contextPath}/<%= imgUrl %>"
-                <%
-                    }
-                }
-                %>
-            ],
+            guide: { name: "<%= guideName %>", avatar: "<%= guideAvatar %>" },
             lat: "<%= lat %>",
             lng: "<%= lng %>",
             location: "<%= t.getDestination().split(",")[0] %>"
@@ -737,7 +626,50 @@
 </script>
 
 <script>
-    window.itinerariesData = {};
+    // Define daily itineraries data (with default fallbacks)
+    window.itinerariesData = {
+        1: [
+            { day: 1, title: "Đón đoàn - Di chuyển đi Bà Nà Hills - Trải nghiệm Làng Pháp", desc: "Đón khách tại sân bay Đà Nẵng. Di chuyển lên đỉnh Bà Nà bằng hệ thống cáp treo đạt nhiều kỷ lục. Khám phá lâu đài cổ kính kiểu Pháp, lâu đài tâm linh và thưởng thức buffet trưa thịnh soạn.", icon: "cable-car" },
+            { day: 2, title: "Check-in Cầu Vàng huyền ảo - Tham quan hầm rượu cổ Debay & Chùa Linh Ứng", desc: "Đón bình minh sớm trên Cầu Vàng (Golden Bridge) tuyệt đẹp không bóng người. Khám phá Vườn hoa Le Jardin D'Amour rực rỡ, hầm rượu cổ sâu trong lòng đất và chùa Linh Ứng uy nghiêm.", icon: "camera" },
+            { day: 3, title: "Khám phá danh thắng Ngũ Hành Sơn - Mua sắm đặc sản - Tiễn đoàn", desc: "Xuống cáp treo, di chuyển tham quan quần thể Ngũ Hành Sơn kỳ bí, ghé thăm làng đá mỹ nghệ Non Nước. Tự do mua sắm quà lưu niệm và xe tiễn đoàn ra sân bay Đà Nẵng kết thúc chuyến đi.", icon: "plane" }
+        ],
+        2: [
+            { day: 1, title: "Chào đón Phú Quốc - Khám phá Dinh Cậu & Chợ đêm ẩm thực", desc: "Đón du khách tại sân bay Phú Quốc, nhận phòng resort 5 sao sát biển. Chiều tham quan Dinh Cậu tâm linh và ngắm hoàng hôn đỏ lịm. Tối dạo chơi tự do và thưởng thức hải sản tại Chợ đêm Đảo Ngọc.", icon: "palmtree" },
+            { day: 2, title: "Lên Du thuyền sang trọng - Câu cá & Lặn ngắm san hô Hòn Móng Tay", desc: "Lên tàu cao cấp du ngoạn 4 đảo phía Nam. Trải nghiệm câu cá giải trí, bơi lặn ngắm san hô tự nhiên tại Hòn Móng Tay, Hòn Gầm Ghì, Hòn Mây Rút. Thưởng thức bữa trưa hải sản thịnh soạn chế biến trực tiếp trên tàu.", icon: "ship" },
+            { day: 3, title: "Tham quan Safari hoang dã - Khám phá siêu quần thể Grand World", desc: "Ghé thăm Công viên bảo tồn động vật bán hoang dã Vinpearl Safari lớn nhất Việt Nam. Chiều tối hòa mình vào không gian lễ hội Châu Âu thu nhỏ của siêu dự án Grand World không ngủ.", icon: "sparkles" },
+            { day: 4, title: "Ghé thăm Nhà thùng Nước mắm truyền thống - Tiễn sân bay", desc: "Tìm hiểu quy trình ủ nước mắm cá cơm Phú Quốc nổi tiếng tại nhà thùng cổ truyền. Ghé mua sắm đặc sản tiêu sọ, ngọc trai Phú Quốc làm quà và xe đưa ra sân bay tiễn đoàn.", icon: "plane" }
+        ],
+        3: [
+            { day: 1, title: "Đón Cảng Tuần Châu - Lên Du thuyền 5 sao - Khám phá Hang Sửng Sốt", desc: "Đoàn làm thủ tục lên tàu tại Cảng Tuần Châu. Thưởng thức đồ uống chào mừng, nghe phổ biến an toàn. Tàu nhổ neo xuyên vịnh, tham quan Hang Sửng Sốt - hang động lớn và đẹp nhất vịnh Hạ Long với thạch nhũ lấp lánh.", icon: "ship" },
+            { day: 2, title: "Chèo kayak Hang Luồn - Chinh phục đảo Ti Tốp - Trở về cảng", desc: "Đón ngày mới với bài tập Thái Cực Quyền trên boong tàu. Chèo thuyền Kayak xuyên qua vách đá Hang Luồn kỳ bí. Chinh phục đỉnh núi đảo Ti Tốp ngắm toàn cảnh Vịnh Hạ Long từ trên cao trước khi tàu cập bến cảng Tuần Châu.", icon: "mountain" }
+        ],
+        4: [
+            { day: 1, title: "Chào Hội An cổ kính - Khám phá thánh địa Mỹ Sơn kỳ bí", desc: "Đoàn di chuyển tham quan Thánh địa Mỹ Sơn - thủ đô đền tháp của vương triều Chăm Pa xưa cổ. Chiều tối nhận phòng khách sạn, tản bộ ngắm phố cổ Hội An lên đèn lung linh huyền ảo.", icon: "landmark" },
+            { day: 2, title: "Trải nghiệm đi thuyền gỗ thả đèn hoa đăng sông Hoài - Học làm đèn lồng", desc: "Tự tay làm một chiếc đèn lồng Hội An nhỏ xinh dưới sự hướng dẫn của nghệ nhân. Chiều mát lên thuyền thả đèn hoa đăng lung linh dọc dòng sông Hoài thơ mộng cầu an lành.", icon: "heart" }
+        ],
+        5: [
+            { day: 1, title: "Đón sân bay Liên Khương - Check-in Đà Lạt mộng mơ - Chợ đêm", desc: "Xe đón đoàn di chuyển lên cao nguyên Đà Lạt trong lành. Nhận phòng khách sạn, chiều tham quan ga xe lửa cổ Đà Lạt và check-in quảng trường Lâm Viên. Tối tự do ăn uống lẩu gà lá é và dạo chợ đêm.", icon: "map-pin" },
+            { day: 2, title: "Săn mây bình minh Đồi chè Cầu Đất - Chinh phục Langbiang huyền thoại", desc: "Thức dậy sớm di chuyển săn mây bồng bềnh tại cầu gỗ đồi chè Cầu Đất. Chiều trekking/đi xe jeep chinh phục đỉnh Langbiang huyền thoại ngắm dòng sông Vàng từ đỉnh núi sương mù.", icon: "mountain" },
+            { day: 3, title: "Thăm vườn dâu tây công nghệ cao - Thác Datanla - Trở về", desc: "Ghé thăm vườn dâu tây tươi hái tại vườn. Trải nghiệm máng trượt xuyên thác nước Datanla kỳ vĩ trước khi xe tiễn đoàn ra sân bay Liên Khương kết thúc tour.", icon: "plane" }
+        ],
+        6: [
+            { day: 1, title: "Đón Sa Pa - Trekking Bản Cát Cát hoang sơ - Thung lũng Mường Hoa", desc: "Xe giường nằm đón du khách đến thị trấn Sa Pa mù sương. Buổi chiều trekking tản bộ dọc theo bản Cát Cát xinh đẹp của người đồng bào H'Mông, ngắm ruộng bậc thang trải dài và thác nước Cát Cát thơ mộng.", icon: "activity" },
+            { day: 2, title: "Chinh phục Đỉnh núi Fansipan bằng Cáp treo - Cột mốc Nóc nhà Đông Dương", desc: "Di chuyển bằng tàu hỏa leo núi Mường Hoa, sau đó lên Cáp treo Fansipan vượt qua thung lũng mây kỳ vĩ. Chinh phục 600 bậc đá để chạm tay vào chóp inox 3.143m huyền thoại - Nóc nhà của Đông Dương.", icon: "mountain" },
+            { day: 3, title: "Thăm Bản Tả Phìn yên bình - Trải nghiệm tắm lá thuốc Dao Đỏ - Trở về Hà Nội", desc: "Ghé thăm bản Tả Phìn nguyên sơ, tự do trải nghiệm tắm lá thuốc thảo mộc của người Dao Đỏ để xua tan mệt mỏi. Trưa mua sắm nông sản hạt dẻ, nấm hương trước khi lên xe về lại Hà Nội.", icon: "plane" }
+        ],
+        7: [
+            { day: 1, title: "Chào Nha Trang nắng vàng - Khám phá Chùa Long Sơn & Tháp Bà Ponagar", desc: "Xe đón khách đưa đi tham quan di tích lịch sử vương triều Chăm cổ Tháp Bà Ponagar, chiêm ngưỡng tượng Phật trắng chùa Long Sơn. Nhận phòng khách sạn cao cấp sát biển Nha Trang.", icon: "landmark" },
+            { day: 2, title: "Lên ca-nô cao tốc - Đi bộ dưới đại dương ngắm san hô Hòn Mun", desc: "Trải nghiệm lặn biển và đi bộ dưới đáy biển (Sea Walk) ngắm san hô, cá màu rực rỡ tại khu bảo tồn biển Hòn Mun bằng mũ dưỡng khí công nghệ cao. Trưa ăn trưa dã ngoại hải sản trên Bè nổi.", icon: "anchor" },
+            { day: 3, title: "Vui chơi thả ga VinWonders đảo Hòn Tre", desc: "Dành trọn vẹn 1 ngày vui chơi tại thiên đường giải trí VinWonders Nha Trang với cáp treo vượt biển, công viên nước khổng lồ và các show diễn thực cảnh Tata Show triệu đô đầy choáng ngợp.", icon: "sparkles" },
+            { day: 4, title: "Mua sắm hải sản Chợ Đầm - Xe tiễn sân bay Cam Ranh", desc: "Mua sắm đặc sản yến sào, mực khô, nem nướng tại Chợ Đầm lịch sử. Xe tiễn đoàn ra sân bay Cam Ranh kết thúc chuyến du lịch biển tuyệt vời.", icon: "plane" }
+        ],
+        8: [
+            { day: 1, title: "Hành trình Hà Nội - Hà Giang - Cổng trời Quản Bạ - Rừng thông Yên Minh", desc: "Khởi hành từ Hà Nội đi Hà Giang. Dừng chân check-in Dốc Bắc Sum quanh co và Cổng trời Quản Bạ ngắm núi đôi Cô Tiên. Chiều đi qua rừng thông Yên Minh xanh mát, nhận phòng homestay người Tày.", icon: "activity" },
+            { day: 2, title: "Cột cờ Lũng Cú địa đầu - Dinh thự Vua Mèo cổ kính - Phố cổ Đồng Văn", desc: "Check-in Cột cờ quốc gia Lũng Cú cực kỳ tự hào. Tham quan kiến trúc cổ kính giao thoa Pháp-Hoa của Dinh thự Vua Mèo Vương Chính Đức. Tối dạo chơi uống cafe Phố cổ Đồng Văn trong gió lạnh vùng cao.", icon: "landmark" },
+            { day: 3, title: "Chinh phục Đệ nhất hùng đèo Mã Pí Lèng - Du thuyền hẻm vực sông Nho Quế", desc: "Vượt qua những khúc cua ngoạn mục đèo Mã Pí Lèng kỳ vĩ bậc nhất Việt Nam. Xuống bến thuyền tản bộ dọc hẻm Tu Sản sâu nhất Đông Nam Á và đi thuyền trên dòng sông Nho Quế xanh biếc thơ mộng.", icon: "mountain" },
+            { day: 4, title: "Check-in Dốc Thẩm Mã huyền thoại - Mua sắm sản vật - Hà Nội", desc: "Chụp ảnh lưu niệm tại Dốc Thẩm Mã - con dốc nổi tiếng nhất Hà Giang với những em bé dân tộc đeo gùi hoa. Ghé mua mật ong bạc hà đặc sản trước khi xe chạy xuyên đêm tiễn về lại Hà Nội.", icon: "plane" }
+        ]
+    };
 
     // LÝ DO VÀ CHỨC NĂNG CỦA ĐOẠN DƯỚI ĐÂY:
     // - Dữ liệu lịch trình (TourItinerary) cần được chuyển sang môi trường Client (JavaScript)
@@ -824,11 +756,67 @@
         }
     %>
 
-
-    // Thanh toán được quản lý ngoài hệ thống.
-
-
-    // Đánh giá đã được nạp và kết xuất trực tiếp bằng mã nguồn JSP ở phía trên, không sử dụng javascript.
+    // LÝ DO VÀ CHỨC NĂNG CỦA ĐOẠN ĐÁNH GIÁ (REVIEWS):
+    // - Dữ liệu đánh giá thật trong cơ sở dữ liệu được nạp lên và đưa vào thuộc tính reviews của activeTour.
+    // - Ta cần kết xuất danh sách này sang JSON (gán vào thuộc tính của window.reviewsData) để detail.js có thể vẽ
+    //   lưới đánh giá động (Reviews list) và scorecard tính điểm trung bình thật.
+    // - Nếu DB của tour này chưa có ai viết review, hệ thống tự động in ra các review mẫu (fallback) tương thích với tour
+    //   để giữ giao diện chuyên nghiệp.
+    window.reviewsData = {
+        <%
+            if (activeTour != null) {
+                List<Review> revs = activeTour.getReviews();
+        %>
+        <%= activeTour.getTourId() %>: [
+            <%
+                if (revs != null && !revs.isEmpty()) {
+                    for (int k = 0; k < revs.size(); k++) {
+                        Review r = revs.get(k);
+                        // Định dạng ngày đăng theo kiểu Việt Nam dd/MM/yyyy
+                        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
+                        String dateStr = sdf.format(r.getCreatedAt());
+                        String name = r.getCustomerName() != null ? r.getCustomerName() : "Khách hàng";
+                        // Link ảnh đại diện mặc định nếu khách hàng không tải avatar lên
+                        String avatar = r.getCustomerAvatar() != null ? r.getCustomerAvatar() : "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80";
+            %>
+            {
+                name: "<%= name.replace("\"", "\\\"") %>",
+                rating: <%= r.getRating() %>,
+                date: "<%= dateStr %>",
+                text: "<%= r.getContent().replace("\"", "\\\"").replace("\r", "").replace("\n", " ") %>",
+                isVerified: <%= r.isIsVerified() %>,
+                avatar: "<%= avatar %>"
+            }<%= (k < revs.size() - 1) ? "," : "" %>
+            <%
+                    }
+                } else {
+                    // Trường hợp DB chưa có review nào cho tour, in ra reviews mẫu dựa theo ID của Tour
+                    if (activeTour.getTourId() == 1) {
+            %>
+            { name: "Phạm Minh Hoàng", rating: 5, date: "15/05/2026", text: "Chuyến đi Vịnh Hạ Long tuyệt vời! Du thuyền sang trọng, cabin sạch sẽ rộng rãi. Đồ ăn hải sản tươi ngon phong phú, nhân viên phục vụ tận tình chu đáo. Trải nghiệm chèo thuyền kayak qua hang Luồn rất thú vị, cảnh quan thiên nhiên tráng lệ đáng để trải nghiệm.", isVerified: true, avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80" },
+            { name: "Lê Minh Thư", rating: 5, date: "14/05/2026", text: "Dịch vụ của Mirai Travels cực kỳ chuyên nghiệp. Đón trả khách đúng giờ, hướng dẫn viên nhiệt tình vui vẻ am hiểu lịch sử địa phương. Khách sạn/Du thuyền chất lượng đúng chuẩn 5 sao, gia đình tôi đã có kỳ nghỉ vô cùng ý nghĩa.", isVerified: true, avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=80&q=80" }
+            <%
+                    } else if (activeTour.getTourId() == 2) {
+            %>
+            { name: "Lê Minh Thư", rating: 5, date: "14/05/2026", text: "Trải nghiệm tuyệt vời tại Đà Nẵng và Hội An. Check-in Cầu Vàng sáng sớm trời mát mẻ chụp hình siêu đẹp. Phố cổ Hội An lung linh sắc đèn lồng về đêm, trải nghiệm thả hoa đăng sông Hoài thơ mộng. Đồ ăn buffet trên Bà Nà Hills rất ngon và đa dạng.", isVerified: true, avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=80&q=80" }
+            <%
+                    } else if (activeTour.getTourId() == 3) {
+            %>
+            { name: "Phạm Minh Hoàng", rating: 4, date: "15/05/2026", text: "Sapa mây mù giăng lối rất đẹp, khách sạn view thung lũng Mường Hoa thơ mộng. Chinh phục đỉnh Fansipan bằng cáp treo rất nhanh chóng, đứng trên nóc nhà Đông Dương cảm giác tự hào ngập tràn. Trekking bản Cát Cát hơi mỏi chân nhưng cảnh sắc rất hoang sơ bình yên.", isVerified: true, avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80" }
+            <%
+                    } else {
+            %>
+            { name: "Trần Anh Tuấn", rating: 5, date: "20/05/2026", text: "Dịch vụ đẳng cấp chuyên nghiệp! Đưa đón đúng giờ, hướng dẫn viên nhiệt tình vui tính. Các điểm tham quan cực đẹp, khách sạn resort ở siêu thích. Chắc chắn sẽ tiếp tục ủng hộ Mirai trong các hành trình du lịch tiếp theo.", isVerified: true, avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=80&q=80" },
+            { name: "Lê Minh Thư", rating: 5, date: "14/05/2026", text: "Trải nghiệm du lịch 5 sao đáng tiền từng xu. Thức ăn siêu ngon đa dạng, lịch trình sắp xếp cực kỳ khoa học không gây cảm giác mệt mỏi. Gia đình tôi đều rất hài lòng.", isVerified: true, avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=80&q=80" }
+            <%
+                    }
+                }
+            %>
+        ]
+        <%
+            }
+        %>
+    };
 </script>
 
 <%

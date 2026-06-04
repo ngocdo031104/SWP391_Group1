@@ -128,6 +128,74 @@ public class BookingDAO extends DBContext {
         return false;
     }
 
+
+    // Dương làm đoạn này: nhả các slot đã bị giữ quá thời gian thanh toán cho booking PendingPayment.
+    // Hàm này tìm booking chưa thanh toán quá holdMinutes, cộng lại NumParticipants vào TourSchedule.AvailableSeats và chuyển booking sang Cancelled.
+    public int releaseExpiredPendingPaymentBookings(int holdMinutes) {
+        String selectExpiredSql = "SELECT BookingID, ScheduleID, NumParticipants FROM Booking "
+                + "WHERE Status = 'PendingPayment' AND CreatedAt <= DATEADD(MINUTE, ?, SYSDATETIME())";
+        String releaseSeatsSql = "UPDATE TourSchedule SET AvailableSeats = CASE "
+                + "WHEN AvailableSeats + ? > TotalSeats THEN TotalSeats ELSE AvailableSeats + ? END "
+                + "WHERE ScheduleID = ?";
+        String cancelBookingSql = "UPDATE Booking SET Status = 'Cancelled', "
+                + "Notes = LEFT(CONCAT(ISNULL(Notes, ''), N' | Hết hạn giữ chỗ sau ', ?, N' phút chưa thanh toán.'), 500), "
+                + "UpdatedAt = SYSDATETIME() WHERE BookingID = ? AND Status = 'PendingPayment'";
+
+        int releasedCount = 0;
+        try {
+            connection.setAutoCommit(false);
+            List<int[]> expiredBookings = new ArrayList<>();
+            try (PreparedStatement psSelect = connection.prepareStatement(selectExpiredSql)) {
+                psSelect.setInt(1, -Math.abs(holdMinutes));
+                try (ResultSet rs = psSelect.executeQuery()) {
+                    while (rs.next()) {
+                        expiredBookings.add(new int[] {
+                            rs.getInt("BookingID"),
+                            rs.getInt("ScheduleID"),
+                            rs.getInt("NumParticipants")
+                        });
+                    }
+                }
+            }
+
+            for (int[] item : expiredBookings) {
+                int bookingId = item[0];
+                int scheduleId = item[1];
+                int numParticipants = item[2];
+
+                try (PreparedStatement psSeats = connection.prepareStatement(releaseSeatsSql)) {
+                    psSeats.setInt(1, numParticipants);
+                    psSeats.setInt(2, numParticipants);
+                    psSeats.setInt(3, scheduleId);
+                    psSeats.executeUpdate();
+                }
+
+                try (PreparedStatement psCancel = connection.prepareStatement(cancelBookingSql)) {
+                    psCancel.setInt(1, holdMinutes);
+                    psCancel.setInt(2, bookingId);
+                    releasedCount += psCancel.executeUpdate();
+                }
+            }
+
+            connection.commit();
+        } catch (SQLException ex) {
+            try {
+                if (connection != null) {
+                    connection.rollback();
+                }
+            } catch (SQLException rollbackEx) {
+                Logger.getLogger(BookingDAO.class.getName()).log(Level.SEVERE, null, rollbackEx);
+            }
+            Logger.getLogger(BookingDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException ex) {
+                Logger.getLogger(BookingDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return releasedCount;
+    }
     /**
      * Gets booking list for a specific customer.
      * @param customerId customer user ID
@@ -234,5 +302,26 @@ public class BookingDAO extends DBContext {
         b.setCreatedAt(rs.getTimestamp("CreatedAt"));
         b.setUpdatedAt(rs.getTimestamp("UpdatedAt"));
         return b;
+    }
+
+    // Dương làm đoạn này: cập nhật lại phần tiền của booking sau khi khách nhập coupon ở màn hình thanh toán.
+    // Method này chỉ thay đổi các cột tài chính, không đụng tới lịch khởi hành hay danh sách người tham gia.
+    public boolean updateBookingFinancials(int bookingId, double discountAmount, double vatAmount, double totalAmount, Integer couponId) {
+        String sql = "UPDATE Booking SET DiscountAmount = ?, VATAmount = ?, TotalAmount = ?, CouponID = ?, UpdatedAt = SYSDATETIME() WHERE BookingID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setDouble(1, discountAmount);
+            ps.setDouble(2, vatAmount);
+            ps.setDouble(3, totalAmount);
+            if (couponId != null) {
+                ps.setInt(4, couponId);
+            } else {
+                ps.setNull(4, java.sql.Types.INTEGER);
+            }
+            ps.setInt(5, bookingId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(BookingDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
     }
 }
