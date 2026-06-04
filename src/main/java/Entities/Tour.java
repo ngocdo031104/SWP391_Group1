@@ -30,6 +30,9 @@ public class Tour implements Serializable {
     // Derived fields
     private double rating = 0.0;
     private int reviewsCount = 0;
+    private int totalSeats;
+    private int availableSeats;
+    private String nextDeparture;
 
     private Integer createdBy;
     private Timestamp createdAt;
@@ -231,6 +234,30 @@ public class Tour implements Serializable {
 
     public void setReviewsCount(int reviewsCount) {
         this.reviewsCount = reviewsCount;
+    }
+
+    public int getTotalSeats() {
+        return totalSeats;
+    }
+
+    public void setTotalSeats(int totalSeats) {
+        this.totalSeats = totalSeats;
+    }
+
+    public int getAvailableSeats() {
+        return availableSeats;
+    }
+
+    public void setAvailableSeats(int availableSeats) {
+        this.availableSeats = availableSeats;
+    }
+
+    public String getNextDeparture() {
+        return nextDeparture;
+    }
+
+    public void setNextDeparture(String nextDeparture) {
+        this.nextDeparture = nextDeparture;
     }
 
     public Integer getCreatedBy() {
