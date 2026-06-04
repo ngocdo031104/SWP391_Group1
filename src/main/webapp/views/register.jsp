@@ -118,8 +118,9 @@
         </div>
       </div>
 
-      <form action="${pageContext.request.contextPath}/register" method="post"
-            id="regForm" novalidate>
+      <form action="${pageContext.request.contextPath}/register"
+      method="post"
+      id="regForm">
 
         <!-- STEP 1: Account -->
         <div class="step-block active fade-up fade-up-3" id="step1">
@@ -200,11 +201,15 @@
               <div class="input-icon-wrap">
                 <i class="fa fa-phone icon"></i>
                 <input type="tel" id="phone" name="phone"
-                       class="form-control ${not empty phoneError ? 'is-invalid' : ''}"
-                       placeholder="09xxxxxxxx"
-                       value="${not empty param.phone ? param.phone : ''}"
-                       pattern="0[0-9]{9}" maxlength="10"
-                       title="Số điện thoại gồm 10 chữ số và bắt đầu bằng 0">
+       class="form-control ${not empty phoneError ? 'is-invalid' : ''}"
+       placeholder="09xxxxxxxx"
+       value="${not empty param.phone ? param.phone : ''}"
+       required
+       pattern="0[0-9]{9}"
+       maxlength="10">
+                <c:if test="${not empty phoneError}">
+    <span class="form-error">${phoneError}</span>
+</c:if>
               </div>
             </div>
             <div class="form-group">
@@ -212,13 +217,23 @@
               <div class="input-icon-wrap">
                 <i class="fa fa-calendar icon"></i>
                 <input type="date" id="dob" name="dob"
-                       class="form-control"
-                       value="${not empty param.dob ? param.dob : ''}">
+       class="form-control ${not empty dobError ? 'is-invalid' : ''}"
+       value="${not empty param.dob ? param.dob : ''}"
+       required>
+                <c:if test="${not empty dobError}">
+    <span class="form-error">${dobError}</span>
+</c:if>
               </div>
             </div>
             <div class="form-group">
               <label class="form-label" for="gender">Giới tính</label>
-              <select id="gender" name="gender" class="form-control">
+              <select id="gender"
+        name="gender"
+        class="form-control ${not empty genderError ? 'is-invalid' : ''}"
+        required>
+                  <c:if test="${not empty genderError}">
+    <span class="form-error">${genderError}</span>
+</c:if>
                 <option value="">-- Chọn --</option>
                 <option value="Male"   ${param.gender eq 'Male'   ? 'selected' : ''}>Nam</option>
                 <option value="Female" ${param.gender eq 'Female' ? 'selected' : ''}>Nữ</option>
@@ -335,12 +350,46 @@ function validateStep1() {
 }
 
 function validateStep2() {
-  const name = document.getElementById('fullName');
-  if (!name.value.trim()) {
-    name.classList.add('is-invalid'); return false;
-  }
-  name.classList.remove('is-invalid');
-  return true;
+
+    let ok = true;
+
+    const name = document.getElementById('fullName');
+    const phone = document.getElementById('phone');
+    const dob = document.getElementById('dob');
+    const gender = document.getElementById('gender');
+
+    if (!name.value.trim()) {
+        name.classList.add('is-invalid');
+        ok = false;
+    } else {
+        name.classList.remove('is-invalid');
+    }
+
+    if (!phone.value.trim()) {
+        phone.classList.add('is-invalid');
+        ok = false;
+    } else if (!/^0\d{9}$/.test(phone.value)) {
+        phone.classList.add('is-invalid');
+        ok = false;
+    } else {
+        phone.classList.remove('is-invalid');
+    }
+
+    if (!dob.value) {
+        dob.classList.add('is-invalid');
+        ok = false;
+    } else {
+        dob.classList.remove('is-invalid');
+    }
+
+    if (!gender.value) {
+        gender.classList.add('is-invalid');
+        ok = false;
+    } else {
+        gender.classList.remove('is-invalid');
+    }
+
+    return ok;
 }
 
 /* ── Password strength ── */
@@ -376,14 +425,29 @@ document.getElementById('dob').max = new Date().toISOString().split("T")[0];
 
 /* ── Final submit ── */
 document.getElementById('regForm').addEventListener('submit', function(e) {
-  if (!document.getElementById('agreeTerms').checked) {
-    document.getElementById('termsError').style.display = 'block';
-    e.preventDefault(); return;
-  }
-  document.getElementById('termsError').style.display = 'none';
-  const btn = document.getElementById('submitBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Đang tạo tài khoản...';
+
+    if (!validateStep1()) {
+        e.preventDefault();
+        return;
+    }
+
+    if (!validateStep2()) {
+        e.preventDefault();
+        return;
+    }
+
+    if (!document.getElementById('agreeTerms').checked) {
+        document.getElementById('termsError').style.display = 'block';
+        e.preventDefault();
+        return;
+    }
+
+    document.getElementById('termsError').style.display = 'none';
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerHTML =
+        '<i class="fa fa-spinner fa-spin"></i> Đang tạo tài khoản...';
 });
 </script>
 </body>
