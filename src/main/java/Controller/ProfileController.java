@@ -6,6 +6,7 @@ package Controller;
  * change their avatar, modify travel preferences, and update passwords.
  */
 
+import Entities.ActivityLog;
 import Entities.User;
 import Entities.UserProfile;
 import Model.UserDAO;
@@ -55,6 +56,9 @@ public class ProfileController extends HttpServlet {
         if (request.getAttribute("user") == null) {
             request.setAttribute("user", user);
         }
+        
+        List<ActivityLog> activityLogs = userDAO.getActivityLogs(user.getUserId());
+        request.setAttribute("activityLogs", activityLogs);
         
         request.getRequestDispatcher("/views/profile.jsp").forward(request, response);
     }

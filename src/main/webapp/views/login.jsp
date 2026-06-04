@@ -1,3 +1,7 @@
+<%-- 
+    Document   : login.jsp
+    Purpose    : Trang đăng nhập vào hệ thống TourBuddy. Hiển thị form đăng nhập và xử lý thông báo lỗi.
+--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <!DOCTYPE html>

@@ -1,3 +1,7 @@
+<%-- 
+    Document   : register.jsp
+    Purpose    : Trang đăng ký tài khoản cho người dùng mới (Customer). Cung cấp form nhập liệu có xác thực phía client.
+--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <!DOCTYPE html>
@@ -160,6 +164,7 @@
               <div class="strength-seg" id="seg4"></div>
             </div>
             <div class="strength-label" id="strengthLabel">Nhập mật khẩu để kiểm tra độ mạnh</div>
+            <span class="form-error" id="pwdError" style="display:none; margin-top:4px;"></span>
           </div>
 
           <div class="form-group">
@@ -334,9 +339,20 @@ function validateStep1() {
     email.classList.add('is-invalid'); ok = false;
   } else { email.classList.remove('is-invalid'); }
 
-  if (!pwd.value || pwd.value.length < 8) {
-    pwd.classList.add('is-invalid'); ok = false;
-  } else { pwd.classList.remove('is-invalid'); }
+  if (!pwd.value || pwd.value.length < 8 || !/[A-Za-z]/.test(pwd.value) || !/[0-9]/.test(pwd.value)) {
+    pwd.classList.add('is-invalid');
+    const pwdErr = document.getElementById('pwdError');
+    pwdErr.style.display = 'block';
+    if (!pwd.value || pwd.value.length < 8) {
+      pwdErr.textContent = 'Mật khẩu phải có ít nhất 8 ký tự';
+    } else {
+      pwdErr.textContent = 'Mật khẩu phải chứa ít nhất 1 chữ cái và 1 chữ số';
+    }
+    ok = false;
+  } else { 
+    pwd.classList.remove('is-invalid'); 
+    document.getElementById('pwdError').style.display = 'none';
+  }
 
   if (cpwd.value !== pwd.value) {
     cpwd.classList.add('is-invalid');
@@ -358,7 +374,10 @@ function validateStep2() {
     const dob = document.getElementById('dob');
     const gender = document.getElementById('gender');
 
-    if (!name.value.trim()) {
+    if (!name.value.trim() || name.value.trim().length < 2) {
+        name.classList.add('is-invalid');
+        ok = false;
+    } else if (!/^[\p{L} .'-]+$/u.test(name.value.trim())) {
         name.classList.add('is-invalid');
         ok = false;
     } else {
@@ -445,9 +464,11 @@ document.getElementById('regForm').addEventListener('submit', function(e) {
     document.getElementById('termsError').style.display = 'none';
 
     const btn = document.getElementById('submitBtn');
-    btn.disabled = true;
-    btn.innerHTML =
-        '<i class="fa fa-spinner fa-spin"></i> Đang tạo tài khoản...';
+    setTimeout(() => {
+        btn.disabled = true;
+        btn.innerHTML =
+            '<i class="fa fa-spinner fa-spin"></i> Đang tạo tài khoản...';
+    }, 10);
 });
 </script>
 </body>
