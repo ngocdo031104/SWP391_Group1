@@ -2,16 +2,19 @@
 <%@ page import="java.text.NumberFormat" %>
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="java.util.Locale" %>
+<%@ page import="java.net.URLEncoder" %>
+<%@ page import="java.nio.charset.StandardCharsets" %>
 <%@ page import="Entities.Tour" %>
 <%@ page import="Entities.TourSchedule" %>
 <%@ page import="Controller.customer.BookingFlowSupport.BookingDraft" %>
+<%@ page import="Utils.SepayConfig" %>
 <%
     // Người làm: Dương
     // Thời gian tạo: 04/06/2026
     // Chức năng: Màn Customer thanh toán booking.
-    // Ý nghĩa: Chọn phương thức thanh toán, nhập coupon nếu có, sau đó tạo payment và xác nhận booking.
+    // Ý nghĩa: Hiển thị VietQR theo số tiền booking, cho nhập coupon nếu có và chờ webhook SePay xác nhận chuyển khoản.
 
-    // Nạp CSS và JS riêng của payment để xử lý coupon ở đúng màn thanh toán.
+    // Nạp CSS và JS riêng của payment để xử lý coupon và polling trạng thái thanh toán SePay.
     request.setAttribute("extraCss", "css/customer-booking-payment.css");
     request.setAttribute("extraScript", "js/customer-booking-payment.js");
     request.setAttribute("bodyClass", "booking-page");
@@ -21,12 +24,23 @@
     TourSchedule selectedSchedule = (TourSchedule) request.getAttribute("selectedSchedule");
     BookingDraft draft = (BookingDraft) request.getAttribute("draft");
 
-    // errorMessage dùng để báo lỗi coupon, lỗi phương thức thanh toán hoặc lỗi tạo payment.
+    // errorMessage dùng để báo lỗi coupon hoặc thông báo khách cần quét QR và chờ SePay xác nhận.
     String errorMessage = (String) request.getAttribute("errorMessage");
 
     // Định dạng tiền và ngày khởi hành cho phần tóm tắt đơn đặt.
     NumberFormat money = NumberFormat.getNumberInstance(new Locale("vi", "VN"));
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+    // Dương làm đoạn này: chuẩn bị dữ liệu VietQR từ booking hiện tại.
+    // qrAmount là số tiền phải chuyển, qrContent là nội dung chuyển khoản dùng để webhook SePay match về đúng BookingCode.
+    long qrAmount = Math.round(draft != null ? draft.totalAmount : 0);
+    String qrContent = draft != null ? draft.bookingCode : "";
+    String encodedContent = URLEncoder.encode(qrContent, StandardCharsets.UTF_8.toString());
+    String encodedAccountName = URLEncoder.encode(SepayConfig.ACCOUNT_NAME, StandardCharsets.UTF_8.toString());
+    String qrImageUrl = "https://img.vietqr.io/image/" + SepayConfig.BANK_CODE + "-" + SepayConfig.ACCOUNT_NO
+            + "-compact2.png?amount=" + qrAmount
+            + "&addInfo=" + encodedContent
+            + "&accountName=" + encodedAccountName;
 %>
 <jsp:include page="/common/header.jsp"/>
 
@@ -44,7 +58,7 @@
 
     <div class="booking-layout">
         <section class="booking-main-panel">
-            <%-- Lỗi payment được in tại đầu màn để khách biết cần sửa coupon hoặc phương thức thanh toán. --%>
+            <%-- Lỗi/thông báo payment được in tại đầu màn để khách biết cần chuyển khoản hoặc coupon đã được cập nhật. --%>
             <% if (errorMessage != null) { %>
                 <div class="booking-alert"><i data-lucide="triangle-alert"></i><span><%= errorMessage %></span></div>
             <% } %>
@@ -52,27 +66,37 @@
             <div class="booking-heading">
                 <p>Process Payment</p>
                 <h1>Thanh toán đơn <%= draft != null ? draft.bookingCode : "" %></h1>
-                <span>Chọn phương thức thanh toán và nhập coupon nếu có.</span>
+                <span>Quét VietQR, chuyển khoản đúng số tiền và nội dung để SePay xác nhận tự động.</span>
             </div>
 
-            <%-- Layout payment gồm form phương thức thanh toán bên trái và coupon/tóm tắt đơn bên phải. --%>
+            <%-- Layout payment gồm VietQR bên trái và coupon/tóm tắt đơn bên phải. --%>
             <div class="payment-layout">
-                <%-- Form payment gửi về BookingPaymentController để tạo bản ghi Payment và cập nhật trạng thái Booking. --%>
+                <%-- Form này chỉ dùng để cập nhật coupon/số tiền QR, không xác nhận thanh toán giả lập. --%>
                 <form method="post" action="${pageContext.request.contextPath}/customer/booking/payment" class="payment-methods" id="payment-form" novalidate>
-                    <input type="hidden" name="action" value="pay">
-                    <h3>Chọn phương thức thanh toán</h3>
-                    <div class="payment-option-grid">
-                        <label><input type="radio" name="paymentMethod" value="CreditCard"> Thẻ tín dụng</label>
-                        <label><input type="radio" name="paymentMethod" value="BankTransfer" checked> Chuyển khoản</label>
-                        <label><input type="radio" name="paymentMethod" value="MoMo"> MoMo Wallet</label>
-                        <label><input type="radio" name="paymentMethod" value="VNPay"> Cổng VNPay</label>
+                    <input type="hidden" name="action" value="refreshQr">
+                    <input type="hidden" name="paymentMethod" value="BankTransfer">
+                    <h3>Thanh toán qua VietQR</h3>
+
+                    <%-- Dương làm đoạn này: QR được tạo từ tài khoản TPBank của bạn, số tiền booking và nội dung BookingCode. --%>
+                    <div class="vietqr-panel">
+                        <img src="<%= qrImageUrl %>" alt="VietQR thanh toán đơn <%= qrContent %>">                        <div id="sepay-status-box"
+                             class="sepay-status-box hidden-status"
+                             data-booking-code="<%= qrContent %>"
+                             data-status-url="${pageContext.request.contextPath}/customer/booking/payment-status"
+                             data-success-url="${pageContext.request.contextPath}/customer/booking/success?code=<%= qrContent %>"
+                             aria-hidden="true">
+                            <strong></strong>
+                            <span></span>
+                        </div>
                     </div>
+
                     <div class="bank-info-box">
                         <h4>Thông tin tài khoản thụ hưởng</h4>
-                        <p>Ngân hàng: <strong>Vietcombank (VCB)</strong></p>
-                        <p>Số tài khoản: <strong>1023456789</strong></p>
-                        <p>Chủ tài khoản: <strong>CONG TY CO PHAN TOURBUDDY</strong></p>
-                        <p>Nội dung chuyển khoản: <strong><%= draft != null ? draft.bookingCode : "" %></strong></p>
+                        <p>Ngân hàng: <strong>Tiền Phong Bank (TPBank)</strong></p>
+                        <p>Số tài khoản: <strong><%= SepayConfig.ACCOUNT_NO %></strong></p>
+                        <p>Chủ tài khoản: <strong><%= SepayConfig.ACCOUNT_NAME %></strong></p>
+                        <p>Số tiền: <strong><%= money.format(qrAmount) %> đ</strong></p>
+                        <p>Nội dung chuyển khoản: <strong><%= qrContent %></strong></p>
                     </div>
                 </form>
 
@@ -87,7 +111,7 @@
                         <div class="field-error" id="coupon-error"></div>
                     </div>
 
-                    <%-- Tóm tắt số tiền hiện tại của đơn; khi submit, controller sẽ tính lại coupon lần cuối ở server. --%>
+                    <%-- Tóm tắt số tiền hiện tại của đơn; khi bấm cập nhật QR, controller sẽ tính lại coupon lần cuối ở server. --%>
                     <div class="payment-summary-card">
                         <h3>Tóm tắt thanh toán đơn đặt</h3>
                         <p><strong><%= tour != null ? tour.getTourName() : "TourBuddy" %></strong></p>
@@ -98,8 +122,8 @@
                             <div><dt>VAT (<%= draft != null ? money.format(draft.vatRatePercent) : "0" %>%)</dt><dd><%= money.format(draft != null ? draft.vatAmount : 0) %> đ</dd></div>
                             <div><dt>Giảm giá</dt><dd>-<%= money.format(draft != null ? draft.discountAmount : 0) %> đ</dd></div>
                         </dl>
-                        <div class="summary-total light"><span>Thành tiền chung</span><strong><%= money.format(draft != null ? draft.totalAmount : 0) %> đ</strong></div>
-                        <button type="submit" form="payment-form" class="booking-primary-btn full-width">Thực hiện thanh toán ngay</button>
+                        <div class="summary-total light"><span>Số tiền cần chuyển</span><strong><%= money.format(draft != null ? draft.totalAmount : 0) %> đ</strong></div>
+                        <button type="submit" form="payment-form" class="booking-primary-btn full-width">Cập nhật coupon và mã QR</button>
                     </div>
                 </aside>
             </div>

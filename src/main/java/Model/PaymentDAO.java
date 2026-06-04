@@ -64,4 +64,18 @@ public class PaymentDAO extends DBContext {
         }
         return false;
     }
+    // Dương làm đoạn này: kiểm tra mã giao dịch SePay đã từng được lưu chưa.
+    // Method này giúp webhook không tạo trùng Payment khi SePay gửi lại cùng một giao dịch nhiều lần.
+    public boolean existsByTransactionRef(String transactionRef) {
+        String sql = "SELECT 1 FROM Payment WHERE TransactionRef = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, transactionRef);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(PaymentDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
 }

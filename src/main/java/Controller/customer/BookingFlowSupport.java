@@ -18,6 +18,9 @@ import java.util.List;
 
 public class BookingFlowSupport {
 
+    // Thời gian giữ slot sau khi khách chuyển từ review sang payment; quá thời gian này booking PendingPayment sẽ bị hủy và nhả ghế.
+    public static final int PAYMENT_HOLD_MINUTES = 5;
+
     // Hàm requireLogin dùng để bảo vệ toàn bộ luồng booking Customer.
     // Nếu chưa có sessionUser, hệ thống chuyển về /login và trả false để controller dừng xử lý.
     // Nếu đã đăng nhập, trả true để controller tiếp tục xử lý request hiện tại.
@@ -64,7 +67,7 @@ public class BookingFlowSupport {
 
     // Hàm readParticipants đọc danh sách người tham gia từ các input động ở màn create.
     // count là số người khách đã chọn; các mảng name/age/phone/email đến từ request parameter cùng tên.
-    // Người đầu tiên là trưởng đoàn nên bắt buộc có phone/email để liên hệ.
+    // Người đầu tiên là trưởng đoàn nên bắt buộc có phone/email để liên hệ và luôn được tính là người lớn.
     // Nếu một dòng thiếu dữ liệu bắt buộc, dòng đó không được đưa vào danh sách kết quả.
     public static List<BookingParticipant> readParticipants(HttpServletRequest request, int count) {
         List<BookingParticipant> participants = new ArrayList<>();
@@ -83,10 +86,13 @@ public class BookingFlowSupport {
                 continue;
             }
 
+            // ageType xác định nhóm giá của khách; trưởng đoàn luôn là Adult để bảo đảm người đại diện là người lớn.
+            String ageType = i == 0 ? "Adult" : normalizeAgeType(ageTypes != null && i < ageTypes.length ? ageTypes[i] : "Adult");
+
             // Tạo entity BookingParticipant để BookingDAO insert batch vào bảng BookingParticipant.
             BookingParticipant participant = new BookingParticipant();
             participant.setFullName(name);
-            participant.setAgeType(ageTypes != null && i < ageTypes.length ? ageTypes[i] : "Adult");
+            participant.setAgeType(ageType);
             participant.setPhoneNumber(phone);
             participant.setEmail(email);
             participant.setIsLeader(i == 0);
@@ -95,6 +101,40 @@ public class BookingFlowSupport {
         return participants;
     }
 
+
+    // normalizeAgeType chuẩn hóa nhóm tuổi người tham gia về đúng các giá trị constraint của BookingParticipant.
+    // Nếu request bị sửa thủ công thành giá trị lạ, hệ thống tự đưa về Adult để tránh lỗi DB và tính tiền sai.
+    public static String normalizeAgeType(String ageType) {
+        String value = safeTrim(ageType);
+        if ("Child".equalsIgnoreCase(value)) {
+            return "Child";
+        }
+        if ("Infant".equalsIgnoreCase(value)) {
+            return "Infant";
+        }
+        return "Adult";
+    }
+
+    // calculateParticipantBaseAmount tính tiền tour theo nhóm tuổi của từng người tham gia.
+    // Adult dùng PriceAdult, Child dùng PriceChild, Infant dùng PriceInfant từ lịch khởi hành đã chọn trong bảng TourSchedule.
+    public static double calculateParticipantBaseAmount(List<BookingParticipant> participants, TourSchedule schedule) {
+        if (participants == null || schedule == null) {
+            return 0;
+        }
+
+        double amount = 0;
+        for (BookingParticipant participant : participants) {
+            String ageType = normalizeAgeType(participant.getAgeType());
+            if ("Child".equals(ageType)) {
+                amount += schedule.getPriceChild();
+            } else if ("Infant".equals(ageType)) {
+                amount += schedule.getPriceInfant();
+            } else {
+                amount += schedule.getPriceAdult();
+            }
+        }
+        return amount;
+    }
     // Hàm calculateDiscount tính số tiền giảm từ coupon.
     // Nếu coupon là Percentage thì giảm theo phần trăm của baseAmount.
     // Nếu coupon là FixedAmount thì giảm số tiền cố định nhưng không vượt quá baseAmount.

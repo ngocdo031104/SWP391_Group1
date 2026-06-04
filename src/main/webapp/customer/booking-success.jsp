@@ -3,7 +3,7 @@
     // Người làm: Dương
     // Thời gian tạo: 04/06/2026
     // Chức năng: Màn Customer hoàn tất booking.
-    // Ý nghĩa: Hiển thị mã booking sau khi thanh toán thành công và hệ thống đã cập nhật trạng thái đơn.
+    // Ý nghĩa: Hiển thị mã booking sau khi SePay ghi nhận thanh toán và đơn chuyển sang trạng thái chờ staff xác nhận.
 
     // Nạp CSS riêng cho màn success và giữ bodyClass booking-page để dùng chung layout booking.
     request.setAttribute("extraCss", "css/customer-booking-success.css");
@@ -30,8 +30,8 @@
         <%-- Khối thông báo thành công hiển thị mã booking để khách đối chiếu khi cần hỗ trợ. --%>
         <section class="booking-main-panel success-box">
             <i data-lucide="badge-check"></i>
-            <h1>Đặt tour thành công</h1>
-            <p>Mã booking của bạn là <strong><%= bookingCode %></strong>. Đơn đã được ghi nhận và chuyển sang trạng thái Confirmed.</p>
+            <h1>Đã ghi nhận thanh toán</h1>
+            <p>Mã booking của bạn là <strong><%= bookingCode %></strong>. Đơn đã được ghi nhận thanh toán và đang ở trạng thái PendingApproval để chờ staff xác nhận.</p>
             <a class="booking-primary-btn inline-link" href="${pageContext.request.contextPath}/home">Về trang chủ</a>
         </section>
     </div>

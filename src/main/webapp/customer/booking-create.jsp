@@ -73,10 +73,10 @@
                         <% if (hasSchedules) { %>
                             <% for (int i = 0; i < schedules.size(); i++) { TourSchedule schedule = schedules.get(i); %>
                                 <label class="schedule-card">
-                                    <input type="radio" name="scheduleId" value="<%= schedule.getScheduleId() %>" <%= i == 0 ? "checked" : "" %>>
+                                    <input type="radio" name="scheduleId" value="<%= schedule.getScheduleId() %>" data-price-adult="<%= schedule.getPriceAdult() %>" data-price-child="<%= schedule.getPriceChild() %>" data-price-infant="<%= schedule.getPriceInfant() %>" <%= i == 0 ? "checked" : "" %>>
                                     <strong><%= dateFormat.format(schedule.getDepartureDate()) %></strong>
                                     <span><%= dateFormat.format(schedule.getDepartureDate()) %> - <%= dateFormat.format(schedule.getReturnDate()) %></span>
-                                    <small><%= schedule.getAvailableSeats() %> chỗ trống · <%= money.format(schedule.getPriceAdult()) %> đ / khách</small>
+                                    <small><%= schedule.getAvailableSeats() %> chỗ trống</small>
                                 </label>
                             <% } %>
                         <% } else { %>
@@ -114,9 +114,11 @@
                 <dl>
                     <div><dt>Điểm đến</dt><dd><%= tour != null ? tour.getDestination() : "-" %></dd></div>
                     <div><dt>Thời gian</dt><dd><%= tour != null ? tour.getDurationDays() : 0 %> ngày</dd></div>
-                    <div><dt>Giá tham khảo</dt><dd><%= money.format(sideBase) %> đ</dd></div>
+                    <div><dt>Người lớn</dt><dd><span id="summary-adult-count">1</span> x <span id="summary-adult-price"><%= money.format(sideBase) %></span> đ</dd></div>
+                    <div><dt>Trẻ em</dt><dd><span id="summary-child-count">0</span> x <span id="summary-child-price">0</span> đ</dd></div>
+                    <div><dt>Trẻ sơ sinh</dt><dd><span id="summary-infant-count">0</span> x <span id="summary-infant-price">0</span> đ</dd></div>
                 </dl>
-                <div class="summary-total"><span>Tạm tính từ</span><strong><%= money.format(sideBase) %> đ</strong></div>
+                <div class="summary-total"><span>Tạm tính tiền tour</span><strong id="summary-base-amount"><%= money.format(sideBase) %> đ</strong></div>
             </div>
         </aside>
     </div>

@@ -101,6 +101,8 @@ public class BookingReviewController extends HttpServlet {
         BookingDAO bookingDAO = null;
         try {
             bookingDAO = new BookingDAO();
+            // Dương làm đoạn này: dọn các booking PendingPayment đã quá 5 phút trước khi giữ slot mới.
+            bookingDAO.releaseExpiredPendingPaymentBookings(BookingFlowSupport.PAYMENT_HOLD_MINUTES);
             boolean created = bookingDAO.createBooking(booking);
             if (!created) {
                 request.setAttribute("errorMessage", "Không thể tạo booking. Vui lòng kiểm tra lại số chỗ còn trống.");

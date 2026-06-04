@@ -3,16 +3,15 @@ package Controller.customer;
 // Người làm: Dương
 // Thời gian tạo: 04/06/2026
 // Chức năng: Controller màn Customer thanh toán booking.
-// Ý nghĩa: Nạp màn thanh toán, xử lý coupon ở bước payment, tạo Payment và cập nhật Booking sang Confirmed.
+// Ý nghĩa: Nạp màn thanh toán, xử lý coupon ở bước payment, hiển thị VietQR và chờ webhook SePay xác nhận chuyển khoản.
 
 import Controller.customer.BookingFlowSupport.BookingDraft;
+import Entities.Booking;
 import Entities.Coupon;
-import Entities.Payment;
 import Entities.Tour;
 import Model.BookingDAO;
 import Model.CouponDAO;
 import Model.InvoiceDAO;
-import Model.PaymentDAO;
 import Model.TourDAO;
 import Model.TourScheduleDAO;
 import jakarta.servlet.ServletException;
@@ -22,7 +21,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
-import java.sql.Timestamp;
 
 @WebServlet(name = "CustomerBookingPaymentController", urlPatterns = {"/customer/booking/payment"})
 public class BookingPaymentController extends HttpServlet {
@@ -43,11 +41,29 @@ public class BookingPaymentController extends HttpServlet {
             return;
         }
 
+BookingDAO bookingDAO = null;
+        try {
+            bookingDAO = new BookingDAO();
+            // Dương làm đoạn này: nếu booking PendingPayment quá 5 phút thì nhả slot trước khi hiển thị QR.
+            bookingDAO.releaseExpiredPendingPaymentBookings(BookingFlowSupport.PAYMENT_HOLD_MINUTES);
+            Booking booking = bookingDAO.getBookingByCode(draft.bookingCode);
+            if (booking == null || "Cancelled".equalsIgnoreCase(booking.getStatus())) {
+                request.getSession().removeAttribute("bookingDraft");
+                request.getSession().setAttribute("bookingExpiredMessage", "Đơn giữ chỗ đã quá 5 phút chưa thanh toán nên hệ thống đã nhả slot. Vui lòng tạo lại booking.");
+                response.sendRedirect(request.getContextPath() + "/customer/booking/create?tourId=" + draft.tourId);
+                return;
+            }
+        } finally {
+            if (bookingDAO != null) {
+                bookingDAO.close();
+            }
+        }
+
         forwardPayment(request, response, draft, null);
     }
 
-    // doPost xử lý thanh toán.
-    // Logic gồm: đọc paymentMethod, kiểm tra coupon nếu có, cập nhật tổng tiền booking, tạo payment và xác nhận booking.
+    // doPost xử lý cập nhật coupon/số tiền trước khi khách quét VietQR.
+    // Logic gồm: kiểm tra coupon nếu có, cập nhật tài chính Booking và quay lại màn chờ SePay webhook.
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -63,15 +79,25 @@ public class BookingPaymentController extends HttpServlet {
             return;
         }
 
-        // paymentMethod là phương thức khách chọn trên form payment.
-        // Nếu request không gửi giá trị thì mặc định VNPay để tránh tạo Payment thiếu method.
-        String paymentMethod = BookingFlowSupport.safeTrim(request.getParameter("paymentMethod"));
-        if (paymentMethod.isEmpty()) {
-            paymentMethod = "VNPay";
+        BookingDAO holdBookingDAO = null;
+        try {
+            holdBookingDAO = new BookingDAO();
+            holdBookingDAO.releaseExpiredPendingPaymentBookings(BookingFlowSupport.PAYMENT_HOLD_MINUTES);
+            Booking booking = holdBookingDAO.getBookingByCode(draft.bookingCode);
+            if (booking == null || "Cancelled".equalsIgnoreCase(booking.getStatus())) {
+                session.removeAttribute("bookingDraft");
+                session.setAttribute("bookingExpiredMessage", "Đơn giữ chỗ đã quá 5 phút chưa thanh toán nên hệ thống đã nhả slot. Vui lòng tạo lại booking.");
+                response.sendRedirect(request.getContextPath() + "/customer/booking/create?tourId=" + draft.tourId);
+                return;
+            }
+        } finally {
+            if (holdBookingDAO != null) {
+                holdBookingDAO.close();
+            }
         }
 
         // couponCode chỉ được xử lý ở màn payment theo yêu cầu nghiệp vụ.
-        // Nếu coupon hợp lệ, draft được cập nhật lại discount/vat/total trước khi tạo Payment.
+        // Nếu coupon hợp lệ, draft được cập nhật lại discount/vat/total trước khi tạo lại VietQR.
         CouponDAO couponDAO = null;
         String couponCode = BookingFlowSupport.safeTrim(request.getParameter("couponCode")).toUpperCase();
         if (!couponCode.isEmpty()) {
@@ -104,43 +130,15 @@ public class BookingPaymentController extends HttpServlet {
             draft.totalAmount = taxableAmount + draft.vatAmount;
         }
 
-        // payment là entity giao dịch thanh toán để insert vào bảng Payment.
-        // Luồng hiện tại mô phỏng thanh toán thành công nên status được set là Success.
-        Payment payment = new Payment();
-        payment.setBookingId(draft.bookingId);
-        payment.setPaymentMethod(paymentMethod);
-        payment.setTransactionRef("TBPAY-" + System.currentTimeMillis());
-        payment.setAmount(draft.totalAmount);
-        payment.setCurrency("VND");
-        payment.setStatus("Success");
-        payment.setPaidAt(new Timestamp(System.currentTimeMillis()));
-        payment.setGatewayResponse("Simulated payment success from customer booking payment screen");
-
-        PaymentDAO paymentDAO = null;
         BookingDAO bookingDAO = null;
         try {
-            paymentDAO = new PaymentDAO();
             bookingDAO = new BookingDAO();
-
-            // Cập nhật lại các cột tài chính của Booking trước khi tạo Payment để DB khớp với coupon đã áp dụng.
+            // Dương làm đoạn này: cập nhật lại số tiền booking nếu khách áp dụng coupon trước khi quét VietQR.
+            // Payment chưa được tạo ở đây; hệ thống chỉ tạo Payment khi SePay webhook báo giao dịch tiền vào hợp lệ.
             bookingDAO.updateBookingFinancials(draft.bookingId, draft.discountAmount, draft.vatAmount, draft.totalAmount, draft.couponId);
-            boolean paid = paymentDAO.createPayment(payment);
-            if (!paid) {
-                forwardPayment(request, response, draft, "Thanh toán chưa thành công. Vui lòng thử lại.");
-                return;
-            }
-
-            // Khi payment thành công, booking chuyển từ PendingPayment sang Confirmed.
-            bookingDAO.updateBookingStatus(draft.bookingId, "Confirmed");
-            if (draft.couponId != null && couponDAO != null) {
-                couponDAO.updateCouponUsage(draft.couponId);
-            }
-            session.removeAttribute("bookingDraft");
-            response.sendRedirect(request.getContextPath() + "/customer/booking/success?code=" + draft.bookingCode);
+            session.setAttribute("bookingDraft", draft);
+            forwardPayment(request, response, draft, "Mã QR đã được cập nhật. Vui lòng chuyển khoản đúng số tiền và nội dung booking để SePay xác nhận tự động.");
         } finally {
-            if (paymentDAO != null) {
-                paymentDAO.close();
-            }
             if (bookingDAO != null) {
                 bookingDAO.close();
             }

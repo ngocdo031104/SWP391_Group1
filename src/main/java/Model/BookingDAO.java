@@ -128,6 +128,74 @@ public class BookingDAO extends DBContext {
         return false;
     }
 
+
+    // Dương làm đoạn này: nhả các slot đã bị giữ quá thời gian thanh toán cho booking PendingPayment.
+    // Hàm này tìm booking chưa thanh toán quá holdMinutes, cộng lại NumParticipants vào TourSchedule.AvailableSeats và chuyển booking sang Cancelled.
+    public int releaseExpiredPendingPaymentBookings(int holdMinutes) {
+        String selectExpiredSql = "SELECT BookingID, ScheduleID, NumParticipants FROM Booking "
+                + "WHERE Status = 'PendingPayment' AND CreatedAt <= DATEADD(MINUTE, ?, SYSDATETIME())";
+        String releaseSeatsSql = "UPDATE TourSchedule SET AvailableSeats = CASE "
+                + "WHEN AvailableSeats + ? > TotalSeats THEN TotalSeats ELSE AvailableSeats + ? END "
+                + "WHERE ScheduleID = ?";
+        String cancelBookingSql = "UPDATE Booking SET Status = 'Cancelled', "
+                + "Notes = LEFT(CONCAT(ISNULL(Notes, ''), N' | Hết hạn giữ chỗ sau ', ?, N' phút chưa thanh toán.'), 500), "
+                + "UpdatedAt = SYSDATETIME() WHERE BookingID = ? AND Status = 'PendingPayment'";
+
+        int releasedCount = 0;
+        try {
+            connection.setAutoCommit(false);
+            List<int[]> expiredBookings = new ArrayList<>();
+            try (PreparedStatement psSelect = connection.prepareStatement(selectExpiredSql)) {
+                psSelect.setInt(1, -Math.abs(holdMinutes));
+                try (ResultSet rs = psSelect.executeQuery()) {
+                    while (rs.next()) {
+                        expiredBookings.add(new int[] {
+                            rs.getInt("BookingID"),
+                            rs.getInt("ScheduleID"),
+                            rs.getInt("NumParticipants")
+                        });
+                    }
+                }
+            }
+
+            for (int[] item : expiredBookings) {
+                int bookingId = item[0];
+                int scheduleId = item[1];
+                int numParticipants = item[2];
+
+                try (PreparedStatement psSeats = connection.prepareStatement(releaseSeatsSql)) {
+                    psSeats.setInt(1, numParticipants);
+                    psSeats.setInt(2, numParticipants);
+                    psSeats.setInt(3, scheduleId);
+                    psSeats.executeUpdate();
+                }
+
+                try (PreparedStatement psCancel = connection.prepareStatement(cancelBookingSql)) {
+                    psCancel.setInt(1, holdMinutes);
+                    psCancel.setInt(2, bookingId);
+                    releasedCount += psCancel.executeUpdate();
+                }
+            }
+
+            connection.commit();
+        } catch (SQLException ex) {
+            try {
+                if (connection != null) {
+                    connection.rollback();
+                }
+            } catch (SQLException rollbackEx) {
+                Logger.getLogger(BookingDAO.class.getName()).log(Level.SEVERE, null, rollbackEx);
+            }
+            Logger.getLogger(BookingDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException ex) {
+                Logger.getLogger(BookingDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return releasedCount;
+    }
     /**
      * Gets booking list for a specific customer.
      * @param customerId customer user ID

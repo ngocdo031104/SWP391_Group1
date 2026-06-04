@@ -59,6 +59,12 @@ public class BookingCreateController extends HttpServlet {
             tour.setSchedules(bookingSchedules);
 
             // tour dùng để hiển thị tên tour, điểm đến và thông tin tổng quan.
+            Object expiredMessage = request.getSession().getAttribute("bookingExpiredMessage");
+            if (expiredMessage != null) {
+                request.getSession().removeAttribute("bookingExpiredMessage");
+                request.setAttribute("errorMessage", expiredMessage.toString());
+            }
+
             request.setAttribute("tour", tour);
             // schedules dùng để render các radio lịch khởi hành trong booking-create.jsp.
             request.setAttribute("schedules", bookingSchedules);
@@ -126,8 +132,8 @@ public class BookingCreateController extends HttpServlet {
                 return;
             }
 
-            // baseAmount tính theo giá người lớn của schedule nhân số người đi.
-            double baseAmount = selectedSchedule.getPriceAdult() * participantCount;
+            // baseAmount tính theo nhóm tuổi của từng participant: Adult/Child/Infant lấy giá từ TourSchedule.
+            double baseAmount = BookingFlowSupport.calculateParticipantBaseAmount(participants, selectedSchedule);
             // vatRatePercent được đọc từ database qua default Invoice.VATRate, nên khi DB đổi VAT thì booking dùng rate mới.
             invoiceDAO = new InvoiceDAO();
             Double vatRatePercent = invoiceDAO.getDefaultVatRatePercent();
