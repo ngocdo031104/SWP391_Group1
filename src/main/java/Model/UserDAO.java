@@ -6,6 +6,7 @@ package Model;
  * profile updates, and password management.
  */
 
+import Entities.ActivityLog;
 import Entities.Role;
 import Entities.User;
 import Entities.UserProfile;
@@ -17,6 +18,8 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserDAO extends DBContext {
 
@@ -298,5 +301,35 @@ public class UserDAO extends DBContext {
             Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
+    }
+
+    public List<ActivityLog> getActivityLogs(int userId) {
+        List<ActivityLog> logs = new ArrayList<>();
+        String sql = "SELECT TOP 10 * FROM (" +
+                     "  SELECT 'BOOKING' AS Type, N'Đặt tour ' + t.TourName + N' thành công' AS Action, b.CreatedAt " +
+                     "  FROM Booking b JOIN TourSchedule s ON b.ScheduleID = s.ScheduleID JOIN Tour t ON s.TourID = t.TourID " +
+                     "  WHERE b.CustomerID = ? " +
+                     "  UNION ALL " +
+                     "  SELECT 'PAYMENT' AS Type, N'Thanh toán ' + FORMAT(p.Amount, 'N0') + N'đ qua ' + p.PaymentMethod AS Action, p.CreatedAt " +
+                     "  FROM Payment p JOIN Booking b ON p.BookingID = b.BookingID " +
+                     "  WHERE b.CustomerID = ? " +
+                     ") AS ActivityLogs " +
+                     "ORDER BY CreatedAt DESC";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ps.setInt(2, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    ActivityLog log = new ActivityLog();
+                    log.setType(rs.getString("Type"));
+                    log.setAction(rs.getString("Action"));
+                    log.setCreatedAt(rs.getTimestamp("CreatedAt"));
+                    logs.add(log);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return logs;
     }
 }

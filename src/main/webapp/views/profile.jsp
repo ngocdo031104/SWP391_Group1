@@ -1,3 +1,7 @@
+<%-- 
+    Document   : profile.jsp
+    Purpose    : Hiển thị và quản lý thông tin hồ sơ người dùng, lịch sử hoạt động, bảo mật và cài đặt thông báo.
+--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt"  prefix="fmt" %>
@@ -510,27 +514,9 @@
               </c:forEach>
             </c:when>
             <c:otherwise>
-              <!-- Demo data khi chưa có log thật -->
-              <div class="activity-item">
-                <div class="activity-icon booking"><i class="fa fa-suitcase"></i></div>
-                <div class="activity-info">
-                  <p>Đặt tour <strong>Vịnh Hạ Long 3N2Đ</strong> thành công</p>
-                  <time>Hôm nay, 10:24</time>
-                </div>
-              </div>
-              <div class="activity-item">
-                <div class="activity-icon payment"><i class="fa fa-credit-card"></i></div>
-                <div class="activity-info">
-                  <p>Thanh toán <strong>3,500,000đ</strong> qua VNPay</p>
-                  <time>Hôm nay, 10:26</time>
-                </div>
-              </div>
-              <div class="activity-item">
-                <div class="activity-icon login"><i class="fa fa-right-to-bracket"></i></div>
-                <div class="activity-info">
-                  <p>Đăng nhập từ thiết bị mới · Chrome / Windows</p>
-                  <time>Hôm qua, 08:15</time>
-                </div>
+              <div class="empty-state" style="text-align:center; padding: 40px 20px;">
+                <i class="fa fa-ghost" style="font-size: 3rem; color: var(--clr-border); margin-bottom: 16px;"></i>
+                <p style="color: var(--clr-muted); font-size: 0.9rem;">Bạn chưa có hoạt động nào gần đây.</p>
               </div>
             </c:otherwise>
           </c:choose>
