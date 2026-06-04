@@ -803,50 +803,7 @@ document.addEventListener('DOMContentLoaded', () => {
         mapCloseBtn.addEventListener('click', () => setMapOpen(false));
     }
 
-    /* ==========================================================================
-       NAVBAR PROFILE DROPDOWN
-       ========================================================================== */
-    // (avatarBtn and dropdownMenu are declared at the top level of DOMContentLoaded)
-
-    if (avatarBtn && dropdownMenu) {
-        avatarBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            dropdownMenu.classList.toggle('active');
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!avatarBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
-                dropdownMenu.classList.remove('active');
-            }
-        });
-    }
-
-    // Mobile Navbar Hamburguer toggle
-    // (mobileMenuToggle and navMenu are declared at the top level of DOMContentLoaded)
-
-    if (mobileMenuToggle && navMenu) {
-        mobileMenuToggle.addEventListener('click', () => {
-            if (navMenu.style.display === 'flex') {
-                navMenu.style.display = 'none';
-            } else {
-                navMenu.style.display = 'flex';
-                navMenu.style.flexDirection = 'column';
-                navMenu.style.position = 'absolute';
-                navMenu.style.top = '70px';
-                navMenu.style.left = '0';
-                navMenu.style.width = '100%';
-                navMenu.style.backgroundColor = 'var(--bg-glass)';
-                navMenu.style.backdropFilter = 'blur(12px)';
-                navMenu.style.padding = '1.5rem var(--space-md)';
-                navMenu.style.boxShadow = 'var(--shadow-lg)';
-                navMenu.style.gap = '1rem';
-                
-                navMenu.querySelectorAll('.nav-link').forEach(link => {
-                    link.style.color = 'var(--slate-800)';
-                });
-            }
-        });
-    }
+    // Profile Dropdown and Mobile Menu Toggle are handled globally by navigation.js
 
     /* ==========================================================================
        RECOMMENDATION SECTION POPULATING (Tour dành cho bạn)

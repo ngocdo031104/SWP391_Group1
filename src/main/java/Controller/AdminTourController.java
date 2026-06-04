@@ -231,6 +231,9 @@ public class AdminTourController extends HttpServlet {
                         }
                     }
                     tourDAO.saveTourInclusions(tour.getTourId(), inclusions);
+                    
+                    // Đồng bộ hóa chuỗi văn bản lịch trình với bảng TourItinerary trong DB
+                    tourDAO.syncTourItineraryFromText(tour.getTourId(), tour.getItinerary());
                 }
                 
                 try (PrintWriter out = response.getWriter()) {

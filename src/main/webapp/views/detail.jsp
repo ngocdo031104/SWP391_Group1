@@ -45,7 +45,7 @@
     }
 %>
 <!-- Nhúng header dùng chung cho toàn bộ website, nằm trong thư mục web/common/ -->
-<jsp:include page="../common/header.jsp" />
+<jsp:include page="/common/header.jsp" />
 
     <!-- TOUR TITLE & HEAD SECTION -->
     <section class="tour-detail-head-section">
@@ -853,4 +853,4 @@
     //   ở phía cuối trang, đảm bảo trang HTML được load xong hết mới chạy script xử lý giao diện.
 %>
 <% request.setAttribute("extraScript", "js/detail.js"); %>
-<jsp:include page="../common/footer.jsp" />
+<jsp:include page="/common/footer.jsp" />

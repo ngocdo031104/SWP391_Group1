@@ -56,6 +56,9 @@ public class Review implements Serializable {
     // Chức năng: Ghi nhận thời gian cập nhật nội dung đánh giá nếu có chỉnh sửa.
     private Timestamp updatedAt;
 
+    // Đường dẫn hình ảnh đính kèm đánh giá chuyến đi
+    private String imageUrl;
+
     // --- CÁC TRƯỜNG THÔNG TIN PHỤ TRỢ (JOIN DỮ LIỆU ĐỂ HIỂN THỊ TRÊN UI) ---
     // Lý do cần các trường này: Trong DB, bảng Review chỉ lưu IDs (CustomerID, BookingID).
     // Nếu không có các trường này, khi hiển thị ra detail.jsp, ta không thể hiển thị ngay Tên khách hàng hay Avatar
@@ -199,5 +202,13 @@ public class Review implements Serializable {
     // Thiết lập trạng thái xác thực đi tour
     public void setIsVerified(boolean isVerified) {
         this.isVerified = isVerified;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }
