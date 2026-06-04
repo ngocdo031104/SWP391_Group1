@@ -1,5 +1,11 @@
 package Controller;
 
+/**
+ * Controller class for managing user authentication.
+ * Handles the login and logout operations, session management,
+ * and remembering user sessions via cookies.
+ */
+
 import Entities.User;
 import Model.UserDAO;
 import Utils.PasswordUtil;

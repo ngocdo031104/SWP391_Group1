@@ -1,5 +1,11 @@
 package Model;
 
+/**
+ * Data Access Object for User-related operations.
+ * Handles database interactions for user login, registration, 
+ * profile updates, and password management.
+ */
+
 import Entities.Role;
 import Entities.User;
 import Entities.UserProfile;

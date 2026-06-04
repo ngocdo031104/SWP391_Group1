@@ -1,5 +1,11 @@
 package Controller;
 
+/**
+ * Controller class for managing user profiles.
+ * Allows users to view and update their personal information,
+ * change their avatar, modify travel preferences, and update passwords.
+ */
+
 import Entities.User;
 import Entities.UserProfile;
 import Model.UserDAO;
