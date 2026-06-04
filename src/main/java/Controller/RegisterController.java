@@ -1,5 +1,11 @@
 package Controller;
 
+/**
+ * Controller class for handling user registration.
+ * Processes user input, validates data (email format, password strength, etc.),
+ * and interacts with the DAO to create new user accounts and profiles.
+ */
+
 import Entities.User;
 import Entities.UserProfile;
 import Model.UserDAO;
@@ -260,6 +266,6 @@ public class RegisterController extends HttpServlet {
     }
 
     private String trim(String s) {
-        return s == null ? null : s.trim();
+        return s == null ? "" : s.trim();
     }
 }
