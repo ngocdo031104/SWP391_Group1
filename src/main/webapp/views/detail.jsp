@@ -255,15 +255,10 @@
                                         }
                                     }
                                     
-                                    // Hiển thị dự phòng (Fallback) nếu DB trống
+                                    // Không có dữ liệu từ DB → hiện thông báo trống
                                     if (!hasIncluded) {
                                 %>
-                                <li><i data-lucide="car"></i> Xe du lịch đưa đón suốt tuyến cao cấp</li>
-                                <li><i data-lucide="hotel"></i> Lưu trú tại khách sạn/resort 5 sao hoặc cắm trại cao cấp</li>
-                                <li><i data-lucide="utensils"></i> Các bữa ăn trong chương trình (Đặc sản địa phương Á - Âu)</li>
-                                <li><i data-lucide="ticket"></i> Vé tham quan tất cả các điểm trong hành trình</li>
-                                <li><i data-lucide="shield"></i> Bảo hiểm du lịch quốc tế/nội địa mức đền bù tối đa</li>
-                                <li><i data-lucide="sparkles"></i> Nước uống, khăn lạnh và trang thiết bị an toàn đi kèm</li>
+                                <li style="color: var(--slate-400); font-style: italic;"><i data-lucide="info"></i> Chưa có thông tin dịch vụ bao gồm.</li>
                                 <%
                                     }
                                 %>
@@ -287,13 +282,10 @@
                                         }
                                     }
                                     
-                                    // Hiển thị dự phòng (Fallback) nếu DB trống
+                                    // Không có dữ liệu từ DB → hiện thông báo trống
                                     if (!hasExcluded) {
                                 %>
-                                <li><i data-lucide="plane"></i> Vé máy bay khứ hồi (Nếu khách khởi hành từ tỉnh khác)</li>
-                                <li><i data-lucide="glass-water"></i> Đồ uống có cồn và chi tiêu mua sắm cá nhân ngoài chương trình</li>
-                                <li><i data-lucide="badge-dollar-sign"></i> Tiền tip (bồi dưỡng) cho HDV và tài xế (Không bắt buộc)</li>
-                                <li><i data-lucide="landmark"></i> Thuế VAT 8% (Chỉ tính khi yêu cầu xuất hóa đơn đỏ)</li>
+                                <li style="color: var(--slate-400); font-style: italic;"><i data-lucide="info"></i> Chưa có thông tin dịch vụ không bao gồm.</li>
                                 <%
                                     }
                                 %>
