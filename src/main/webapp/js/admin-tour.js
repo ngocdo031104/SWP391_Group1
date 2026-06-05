@@ -449,7 +449,23 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('tour-video').value = tour.videoUrl || '';
         
         document.getElementById('tour-description').value = tour.description;
-        document.getElementById('tour-itinerary').value = tour.itinerary;
+        
+        // Nếu tour.itinerary có sẵn text thì điền vào, ngược lại load từ bảng TourItinerary trong DB
+        const itineraryTextarea = document.getElementById('tour-itinerary');
+        if (tour.itinerary && tour.itinerary.trim() !== '') {
+            itineraryTextarea.value = tour.itinerary;
+        } else {
+            // Load từ bảng TourItinerary → dựng lại text để admin chỉnh sửa
+            itineraryTextarea.value = 'Đang tải lịch trình...';
+            fetch(`tours?ajax=true&action=getItinerary&tourId=${tour.tourId}`)
+                .then(res => res.json())
+                .then(data => {
+                    itineraryTextarea.value = data.text || '';
+                })
+                .catch(() => {
+                    itineraryTextarea.value = '';
+                });
+        }
         
         document.getElementById('tour-featured').checked = tour.isFeatured;
 

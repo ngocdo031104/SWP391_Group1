@@ -3,6 +3,9 @@ package Controller;
 import Entities.Tour;
 import Entities.TourCategory;
 import Model.TourDAO;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonArray;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -18,10 +21,14 @@ public class AdminTourController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        // Kiểm tra xem request này có phải là AJAX fetch không.
+        // Phía JS client (admin-tour.js) sẽ truyền parameter ?ajax=true khi cần lấy dữ liệu JSON.
         String ajax = request.getParameter("ajax");
         
         if ("true".equalsIgnoreCase(ajax)) {
             String action = request.getParameter("action");
+            
+            // TH1: AJAX lấy danh sách dịch vụ đi kèm (Inclusions) của 1 tour để đổ vào modal Form Edit
             if ("getInclusions".equalsIgnoreCase(action)) {
                 response.setContentType("application/json;charset=UTF-8");
                 TourDAO tourDAO = null;
@@ -30,23 +37,9 @@ public class AdminTourController extends HttpServlet {
                     int tourId = parseInt(request.getParameter("tourId"), 0);
                     List<Entities.TourInclusion> inclusions = tourDAO.getInclusionsByTourId(tourId);
                     
-                    StringBuilder json = new StringBuilder("[");
-                    for (int i = 0; i < inclusions.size(); i++) {
-                        Entities.TourInclusion inc = inclusions.get(i);
-                        json.append("{")
-                            .append("\"inclusionId\":").append(inc.getInclusionId()).append(",")
-                            .append("\"tourId\":").append(inc.getTourId()).append(",")
-                            .append("\"inclusionType\":\"").append(escapeJson(inc.getInclusionType())).append("\",")
-                            .append("\"serviceName\":\"").append(escapeJson(inc.getServiceName())).append("\",")
-                            .append("\"iconName\":\"").append(escapeJson(inc.getIconName())).append("\"")
-                            .append("}");
-                        if (i < inclusions.size() - 1) {
-                            json.append(",");
-                        }
-                    }
-                    json.append("]");
+                    String json = new Gson().toJson(inclusions);
                     try (PrintWriter out = response.getWriter()) {
-                        out.print(json.toString());
+                        out.print(json);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -62,68 +55,86 @@ public class AdminTourController extends HttpServlet {
                 return;
             }
 
+            // TH2: AJAX lấy lịch trình (Itinerary) dưới dạng văn bản thô để đưa vào Textarea trong Form Edit
+            if ("getItinerary".equalsIgnoreCase(action)) {
+                response.setContentType("application/json;charset=UTF-8");
+                TourDAO tourDAO = null;
+                try {
+                    tourDAO = new TourDAO();
+                    int tourId = parseInt(request.getParameter("tourId"), 0);
+                    List<Entities.TourItinerary> itineraries = tourDAO.getItineraryByTourId(tourId);
+                    
+                    // Nối các ngày thành chuỗi text có dạng: "Ngày 1: Tiêu đề - Mô tả\nNgày 2: ..."
+                    StringBuilder text = new StringBuilder();
+                    for (Entities.TourItinerary it : itineraries) {
+                        text.append("Ngày ").append(it.getDayNumber()).append(": ").append(it.getTitle());
+                        if (it.getDescription() != null && !it.getDescription().trim().isEmpty()) {
+                            text.append(" - ").append(it.getDescription().trim());
+                        }
+                        text.append("\n");
+                    }
+                    
+                    Gson gson = new Gson();
+                    JsonObject result = new JsonObject();
+                    result.addProperty("text", text.toString().trim());
+                    try (PrintWriter out = response.getWriter()) { // Trả về JSON có cấu trúc: { "text": "Ngày 1: ...\nNgày 2: ..." }
+                        out.print(gson.toJson(result));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    try (PrintWriter out = response.getWriter()) {
+                        out.print("{\"text\":\"\"}");
+                    }
+                } finally {
+                    if (tourDAO != null) {
+                        tourDAO.close();
+                    }
+                }
+                return;
+            }
+
+            // TH3: Mặc định khi gọi AJAX true không truyền action -> Trả về danh sách tất cả Tour Admin + Doanh thu 6 tháng gần nhất
             response.setContentType("application/json;charset=UTF-8");
             TourDAO tourDAO = null;
             try {
                 tourDAO = new TourDAO();
+                // Query toàn bộ tours (kể cả Active, Draft, Disabled) để quản lý
                 List<Tour> tours = tourDAO.getAllToursAdmin();
                 
+                // Lấy mảng doanh thu 6 tháng gần nhất để vẽ biểu đồ line chart ở Dashboard admin
                 double[] monthlyRevenue = tourDAO.getMonthlyRevenueLast6Months();
                 
-                StringBuilder json = new StringBuilder("{");
-                json.append("\"tours\":[");
-                for (int i = 0; i < tours.size(); i++) {
-                    Tour t = tours.get(i);
-                    json.append("{")
-                        .append("\"tourId\":").append(t.getTourId()).append(",")
-                        .append("\"categoryId\":").append(t.getCategoryId()).append(",")
-                        .append("\"categoryName\":\"").append(escapeJson(t.getCategory() != null ? t.getCategory().getCategoryName() : "Khác")).append("\",")
-                        .append("\"tourName\":\"").append(escapeJson(t.getTourName())).append("\",")
-                        .append("\"description\":\"").append(escapeJson(t.getDescription())).append("\",")
-                        .append("\"destination\":\"").append(escapeJson(t.getDestination())).append("\",")
-                        .append("\"durationDays\":").append(t.getDurationDays()).append(",")
-                        .append("\"itinerary\":\"").append(escapeJson(t.getItinerary())).append("\",")
-                        .append("\"difficultyLevel\":\"").append(escapeJson(t.getDifficultyLevel())).append("\",")
-                        .append("\"basePrice\":").append(t.getBasePrice()).append(",")
-                        .append("\"maxParticipants\":").append(t.getMaxParticipants()).append(",")
-                        .append("\"status\":\"").append(escapeJson(t.getStatus())).append("\",")
-                        .append("\"isFeatured\":").append(t.isIsFeatured()).append(",")
-                        .append("\"languages\":\"").append(escapeJson(t.getLanguages())).append("\",")
-                        .append("\"groupSizeMin\":").append(t.getGroupSizeMin()).append(",")
-                        .append("\"groupSizeMax\":").append(t.getGroupSizeMax()).append(",")
-                        .append("\"departureCity\":\"").append(escapeJson(t.getDepartureCity())).append("\",")
-                        .append("\"videoUrl\":\"").append(escapeJson(t.getVideoUrl())).append("\",")
-                        .append("\"rating\":").append(t.getRating()).append(",")
-                        .append("\"reviewsCount\":").append(t.getReviewsCount()).append(",")
-                        .append("\"totalSeats\":").append(t.getTotalSeats()).append(",")
-                        .append("\"availableSeats\":").append(t.getAvailableSeats()).append(",")
-                        .append("\"nextDeparture\":\"").append(escapeJson(t.getNextDeparture() != null ? t.getNextDeparture() : "")).append("\",")
-                        .append("\"createdAt\":\"").append(t.getCreatedAt() != null ? t.getCreatedAt().toString().split(" ")[0] : "2026-05-20").append("\"")
-                        .append("}");
-                    if (i < tours.size() - 1) {
-                        json.append(",");
+                Gson gson = new Gson();
+                JsonArray toursArray = new JsonArray();
+                for (Tour t : tours) {
+                    JsonObject tourJson = gson.toJsonTree(t).getAsJsonObject();
+                    tourJson.addProperty("categoryName", t.getCategory() != null ? t.getCategory().getCategoryName() : "Khác");
+                    if (t.getCreatedAt() != null) {
+                        tourJson.addProperty("createdAt", t.getCreatedAt().toString().split(" ")[0]);
+                    } else {
+                        tourJson.addProperty("createdAt", "2026-05-20");
                     }
+                    toursArray.add(tourJson);
                 }
-                json.append("],");
                 
-                json.append("\"monthlyRevenue\":[");
+                long[] revenueLongs = new long[monthlyRevenue.length];// Chuyển đổi từ double sang long để tránh lỗi JSON khi gửi về client (vì JS sẽ đọc số quá lớn có thể bị mất độ chính xác)
                 for (int i = 0; i < monthlyRevenue.length; i++) {
-                    json.append((long)monthlyRevenue[i]); // cast to long to avoid decimal formatting issues in JS chart
-                    if (i < monthlyRevenue.length - 1) {
-                        json.append(",");
-                    }
+                    revenueLongs[i] = (long) monthlyRevenue[i];
                 }
-                json.append("]");
-                json.append("}");
+                
+                JsonObject root = new JsonObject();
+                root.add("tours", toursArray);
+                root.add("monthlyRevenue", gson.toJsonTree(revenueLongs));
                 
                 try (PrintWriter out = response.getWriter()) {
-                    out.print(json.toString());
+                    out.print(gson.toJson(root));
                 }
-            } catch (Exception e) {
+            } catch (Exception e) {// Nếu có lỗi xảy ra trong quá trình lấy dữ liệu từ DB hoặc xử lý, trả về lỗi 500 và log lỗi chi tiết để dễ dàng debug.
                 e.printStackTrace();
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 try (PrintWriter out = response.getWriter()) {
-                    out.print("{\"status\":\"error\",\"message\":\"" + e.getMessage() + "\"}");
+                    out.print("{\"status\":\"error\",\"message\":\"" + e.getMessage() + "\"}");// Trả về JSON lỗi để client có thể hiển thị thông báo lỗi phù hợp.
                 }
             } finally {
                 if (tourDAO != null) {
@@ -131,10 +142,11 @@ public class AdminTourController extends HttpServlet {
                 }
             }
         } else {
-            // Forward to the JSP page
+            // Trường hợp truy cập trực tiếp bằng trình duyệt (không phải AJAX) -> Render trang JSP
             TourDAO tourDAO = null;
             try {
                 tourDAO = new TourDAO();
+                // Load danh sách category để đổ vào thẻ <select> trong Form Modal thêm/sửa
                 List<TourCategory> categories = tourDAO.getAllCategories();
                 request.setAttribute("categories", categories);
             } catch (Exception e) {
@@ -144,6 +156,8 @@ public class AdminTourController extends HttpServlet {
                     tourDAO.close();
                 }
             }
+            
+            // Servlet này ánh xạ 2 URL, check xem đang vào URL nào để forward đúng file JSP
             String path = request.getServletPath();
             if ("/admin/dashboard".equals(path)) {
                 request.getRequestDispatcher("/admin/dashboard.jsp").forward(request, response);
@@ -156,6 +170,7 @@ public class AdminTourController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        // Thiết lập bộ mã UTF-8 để đảm bảo khi đọc form tiếng Việt không bị lỗi hiển thị
         response.setContentType("application/json;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
         
@@ -165,12 +180,14 @@ public class AdminTourController extends HttpServlet {
         try {
             tourDAO = new TourDAO();
             
-            if ("add".equalsIgnoreCase(action) || "edit".equalsIgnoreCase(action)) {
+            // Xử lý Thêm mới (action = add) hoặc Chỉnh sửa (action = edit) tour
+            if ("add".equalsIgnoreCase(action) || "edit".equalsIgnoreCase(action)) {// Cả 2 hành động thêm mới và chỉnh sửa đều gửi lên tất cả thông tin tour giống nhau, chỉ khác ở chỗ nếu là edit sẽ có thêm tourId để xác định tour nào cần cập nhật
                 Tour tour = new Tour();
                 if ("edit".equalsIgnoreCase(action)) {
                     tour.setTourId(parseInt(request.getParameter("tourId"), 0));
                 }
                 
+                // Thu thập tất cả các tham số từ form gửi lên
                 tour.setCategoryId(parseInt(request.getParameter("categoryId"), 1));
                 tour.setTourName(request.getParameter("tourName"));
                 tour.setDescription(request.getParameter("description"));
@@ -180,38 +197,43 @@ public class AdminTourController extends HttpServlet {
                 tour.setDifficultyLevel(request.getParameter("difficultyLevel"));
                 tour.setBasePrice(parseDouble(request.getParameter("basePrice"), 0.0));
                 tour.setMaxParticipants(parseInt(request.getParameter("maxParticipants"), 20));
-                tour.setStatus(request.getParameter("status"));
+                tour.setStatus(request.getParameter("status")); // Trạng thái: Active, Draft, Disabled
                 tour.setIsFeatured("true".equalsIgnoreCase(request.getParameter("isFeatured")));
                 tour.setLanguages(request.getParameter("languages"));
                 tour.setGroupSizeMin(parseInt(request.getParameter("groupSizeMin"), 1));
                 tour.setGroupSizeMax(parseInt(request.getParameter("groupSizeMax"), 20));
                 tour.setDepartureCity(request.getParameter("departureCity"));
                 
+                // Kinh độ và vĩ độ phục vụ hiển thị định vị bản đồ (Mapbox/SVG)
                 String latStr = request.getParameter("latitude");
                 if (latStr != null && !latStr.trim().isEmpty()) {
                     tour.setLatitude(parseDouble(latStr, 0.0));
                 } else {
-                    tour.setLatitude(null);
+                    tour.setLatitude(null); // Để null nếu admin không điền
                 }
                 String lngStr = request.getParameter("longitude");
                 if (lngStr != null && !lngStr.trim().isEmpty()) {
                     tour.setLongitude(parseDouble(lngStr, 0.0));
                 } else {
-                    tour.setLongitude(null);
+                    tour.setLongitude(null); // Để null nếu admin không điền
                 }
                 
                 tour.setVideoUrl(request.getParameter("videoUrl"));
                 
                 boolean success;
                 if ("add".equalsIgnoreCase(action)) {
+                    // Thêm mới tour và lấy ra ID tự động tăng được sinh từ SQL
                     int generatedId = tourDAO.insertTour(tour);
                     success = generatedId > 0;
                     tour.setTourId(generatedId);
                 } else {
+                    // Cập nhật thông tin tour đã có
                     success = tourDAO.updateTour(tour);
                 }
                 
+                // Nếu thêm/sửa tour thành công -> Tiến hành cập nhật tiếp các bảng liên quan (Inclusions và Itinerary)
                 if (success) {
+                    // 1. Lưu danh sách dịch vụ bao gồm & loại trừ (lấy từ các dòng động của form)
                     String[] incTypes = request.getParameterValues("incType");
                     String[] incIcons = request.getParameterValues("incIcon");
                     String[] incServices = request.getParameterValues("incService");
@@ -230,53 +252,82 @@ public class AdminTourController extends HttpServlet {
                             }
                         }
                     }
-                    tourDAO.saveTourInclusions(tour.getTourId(), inclusions);
+                    // Hàm saveTourInclusions sẽ DELETE đống dịch vụ cũ của tour này rồi INSERT lại đống mới
+                    tourDAO.saveTourInclusions(tour.getTourId(), inclusions);// Cách làm này đơn giản và hiệu quả hơn là phải so sánh từng item cũ - mới để UPDATE hoặc DELETE riêng lẻ, vì số lượng dịch vụ đi kèm thường không nhiều nên việc xóa rồi
                     
-                    // Đồng bộ hóa chuỗi văn bản lịch trình với bảng TourItinerary trong DB
+                    // 2. Tách lịch trình từ ô Textarea (phân tách dòng bằng regex) nạp vào bảng TourItinerary trong DB
                     tourDAO.syncTourItineraryFromText(tour.getTourId(), tour.getItinerary());
                 }
                 
+                Gson gson = new Gson();
                 try (PrintWriter out = response.getWriter()) {
+                    JsonObject resp = new JsonObject();
                     if (success) {
-                        out.print("{\"status\":\"success\",\"message\":\"Lưu thông tin tour thành công!\",\"tourId\":" + tour.getTourId() + "}");
+                        resp.addProperty("status", "success");
+                        resp.addProperty("message", "Lưu thông tin tour thành công!");
+                        resp.addProperty("tourId", tour.getTourId());
                     } else {
-                        out.print("{\"status\":\"error\",\"message\":\"Không thể lưu thông tin tour.\"}");
+                        resp.addProperty("status", "error");
+                        resp.addProperty("message", "Không thể lưu thông tin tour.");
                     }
+                    out.print(gson.toJson(resp));
                 }
                 
-            } else if ("delete".equalsIgnoreCase(action)) {
+            } else if ("delete".equalsIgnoreCase(action)) {// Xử lý xóa tour (action = delete)
+                // Xử lý xóa tour (action = delete)
                 int tourId = parseInt(request.getParameter("tourId"), 0);
+                // Thực hiện hard delete: xóa từ các bảng con (Media, Inclusion, FAQ, Booking...) trước khi xóa tour ở bảng chính.
+                // Việc xóa này dùng SQL Transaction (commit/rollback) trong DAO để đảm bảo an toàn dữ liệu.
                 boolean success = tourDAO.deleteTour(tourId);
+                Gson gson = new Gson();
                 try (PrintWriter out = response.getWriter()) {
+                    JsonObject resp = new JsonObject();
                     if (success) {
-                        out.print("{\"status\":\"success\",\"message\":\"Xóa tour thành công!\"}");
+                        resp.addProperty("status", "success");
+                        resp.addProperty("message", "Xóa tour thành công!");
                     } else {
-                        out.print("{\"status\":\"error\",\"message\":\"Không thể xóa tour (tour này có thể đang có lịch trình hoặc đơn đặt).\"}");
+                        resp.addProperty("status", "error");
+                        resp.addProperty("message", "Không thể xóa tour (tour này có thể đang có lịch trình hoặc đơn đặt).");
                     }
+                    out.print(gson.toJson(resp));
                 }
                 
             } else if ("toggle-status".equalsIgnoreCase(action)) {
+                // Xử lý đổi trạng thái nhanh (action = toggle-status) bằng cách click vào Status badge trên bảng
                 int tourId = parseInt(request.getParameter("tourId"), 0);
                 String status = request.getParameter("status");
                 boolean success = tourDAO.updateTourStatus(tourId, status);
+                Gson gson = new Gson();
                 try (PrintWriter out = response.getWriter()) {
+                    JsonObject resp = new JsonObject();
                     if (success) {
-                        out.print("{\"status\":\"success\",\"message\":\"Cập nhật trạng thái thành công!\"}");
+                        resp.addProperty("status", "success");
+                        resp.addProperty("message", "Cập nhật trạng thái thành công!");
                     } else {
-                        out.print("{\"status\":\"error\",\"message\":\"Không thể cập nhật trạng thái tour.\"}");
+                        resp.addProperty("status", "error");
+                        resp.addProperty("message", "Không thể cập nhật trạng thái tour.");
                     }
+                    out.print(gson.toJson(resp));
                 }
             } else {
+                Gson gson = new Gson();
                 try (PrintWriter out = response.getWriter()) {
-                    out.print("{\"status\":\"error\",\"message\":\"Hành động không xác định.\"}");
+                    JsonObject resp = new JsonObject();
+                    resp.addProperty("status", "error");
+                    resp.addProperty("message", "Hành động không xác định.");
+                    out.print(gson.toJson(resp));
                 }
             }
             
         } catch (Exception e) {
             e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            Gson gson = new Gson();
             try (PrintWriter out = response.getWriter()) {
-                out.print("{\"status\":\"error\",\"message\":\"Lỗi hệ thống: " + e.getMessage() + "\"}");
+                JsonObject resp = new JsonObject();
+                resp.addProperty("status", "error");
+                resp.addProperty("message", "Lỗi hệ thống: " + e.getMessage());
+                out.print(gson.toJson(resp));
             }
         } finally {
             if (tourDAO != null) {
@@ -285,6 +336,7 @@ public class AdminTourController extends HttpServlet {
         }
     }
 
+    // Helper ép kiểu chuỗi sang int an toàn, nếu null hoặc lỗi format thì lấy giá trị default
     private int parseInt(String value, int defaultVal) {
         try {
             if (value != null && !value.trim().isEmpty()) {
@@ -294,6 +346,7 @@ public class AdminTourController extends HttpServlet {
         return defaultVal;
     }
 
+    // Helper ép kiểu chuỗi sang double an toàn
     private double parseDouble(String value, double defaultVal) {
         try {
             if (value != null && !value.trim().isEmpty()) {
@@ -301,16 +354,5 @@ public class AdminTourController extends HttpServlet {
             }
         } catch (NumberFormatException e) {}
         return defaultVal;
-    }
-
-    private String escapeJson(String input) {
-        if (input == null) return "";
-        return input.replace("\\", "\\\\")
-                    .replace("\"", "\\\"")
-                    .replace("\b", "\\b")
-                    .replace("\f", "\\f")
-                    .replace("\n", "\\n")
-                    .replace("\r", "\\r")
-                    .replace("\t", "\\t");
     }
 }

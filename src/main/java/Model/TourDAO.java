@@ -30,22 +30,34 @@ public class TourDAO extends DBContext {
      * @return list of TourCategory objects
      */
     public List<TourCategory> getAllCategories() {
+        // Khởi tạo danh sách rỗng để lưu trữ các danh mục tour sẽ lấy ra từ database
         List<TourCategory> list = new ArrayList<>();
+        
+        // Chuỗi SQL để SELECT các cột của danh mục tour. Chỉ lấy các danh mục đang hoạt động (IsActive = 1)
         String sql = "SELECT CategoryID, CategoryName, Description, IsActive FROM TourCategory WHERE IsActive = 1";
+        
+        // Sử dụng try-with-resources để tự động đóng PreparedStatement và ResultSet sau khi dùng xong
         try (PreparedStatement ps = connection.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
+            
+            // Duyệt qua từng dòng kết quả trả về từ database
             while (rs.next()) {
+                // Khởi tạo đối tượng TourCategory và gán giá trị tương ứng từ cột cơ sở dữ liệu
                 TourCategory cat = new TourCategory(
                     rs.getInt("CategoryID"),
                     rs.getString("CategoryName"),
                     rs.getString("Description"),
                     rs.getBoolean("IsActive")
                 );
+                // Thêm đối tượng danh mục vừa tạo vào danh sách kết quả
                 list.add(cat);
             }
         } catch (SQLException ex) {
+            // Ghi log lỗi chi tiết ra console nếu quá trình kết nối hoặc thực thi SQL gặp sự cố
             Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        // Trả về danh sách danh mục đã nạp đầy đủ dữ liệu
         return list;
     }
 
@@ -54,22 +66,37 @@ public class TourDAO extends DBContext {
      * @return list of featured Tour objects
      */
     public List<Tour> getFeaturedTours() {
+        // Khởi tạo danh sách rỗng chứa các tour nổi bật
         List<Tour> list = new ArrayList<>();
+        
+        // Chuỗi SELECT lấy thông tin chi tiết tour và tính điểm rating trung bình + tổng số lượng review bằng subquery.
+        // Điều kiện lọc: Chỉ lấy những tour nổi bật (IsFeatured = 1) và đang hoạt động (Status = 'Active')
         String sql = "SELECT TourID, CategoryID, TourName, Description, Destination, DurationDays, Itinerary, DifficultyLevel, BasePrice, MaxParticipants, Status, IsFeatured, Languages, GroupSizeMin, GroupSizeMax, DepartureCity, Latitude, Longitude, VideoURL, CreatedBy, CreatedAt, UpdatedAt, "
                    + "ISNULL((SELECT AVG(CAST(Rating AS FLOAT)) FROM Review r WHERE r.TourID = Tour.TourID), 0.0) as AvgRating, "
                    + "(SELECT COUNT(*) FROM Review r WHERE r.TourID = Tour.TourID) as ReviewCount "
                    + "FROM Tour WHERE IsFeatured = 1 AND Status = 'Active'";
+                   
+        // Thực thi câu lệnh SQL kết nối database
         try (PreparedStatement ps = connection.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
+             
+            // Vòng lặp duyệt qua từng tour trả về
             while (rs.next()) {
+                // Gọi helper method mapTour để tự động map dữ liệu từ ResultSet sang đối tượng Java Tour
                 Tour tour = mapTour(rs);
-                // Load one thumbnail/image for listing
+                
+                // Mỗi tour hiển thị ở trang chủ cần 1 ảnh đại diện (thumbnail), ta gọi hàm getMediaForTour với tham số onlyFirst = true
                 tour.setMediaList(getMediaForTour(tour.getTourId(), true));
+                
+                // Thêm tour đã hoàn thiện thông tin ảnh đại diện vào list
                 list.add(tour);
             }
         } catch (SQLException ex) {
+            // Ghi nhận lỗi nếu xảy ra sự cố truy vấn CSDL
             Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        // Trả về danh sách các tour nổi bật cho HomeController sử dụng
         return list;
     }
 
@@ -84,7 +111,8 @@ public class TourDAO extends DBContext {
     public List<Tour> searchTours(String destination, Integer categoryId, Double maxPrice, String departureDate) {
         List<Tour> list = new ArrayList<>();
         
-        // Base Query
+        // Khởi tạo câu SQL gốc. Lấy các tour có status là Active.
+        // Đồng thời dùng truy vấn con (Subquery) để tính AvgRating (số sao trung bình) và ReviewCount của từng tour.
         StringBuilder sql = new StringBuilder(
             "SELECT DISTINCT t.TourID, t.CategoryID, t.TourName, t.Description, t.Destination, t.DurationDays, t.Itinerary, t.DifficultyLevel, t.BasePrice, t.MaxParticipants, t.Status, t.IsFeatured, t.Languages, t.GroupSizeMin, t.GroupSizeMax, t.DepartureCity, t.Latitude, t.Longitude, t.VideoURL, t.CreatedBy, t.CreatedAt, t.UpdatedAt, " +
             "ISNULL((SELECT AVG(CAST(Rating AS FLOAT)) FROM Review r WHERE r.TourID = t.TourID), 0.0) as AvgRating, " +
@@ -94,35 +122,42 @@ public class TourDAO extends DBContext {
             "WHERE t.Status = 'Active'"
         );
         
+        // List này lưu các tham số tương ứng với các dấu "?" động để gán vào PreparedStatement sau nhằm tránh SQL Injection
         List<Object> params = new ArrayList<>();
         
+        // Nếu user nhập điểm đến, nối thêm điều kiện lọc theo tên Destination (tìm kiếm tương đối dùng LIKE)
         if (destination != null && !destination.trim().isEmpty()) {
             sql.append(" AND t.Destination LIKE ?");
             params.add("%" + destination.trim() + "%");
         }
         
+        // Nếu có chọn danh mục tour cụ thể
         if (categoryId != null) {
             sql.append(" AND t.CategoryID = ?");
             params.add(categoryId);
         }
         
+        // Nếu có nhập giá trần (ngân sách tối đa)
         if (maxPrice != null) {
             sql.append(" AND t.BasePrice <= ?");
             params.add(maxPrice);
         }
         
+        // Nếu lọc theo ngày khởi hành, kiểm tra ngày đi của lịch trình (DepartureDate) phải lớn hơn hoặc bằng ngày tìm kiếm
         if (departureDate != null && !departureDate.trim().isEmpty()) {
             sql.append(" AND s.DepartureDate >= ? AND s.Status = 'Open'");
             params.add(java.sql.Date.valueOf(departureDate));
         }
 
         try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            // Duyệt qua list params và gán giá trị tương ứng vào từng dấu "?" trong câu SQL động
             for (int i = 0; i < params.size(); i++) {
                 ps.setObject(i + 1, params.get(i));
             }
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Tour tour = mapTour(rs);
+                    // Lấy thêm 1 ảnh đại diện (thumbnail) của tour để hiển thị trên giao diện danh sách
                     tour.setMediaList(getMediaForTour(tour.getTourId(), true));
                     list.add(tour);
                 }
@@ -140,6 +175,8 @@ public class TourDAO extends DBContext {
      * @return Tour object or null if not found
      */
     public Tour getTourById(int tourId) {
+        // Chuỗi SELECT lấy thông tin chi tiết tour bằng ID, đồng thời JOIN với bảng TourCategory
+        // để lấy thêm CategoryName và CategoryDesc phục vụ hiển thị Breadcrumb và nhãn danh mục ở trang Detail.
         String sql = "SELECT t.TourID, t.CategoryID, t.TourName, t.Description, t.Destination, t.DurationDays, t.Itinerary, t.DifficultyLevel, t.BasePrice, t.MaxParticipants, t.Status, t.IsFeatured, t.Languages, t.GroupSizeMin, t.GroupSizeMax, t.DepartureCity, t.Latitude, t.Longitude, t.VideoURL, t.CreatedBy, t.CreatedAt, t.UpdatedAt, "
                    + "ISNULL((SELECT AVG(CAST(Rating AS FLOAT)) FROM Review r WHERE r.TourID = t.TourID), 0.0) as AvgRating, "
                    + "(SELECT COUNT(*) FROM Review r WHERE r.TourID = t.TourID) as ReviewCount, "
@@ -148,33 +185,37 @@ public class TourDAO extends DBContext {
                    + "JOIN TourCategory c ON t.CategoryID = c.CategoryID "
                    + "WHERE t.TourID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            // Truyền tham số ID tour cần tìm vào câu lệnh SQL
             ps.setInt(1, tourId);
             try (ResultSet rs = ps.executeQuery()) {
+                // Nếu tìm thấy tour khớp với ID trong DB
                 if (rs.next()) {
+                    // Map các trường cơ bản của Tour
                     Tour tour = mapTour(rs);
                     
+                    // Khởi tạo và gán đối tượng TourCategory đi kèm
                     TourCategory cat = new TourCategory();
                     cat.setCategoryId(rs.getInt("CategoryID"));
                     cat.setCategoryName(rs.getString("CategoryName"));
                     cat.setDescription(rs.getString("CategoryDesc"));
                     tour.setCategory(cat);
                     
-                    // Nạp danh sách hình ảnh/video của tour từ bảng TourMedia để cấp cho slideshow ảnh ở đầu trang detail.jsp.
+                    // Nạp danh sách hình ảnh/video của tour từ bảng TourMedia để hiển thị lên slideshow ảnh ở đầu trang detail.jsp
                     tour.setMediaList(getMediaForTour(tourId, false));
                     
-                    // Nạp danh sách các đợt khởi hành còn chỗ trong tương lai từ bảng TourSchedule để tính toán số ghế trống và giá ở sidebar.
+                    // Nạp danh sách các đợt khởi hành còn chỗ trong tương lai từ bảng TourSchedule để tính toán số ghế trống và giá ở sidebar
                     tour.setSchedules(getSchedulesByTourId(tourId));
                     
-                    // Nạp lịch trình đi cụ thể từng ngày từ bảng TourItinerary để hiển thị sơ đồ Timeline động ở thân trang.
+                    // Nạp lịch trình đi cụ thể từng ngày từ bảng TourItinerary để hiển thị sơ đồ Timeline động ở thân trang
                     tour.setItineraries(getItineraryByTourId(tourId));
                     
-                    // Nạp danh sách dịch vụ bao gồm (Included) và loại trừ (Excluded) từ bảng TourInclusion.
+                    // Nạp danh sách dịch vụ bao gồm (Included) và loại trừ (Excluded) từ bảng TourInclusion
                     tour.setInclusions(getInclusionsByTourId(tourId));
                     
-                    // Nạp danh sách câu hỏi thường gặp FAQ từ bảng TourFAQ phục vụ Accordion ở cuối trang.
+                    // Nạp danh sách câu hỏi thường gặp FAQ từ bảng TourFAQ phục vụ Accordion ở cuối trang
                     tour.setFaqs(getFaqsByTourId(tourId));
                     
-                    // Nạp tất cả các bình luận, đánh giá và số sao thực tế từ khách hàng từ bảng Review để hiển thị lên khung nhận xét.
+                    // Nạp tất cả các bình luận, đánh giá và số sao thực tế từ khách hàng từ bảng Review để hiển thị lên khung nhận xét
                     tour.setReviews(getReviewsByTourId(tourId));
                     return tour;
                 }
@@ -191,7 +232,11 @@ public class TourDAO extends DBContext {
      * @return list of TourSchedule objects
      */
     public List<TourSchedule> getSchedulesByTourId(int tourId) {
+        // Khởi tạo danh sách rỗng chứa các lịch trình khởi hành
         List<TourSchedule> list = new ArrayList<>();
+        
+        // Truy vấn danh sách lịch khởi hành của tour này lớn hơn hoặc bằng ngày hôm nay (DepartureDate >= GETDATE())
+        // Đồng thời LEFT JOIN bảng [User] và UserProfile để lấy thông tin chi tiết của Hướng dẫn viên (Guide) phục vụ tour đó.
         String sql = "SELECT ts.ScheduleID, ts.TourID, ts.DepartureDate, ts.ReturnDate, ts.TotalSeats, ts.AvailableSeats, "
                    + "ts.PriceAdult, ts.PriceChild, ts.PriceInfant, ts.Transportation, ts.Status, ts.CreatedAt, "
                    + "ts.GuideID, ts.TourStatus, "
@@ -203,8 +248,10 @@ public class TourDAO extends DBContext {
                    + "WHERE ts.TourID = ? AND ts.DepartureDate >= CAST(GETDATE() AS DATE) "
                    + "ORDER BY ts.DepartureDate ASC";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            // Truyền ID tour vào tham số truy vấn
             ps.setInt(1, tourId);
             try (ResultSet rs = ps.executeQuery()) {
+                // Duyệt qua từng bản ghi lịch trình
                 while (rs.next()) {
                     TourSchedule sched = new TourSchedule(
                         rs.getInt("ScheduleID"),
@@ -221,24 +268,30 @@ public class TourDAO extends DBContext {
                         rs.getTimestamp("CreatedAt")
                     );
                     
+                    // Đọc ID của Hướng dẫn viên du lịch
                     int guideId = rs.getInt("GuideID");
+                    // rs.wasNull() kiểm tra xem cột GuideID vừa đọc có giá trị NULL hay không (chưa được phân công HDV)
                     if (!rs.wasNull()) {
                         sched.setGuideId(guideId);
                         sched.setTourStatus(rs.getString("TourStatus"));
                         
+                        // Nếu đã được phân công HDV, khởi tạo đối tượng User và nạp thông tin tên, email, sđt
                         User u = new User();
                         u.setUserId(guideId);
                         u.setEmail(rs.getString("Email"));
                         u.setFullName(rs.getString("FullName"));
                         u.setPhoneNumber(rs.getString("PhoneNumber"));
                         
+                        // Đọc avatar của HDV từ bảng UserProfile
                         UserProfile up = new UserProfile();
                         up.setUserId(guideId);
                         up.setAvatarUrl(rs.getString("AvatarURL"));
                         u.setProfile(up);
                         
+                        // Gán đối tượng HDV hoàn thiện vào lịch trình
                         sched.setGuide(u);
                     }
+                    // Thêm lịch trình khởi hành vào list
                     list.add(sched);
                 }
             }
@@ -358,7 +411,8 @@ public class TourDAO extends DBContext {
      * @param itineraryText Chuỗi văn bản mô tả lịch trình (tách biệt bằng dấu xuống dòng)
      */
     public void syncTourItineraryFromText(int tourId, String itineraryText) {
-        // 1. Xóa tất cả các bản ghi lịch trình cũ của TourID này
+        // Bước 1: Xóa tất cả các bản ghi lịch trình chi tiết cũ của TourID này
+        // Việc xóa này để dọn sạch dữ liệu cũ trước khi đồng bộ dữ liệu mới từ ô nhập liệu của Admin
         String deleteSql = "DELETE FROM TourItinerary WHERE TourID = ?";
         try (PreparedStatement ps = connection.prepareStatement(deleteSql)) {
             ps.setInt(1, tourId);
@@ -367,41 +421,53 @@ public class TourDAO extends DBContext {
             Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, "syncTourItineraryFromText delete failed", ex);
         }
 
+        // Nếu chuỗi text lịch trình trống rỗng thì kết thúc luôn không làm gì tiếp
         if (itineraryText == null || itineraryText.trim().isEmpty()) {
             return;
         }
 
-        // 2. Phân tích chuỗi văn bản và chèn các dòng lịch trình mới
+        // Bước 2: Phân tách chuỗi văn bản theo dấu xuống dòng để lấy từng ngày lịch trình
         String[] lines = itineraryText.split("\\n");
+        // Câu lệnh SQL để chèn một dòng lịch trình chi tiết mới vào DB
         String insertSql = "INSERT INTO TourItinerary (TourID, DayNumber, Title, ShortDescription, Description, Activities, Meals, Accommodation, ImageURL, SortOrder) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
+        // Khởi tạo regex pattern để nhận diện số ngày (Ví dụ: "Ngày 1: Khởi hành", "Day 2 - Tham quan")
         java.util.regex.Pattern dayPattern = java.util.regex.Pattern.compile("^(?:ngày|day)\\s+(\\d+)", java.util.regex.Pattern.CASE_INSENSITIVE);
         int dayCount = 1;
         
+        // Duyệt qua từng dòng văn bản lịch trình
         for (int i = 0; i < lines.length; i++) {
             String line = lines[i].trim();
+            // Bỏ qua dòng trống
             if (line.isEmpty()) {
                 continue;
             }
 
+            // Mặc định số ngày sẽ là số thứ tự tăng dần (nếu dòng text không chỉ rõ Ngày mấy)
             int currentDay = dayCount;
             java.util.regex.Matcher matcher = dayPattern.matcher(line);
+            
+            // Nếu tìm thấy chữ "Ngày X" hoặc "Day X" ở đầu dòng
             if (matcher.find()) {
                 try {
+                    // Ép kiểu số ngày (X) thành kiểu int
                     currentDay = Integer.parseInt(matcher.group(1));
+                    // Cắt bỏ phần "Ngày X" ra khỏi chuỗi để lấy phần nội dung đằng sau
                     line = line.substring(matcher.end()).trim();
+                    // Loại bỏ dấu hai chấm hoặc gạch ngang thừa ở đầu chuỗi (ví dụ: ": Khởi hành" -> "Khởi hành")
                     if (line.startsWith(":") || line.startsWith("-")) {
                         line = line.substring(1).trim();
                     }
                 } catch (NumberFormatException e) {
-                    // Fallback sử dụng số thứ tự tăng dần
+                    // Nếu lỗi ép kiểu, giữ nguyên giá trị dayCount tự tăng làm mặc định
                 }
             }
 
+            // Mặc định toàn bộ dòng text là Tiêu đề
             String title = line;
             String desc = "";
             
-            // Tách Tiêu đề và Mô tả qua dấu hai chấm (:) hoặc gạch ngang (-)
+            // Tách Tiêu đề (Title) và Mô tả (Description) qua dấu hai chấm (:) hoặc gạch ngang (-) nếu có
             if (line.contains(":")) {
                 int colonIdx = line.indexOf(":");
                 title = line.substring(0, colonIdx).trim();
@@ -412,7 +478,8 @@ public class TourDAO extends DBContext {
                 desc = line.substring(dashIdx + 1).trim();
             }
 
-            // Quy tắc tự động gán Tên Icon dựa theo từ khóa trong tiêu đề hoặc mô tả
+            // Quy tắc tự động gán tên Icon (Sparkles, Plane, Hotel, Ship...) dựa theo các từ khóa xuất hiện trong Tiêu đề hoặc Mô tả
+            // Tên Icon này sẽ được lưu tạm vào cột ImageURL để detail.jsp hiển thị đúng icon Lucide tương ứng.
             String iconName = "activity";
             String tL = title.toLowerCase();
             String dL = desc.toLowerCase();
@@ -432,23 +499,25 @@ public class TourDAO extends DBContext {
                 iconName = "map-pin";
             }
 
+            // Tiến hành chèn bản ghi lịch trình chi tiết ngày này vào Database
             try (PreparedStatement ps = connection.prepareStatement(insertSql)) {
                 ps.setInt(1, tourId);
                 ps.setInt(2, currentDay);
                 ps.setString(3, title);
-                ps.setString(4, null); // ShortDescription
-                ps.setString(5, desc);  // Description
-                ps.setString(6, null); // Activities
-                ps.setString(7, null); // Meals
-                ps.setString(8, null); // Accommodation
-                ps.setString(9, iconName); // ImageURL (Được dùng làm tên icon trong detail.jsp)
-                ps.setInt(10, i); // SortOrder
+                ps.setString(4, null); // Cột ShortDescription để trống
+                ps.setString(5, desc);  // Cột Description lưu mô tả chi tiết của ngày
+                ps.setString(6, null); // Cột Activities để trống
+                ps.setString(7, null); // Cột Meals để trống
+                ps.setString(8, null); // Cột Accommodation để trống
+                ps.setString(9, iconName); // Lưu tên icon vào cột ImageURL
+                ps.setInt(10, i); // Thứ tự sắp xếp (SortOrder) theo thứ tự dòng text nhập vào
                 
                 ps.executeUpdate();
             } catch (SQLException ex) {
                 Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, "syncTourItineraryFromText insert failed", ex);
             }
             
+            // Tăng biến đếm ngày lên 1
             dayCount++;
         }
     }
@@ -616,6 +685,7 @@ public class TourDAO extends DBContext {
 
     public boolean insertReview(String name, String email, int tourId, int rating, String content, String imageUrl) {
         int userId = -1;
+        // Bước 1: Tìm xem email của người review đã tồn tại trong DB chưa
         String findUserSql = "SELECT UserID FROM [User] WHERE Email = ?";
         try (PreparedStatement ps = connection.prepareStatement(findUserSql)) {
             ps.setString(1, email);
@@ -628,6 +698,8 @@ public class TourDAO extends DBContext {
             Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+        // Bước 2: Nếu chưa có User ứng với Email này -> Tạo tài khoản dummy với mật khẩu mặc định rỗng
+        // để lưu họ tên và email của khách vãng lai, phục vụ việc ràng buộc khóa ngoại (CustomerID)
         if (userId == -1) {
             String insertUserSql = "INSERT INTO [User] (RoleID, Email, PasswordHash, FullName, PhoneNumber, IsActive, IsVerified) VALUES (4, ?, 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855', ?, '', 1, 1)";
             try (PreparedStatement ps = connection.prepareStatement(insertUserSql, Statement.RETURN_GENERATED_KEYS)) {
@@ -640,6 +712,7 @@ public class TourDAO extends DBContext {
                     }
                 }
                 
+                // Khởi tạo UserProfile kèm avatar mặc định cho tài khoản vừa tạo
                 String insertProfileSql = "INSERT INTO UserProfile (UserID, AvatarURL) VALUES (?, 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80')";
                 try (PreparedStatement ps2 = connection.prepareStatement(insertProfileSql)) {
                     ps2.setInt(1, userId);
@@ -651,6 +724,7 @@ public class TourDAO extends DBContext {
             }
         }
         
+        // Bước 3: Tìm xem tài khoản này đã từng đặt tour này chưa (để hiển thị tích "Đã mua hàng / Verified Booking")
         int bookingId = -1;
         String findBookingSql = "SELECT BookingID FROM Booking b JOIN TourSchedule s ON b.ScheduleID = s.ScheduleID WHERE b.CustomerID = ? AND s.TourID = ?";
         try (PreparedStatement ps = connection.prepareStatement(findBookingSql)) {
@@ -665,6 +739,7 @@ public class TourDAO extends DBContext {
             Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+        // Bước 4: Fallback nếu họ chưa mua, nạp đại 1 BookingID bất kỳ đã có trong DB của Tour này
         if (bookingId == -1) {
             String fallbackBookingSql = "SELECT TOP 1 BookingID FROM Booking b JOIN TourSchedule s ON b.ScheduleID = s.ScheduleID WHERE s.TourID = ?";
             try (PreparedStatement ps = connection.prepareStatement(fallbackBookingSql)) {
@@ -679,6 +754,9 @@ public class TourDAO extends DBContext {
             }
         }
         
+        // Bước 5: Nếu tour này mới tinh, chưa hề có ai đặt (không có Booking nào) -> Phải tự tạo 1 "Dummy Booking"
+        // nhằm thỏa mãn ràng buộc khóa ngoại (FOREIGN KEY) BookingID của bảng Review (không cho phép null).
+        // Đây là điểm kỹ thuật đặc biệt phục vụ xử lý tạm thời cơ sở dữ liệu.
         if (bookingId == -1) {
             int scheduleId = -1;
             String findScheduleSql = "SELECT TOP 1 ScheduleID FROM TourSchedule WHERE TourID = ?";
@@ -711,10 +789,12 @@ public class TourDAO extends DBContext {
             }
         }
         
+        // Nếu không có cách nào kiếm được hoặc tạo được BookingID thì chịu, không chèn review được
         if (bookingId == -1) {
             return false;
         }
         
+        // Bước 6: Chèn trực tiếp đánh giá vào bảng Review
         String insertReviewSql = "INSERT INTO Review (TourID, BookingID, CustomerID, Rating, Content, IsVisible, CreatedAt, UpdatedAt, ImageURL) VALUES (?, ?, ?, ?, ?, 1, SYSDATETIME(), SYSDATETIME(), ?)";
         try (PreparedStatement ps = connection.prepareStatement(insertReviewSql)) {
             ps.setInt(1, tourId);
@@ -973,96 +1053,101 @@ public class TourDAO extends DBContext {
      */
     public boolean deleteTour(int tourId) {
         try {
+            // Thiết lập AutoCommit = false để tự quản lý transaction thủ công.
+            // Điều này đảm bảo: hoặc là tất cả các bước xóa dữ liệu liên quan ở các bảng con (khóa ngoại) thành công,
+            // hoặc là khôi phục (rollback) lại toàn bộ nếu có bất kỳ bước nào lỗi, tránh rác dữ liệu.
             connection.setAutoCommit(false);
             
-            // 1. Delete reviews referencing TourID directly
+            // 1. Xóa các reviews liên quan trực tiếp tới tourId
             try (PreparedStatement ps = connection.prepareStatement("DELETE FROM Review WHERE TourID = ?")) {
                 ps.setInt(1, tourId);
                 ps.executeUpdate();
             }
             
-            // 2. Delete media
+            // 2. Xóa các phương tiện (hình ảnh, video) của tour
             try (PreparedStatement ps = connection.prepareStatement("DELETE FROM TourMedia WHERE TourID = ?")) {
                 ps.setInt(1, tourId);
                 ps.executeUpdate();
             }
             
-            // 3. Delete inclusion
+            // 3. Xóa các dịch vụ đi kèm
             try (PreparedStatement ps = connection.prepareStatement("DELETE FROM TourInclusion WHERE TourID = ?")) {
                 ps.setInt(1, tourId);
                 ps.executeUpdate();
             }
             
-            // 4. Delete faq
+            // 4. Xóa câu hỏi thường gặp FAQ của tour
             try (PreparedStatement ps = connection.prepareStatement("DELETE FROM TourFAQ WHERE TourID = ?")) {
                 ps.setInt(1, tourId);
                 ps.executeUpdate();
             }
             
-            // 5. Delete itinerary
+            // 5. Xóa lịch trình chi tiết từng ngày
             try (PreparedStatement ps = connection.prepareStatement("DELETE FROM TourItinerary WHERE TourID = ?")) {
                 ps.setInt(1, tourId);
                 ps.executeUpdate();
             }
             
-            // 6. Delete attendance
+            // 6. Xóa dữ liệu điểm danh của lịch trình thuộc tour này
             try (PreparedStatement ps = connection.prepareStatement(
                 "DELETE FROM Attendance WHERE ScheduleID IN (SELECT ScheduleID FROM TourSchedule WHERE TourID = ?)")) {
                 ps.setInt(1, tourId);
                 ps.executeUpdate();
             }
             
-            // 7. Delete assignments
+            // 7. Xóa dữ liệu phân công hướng dẫn viên du lịch
             try (PreparedStatement ps = connection.prepareStatement(
                 "DELETE FROM TourAssignment WHERE ScheduleID IN (SELECT ScheduleID FROM TourSchedule WHERE TourID = ?)")) {
                 ps.setInt(1, tourId);
                 ps.executeUpdate();
             }
             
-            // 8. Delete payment
+            // 8. Xóa dữ liệu thanh toán của các đơn hàng đặt tour này
             try (PreparedStatement ps = connection.prepareStatement(
                 "DELETE FROM Payment WHERE BookingID IN (SELECT BookingID FROM Booking WHERE ScheduleID IN (SELECT ScheduleID FROM TourSchedule WHERE TourID = ?))")) {
                 ps.setInt(1, tourId);
                 ps.executeUpdate();
             }
             
-            // 9. Delete booking-level reviews
+            // 9. Xóa các đánh giá review liên kết thông qua BookingID
             try (PreparedStatement ps = connection.prepareStatement(
                 "DELETE FROM Review WHERE BookingID IN (SELECT BookingID FROM Booking WHERE ScheduleID IN (SELECT ScheduleID FROM TourSchedule WHERE TourID = ?))")) {
                 ps.setInt(1, tourId);
                 ps.executeUpdate();
             }
             
-            // 10. Delete booking participants
+            // 10. Xóa thông tin các hành khách tham gia đi kèm trong các đơn đặt
             try (PreparedStatement ps = connection.prepareStatement(
                 "DELETE FROM BookingParticipant WHERE BookingID IN (SELECT BookingID FROM Booking WHERE ScheduleID IN (SELECT ScheduleID FROM TourSchedule WHERE TourID = ?))")) {
                 ps.setInt(1, tourId);
                 ps.executeUpdate();
             }
             
-            // 11. Delete bookings
+            // 11. Xóa tất cả các hóa đơn / đơn đặt (Booking) thuộc về lịch trình tour này
             try (PreparedStatement ps = connection.prepareStatement(
                 "DELETE FROM Booking WHERE ScheduleID IN (SELECT ScheduleID FROM TourSchedule WHERE TourID = ?)")) {
                 ps.setInt(1, tourId);
                 ps.executeUpdate();
             }
             
-            // 12. Delete schedules
+            // 12. Xóa tất cả các lịch khởi hành (TourSchedule) của tour
             try (PreparedStatement ps = connection.prepareStatement("DELETE FROM TourSchedule WHERE TourID = ?")) {
                 ps.setInt(1, tourId);
                 ps.executeUpdate();
             }
             
-            // 13. Delete Tour itself
+            // 13. Cuối cùng, khi không còn khóa ngoại nào ràng buộc nữa, tiến hành xóa bản ghi Tour ở bảng Tour chính
             boolean success = false;
             try (PreparedStatement ps = connection.prepareStatement("DELETE FROM Tour WHERE TourID = ?")) {
                 ps.setInt(1, tourId);
                 success = ps.executeUpdate() > 0;
             }
             
+            // Commit toàn bộ các thay đổi nếu tất cả các câu lệnh SQL trên chạy trơn tru không lỗi
             connection.commit();
             return success;
         } catch (SQLException ex) {
+            // Khi có bất kỳ lỗi SQL nào xảy ra ở các bước trên -> Thực hiện rollback khôi phục nguyên vẹn dữ liệu ban đầu
             try {
                 connection.rollback();
             } catch (SQLException rollbackEx) {
@@ -1070,6 +1155,7 @@ public class TourDAO extends DBContext {
             }
             Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, "deleteTour failed", ex);
         } finally {
+            // Phục hồi lại trạng thái tự động commit mặc định cho connection
             try {
                 connection.setAutoCommit(true);
             } catch (SQLException ex) {
