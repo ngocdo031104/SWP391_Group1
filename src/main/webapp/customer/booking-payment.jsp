@@ -41,10 +41,17 @@
             + "-compact2.png?amount=" + qrAmount
             + "&addInfo=" + encodedContent
             + "&accountName=" + encodedAccountName;
+
+    // Dương làm đoạn này: paymentExpiresAtMillis là mốc hết hạn giữ slot 10 phút để JavaScript đếm ngược trên màn thanh toán.
+    long paymentExpiresAtMillis = draft != null ? draft.paymentExpiresAtMillis : 0;
 %>
 <jsp:include page="/common/header.jsp"/>
 
 <main class="booking-shell">
+    <%-- Dương làm đoạn này: nút quay lại dùng chung cho các màn trong luồng booking để khách có thể trở về bước trước. --%>
+    <button type="button" class="booking-back-btn" onclick="window.location.href='${pageContext.request.contextPath}/customer/booking/review'" aria-label="Quay lại bước trước" title="Quay lại bước trước">
+        <i data-lucide="arrow-left"></i>
+    </button>
     <%-- Thanh tiến trình đánh dấu bước payment là bước đang active. --%>
     <section class="booking-progress" aria-label="Tiến trình đặt tour">
         <div class="progress-step done"><span>1</span><strong>Đặt tour</strong><small>Booking creation</small></div>
@@ -69,6 +76,11 @@
                 <span>Quét VietQR, chuyển khoản đúng số tiền và nội dung để SePay xác nhận tự động.</span>
             </div>
 
+
+            <%-- Dương làm đoạn này: bộ đếm ngược cho thời gian giữ slot 10 phút ở trạng thái PendingPayment. --%>
+            <div class="payment-expiry-card" id="payment-expiry-card" data-expires-at="<%= paymentExpiresAtMillis %>">
+                <span>Thanh toán sẽ hết hạn sau: <strong id="payment-countdown-inline">10:00</strong></span>
+            </div>
             <%-- Layout payment gồm VietQR bên trái và coupon/tóm tắt đơn bên phải. --%>
             <div class="payment-layout">
                 <%-- Form này chỉ dùng để cập nhật coupon/số tiền QR, không xác nhận thanh toán giả lập. --%>

@@ -93,6 +93,12 @@ public class BookingCreateController extends HttpServlet {
         int tourId = BookingFlowSupport.parseInt(request.getParameter("tourId"), 0);
         int scheduleId = BookingFlowSupport.parseInt(request.getParameter("scheduleId"), 0);
         int participantCount = BookingFlowSupport.parseInt(request.getParameter("participantCount"), 1);
+        // Dương làm đoạn này: customerNote là ghi chú tự do của khách ở màn tạo booking.
+        // Ghi chú không bắt buộc, được cắt độ dài để tránh lưu nội dung quá dài vào Booking.Notes.
+        String customerNote = BookingFlowSupport.safeTrim(request.getParameter("customerNote"));
+        if (customerNote.length() > 500) {
+            customerNote = customerNote.substring(0, 500);
+        }
 
         TourDAO tourDAO = null;
         TourScheduleDAO tourScheduleDAO = null;
@@ -153,6 +159,7 @@ public class BookingCreateController extends HttpServlet {
             draft.totalAmount = baseAmount + draft.vatAmount;
             draft.couponId = null;
             draft.couponCode = "";
+            draft.customerNote = customerNote;
             draft.participants = participants;
 
             // Lưu draft vào session để BookingReviewController đọc và hiển thị màn xác nhận.

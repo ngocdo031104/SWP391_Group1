@@ -29,10 +29,18 @@
     // money và dateFormat dùng để format số tiền/ngày tháng nhất quán trên màn review.
     NumberFormat money = NumberFormat.getNumberInstance(new Locale("vi", "VN"));
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+    // Dương làm đoạn này: escape ghi chú trước khi hiển thị để nội dung khách nhập không phá vỡ HTML của màn review.
+    String customerNoteDisplay = draft != null && draft.customerNote != null ? draft.customerNote : "";
+    customerNoteDisplay = customerNoteDisplay.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;");
 %>
 <jsp:include page="/common/header.jsp"/>
 
 <main class="booking-shell">
+    <%-- Dương làm đoạn này: nút quay lại dùng chung cho các màn trong luồng booking để khách có thể trở về bước trước. --%>
+    <button type="button" class="booking-back-btn" onclick="window.location.href='${pageContext.request.contextPath}/customer/booking/create?tourId=<%= draft != null ? draft.tourId : 0 %>'" aria-label="Quay lại bước trước" title="Quay lại bước trước">
+        <i data-lucide="arrow-left"></i>
+    </button>
     <%-- Thanh tiến trình đánh dấu bước review là bước đang active. --%>
     <section class="booking-progress" aria-label="Tiến trình đặt tour">
         <div class="progress-step done"><span>1</span><strong>Đặt tour</strong><small>Booking creation</small></div>
@@ -87,7 +95,7 @@
                         </div>
                     </div>
                 </div>
-
+
                 <%-- Thẻ tổng kết tiền: ở bước này coupon chưa nhập nên giảm giá thường là 0. --%>
                 <div class="review-payment-card">
                     <h3>Tổng kết thanh toán đơn đặt</h3>
@@ -103,6 +111,16 @@
                         <button type="submit" class="booking-primary-btn full-width">Chuyển sang thanh toán <i data-lucide="arrow-right"></i></button>
                     </form>
                 </div>
+
+                <%-- Dương làm đoạn này: ghi chú khách được đưa xuống dưới và trải rộng toàn bộ vùng review để không bị lệch sang cột phải. --%>
+                <% if (draft != null && draft.customerNote != null && !draft.customerNote.trim().isEmpty()) { %>
+                    <div class="booking-section review-note-section">
+                        <div class="section-title"><span><i data-lucide="message-square-text"></i></span><strong>Ghi chú của khách</strong></div>
+                        <div class="participant-review-item">
+                            <small><%= customerNoteDisplay %></small>
+                        </div>
+                    </div>
+                <% } %>
             </div>
         </section>
     </div>

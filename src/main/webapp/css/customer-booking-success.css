@@ -4,7 +4,7 @@
  * Chức năng: CSS cho màn Customer hoàn tất booking.
  * Ý nghĩa: Căn giữa thông báo thành công và mã booking sau khi hệ thống ghi nhận payment.
  */
-@import url('customer-booking-common.css');
+@import url('customer-booking-common.css?v=2.1');
 
 /* Màn success chỉ cần một khối thông báo nên layout chuyển về block thay vì grid 2 cột. */
 .booking-layout {

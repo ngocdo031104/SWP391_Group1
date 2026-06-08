@@ -3,7 +3,7 @@ package Controller.customer;
 // Người làm: Dương
 // Thời gian tạo: 04/06/2026
 // Chức năng: API kiểm tra trạng thái thanh toán SePay cho màn Customer payment.
-// Ý nghĩa: Cho JavaScript polling trạng thái Booking sau khi webhook SePay ghi nhận thanh toán và chuyển đơn sang chờ staff duyệt.
+// Ý nghĩa: Cho JavaScript polling trạng thái Booking sau khi webhook SePay ghi nhận thanh toán và chuyển đơn sang trạng thái Success.
 
 import Entities.Booking;
 import Model.BookingDAO;
@@ -36,7 +36,7 @@ public class BookingPaymentStatusController extends HttpServlet {
             bookingDAO = new BookingDAO();
             bookingDAO.releaseExpiredPendingPaymentBookings(BookingFlowSupport.PAYMENT_HOLD_MINUTES);
             Booking booking = bookingDAO.getBookingByCode(bookingCode);
-            boolean paid = booking != null && ("PendingApproval".equalsIgnoreCase(booking.getStatus()) || "Confirmed".equalsIgnoreCase(booking.getStatus()) || "Completed".equalsIgnoreCase(booking.getStatus()));
+            boolean paid = booking != null && ("Success".equalsIgnoreCase(booking.getStatus()) || "Completed".equalsIgnoreCase(booking.getStatus()));
             String status = booking != null ? booking.getStatus() : "NotFound";
             boolean expired = booking != null && "Cancelled".equalsIgnoreCase(booking.getStatus());
             response.getWriter().write("{\"paid\":" + paid + ",\"expired\":" + expired + ",\"status\":\"" + escapeJson(status) + "\"}");

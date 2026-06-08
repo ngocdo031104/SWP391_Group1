@@ -3,7 +3,7 @@
     // Người làm: Dương
     // Thời gian tạo: 04/06/2026
     // Chức năng: Màn Customer hoàn tất booking.
-    // Ý nghĩa: Hiển thị mã booking sau khi SePay ghi nhận thanh toán và đơn chuyển sang trạng thái chờ staff xác nhận.
+    // Ý nghĩa: Hiển thị mã booking sau khi SePay ghi nhận thanh toán và đơn chuyển sang trạng thái Success.
 
     // Nạp CSS riêng cho màn success và giữ bodyClass booking-page để dùng chung layout booking.
     request.setAttribute("extraCss", "css/customer-booking-success.css");
@@ -15,6 +15,10 @@
 <jsp:include page="/common/header.jsp"/>
 
 <main class="booking-shell">
+    <%-- Dương làm đoạn này: nút quay lại dùng chung cho các màn trong luồng booking để khách có thể trở về bước trước. --%>
+    <button type="button" class="booking-back-btn" onclick="window.location.href='${pageContext.request.contextPath}/home'" aria-label="Về trang chủ" title="Về trang chủ">
+        <i data-lucide="arrow-left"></i>
+    </button>
     <%-- Thanh tiến trình đánh dấu toàn bộ các bước đã hoàn tất. --%>
     <section class="booking-progress" aria-label="Tiến trình đặt tour">
         <div class="progress-step done"><span>1</span><strong>Đặt tour</strong><small>Booking creation</small></div>
@@ -31,7 +35,7 @@
         <section class="booking-main-panel success-box">
             <i data-lucide="badge-check"></i>
             <h1>Đã ghi nhận thanh toán</h1>
-            <p>Mã booking của bạn là <strong><%= bookingCode %></strong>. Đơn đã được ghi nhận thanh toán và đang ở trạng thái PendingApproval để chờ staff xác nhận.</p>
+            <p>Mã booking của bạn là <strong><%= bookingCode %></strong>. Đơn đã được ghi nhận thanh toán và chuyển sang trạng thái Success.</p>
             <a class="booking-primary-btn inline-link" href="${pageContext.request.contextPath}/home">Về trang chủ</a>
         </section>
     </div>
