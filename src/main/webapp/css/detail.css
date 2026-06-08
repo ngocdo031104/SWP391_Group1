@@ -1,6 +1,11 @@
 /* ==========================================================================
-   TOUR DETAIL PAGE â€” PREMIUM LAYOUT
+   TOUR DETAIL PAGE — PREMIUM LAYOUT
    ========================================================================== */
+.detail-page {
+    padding-top: 95px;
+    background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+}
+
 .tour-detail-head-section {
     padding: 1.5rem 0 0.5rem;
 }

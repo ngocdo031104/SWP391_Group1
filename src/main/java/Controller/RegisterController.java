@@ -9,6 +9,7 @@ package Controller;
 import Entities.User;
 import Entities.UserProfile;
 import Model.UserDAO;
+import Utils.EmailUtil;
 import Utils.PasswordUtil;
 
 import jakarta.servlet.ServletException;
@@ -20,6 +21,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Date;
 import java.util.Calendar;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -230,15 +232,23 @@ public class RegisterController extends HttpServlet {
             boolean success = userDAO.register(user, profile);
 
             if (success) {
-
-                request.setAttribute(
-                        "successMessage",
-                        "Đăng ký tài khoản thành công! Vui lòng đăng nhập."
-                );
-
-                request.getRequestDispatcher("/views/login.jsp")
-                        .forward(request, response);
-
+                // Generate OTP
+                String otp = String.format("%06d", new Random().nextInt(999999));
+                
+                // Save to session
+                request.getSession().setAttribute("verify_email", email);
+                request.getSession().setAttribute("verify_otp", otp);
+                
+                // Send email
+                try {
+                    EmailUtil.sendOTP(email, otp);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Logger.getLogger(RegisterController.class.getName()).log(Level.SEVERE, "Failed to send email", e);
+                    request.getSession().setAttribute("emailError", "Lỗi gửi mail: " + e.getMessage() + " - " + e.getClass().getName());
+                }
+                
+                response.sendRedirect(request.getContextPath() + "/verify");
             } else {
 
                 request.setAttribute(
