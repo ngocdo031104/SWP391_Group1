@@ -39,10 +39,11 @@ public class GoogleLoginUtil {
     }
 
     public static JsonObject getUserInfo(String accessToken) throws Exception {
-        String link = "https://www.googleapis.com/oauth2/v1/userinfo?access_token=" + accessToken;
+        String link = "https://www.googleapis.com/oauth2/v1/userinfo";
         URL url = new URL(link);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
+        conn.setRequestProperty("Authorization", "Bearer " + accessToken);
         
         try (InputStreamReader reader = new InputStreamReader(conn.getInputStream())) {
             return new Gson().fromJson(reader, JsonObject.class);
