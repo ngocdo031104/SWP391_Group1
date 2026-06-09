@@ -255,7 +255,10 @@ public class UserDAO extends DBContext {
      */
     public boolean updateProfile(User user, UserProfile profile) {
         String updateUserSql = "UPDATE [User] SET FullName = ?, PhoneNumber = ?, UpdatedAt = SYSDATETIME() WHERE UserID = ?";
+        String checkProfileSql = "SELECT 1 FROM UserProfile WHERE UserID = ?";
+        String insertProfileSql = "INSERT INTO UserProfile (AvatarURL, Biography, DateOfBirth, Gender, Address, TravelInterests, UpdatedAt, UserID) VALUES (?, ?, ?, ?, ?, ?, SYSDATETIME(), ?)";
         String updateProfileSql = "UPDATE UserProfile SET AvatarURL = ?, Biography = ?, DateOfBirth = ?, Gender = ?, Address = ?, TravelInterests = ?, UpdatedAt = SYSDATETIME() WHERE UserID = ?";
+        
         try {
             connection.setAutoCommit(false); // Start Transaction
             
@@ -266,7 +269,16 @@ public class UserDAO extends DBContext {
                 psUser.executeUpdate();
             }
             
-            try (PreparedStatement psProfile = connection.prepareStatement(updateProfileSql)) {
+            boolean profileExists = false;
+            try (PreparedStatement psCheck = connection.prepareStatement(checkProfileSql)) {
+                psCheck.setInt(1, user.getUserId());
+                try (ResultSet rs = psCheck.executeQuery()) {
+                    if (rs.next()) profileExists = true;
+                }
+            }
+            
+            String targetSql = profileExists ? updateProfileSql : insertProfileSql;
+            try (PreparedStatement psProfile = connection.prepareStatement(targetSql)) {
                 psProfile.setString(1, profile.getAvatarUrl());
                 psProfile.setString(2, profile.getBiography());
                 psProfile.setDate(3, profile.getDateOfBirth());
