@@ -6,10 +6,40 @@
 <%@ page import="Entities.TourSchedule" %>
 <%@ page import="Entities.TourMedia" %>
 <%
-    request.setAttribute("extraCss", "css/tourdiscovery.css");
+    request.setAttribute("extraCss", "css/tourdiscovery.css?v=" + System.currentTimeMillis());
     request.setAttribute("bodyClass", "explore-page");
 %>
 <jsp:include page="/common/header.jsp" />
+
+<style>
+    /* Force pagination to display horizontally and fix alignment */
+    .pagination-numbers {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        flex-direction: row !important;
+        gap: 0.5rem !important;
+    }
+    
+    .pagination-number-btn {
+        margin: 0 !important;
+        display: inline-flex !important;
+    }
+    
+    /* Enhance the price styling to make it premium */
+    .tour-price .price-val {
+        display: flex !important;
+        align-items: flex-start !important;
+        gap: 0.15rem !important;
+    }
+    
+    .tour-price .price-val span {
+        font-size: 0.85rem !important;
+        font-weight: 700 !important;
+        color: var(--primary) !important;
+        margin-top: 0.15rem !important;
+    }
+</style>
 
     <section class="explore-search-section">
         <div class="container">
