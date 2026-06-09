@@ -5,15 +5,23 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt"  prefix="fmt" %>
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hồ Sơ — TourBuddy</title>
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/tourbuddy.css?v=1.4">
+<%
+    request.setAttribute("extraCss", "assets/css/tourbuddy.css");
+    request.setAttribute("bodyClass", "profile-page");
+%>
+<jsp:include page="/common/header.jsp" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
+    /* Override navbar from transparent/white to dark text for profile page */
+    .header { background-color: rgba(255,255,255,0.95) !important; box-shadow: 0 1px 4px rgba(0,0,0,.06) !important; }
+    .header .logo { color: var(--clr-primary) !important; }
+    .header .nav-link { color: var(--clr-muted) !important; }
+    .header .nav-link:hover { color: var(--clr-accent) !important; }
+    .header .notification-bell { color: var(--clr-text) !important; }
+    .header .user-avatar { border-color: var(--clr-primary) !important; }
+    .header .nav-search { opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important; }
+    .header .mobile-nav-toggle { color: var(--clr-text) !important; }
+
     .activity-item {
       display: flex; gap: 14px; align-items: flex-start;
       padding: 14px 0; border-bottom: 1px solid var(--clr-border);
@@ -77,26 +85,20 @@
     }
     .toggle-switch input:checked + .slider { background: var(--clr-primary); }
     .toggle-switch input:checked + .slider::before { transform: translateX(20px); }
-  </style>
-</head>
-<body>
 
-<!-- Navbar -->
-<nav class="navbar">
-  <a href="${pageContext.request.contextPath}/home" class="logo" id="nav-logo">
-    <div class="logo-icon">T</div>
-    <span>TourBuddy</span>
-  </a>
-  <div class="navbar-nav">
-    <a href="${pageContext.request.contextPath}/home">Trang Chủ</a>
-    <a href="${pageContext.request.contextPath}/tourdiscovery">Tours</a>
-    <a href="${pageContext.request.contextPath}/bookings">Booking</a>
-    <a href="${pageContext.request.contextPath}/profile" class="active">Hồ Sơ</a>
-    <a href="${pageContext.request.contextPath}/logout" style="color:var(--clr-error)">
-      <i class="fa fa-right-from-bracket"></i>
-    </a>
-  </div>
-</nav>
+    .tag-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .tag { 
+      padding: 6px 14px; border: 1px solid var(--clr-border); 
+      border-radius: 99px; cursor: pointer; transition: 0.2s;
+      font-size: 0.85rem; color: var(--clr-text); user-select: none;
+      display: inline-block;
+    }
+    .tag:hover { border-color: var(--clr-primary); }
+    .tag.selected { 
+      background: var(--clr-primary-l); border-color: var(--clr-primary);
+      color: var(--clr-primary); font-weight: 500;
+    }
+  </style>
 
 <div class="profile-wrapper">
 
@@ -416,7 +418,8 @@
                      value="${sessionUser.profile.travelInterests}">
             </div>
 
-            <div class="form-group">
+            <!-- Ngân sách và Phong cách bị ẩn do Database chưa hỗ trợ -->
+            <div class="form-group" style="display: none;">
               <label class="form-label" for="budgetRange">Ngân sách tour ưa thích (VNĐ/người)</label>
               <select id="budgetRange" name="budgetRange" class="form-control" style="max-width:320px">
                 <option value="">-- Chọn mức ngân sách --</option>
@@ -428,7 +431,7 @@
               </select>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" style="display: none;">
               <label class="form-label" for="travelStyle">Phong cách di chuyển</label>
               <select id="travelStyle" name="travelStyle" class="form-control" style="max-width:320px">
                 <option value="">-- Chọn --</option>
@@ -654,5 +657,4 @@ function shareProfile() {
   }
 }
 </script>
-</body>
-</html>
+<jsp:include page="/common/footer.jsp" />
