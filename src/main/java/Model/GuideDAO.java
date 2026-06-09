@@ -176,8 +176,8 @@ public class GuideDAO extends DBContext {
             return ps.executeUpdate() > 0;
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Lỗi khi chèn Guide Profile mới", ex);
+            throw new RuntimeException("SQL Error in insertGuideProfile: " + ex.getMessage(), ex);
         }
-        return false;
     }
 
     /**
@@ -202,8 +202,8 @@ public class GuideDAO extends DBContext {
             return ps.executeUpdate() > 0;
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Lỗi khi cập nhật Guide Profile của UserID: " + profile.getUserId(), ex);
+            throw new RuntimeException("SQL Error in updateGuideProfile: " + ex.getMessage(), ex);
         }
-        return false;
     }
 
     /**

@@ -569,6 +569,9 @@
     font-size: 1.25rem;
     font-weight: 850;
     color: var(--primary);
+    display: flex;
+    align-items: flex-start;
+    gap: 0.1rem;
 }
 
 .tour-meta-info {
@@ -659,8 +662,9 @@
 
 .tour-price .price-val span {
     font-size: 0.85rem;
-    font-weight: 400;
-    color: var(--slate-600);
+    font-weight: 600;
+    color: var(--primary);
+    margin-top: 0.15rem;
 }
 
 /* 6. Collapsible Sidebar Map Section (Desktop 420px) */
@@ -863,6 +867,12 @@
     align-items: center;
     gap: 0.5rem;
     padding: 2.5rem 0 1rem 0;
+}
+
+.pagination-numbers {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .pagination-btn, .pagination-number-btn {

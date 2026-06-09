@@ -189,6 +189,7 @@ public class GuideProfileController extends HttpServlet {
         try {
             GuideDAO guideDAO = new GuideDAO();
             GuideProfile guideProfile = guideDAO.getGuideProfileByUserId(sessionUser.getUserId());
+            boolean isNew = false;
 
             if (guideProfile == null) {
                 // Create a new guide profile if they didn't have one
@@ -196,9 +197,13 @@ public class GuideProfileController extends HttpServlet {
                 guideProfile.setUserId(sessionUser.getUserId());
                 guideProfile.setRating(5.0); // Default rating
                 guideProfile.setIsActive(true);
-                guideDAO.insertGuideProfile(guideProfile);
-                // Fetch the newly inserted one to get the ID
-                guideProfile = guideDAO.getGuideProfileByUserId(sessionUser.getUserId());
+                // Khởi tạo các trường bắt buộc tránh lỗi DB constraints
+                guideProfile.setSpecialization("");
+                guideProfile.setLanguages("");
+                guideProfile.setCertifications("");
+                guideProfile.setBio("");
+                guideProfile.setEmergencyPhone("");
+                isNew = true;
             }
 
             String expStr = trim(request.getParameter("yearsOfExperience"));
@@ -227,7 +232,13 @@ public class GuideProfileController extends HttpServlet {
             guideProfile.setCertifications(certifications);
             guideProfile.setBio(biography);
 
-            boolean success = guideDAO.updateGuideProfile(guideProfile);
+            boolean success;
+            if (isNew) {
+                success = guideDAO.insertGuideProfile(guideProfile);
+            } else {
+                success = guideDAO.updateGuideProfile(guideProfile);
+            }
+            
             request.setAttribute(success ? "successMessage" : "errorMessage",
                     success ? "Cập nhật thông tin nghề nghiệp thành công." : "Không thể cập nhật thông tin nghề nghiệp.");
 
