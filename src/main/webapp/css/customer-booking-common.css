@@ -5,19 +5,22 @@
  * Ý nghĩa: Gom layout nền, thanh tiến trình, nút chính, thông báo lỗi và các thành phần dùng lặp lại giữa create/review/payment/success.
  */
 
-/* Nền riêng của các màn booking để tách thị giác khỏi các trang public khác. */
+/* Nền riêng của các màn booking: dải xanh dịu phía trên giúp header transparent vẫn đọc rõ chữ trắng. */
 .booking-page {
-    background: #f4f7fb;
+    background: linear-gradient(180deg, #b9ddff 0, #d3ecff 112px, #f4f7fb 280px);
 }
 
-/* Khung ngoài giới hạn chiều rộng nội dung để các màn booking có cùng khoảng cách hai bên. */
+/* Khung ngoài chiếm gần hết chiều ngang và được đẩy xuống dưới header fixed để thanh tiến trình không bị che. */
 .booking-shell {
-    width: min(1180px, calc(100% - 32px));
-    margin: 32px auto 64px;
+    position: relative;
+    width: calc(100% - 32px);
+    max-width: none;
+    margin: 96px auto 64px;
 }
 
 /* Thanh tiến trình 4 bước dùng chung: create, review, payment và success. */
 .booking-progress {
+    position: relative;
     display: grid;
     grid-template-columns: 1fr 48px 1fr 48px 1fr 48px 1fr;
     align-items: center;
@@ -88,6 +91,8 @@
 
 /* Panel chính chứa nội dung nghiệp vụ của từng màn. */
 .booking-main-panel {
+    width: 100%;
+    box-sizing: border-box;
     padding: 24px;
 }
 
@@ -233,4 +238,62 @@
     .progress-line {
         display: none;
     }
+}
+
+/* Dương làm đoạn này: nút quay lại hiển thị thành mũi tên nét lớn, đặt trong vùng tiến trình để khách dễ nhận ra thao tác quay về. */
+.booking-back-btn {
+    width: 78px;
+    height: 58px;
+    display: inline-grid;
+    place-items: center;
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    color: #102033;
+    cursor: pointer;
+    box-shadow: none;
+    position: absolute;
+    top: 60px;
+    left: 24px;
+    transform: translateY(-50%);
+    z-index: 5;
+}
+
+/* Ẩn icon Lucide gốc để tự vẽ mũi tên dài giống mẫu người dùng gửi. */
+.booking-back-btn svg {
+    display: none;
+}
+
+/* Thân mũi tên dài khoảng 50% so với mẫu vẽ tay, dùng pseudo-element để không cần thêm HTML. */
+.booking-back-btn::before {
+    content: '';
+    width: 48px;
+    height: 3px;
+    background: currentColor;
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-radius: 999px;
+}
+
+/* Đầu mũi tên tạo bằng viền để nét đồng bộ với thân mũi tên. */
+.booking-back-btn::after {
+    content: '';
+    width: 20px;
+    height: 20px;
+    border-left: 3px solid currentColor;
+    border-bottom: 3px solid currentColor;
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%) rotate(45deg);
+    border-radius: 1px;
+}
+
+.booking-back-btn:hover {
+    color: #0369a1;
+    background: transparent;
 }

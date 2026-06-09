@@ -4,13 +4,16 @@
  * Chức năng: CSS cho màn Customer xác nhận chi tiết đơn đặt tour.
  * Ý nghĩa: Tạo bố cục giống màn review mẫu gồm card tour, danh sách người đi và khung tổng kết thanh toán.
  */
-@import url('customer-booking-common.css');
+@import url('customer-booking-common.css?v=2.1');
 
-/* Layout 2 cột: nội dung review bên trái và tổng kết tiền bên phải. */
-.booking-layout,
+/* Layout ngoài chiếm toàn bộ chiều ngang; bên trong review mới chia 2 cột nội dung và tổng kết tiền. */
+.booking-layout {
+    display: block;
+}
+
 .booking-review-layout {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 330px;
+    grid-template-columns: minmax(0, 1.15fr) minmax(360px, 0.85fr);
     gap: 24px;
     align-items: start;
 }
@@ -117,4 +120,10 @@
     .review-info-grid {
         grid-template-columns: 1fr;
     }
+}
+
+/* Dương làm đoạn này: ghi chú khách nằm dưới cùng và trải rộng qua cả hai cột review. */
+.review-note-section {
+    grid-column: 1 / -1;
+    margin-bottom: 0;
 }

@@ -3,7 +3,7 @@ package Controller;
 // Người làm: Dương
 // Thời gian tạo: 04/06/2026
 // Chức năng: Webhook nhận thông báo giao dịch tiền vào từ SePay.
-// Ý nghĩa: Khi SePay báo khách đã chuyển khoản đúng nội dung booking, controller tạo Payment và cập nhật Booking sang PendingApproval để chờ staff xác nhận.
+// Ý nghĩa: Khi SePay báo khách đã chuyển khoản đúng nội dung booking, controller tạo Payment và cập nhật Booking sang Success sau khi thanh toán hợp lệ.
 
 import Entities.Booking;
 import Entities.Payment;
@@ -86,7 +86,7 @@ public class SepayWebhookController extends HttpServlet {
                 paymentDAO.createPayment(payment);
             }
 
-            bookingDAO.updateBookingStatus(booking.getBookingId(), "PendingApproval");
+            bookingDAO.updateBookingStatus(booking.getBookingId(), "Success");
             if (booking.getCouponId() != null) {
                 couponDAO = new CouponDAO();
                 couponDAO.updateCouponUsage(booking.getCouponId());

@@ -32,10 +32,18 @@
     // hasSchedules quyết định có cho submit form hay không; sideBase là giá gốc hiển thị ở thẻ tổng quan bên phải.
     boolean hasSchedules = schedules != null && !schedules.isEmpty();
     double sideBase = tour != null ? tour.getBasePrice() : 0;
+
+    // Dương làm đoạn này: giữ lại ghi chú khách đã nhập nếu submit form bị lỗi validate server-side.
+    String customerNoteValue = request.getParameter("customerNote") != null ? request.getParameter("customerNote") : "";
+    customerNoteValue = customerNoteValue.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;");
 %>
 <jsp:include page="/common/header.jsp"/>
 
 <main class="booking-shell">
+    <%-- Dương làm đoạn này: nút quay lại dùng chung cho các màn trong luồng booking để khách có thể trở về bước trước. --%>
+    <button type="button" class="booking-back-btn" onclick="window.location.href='${pageContext.request.contextPath}<%= tour != null ? "/detail?id=" + tour.getTourId() : "/tourdiscovery" %>'" aria-label="Quay lại bước trước" title="Quay lại bước trước">
+        <i data-lucide="arrow-left"></i>
+    </button>
     <%-- Thanh tiến trình cho biết khách đang ở bước tạo booking trong luồng 4 bước. --%>
     <section class="booking-progress" aria-label="Tiến trình đặt tour">
         <div class="progress-step active"><span>1</span><strong>Đặt tour</strong><small>Booking creation</small></div>
@@ -99,6 +107,14 @@
                     <div id="participant-list" class="participant-list"></div>
                 </div>
 
+
+                <%-- Dương làm đoạn này: ghi chú riêng của khách được lưu vào Booking.Notes sau khi đơn được tạo ở bước review. --%>
+                <div class="booking-section">
+                    <div class="section-title"><span>3</span><strong>Ghi chú cho đơn đặt tour</strong></div>
+                    <div class="booking-note-field">
+                        <textarea name="customerNote" id="customer-note" maxlength="500" rows="2" aria-label="Ghi chú cho đơn đặt tour" wrap="soft" style="display:block;width:100%;max-width:none;box-sizing:border-box;resize:none;overflow:hidden;white-space:pre-wrap;word-break:break-word;" placeholder="Ví dụ: cần hỗ trợ xe đưa đón, ăn chay, đi cùng người lớn tuổi..."><%= customerNoteValue %></textarea>
+                    </div>
+                </div>
                 <button type="submit" class="booking-primary-btn" <%= hasSchedules ? "" : "disabled" %>>
                     Xác nhận thông tin đặt tour
                     <i data-lucide="arrow-right"></i>

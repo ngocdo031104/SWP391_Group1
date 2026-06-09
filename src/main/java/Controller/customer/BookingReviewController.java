@@ -83,6 +83,13 @@ public class BookingReviewController extends HttpServlet {
             return;
         }
 
+        // Dương làm đoạn này: bookingNote lấy từ ghi chú khách nhập ở màn create booking.
+        // Nếu khách không nhập ghi chú, hệ thống dùng note mặc định để nhân viên vẫn biết nguồn tạo đơn.
+        String bookingNote = BookingFlowSupport.safeTrim(draft.customerNote);
+        if (bookingNote.isEmpty()) {
+            bookingNote = "Đơn đặt tour được tạo từ màn hình đăng ký tham gia.";
+        }
+
         // booking là entity thật để insert vào bảng Booking.
         Booking booking = new Booking();
         booking.setBookingCode(BookingFlowSupport.generateBookingCode());
@@ -94,14 +101,14 @@ public class BookingReviewController extends HttpServlet {
         booking.setVatAmount(draft.vatAmount);
         booking.setTotalAmount(draft.totalAmount);
         booking.setStatus("PendingPayment");
-        booking.setNotes("Đơn đặt tour được tạo từ màn hình đăng ký tham gia.");
+        booking.setNotes(bookingNote);
         booking.setCouponId(draft.couponId);
         booking.setParticipants(draft.participants);
 
         BookingDAO bookingDAO = null;
         try {
             bookingDAO = new BookingDAO();
-            // Dương làm đoạn này: dọn các booking PendingPayment đã quá 5 phút trước khi giữ slot mới.
+            // Dương làm đoạn này: dọn các booking PendingPayment đã quá 10 phút trước khi giữ slot mới.
             bookingDAO.releaseExpiredPendingPaymentBookings(BookingFlowSupport.PAYMENT_HOLD_MINUTES);
             boolean created = bookingDAO.createBooking(booking);
             if (!created) {
@@ -113,6 +120,9 @@ public class BookingReviewController extends HttpServlet {
             // Sau khi DB tạo booking thành công, lưu bookingId/bookingCode vào draft để màn payment sử dụng.
             draft.bookingId = booking.getBookingId();
             draft.bookingCode = booking.getBookingCode();
+            // Dương làm đoạn này: lưu mốc giữ slot 10 phút để màn payment có bộ đếm ngược thống nhất với server.
+            draft.paymentHoldStartedAtMillis = System.currentTimeMillis();
+            draft.paymentExpiresAtMillis = draft.paymentHoldStartedAtMillis + BookingFlowSupport.PAYMENT_HOLD_MINUTES * 60L * 1000L;
             session.setAttribute("bookingDraft", draft);
             response.sendRedirect(request.getContextPath() + "/customer/booking/payment");
         } finally {

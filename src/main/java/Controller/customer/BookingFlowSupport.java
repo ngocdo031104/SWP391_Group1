@@ -19,7 +19,7 @@ import java.util.List;
 public class BookingFlowSupport {
 
     // Thời gian giữ slot sau khi khách chuyển từ review sang payment; quá thời gian này booking PendingPayment sẽ bị hủy và nhả ghế.
-    public static final int PAYMENT_HOLD_MINUTES = 5;
+    public static final int PAYMENT_HOLD_MINUTES = 10;
 
     // Hàm requireLogin dùng để bảo vệ toàn bộ luồng booking Customer.
     // Nếu chưa có sessionUser, hệ thống chuyển về /login và trả false để controller dừng xử lý.
@@ -175,6 +175,12 @@ public class BookingFlowSupport {
         public Integer couponId;
         // couponCode lưu mã coupon đã áp dụng để có thể hiển thị lại nếu cần.
         public String couponCode;
+        // customerNote lưu ghi chú riêng của khách nhập ở màn create để BookingReviewController ghi vào Booking.Notes.
+        public String customerNote;
+        // paymentHoldStartedAtMillis lưu thời điểm booking thật được tạo và slot bắt đầu bị giữ cho thanh toán.
+        public long paymentHoldStartedAtMillis;
+        // paymentExpiresAtMillis lưu mốc hết hạn giữ slot 10 phút để màn payment hiển thị bộ đếm ngược.
+        public long paymentExpiresAtMillis;
         // baseAmount là tiền tour gốc trước VAT và giảm giá.
         public double baseAmount;
         // discountAmount là số tiền giảm sau khi áp dụng coupon.

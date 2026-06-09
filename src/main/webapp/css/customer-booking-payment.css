@@ -4,13 +4,16 @@
  * Chức năng: CSS cho màn Customer thanh toán booking.
  * Ý nghĩa: Định dạng lựa chọn phương thức thanh toán, nhập coupon và tóm tắt thành tiền trước khi tạo payment.
  */
-@import url('customer-booking-common.css');
+@import url('customer-booking-common.css?v=2.1');
 
-/* Layout 2 cột: phương thức thanh toán bên trái, coupon và tổng kết bên phải. */
-.booking-layout,
+/* Layout ngoài chiếm toàn bộ chiều ngang; bên trong payment mới chia 2 cột QR và tổng kết. */
+.booking-layout {
+    display: block;
+}
+
 .payment-layout {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 330px;
+    grid-template-columns: minmax(0, 1.1fr) minmax(360px, 0.9fr);
     gap: 24px;
     align-items: start;
 }
@@ -161,13 +164,13 @@
     color: #082f49;
 }
 
-/* Khi polling thấy booking đã Confirmed, trạng thái đổi sang xanh lá trước khi điều hướng success. */
+/* Khi polling thấy booking đã Success, trạng thái đổi sang xanh lá trước khi điều hướng success. */
 .sepay-status-box.paid {
     border-color: #86efac;
     background: #ecfdf5;
     color: #166534;
 }
-/* Dương làm đoạn này: trạng thái hết hạn giữ chỗ sau 5 phút chưa thanh toán. */
+/* Dương làm đoạn này: trạng thái hết hạn giữ chỗ sau 10 phút chưa thanh toán. */
 .sepay-status-box.expired {
     border-color: #fecaca;
     background: #fff1f2;
@@ -180,4 +183,58 @@
 /* Ẩn box trạng thái SePay trên giao diện nhưng vẫn giữ node để JavaScript polling tự chuyển success. */
 .hidden-status {
     display: none !important;
+}
+/* Dương làm đoạn này: card đếm ngược thời gian giữ slot 10 phút ở màn thanh toán. */
+.payment-expiry-card {
+    display: block;
+    margin: 0 0 18px;
+    padding: 14px 16px;
+    border: 1px solid #bae6fd;
+    border-radius: 8px;
+    background: #effaff;
+    color: #0f4c81;
+}
+
+.payment-expiry-card span {
+    color: #315d7f;
+    font-weight: 500;
+}
+
+.payment-expiry-card strong {
+    color: #082f49;
+    font-size: 1.45rem;
+    line-height: 1;
+}
+
+/* Khi còn dưới 1 phút, card chuyển vàng để nhắc khách thanh toán ngay. */
+.payment-expiry-card.is-warning {
+    border-color: #fde68a;
+    background: #fffbeb;
+    color: #92400e;
+}
+
+.payment-expiry-card.is-warning strong,
+.payment-expiry-card.is-warning small,
+.payment-expiry-card.is-warning span {
+    color: #92400e;
+}
+
+/* Khi hết thời gian, card chuyển đỏ để báo booking có thể bị huỷ và nhả slot. */
+.payment-expiry-card.is-expired {
+    border-color: #fecaca;
+    background: #fff1f2;
+    color: #b91c1c;
+}
+
+.payment-expiry-card.is-expired strong,
+.payment-expiry-card.is-expired small,
+.payment-expiry-card.is-expired span {
+    color: #991b1b;
+}
+
+@media (max-width: 640px) {
+    .payment-expiry-card {
+        align-items: flex-start;
+        flex-direction: column;
+    }
 }

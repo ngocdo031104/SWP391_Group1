@@ -229,6 +229,20 @@
         });
     }
 
+
+    // Dương làm đoạn này: customerNote tự tăng chiều cao theo nội dung khách nhập.
+    // Textarea vẫn giữ maxlength=500 nên khi tới giới hạn trình duyệt sẽ không cho nhập thêm ký tự.
+    const customerNote = document.getElementById('customer-note');
+    function autoResizeCustomerNote() {
+        if (!customerNote) return;
+        customerNote.style.height = 'auto';
+        customerNote.style.height = Math.min(customerNote.scrollHeight, 260) + 'px';
+    }
+
+    if (customerNote) {
+        customerNote.addEventListener('input', autoResizeCustomerNote);
+        autoResizeCustomerNote();
+    }
     // Render mặc định một participant khi trang vừa load.
     renderParticipants([]);
     if (window.lucide) lucide.createIcons();

@@ -44,12 +44,12 @@ public class BookingPaymentController extends HttpServlet {
 BookingDAO bookingDAO = null;
         try {
             bookingDAO = new BookingDAO();
-            // Dương làm đoạn này: nếu booking PendingPayment quá 5 phút thì nhả slot trước khi hiển thị QR.
+            // Dương làm đoạn này: nếu booking PendingPayment quá 10 phút thì nhả slot trước khi hiển thị QR.
             bookingDAO.releaseExpiredPendingPaymentBookings(BookingFlowSupport.PAYMENT_HOLD_MINUTES);
             Booking booking = bookingDAO.getBookingByCode(draft.bookingCode);
             if (booking == null || "Cancelled".equalsIgnoreCase(booking.getStatus())) {
                 request.getSession().removeAttribute("bookingDraft");
-                request.getSession().setAttribute("bookingExpiredMessage", "Đơn giữ chỗ đã quá 5 phút chưa thanh toán nên hệ thống đã nhả slot. Vui lòng tạo lại booking.");
+                request.getSession().setAttribute("bookingExpiredMessage", "Đơn giữ chỗ đã quá 10 phút chưa thanh toán nên hệ thống đã nhả slot. Vui lòng tạo lại booking.");
                 response.sendRedirect(request.getContextPath() + "/customer/booking/create?tourId=" + draft.tourId);
                 return;
             }
@@ -86,7 +86,7 @@ BookingDAO bookingDAO = null;
             Booking booking = holdBookingDAO.getBookingByCode(draft.bookingCode);
             if (booking == null || "Cancelled".equalsIgnoreCase(booking.getStatus())) {
                 session.removeAttribute("bookingDraft");
-                session.setAttribute("bookingExpiredMessage", "Đơn giữ chỗ đã quá 5 phút chưa thanh toán nên hệ thống đã nhả slot. Vui lòng tạo lại booking.");
+                session.setAttribute("bookingExpiredMessage", "Đơn giữ chỗ đã quá 10 phút chưa thanh toán nên hệ thống đã nhả slot. Vui lòng tạo lại booking.");
                 response.sendRedirect(request.getContextPath() + "/customer/booking/create?tourId=" + draft.tourId);
                 return;
             }
