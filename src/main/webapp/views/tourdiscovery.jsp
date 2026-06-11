@@ -238,6 +238,26 @@
                     <svg class="vector-map-bg" viewBox="0 0 500 800" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                         <rect width="100%" height="100%" fill="#e0f2fe"/>
                         <path d="M 180,40 Q 190,70 170,80 T 160,110 T 190,130 T 210,100 T 240,110 T 260,130 T 270,160 T 235,170 T 205,160 T 180,180 T 200,200 Q 215,220 220,250 T 240,290 T 260,330 T 270,380 T 290,420 Q 300,450 280,480 T 250,520 T 230,560 T 200,600 T 170,620 T 180,650 L 220,680 L 150,710 Q 120,700 90,690 L 80,630 Q 100,590 120,580 T 140,540 T 180,500 T 200,450 T 200,380 T 195,300 T 170,250 T 130,220 T 110,180 Q 100,120 120,80 T 160,50 Z" fill="#f0fdf4" stroke="#a7f3d0" stroke-width="2"/>
+                        
+                        <!-- Quần đảo Hoàng Sa (Paracel Islands) -->
+                        <g class="island-group" id="hoang-sa">
+                            <circle cx="340" cy="270" r="4" fill="#f0fdf4" stroke="#a7f3d0" stroke-width="1"/>
+                            <circle cx="348" cy="274" r="3" fill="#f0fdf4" stroke="#a7f3d0" stroke-width="1"/>
+                            <circle cx="335" cy="278" r="3" fill="#f0fdf4" stroke="#a7f3d0" stroke-width="1"/>
+                            <text x="355" y="278" font-size="8" font-weight="600" fill="#047857">Q.đ Hoàng Sa (Việt Nam)</text>
+                        </g>
+                        
+                        <!-- Quần đảo Trường Sa (Spratly Islands) -->
+                        <g class="island-group" id="truong-sa">
+                            <circle cx="390" cy="580" r="3" fill="#f0fdf4" stroke="#a7f3d0" stroke-width="1"/>
+                            <circle cx="398" cy="585" r="4" fill="#f0fdf4" stroke="#a7f3d0" stroke-width="1"/>
+                            <circle cx="405" cy="590" r="3" fill="#f0fdf4" stroke="#a7f3d0" stroke-width="1"/>
+                            <circle cx="388" cy="592" r="3" fill="#f0fdf4" stroke="#a7f3d0" stroke-width="1"/>
+                            <circle cx="402" cy="600" r="4" fill="#f0fdf4" stroke="#a7f3d0" stroke-width="1"/>
+                            <circle cx="410" cy="608" r="3" fill="#f0fdf4" stroke="#a7f3d0" stroke-width="1"/>
+                            <text x="320" y="625" font-size="8" font-weight="600" fill="#047857">Q.đ Trường Sa (Việt Nam)</text>
+                        </g>
+
                         <text x="20" y="40" font-size="12" font-weight="700" fill="#0369a1">BẢN ĐỒ VIỆT NAM</text>
                         <text x="20" y="58" font-size="9" fill="#0284c7">Nhấn vào pin để xem tour</text>
                     </svg>

@@ -71,10 +71,10 @@ public class TourDAO extends DBContext {
         
         // Chuỗi SELECT lấy thông tin chi tiết tour và tính điểm rating trung bình + tổng số lượng review bằng subquery.
         // Điều kiện lọc: Chỉ lấy những tour nổi bật (IsFeatured = 1) và đang hoạt động (Status = 'Active')
-        String sql = "SELECT TourID, CategoryID, TourName, Description, Destination, DurationDays, Itinerary, DifficultyLevel, BasePrice, MaxParticipants, Status, IsFeatured, Languages, GroupSizeMin, GroupSizeMax, DepartureCity, Latitude, Longitude, VideoURL, CreatedBy, CreatedAt, UpdatedAt, "
+        String sql = "SELECT TourID, CategoryID, TourName, Description, Destination, DurationDays, Itinerary, DifficultyLevel, BasePrice, MaxParticipants, Status, IsFeatured, IsDeleted, Languages, GroupSizeMin, GroupSizeMax, DepartureCity, Latitude, Longitude, VideoURL, CreatedBy, CreatedAt, UpdatedAt, "
                    + "ISNULL((SELECT AVG(CAST(Rating AS FLOAT)) FROM Review r WHERE r.TourID = Tour.TourID), 0.0) as AvgRating, "
                    + "(SELECT COUNT(*) FROM Review r WHERE r.TourID = Tour.TourID) as ReviewCount "
-                   + "FROM Tour WHERE IsFeatured = 1 AND Status = 'Active'";
+                   + "FROM Tour WHERE IsFeatured = 1 AND Status = 'Active' AND IsDeleted = 0";
                    
         // Thực thi câu lệnh SQL kết nối database
         try (PreparedStatement ps = connection.prepareStatement(sql);
@@ -114,12 +114,12 @@ public class TourDAO extends DBContext {
         // Khởi tạo câu SQL gốc. Lấy các tour có status là Active.
         // Đồng thời dùng truy vấn con (Subquery) để tính AvgRating (số sao trung bình) và ReviewCount của từng tour.
         StringBuilder sql = new StringBuilder(
-            "SELECT DISTINCT t.TourID, t.CategoryID, t.TourName, t.Description, t.Destination, t.DurationDays, t.Itinerary, t.DifficultyLevel, t.BasePrice, t.MaxParticipants, t.Status, t.IsFeatured, t.Languages, t.GroupSizeMin, t.GroupSizeMax, t.DepartureCity, t.Latitude, t.Longitude, t.VideoURL, t.CreatedBy, t.CreatedAt, t.UpdatedAt, " +
+            "SELECT DISTINCT t.TourID, t.CategoryID, t.TourName, t.Description, t.Destination, t.DurationDays, t.Itinerary, t.DifficultyLevel, t.BasePrice, t.MaxParticipants, t.Status, t.IsFeatured, t.IsDeleted, t.Languages, t.GroupSizeMin, t.GroupSizeMax, t.DepartureCity, t.Latitude, t.Longitude, t.VideoURL, t.CreatedBy, t.CreatedAt, t.UpdatedAt, " +
             "ISNULL((SELECT AVG(CAST(Rating AS FLOAT)) FROM Review r WHERE r.TourID = t.TourID), 0.0) as AvgRating, " +
             "(SELECT COUNT(*) FROM Review r WHERE r.TourID = t.TourID) as ReviewCount " +
             "FROM Tour t " +
             "LEFT JOIN TourSchedule s ON t.TourID = s.TourID " +
-            "WHERE t.Status = 'Active'"
+            "WHERE t.Status = 'Active' AND t.IsDeleted = 0"
         );
         
         // List này lưu các tham số tương ứng với các dấu "?" động để gán vào PreparedStatement sau nhằm tránh SQL Injection
@@ -177,7 +177,7 @@ public class TourDAO extends DBContext {
     public Tour getTourById(int tourId) {
         // Chuỗi SELECT lấy thông tin chi tiết tour bằng ID, đồng thời JOIN với bảng TourCategory
         // để lấy thêm CategoryName và CategoryDesc phục vụ hiển thị Breadcrumb và nhãn danh mục ở trang Detail.
-        String sql = "SELECT t.TourID, t.CategoryID, t.TourName, t.Description, t.Destination, t.DurationDays, t.Itinerary, t.DifficultyLevel, t.BasePrice, t.MaxParticipants, t.Status, t.IsFeatured, t.Languages, t.GroupSizeMin, t.GroupSizeMax, t.DepartureCity, t.Latitude, t.Longitude, t.VideoURL, t.CreatedBy, t.CreatedAt, t.UpdatedAt, "
+        String sql = "SELECT t.TourID, t.CategoryID, t.TourName, t.Description, t.Destination, t.DurationDays, t.Itinerary, t.DifficultyLevel, t.BasePrice, t.MaxParticipants, t.Status, t.IsFeatured, t.IsDeleted, t.Languages, t.GroupSizeMin, t.GroupSizeMax, t.DepartureCity, t.Latitude, t.Longitude, t.VideoURL, t.CreatedBy, t.CreatedAt, t.UpdatedAt, "
                    + "ISNULL((SELECT AVG(CAST(Rating AS FLOAT)) FROM Review r WHERE r.TourID = t.TourID), 0.0) as AvgRating, "
                    + "(SELECT COUNT(*) FROM Review r WHERE r.TourID = t.TourID) as ReviewCount, "
                    + "c.CategoryName, c.Description AS CategoryDesc "
@@ -344,6 +344,7 @@ public class TourDAO extends DBContext {
         tour.setMaxParticipants(rs.getInt("MaxParticipants"));
         tour.setStatus(rs.getString("Status"));
         tour.setIsFeatured(rs.getBoolean("IsFeatured"));
+        tour.setIsDeleted(rs.getBoolean("IsDeleted"));
         
         tour.setLanguages(rs.getString("Languages"));
         tour.setGroupSizeMin(rs.getInt("GroupSizeMin"));
@@ -586,7 +587,7 @@ public class TourDAO extends DBContext {
 
     public List<DestinationInfo> getTopDestinations() {
         List<DestinationInfo> list = new ArrayList<>();
-        String sql = "SELECT Destination, COUNT(*) as TourCount FROM Tour WHERE Status = 'Active' GROUP BY Destination";
+        String sql = "SELECT Destination, COUNT(*) as TourCount FROM Tour WHERE Status = 'Active' AND IsDeleted = 0 GROUP BY Destination";
         try (PreparedStatement ps = connection.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
@@ -930,7 +931,7 @@ public class TourDAO extends DBContext {
 
     public List<String> getDistinctDestinations() {
         List<String> list = new ArrayList<>();
-        String sql = "SELECT DISTINCT Destination FROM Tour WHERE Status = 'Active'";
+        String sql = "SELECT DISTINCT Destination FROM Tour WHERE Status = 'Active' AND IsDeleted = 0";
         try (PreparedStatement ps = connection.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
@@ -950,7 +951,7 @@ public class TourDAO extends DBContext {
 
     public List<String> getDistinctDepartureCities() {
         List<String> list = new ArrayList<>();
-        String sql = "SELECT DISTINCT DepartureCity FROM Tour WHERE Status = 'Active'";
+        String sql = "SELECT DISTINCT DepartureCity FROM Tour WHERE Status = 'Active' AND IsDeleted = 0";
         try (PreparedStatement ps = connection.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
@@ -1052,115 +1053,12 @@ public class TourDAO extends DBContext {
      * @return true if successful
      */
     public boolean deleteTour(int tourId) {
-        try {
-            // Thiết lập AutoCommit = false để tự quản lý transaction thủ công.
-            // Điều này đảm bảo: hoặc là tất cả các bước xóa dữ liệu liên quan ở các bảng con (khóa ngoại) thành công,
-            // hoặc là khôi phục (rollback) lại toàn bộ nếu có bất kỳ bước nào lỗi, tránh rác dữ liệu.
-            connection.setAutoCommit(false);
-            
-            // 1. Xóa các reviews liên quan trực tiếp tới tourId
-            try (PreparedStatement ps = connection.prepareStatement("DELETE FROM Review WHERE TourID = ?")) {
-                ps.setInt(1, tourId);
-                ps.executeUpdate();
-            }
-            
-            // 2. Xóa các phương tiện (hình ảnh, video) của tour
-            try (PreparedStatement ps = connection.prepareStatement("DELETE FROM TourMedia WHERE TourID = ?")) {
-                ps.setInt(1, tourId);
-                ps.executeUpdate();
-            }
-            
-            // 3. Xóa các dịch vụ đi kèm
-            try (PreparedStatement ps = connection.prepareStatement("DELETE FROM TourInclusion WHERE TourID = ?")) {
-                ps.setInt(1, tourId);
-                ps.executeUpdate();
-            }
-            
-            // 4. Xóa câu hỏi thường gặp FAQ của tour
-            try (PreparedStatement ps = connection.prepareStatement("DELETE FROM TourFAQ WHERE TourID = ?")) {
-                ps.setInt(1, tourId);
-                ps.executeUpdate();
-            }
-            
-            // 5. Xóa lịch trình chi tiết từng ngày
-            try (PreparedStatement ps = connection.prepareStatement("DELETE FROM TourItinerary WHERE TourID = ?")) {
-                ps.setInt(1, tourId);
-                ps.executeUpdate();
-            }
-            
-            // 6. Xóa dữ liệu điểm danh của lịch trình thuộc tour này
-            try (PreparedStatement ps = connection.prepareStatement(
-                "DELETE FROM Attendance WHERE ScheduleID IN (SELECT ScheduleID FROM TourSchedule WHERE TourID = ?)")) {
-                ps.setInt(1, tourId);
-                ps.executeUpdate();
-            }
-            
-            // 7. Xóa dữ liệu phân công hướng dẫn viên du lịch
-            try (PreparedStatement ps = connection.prepareStatement(
-                "DELETE FROM TourAssignment WHERE ScheduleID IN (SELECT ScheduleID FROM TourSchedule WHERE TourID = ?)")) {
-                ps.setInt(1, tourId);
-                ps.executeUpdate();
-            }
-            
-            // 8. Xóa dữ liệu thanh toán của các đơn hàng đặt tour này
-            try (PreparedStatement ps = connection.prepareStatement(
-                "DELETE FROM Payment WHERE BookingID IN (SELECT BookingID FROM Booking WHERE ScheduleID IN (SELECT ScheduleID FROM TourSchedule WHERE TourID = ?))")) {
-                ps.setInt(1, tourId);
-                ps.executeUpdate();
-            }
-            
-            // 9. Xóa các đánh giá review liên kết thông qua BookingID
-            try (PreparedStatement ps = connection.prepareStatement(
-                "DELETE FROM Review WHERE BookingID IN (SELECT BookingID FROM Booking WHERE ScheduleID IN (SELECT ScheduleID FROM TourSchedule WHERE TourID = ?))")) {
-                ps.setInt(1, tourId);
-                ps.executeUpdate();
-            }
-            
-            // 10. Xóa thông tin các hành khách tham gia đi kèm trong các đơn đặt
-            try (PreparedStatement ps = connection.prepareStatement(
-                "DELETE FROM BookingParticipant WHERE BookingID IN (SELECT BookingID FROM Booking WHERE ScheduleID IN (SELECT ScheduleID FROM TourSchedule WHERE TourID = ?))")) {
-                ps.setInt(1, tourId);
-                ps.executeUpdate();
-            }
-            
-            // 11. Xóa tất cả các hóa đơn / đơn đặt (Booking) thuộc về lịch trình tour này
-            try (PreparedStatement ps = connection.prepareStatement(
-                "DELETE FROM Booking WHERE ScheduleID IN (SELECT ScheduleID FROM TourSchedule WHERE TourID = ?)")) {
-                ps.setInt(1, tourId);
-                ps.executeUpdate();
-            }
-            
-            // 12. Xóa tất cả các lịch khởi hành (TourSchedule) của tour
-            try (PreparedStatement ps = connection.prepareStatement("DELETE FROM TourSchedule WHERE TourID = ?")) {
-                ps.setInt(1, tourId);
-                ps.executeUpdate();
-            }
-            
-            // 13. Cuối cùng, khi không còn khóa ngoại nào ràng buộc nữa, tiến hành xóa bản ghi Tour ở bảng Tour chính
-            boolean success = false;
-            try (PreparedStatement ps = connection.prepareStatement("DELETE FROM Tour WHERE TourID = ?")) {
-                ps.setInt(1, tourId);
-                success = ps.executeUpdate() > 0;
-            }
-            
-            // Commit toàn bộ các thay đổi nếu tất cả các câu lệnh SQL trên chạy trơn tru không lỗi
-            connection.commit();
-            return success;
+        String sql = "UPDATE Tour SET Status = 'Inactive', IsDeleted = 1, UpdatedAt = GETDATE() WHERE TourID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, tourId);
+            return ps.executeUpdate() > 0;
         } catch (SQLException ex) {
-            // Khi có bất kỳ lỗi SQL nào xảy ra ở các bước trên -> Thực hiện rollback khôi phục nguyên vẹn dữ liệu ban đầu
-            try {
-                connection.rollback();
-            } catch (SQLException rollbackEx) {
-                Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, "rollback failed", rollbackEx);
-            }
             Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, "deleteTour failed", ex);
-        } finally {
-            // Phục hồi lại trạng thái tự động commit mặc định cho connection
-            try {
-                connection.setAutoCommit(true);
-            } catch (SQLException ex) {
-                Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, "setAutoCommit failed", ex);
-            }
         }
         return false;
     }
@@ -1185,7 +1083,7 @@ public class TourDAO extends DBContext {
      */
     public List<Tour> getAllToursAdmin() {
         List<Tour> list = new ArrayList<>();
-        String sql = "SELECT t.TourID, t.CategoryID, t.TourName, t.Description, t.Destination, t.DurationDays, t.Itinerary, t.DifficultyLevel, t.BasePrice, t.MaxParticipants, t.Status, t.IsFeatured, t.Languages, t.GroupSizeMin, t.GroupSizeMax, t.DepartureCity, t.Latitude, t.Longitude, t.VideoURL, t.CreatedBy, t.CreatedAt, t.UpdatedAt, "
+        String sql = "SELECT t.TourID, t.CategoryID, t.TourName, t.Description, t.Destination, t.DurationDays, t.Itinerary, t.DifficultyLevel, t.BasePrice, t.MaxParticipants, t.Status, t.IsFeatured, t.IsDeleted, t.Languages, t.GroupSizeMin, t.GroupSizeMax, t.DepartureCity, t.Latitude, t.Longitude, t.VideoURL, t.CreatedBy, t.CreatedAt, t.UpdatedAt, "
                    + "ISNULL((SELECT AVG(CAST(Rating AS FLOAT)) FROM Review r WHERE r.TourID = t.TourID), 0.0) as AvgRating, "
                    + "(SELECT COUNT(*) FROM Review r WHERE r.TourID = t.TourID) as ReviewCount, "
                    + "ISNULL((SELECT SUM(TotalSeats) FROM TourSchedule s WHERE s.TourID = t.TourID), t.MaxParticipants) as TotalSeats, "
@@ -1195,6 +1093,7 @@ public class TourDAO extends DBContext {
                    + "c.CategoryName, c.Description AS CategoryDesc "
                    + "FROM Tour t "
                    + "JOIN TourCategory c ON t.CategoryID = c.CategoryID "
+                   + "WHERE t.IsDeleted = 0 "
                    + "ORDER BY t.TourID DESC";
         try (PreparedStatement ps = connection.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {

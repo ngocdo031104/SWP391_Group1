@@ -26,6 +26,7 @@ public class Tour implements Serializable {
     private Double latitude;
     private Double longitude;
     private String videoUrl;
+    private boolean isDeleted;
     
     // Derived fields
     private double rating = 0.0;
@@ -218,6 +219,14 @@ public class Tour implements Serializable {
 
     public void setVideoUrl(String videoUrl) {
         this.videoUrl = videoUrl;
+    }
+
+    public boolean isIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 
     public double getRating() {
