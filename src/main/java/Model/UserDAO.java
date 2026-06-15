@@ -407,4 +407,71 @@ public class UserDAO extends DBContext {
         }
         return false;
     }
+
+    public List<User> getAllCustomers() {
+        List<User> list = new ArrayList<>();
+        String sql = "SELECT u.UserID, u.Email, u.FullName, u.PhoneNumber, u.IsActive "
+                   + "FROM [User] u "
+                   + "JOIN Role r ON u.RoleID = r.RoleID "
+                   + "WHERE r.RoleName = 'Customer'";
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                User user = new User();
+                user.setUserId(rs.getInt("UserID"));
+                user.setEmail(rs.getString("Email"));
+                user.setFullName(rs.getString("FullName"));
+                user.setPhoneNumber(rs.getString("PhoneNumber"));
+                user.setIsActive(rs.getBoolean("IsActive"));
+                list.add(user);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return list;
+    }
+
+    public boolean setResetToken(String email, String token, Timestamp expiry) {
+        String sql = "UPDATE [User] SET ResetToken = ?, ResetTokenExpiry = ? WHERE Email = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, token);
+            ps.setTimestamp(2, expiry);
+            ps.setString(3, email);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
+    public User getUserByResetToken(String token) {
+        String sql = "SELECT UserID, Email, ResetTokenExpiry FROM [User] WHERE ResetToken = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, token);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    User user = new User();
+                    user.setUserId(rs.getInt("UserID"));
+                    user.setEmail(rs.getString("Email"));
+                    user.setResetTokenExpiry(rs.getTimestamp("ResetTokenExpiry"));
+                    return user;
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    public boolean resetPassword(int userId, String newPasswordHash) {
+        String sql = "UPDATE [User] SET PasswordHash = ?, ResetToken = NULL, ResetTokenExpiry = NULL, UpdatedAt = SYSDATETIME() WHERE UserID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, newPasswordHash);
+            ps.setInt(2, userId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
 }
