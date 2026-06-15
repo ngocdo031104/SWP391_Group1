@@ -15,6 +15,8 @@ public class User implements Serializable {
     private Timestamp createdAt;
     private Timestamp updatedAt;
     private Timestamp lastLoginAt;
+    private String resetToken;
+    private Timestamp resetTokenExpiry;
     
     // Linked Entities for ease of use in MVC
     private Role role;
@@ -123,6 +125,22 @@ public class User implements Serializable {
 
     public void setLastLoginAt(Timestamp lastLoginAt) {
         this.lastLoginAt = lastLoginAt;
+    }
+
+    public String getResetToken() {
+        return resetToken;
+    }
+
+    public void setResetToken(String resetToken) {
+        this.resetToken = resetToken;
+    }
+
+    public Timestamp getResetTokenExpiry() {
+        return resetTokenExpiry;
+    }
+
+    public void setResetTokenExpiry(Timestamp resetTokenExpiry) {
+        this.resetTokenExpiry = resetTokenExpiry;
     }
 
     public Role getRole() {
