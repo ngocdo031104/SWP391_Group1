@@ -1,4 +1,4 @@
-﻿package Controller;
+package Controller;
 
 import Entities.Tour;
 import Entities.Coupon;

@@ -1,4 +1,4 @@
-﻿package Controller;
+package Controller;
 
 import Entities.User;
 import Entities.UserProfile;

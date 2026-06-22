@@ -1,4 +1,4 @@
-﻿package Controller;
+package Controller;
 
 /**
  * Controller class for handling user registration.

@@ -1,4 +1,4 @@
-﻿import java.sql.*;
+import java.sql.*;
 
 public class FixTourCols {
     public static void main(String[] args) {

@@ -1,4 +1,4 @@
-﻿package Model;
+package Model;
 
 import Entities.Coupon;
 import Utils.DBContext;

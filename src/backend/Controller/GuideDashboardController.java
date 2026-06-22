@@ -1,4 +1,4 @@
-﻿package Controller;
+package Controller;
 
 import Entities.BookingParticipant;
 import Entities.TourAssignment;

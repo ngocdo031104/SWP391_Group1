@@ -1,4 +1,4 @@
-﻿package Controller;
+package Controller;
 
 import Entities.Notification;
 import Entities.User;

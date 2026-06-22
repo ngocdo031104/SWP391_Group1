@@ -1,4 +1,4 @@
-﻿package Model;
+package Model;
 
 // Người làm: Dương
 // Thời gian tạo: 04/06/2026

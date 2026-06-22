@@ -1,4 +1,4 @@
-﻿package Utils;
+package Utils;
 
 import jakarta.mail.Authenticator;
 import jakarta.mail.Message;
