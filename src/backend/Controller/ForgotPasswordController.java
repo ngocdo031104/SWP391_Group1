@@ -1,4 +1,4 @@
-﻿package Controller;
+package Controller;
 
 import Model.UserDAO;
 import Utils.EmailUtil;

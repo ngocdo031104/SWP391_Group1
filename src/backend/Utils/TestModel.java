@@ -1,4 +1,4 @@
-﻿package Utils;
+package Utils;
 
 import Entities.Booking;
 import Entities.BookingParticipant;

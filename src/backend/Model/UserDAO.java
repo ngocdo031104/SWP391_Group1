@@ -1,4 +1,4 @@
-﻿package Model;
+package Model;
 
 /**
  * Data Access Object for User-related operations.
