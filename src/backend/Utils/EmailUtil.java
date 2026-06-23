@@ -30,10 +30,10 @@ public class EmailUtil {
             }
         });
 
-        Message message = new MimeMessage(session);
-        message.setFrom(new InternetAddress(SENDER_EMAIL, "TourBuddy System"));
+        MimeMessage message = new MimeMessage(session);
+        message.setFrom(new InternetAddress(SENDER_EMAIL, "TourBuddy System", "UTF-8"));
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));
-        message.setSubject("Mã xác nhận tài khoản TourBuddy");
+        message.setSubject(jakarta.mail.internet.MimeUtility.encodeText("M\\u00e3 x\\u00e1c nh\\u1eadn t\\u00e0i kho\\u1ea3n TourBuddy", "UTF-8", "B"));
 
         String htmlContent = "<div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;'>"
                 + "<h2 style='color: #1E7D4B; text-align: center;'>TourBuddy - Xác thực tài khoản</h2>"
@@ -66,10 +66,10 @@ public class EmailUtil {
             }
         });
 
-        Message message = new MimeMessage(session);
-        message.setFrom(new InternetAddress(SENDER_EMAIL, "TourBuddy System"));
+        MimeMessage message = new MimeMessage(session);
+        message.setFrom(new InternetAddress(SENDER_EMAIL, "TourBuddy System", "UTF-8"));
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));
-        message.setSubject(subject);
+        message.setSubject(jakarta.mail.internet.MimeUtility.encodeText(subject, "UTF-8", "B"));
 
         String htmlContent = "<div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;'>"
                 + "<h2 style='color: #1E7D4B; text-align: center;'>Thông báo từ TourBuddy</h2>"
@@ -99,10 +99,10 @@ public class EmailUtil {
             }
         });
 
-        Message message = new MimeMessage(session);
-        message.setFrom(new InternetAddress(SENDER_EMAIL, "TourBuddy Security"));
+        MimeMessage message = new MimeMessage(session);
+        message.setFrom(new InternetAddress(SENDER_EMAIL, "TourBuddy Security", "UTF-8"));
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));
-        message.setSubject("Yêu cầu khôi phục mật khẩu - TourBuddy");
+        message.setSubject(jakarta.mail.internet.MimeUtility.encodeText("Y\\u00eau c\\u1ea7u kh\\u00f4i ph\\u1ee5c m\\u1eadt kh\\u1ea9u - TourBuddy", "UTF-8", "B"));
 
         String htmlContent = "<div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;'>"
                 + "<h2 style='color: #1E7D4B; text-align: center;'>Khôi phục mật khẩu</h2>"

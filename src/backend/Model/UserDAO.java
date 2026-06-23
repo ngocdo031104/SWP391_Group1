@@ -474,4 +474,45 @@ public class UserDAO extends DBContext {
         }
         return false;
     }
+
+    public List<User> getAllUsers() {
+        List<User> list = new ArrayList<>();
+        String sql = "SELECT u.UserID, u.Email, u.FullName, u.PhoneNumber, u.IsActive, r.RoleName "
+                   + "FROM [User] u "
+                   + "JOIN Role r ON u.RoleID = r.RoleID "
+                   + "ORDER BY u.UserID DESC";
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                User user = new User();
+                user.setUserId(rs.getInt("UserID"));
+                user.setEmail(rs.getString("Email"));
+                user.setFullName(rs.getString("FullName"));
+                user.setPhoneNumber(rs.getString("PhoneNumber"));
+                user.setIsActive(rs.getBoolean("IsActive"));
+                
+                Role role = new Role();
+                role.setRoleName(rs.getString("RoleName"));
+                user.setRole(role);
+                
+                list.add(user);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return list;
+    }
+
+    public boolean updateUserStatus(int userId, boolean isActive) {
+        String sql = "UPDATE [User] SET IsActive = ?, UpdatedAt = SYSDATETIME() WHERE UserID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setBoolean(1, isActive);
+            ps.setInt(2, userId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
 }
+
