@@ -2,6 +2,7 @@ package Entities;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.List;
 
 public class Role implements Serializable {
     private int roleId;
@@ -9,6 +10,8 @@ public class Role implements Serializable {
     private String description;
     private boolean isActive;
     private Timestamp createdAt;
+    private List<Permission> permissions;
+    private boolean isSystemRole;
 
     public Role() {
     }
@@ -59,5 +62,21 @@ public class Role implements Serializable {
 
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public List<Permission> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(List<Permission> permissions) {
+        this.permissions = permissions;
+    }
+
+    public boolean isSystemRole() {
+        return isSystemRole;
+    }
+
+    public void setSystemRole(boolean isSystemRole) {
+        this.isSystemRole = isSystemRole;
     }
 }

@@ -38,6 +38,18 @@
                 </a>
             </li>
             <li>
+                <a href="${pageContext.request.contextPath}/admin/users">
+                    <i data-lucide="users"></i>
+                    <span>Quản Lý Người Dùng</span>
+                </a>
+            </li>
+            <li>
+                <a href="${pageContext.request.contextPath}/admin/users?action=history">
+                    <i data-lucide="history"></i>
+                    <span>Lịch Sử Quản Trị</span>
+                </a>
+            </li>
+            <li>
                 <a href="${pageContext.request.contextPath}/admin/tours">
                     <i data-lucide="compass"></i>
                     <span>Quản Lý Tour</span>
@@ -71,6 +83,12 @@
                 <a href="#">
                     <i data-lucide="trending-up"></i>
                     <span>Dự Báo & Xu Hướng</span>
+                </a>
+            </li>
+            <li>
+                <a href="${pageContext.request.contextPath}/admin/roles">
+                    <i data-lucide="shield-check"></i>
+                    <span>Phân Quyền</span>
                 </a>
             </li>
             <li>
