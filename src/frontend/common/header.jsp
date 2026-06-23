@@ -81,6 +81,7 @@
                                 </div>
                                 <a href="${pageContext.request.contextPath}/profile" id="dropdown-profile-link"><i data-lucide="user"></i> Hồ Sơ Của Tôi</a>
                                 <a href="${pageContext.request.contextPath}/bookings" id="dropdown-bookings-link"><i data-lucide="compass"></i> Đơn Đặt Chỗ</a>
+                                <a href="${pageContext.request.contextPath}/customer/buddies" id="dropdown-buddies-link"><i data-lucide="users"></i> Mạng Lưới Buddy</a>
                                 <a href="#" id="dropdown-wishlist-link"><i data-lucide="heart"></i> Yêu Thích</a>
                                 <c:if test="${sessionUser.role.roleName eq 'Admin'}">
                                     <a href="${pageContext.request.contextPath}/admin/dashboard" id="dropdown-admin-link"><i data-lucide="shield-alert"></i> Quản Trị (Admin)</a>
