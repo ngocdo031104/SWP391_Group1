@@ -12,8 +12,17 @@ public class Role implements Serializable {
     private Timestamp createdAt;
     private List<Permission> permissions;
     private boolean isSystemRole;
+    private int userCount;
 
     public Role() {
+    }
+
+    public int getUserCount() {
+        return userCount;
+    }
+
+    public void setUserCount(int userCount) {
+        this.userCount = userCount;
     }
 
     public Role(int roleId, String roleName, String description, boolean isActive, Timestamp createdAt) {
