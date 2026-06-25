@@ -390,64 +390,130 @@
 
     <!-- ── TAB 3: Preferences ── -->
     <div class="tab-content" id="tab-preferences">
-      <form action="${pageContext.request.contextPath}/profile/update"
-            method="post">
-        <input type="hidden" name="action" value="updatePreferences">
+        <form action="${pageContext.request.contextPath}/profile/update" method="post" id="prefForm">
+          <input type="hidden" name="action" value="updatePreferences">
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fa fa-heart" style="margin-right:8px;color:var(--clr-accent)"></i>
+                Sở thích & Tìm bạn đồng hành</h3>
+            </div>
+            <div class="card-body">
+              <div class="form-grid">
+                
+                <div class="form-group full">
+                  <label class="form-label">Điểm đến yêu thích (Tags)</label>
+                  <input type="text" name="destination" class="form-control" value="${myPref.destination}" placeholder="VD: Vietnam, Thailand, Japan...">
+                </div>
 
-        <div class="card">
-          <div class="card-header">
-            <h3><i class="fa fa-heart" style="margin-right:8px;color:var(--clr-accent)"></i>
-              Sở thích du lịch</h3>
-          </div>
-          <div class="card-body">
-            <div class="form-group">
-              <label class="form-label">Loại hình du lịch yêu thích</label>
-              <div class="tag-group" id="interestTags">
-                <span class="tag" data-val="beach"    onclick="toggleTag(this)">🏖️ Biển & Đảo</span>
-                <span class="tag" data-val="mountain" onclick="toggleTag(this)">⛰️ Núi & Trekking</span>
-                <span class="tag" data-val="culture"  onclick="toggleTag(this)">🏛️ Văn hóa & Lịch sử</span>
-                <span class="tag" data-val="food"     onclick="toggleTag(this)">🍜 Ẩm thực</span>
-                <span class="tag" data-val="city"     onclick="toggleTag(this)">🌆 Đô thị</span>
-                <span class="tag" data-val="adventure"onclick="toggleTag(this)">🪂 Mạo hiểm</span>
-                <span class="tag" data-val="eco"      onclick="toggleTag(this)">🌿 Sinh thái</span>
-                <span class="tag" data-val="luxury"   onclick="toggleTag(this)">💎 Nghỉ dưỡng cao cấp</span>
-                <span class="tag" data-val="family"   onclick="toggleTag(this)">👨‍👩‍👧 Gia đình</span>
-                <span class="tag" data-val="solo"     onclick="toggleTag(this)">🎒 Du lịch một mình</span>
+                <div class="form-group">
+                  <label class="form-label">Phong cách du lịch</label>
+                  <select name="travelStyle" class="form-control">
+                    <option value="Explorer" ${myPref.travelStyle == 'Explorer' ? 'selected' : ''}>Khám phá (Explorer)</option>
+                    <option value="Relaxed" ${myPref.travelStyle == 'Relaxed' ? 'selected' : ''}>Nghỉ dưỡng (Relaxed)</option>
+                    <option value="Balanced" ${myPref.travelStyle == 'Balanced' ? 'selected' : ''}>Cân bằng (Balanced)</option>
+                    <option value="Luxury" ${myPref.travelStyle == 'Luxury' ? 'selected' : ''}>Sang trọng (Luxury)</option>
+                    <option value="Backpacking" ${myPref.travelStyle == 'Backpacking' ? 'selected' : ''}>Phượt (Backpacking)</option>
+                  </select>
+                </div>
+                
+                <div class="form-group">
+                  <label class="form-label">Tần suất du lịch</label>
+                  <select name="travelFrequency" class="form-control">
+                    <option value="Rarely" ${myPref.travelFrequency == 'Rarely' ? 'selected' : ''}>Hiếm khi (1-2 lần/năm)</option>
+                    <option value="Occasionally" ${myPref.travelFrequency == 'Occasionally' ? 'selected' : ''}>Thỉnh thoảng (3-5 lần/năm)</option>
+                    <option value="Frequently" ${myPref.travelFrequency == 'Frequently' ? 'selected' : ''}>Thường xuyên (Mỗi tháng)</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Thời gian chuyến đi ưu tiên</label>
+                  <select name="tripDuration" class="form-control">
+                    <option value="1-3 days" ${myPref.tripDuration == '1-3 days' ? 'selected' : ''}>1-3 ngày (Ngắn ngày)</option>
+                    <option value="1 week" ${myPref.tripDuration == '1 week' ? 'selected' : ''}>1 tuần</option>
+                    <option value="2+ weeks" ${myPref.tripDuration == '2+ weeks' ? 'selected' : ''}>Hơn 2 tuần</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Ngôn ngữ</label>
+                  <select name="languages" class="form-control">
+                    <option value="Tiếng Việt" ${myPref.languages == 'Tiếng Việt' ? 'selected' : ''}>Tiếng Việt</option>
+                    <option value="English" ${myPref.languages == 'English' ? 'selected' : ''}>Tiếng Anh</option>
+                    <option value="Bilingual" ${myPref.languages == 'Bilingual' ? 'selected' : ''}>Song ngữ (Anh-Việt)</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Thói quen hút thuốc</label>
+                  <select name="smokingPreference" class="form-control">
+                    <option value="Non-smoker" ${myPref.smokingPreference == 'Non-smoker' ? 'selected' : ''}>Không hút thuốc</option>
+                    <option value="Smoker" ${myPref.smokingPreference == 'Smoker' ? 'selected' : ''}>Có hút thuốc</option>
+                    <option value="Don't care" ${myPref.smokingPreference == "Don't care" ? 'selected' : ''}>Không quan tâm</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Thói quen uống rượu bia</label>
+                  <select name="drinkingPreference" class="form-control">
+                    <option value="Non-drinker" ${myPref.drinkingPreference == 'Non-drinker' ? 'selected' : ''}>Không uống</option>
+                    <option value="Social drinker" ${myPref.drinkingPreference == 'Social drinker' ? 'selected' : ''}>Uống xã giao</option>
+                    <option value="Don't care" ${myPref.drinkingPreference == "Don't care" ? 'selected' : ''}>Không quan tâm</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Độ tuổi bạn đồng hành ưu tiên</label>
+                  <select name="targetAgeMax" class="form-control">
+                    <option value="0" ${myPref.targetAgeMax == 0 ? 'selected' : ''}>Bất kỳ độ tuổi nào</option>
+                    <option value="25" ${myPref.targetAgeMax == 25 ? 'selected' : ''}>18 - 25 tuổi</option>
+                    <option value="35" ${myPref.targetAgeMax == 35 ? 'selected' : ''}>26 - 35 tuổi</option>
+                    <option value="50" ${myPref.targetAgeMax == 50 ? 'selected' : ''}>36 - 50 tuổi</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Giới tính bạn đồng hành</label>
+                  <select name="gender" class="form-control">
+                    <option value="All" ${myPref.targetGender == 'All' ? 'selected' : ''}>Tất cả</option>
+                    <option value="Male" ${myPref.targetGender == 'Male' ? 'selected' : ''}>Nam</option>
+                    <option value="Female" ${myPref.targetGender == 'Female' ? 'selected' : ''}>Nữ</option>
+                  </select>
+                </div>
+
+                <div class="form-group full">
+                  <label class="form-label">Sở thích du lịch (Chọn nhiều)</label>
+                  <input type="hidden" name="tags" id="travelTagsInput" value="${myPref.tags}">
+                  <div class="tag-group">
+                    <c:forEach var="tag" items="${['Beach', 'Mountains', 'Culture', 'Food', 'Shopping', 'Adventure', 'Photography', 'Nightlife', 'Nature']}">
+                      <span class="tag" data-input="travelTagsInput" data-val="${tag}" onclick="toggleMultiTag(this)">${tag}</span>
+                    </c:forEach>
+                  </div>
+                </div>
+
+                <div class="form-group full">
+                  <label class="form-label">Hoạt động ưa thích (Chọn nhiều)</label>
+                  <input type="hidden" name="activityPreferences" id="activityTagsInput" value="${myPref.activityPreferences}">
+                  <div class="tag-group">
+                    <c:forEach var="act" items="${['Hiking', 'Camping', 'Sightseeing', 'Local Experiences', 'Water Sports', 'Museums']}">
+                      <span class="tag" data-input="activityTagsInput" data-val="${act}" onclick="toggleMultiTag(this)">${act}</span>
+                    </c:forEach>
+                  </div>
+                </div>
+
               </div>
-              <input type="hidden" name="travelInterests" id="interestInput"
-                     value="${sessionUser.profile.travelInterests}">
-            </div>
+              
+              <div class="save-bar" style="margin-top: 24px;">
+                <button type="button" class="btn btn-ghost" onclick="resetForm()">
+                  Hủy thay đổi
+                </button>
+                <button type="submit" class="btn btn-primary">
+                  <i class="fa fa-floppy-disk"></i> Lưu Sở Thích
+                </button>
+              </div>
 
-            <!-- Ngân sách và Phong cách bị ẩn do Database chưa hỗ trợ -->
-            <div class="form-group" style="display: none;">
-              <label class="form-label" for="budgetRange">Ngân sách tour ưa thích (VNĐ/người)</label>
-              <select id="budgetRange" name="budgetRange" class="form-control" style="max-width:320px">
-                <option value="">-- Chọn mức ngân sách --</option>
-                <option value="under1m">Dưới 1 triệu</option>
-                <option value="1m-3m">1 – 3 triệu</option>
-                <option value="3m-7m">3 – 7 triệu</option>
-                <option value="7m-15m">7 – 15 triệu</option>
-                <option value="above15m">Trên 15 triệu</option>
-              </select>
             </div>
-
-            <div class="form-group" style="display: none;">
-              <label class="form-label" for="travelStyle">Phong cách di chuyển</label>
-              <select id="travelStyle" name="travelStyle" class="form-control" style="max-width:320px">
-                <option value="">-- Chọn --</option>
-                <option value="backpacker">Bụi / Backpacker</option>
-                <option value="comfort">Thoải mái / Tiện nghi</option>
-                <option value="luxury">Sang trọng / Cao cấp</option>
-                <option value="flexible">Linh hoạt</option>
-              </select>
-            </div>
-
-            <button type="submit" class="btn btn-primary">
-              <i class="fa fa-floppy-disk"></i> Lưu sở thích
-            </button>
           </div>
-        </div>
-      </form>
+        </form>
     </div>
 
     <!-- ── TAB 4: Notifications ── -->
@@ -581,16 +647,19 @@ function calcCompletion() {
 }
 calcCompletion();
 
-/* ── Interest tags ── */
-const savedInterests = (document.getElementById('interestInput').value || '').split(',');
-document.querySelectorAll('.tag[data-val]').forEach(tag => {
-  if (savedInterests.includes(tag.dataset.val)) tag.classList.add('selected');
+/* ── Tags Initialization ── */
+document.querySelectorAll('input[type="hidden"][id$="TagsInput"]').forEach(input => {
+  const savedVals = (input.value || '').split(',').map(s => s.trim());
+  document.querySelectorAll(`.tag[data-input="${input.id}"]`).forEach(tag => {
+    if (savedVals.includes(tag.dataset.val)) tag.classList.add('selected');
+  });
 });
 
-function toggleTag(el) {
+function toggleMultiTag(el) {
   el.classList.toggle('selected');
-  const selected = [...document.querySelectorAll('.tag.selected')].map(t => t.dataset.val);
-  document.getElementById('interestInput').value = selected.join(',');
+  const inputId = el.dataset.input;
+  const selected = [...document.querySelectorAll(`.tag[data-input="${inputId}"].selected`)].map(t => t.dataset.val);
+  document.getElementById(inputId).value = selected.join(', ');
 }
 
 const dobInputProfile = document.getElementById('dob');

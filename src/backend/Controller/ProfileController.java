@@ -60,6 +60,14 @@ public class ProfileController extends HttpServlet {
         List<ActivityLog> activityLogs = userDAO.getActivityLogs(user.getUserId());
         request.setAttribute("activityLogs", activityLogs);
         
+        // Fetch travel preferences
+        Model.MatchingDAO matchingDAO = new Model.MatchingDAO();
+        Entities.TravelPreference myPref = matchingDAO.getPreference(user.getUserId());
+        if (myPref == null) {
+            myPref = new Entities.TravelPreference();
+        }
+        request.setAttribute("myPref", myPref);
+        
         request.getRequestDispatcher("/views/profile.jsp").forward(request, response);
     }
 
@@ -194,8 +202,51 @@ public class ProfileController extends HttpServlet {
                 profile.setDateOfBirth(parsedDob);
 
             } else if ("updatePreferences".equals(action)) {
-                String interests = request.getParameter("travelInterests");
-                profile.setTravelInterests(interests);
+                Model.MatchingDAO matchingDAO = new Model.MatchingDAO();
+                Entities.TravelPreference pref = new Entities.TravelPreference();
+                pref.setUserId(user.getUserId());
+                pref.setDestination(trim(request.getParameter("destination")));
+                pref.setTravelStyle(trim(request.getParameter("travelStyle")));
+                
+                String startDateStr = trim(request.getParameter("startDate"));
+                String endDateStr = trim(request.getParameter("endDate"));
+                if (!startDateStr.isEmpty()) {
+                    pref.setStartDate(java.sql.Date.valueOf(startDateStr));
+                }
+                if (!endDateStr.isEmpty()) {
+                    pref.setEndDate(java.sql.Date.valueOf(endDateStr));
+                }
+                
+                String minB = trim(request.getParameter("minBudget"));
+                String maxB = trim(request.getParameter("maxBudget"));
+                pref.setMinBudget(!minB.isEmpty() ? Double.parseDouble(minB) : 0);
+                pref.setMaxBudget(!maxB.isEmpty() ? Double.parseDouble(maxB) : 0);
+                
+                String ageMaxStr = trim(request.getParameter("targetAgeMax"));
+                pref.setTargetAgeMax(!ageMaxStr.isEmpty() ? Integer.parseInt(ageMaxStr) : 0);
+                
+                pref.setTargetGender(trim(request.getParameter("gender")));
+                pref.setLanguages(trim(request.getParameter("languages")));
+                
+                String[] tagsArr = request.getParameterValues("tags");
+                pref.setTags(tagsArr != null ? String.join(", ", tagsArr) : trim(request.getParameter("tags")));
+                
+                String[] activityArr = request.getParameterValues("activityPreferences");
+                pref.setActivityPreferences(activityArr != null ? String.join(", ", activityArr) : trim(request.getParameter("activityPreferences")));
+                
+                pref.setTripDuration(trim(request.getParameter("tripDuration")));
+                pref.setTravelFrequency(trim(request.getParameter("travelFrequency")));
+                pref.setSmokingPreference(trim(request.getParameter("smokingPreference")));
+                pref.setDrinkingPreference(trim(request.getParameter("drinkingPreference")));
+                
+                boolean savedPref = matchingDAO.savePreference(pref);
+                if (!savedPref) {
+                     sendErrorBack(request, response, user, profile, "Không thể lưu sở thích du lịch");
+                     return;
+                }
+                request.setAttribute("successMessage", "Cập nhật sở thích du lịch thành công");
+                doGet(request, response);
+                return;
             }
 
             // Tiến hành cập nhật Database
