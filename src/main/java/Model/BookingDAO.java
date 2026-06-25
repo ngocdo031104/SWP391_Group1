@@ -218,6 +218,44 @@ public class BookingDAO extends DBContext {
         return list;
     }
 
+    // Dương làm phần này: lấy danh sách booking kèm thông tin Tour để hiển thị Lịch sử Tour
+    public List<Booking> getBookingsWithTourByCustomerId(int customerId) {
+        List<Booking> list = new ArrayList<>();
+        String sql = "SELECT b.BookingID, b.BookingCode, b.ScheduleID, b.CustomerID, b.NumParticipants, "
+                   + "b.BaseAmount, b.VATAmount, b.DiscountAmount, b.TotalAmount, b.Status, b.Notes, b.CouponID, b.CreatedAt, b.UpdatedAt, "
+                   + "s.DepartureDate, s.ReturnDate, s.Transportation, "
+                   + "t.TourName, t.Destination, t.DurationDays "
+                   + "FROM Booking b "
+                   + "JOIN TourSchedule s ON b.ScheduleID = s.ScheduleID "
+                   + "JOIN Tour t ON s.TourID = t.TourID "
+                   + "WHERE b.CustomerID = ? ORDER BY b.CreatedAt DESC";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, customerId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Booking booking = mapBooking(rs);
+                    Entities.TourSchedule schedule = new Entities.TourSchedule();
+                    schedule.setScheduleId(booking.getScheduleId());
+                    schedule.setDepartureDate(rs.getDate("DepartureDate"));
+                    schedule.setReturnDate(rs.getDate("ReturnDate"));
+                    schedule.setTransportation(rs.getString("Transportation"));
+
+                    Entities.Tour tour = new Entities.Tour();
+                    tour.setTourName(rs.getString("TourName"));
+                    tour.setDestination(rs.getString("Destination"));
+                    tour.setDurationDays(rs.getInt("DurationDays"));
+
+                    schedule.setTour(tour);
+                    booking.setSchedule(schedule);
+                    list.add(booking);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(BookingDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return list;
+    }
+
     /**
      * Gets details of a booking using its unique booking code.
      * @param bookingCode unique booking code
@@ -316,7 +354,7 @@ public class BookingDAO extends DBContext {
         String sql = "SELECT bp.ParticipantID, bp.BookingID, bp.FullName, bp.AgeType, bp.PhoneNumber, bp.Email, bp.IsLeader, bp.CreatedAt "
                    + "FROM BookingParticipant bp "
                    + "JOIN Booking b ON bp.BookingID = b.BookingID "
-                   + "WHERE b.ScheduleID = ? AND b.Status IN ('Confirmed', 'Completed', 'Paid')";
+                   + "WHERE b.ScheduleID = ? AND b.Status IN ('Confirmed', 'Completed', 'Success')";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, scheduleId);
             try (ResultSet rs = ps.executeQuery()) {

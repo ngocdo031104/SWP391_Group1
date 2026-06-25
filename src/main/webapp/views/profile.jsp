@@ -145,7 +145,7 @@
         <button class="btn btn-outline btn-sm" onclick="shareProfile()">
           <i class="fa fa-share-nodes"></i> Chia sẻ
         </button>
-        <a href="${pageContext.request.contextPath}/bookings" class="btn btn-primary btn-sm">
+        <a href="${pageContext.request.contextPath}/customer/booking/history" class="btn btn-primary btn-sm">
           <i class="fa fa-suitcase"></i> Lịch sử Tour
         </a>
       </div>
