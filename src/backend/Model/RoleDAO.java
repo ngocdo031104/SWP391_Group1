@@ -17,7 +17,7 @@ public class RoleDAO extends DBContext {
 
     public List<Role> getAllRoles() {
         List<Role> list = new ArrayList<>();
-        String sql = "SELECT * FROM Role";
+        String sql = "SELECT r.*, (SELECT COUNT(*) FROM [User] u WHERE u.RoleID = r.RoleID) as UserCount FROM Role r";
         try (PreparedStatement ps = connection.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
@@ -26,6 +26,7 @@ public class RoleDAO extends DBContext {
                 r.setRoleName(rs.getString("RoleName"));
                 r.setDescription(rs.getString("Description"));
                 r.setSystemRole(rs.getBoolean("IsSystemRole"));
+                r.setUserCount(rs.getInt("UserCount"));
                 r.setPermissions(getPermissionsByRoleId(r.getRoleId()));
                 list.add(r);
             }
@@ -36,7 +37,7 @@ public class RoleDAO extends DBContext {
     }
 
     public Role getRoleById(int roleId) {
-        String sql = "SELECT * FROM Role WHERE RoleID = ?";
+        String sql = "SELECT r.*, (SELECT COUNT(*) FROM [User] u WHERE u.RoleID = r.RoleID) as UserCount FROM Role r WHERE r.RoleID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, roleId);
             try (ResultSet rs = ps.executeQuery()) {
@@ -46,6 +47,7 @@ public class RoleDAO extends DBContext {
                     r.setRoleName(rs.getString("RoleName"));
                     r.setDescription(rs.getString("Description"));
                     r.setSystemRole(rs.getBoolean("IsSystemRole"));
+                    r.setUserCount(rs.getInt("UserCount"));
                     r.setPermissions(getPermissionsByRoleId(r.getRoleId()));
                     return r;
                 }

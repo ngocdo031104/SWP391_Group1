@@ -6,6 +6,8 @@ import Entities.TravelPreference;
 import Entities.MatchedUser;
 import Model.BuddyRequestDAO;
 import Model.MatchingDAO;
+import Model.TourDAO;
+import Entities.DestinationInfo;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -77,6 +79,14 @@ public class BuddyController extends HttpServlet {
             request.setAttribute("friendPrefs", friendPrefs);
             List<User> suggestedBuddies = buddyRequestDAO.getSuggestedBuddies(currentUserId);
             request.setAttribute("suggestedBuddies", suggestedBuddies);
+            
+            TourDAO tourDAO = new TourDAO();
+            try {
+                List<DestinationInfo> destinations = tourDAO.getTopDestinations();
+                request.setAttribute("destinations", destinations);
+            } finally {
+                tourDAO.close();
+            }
             
         } catch (Exception e) {
             e.printStackTrace();

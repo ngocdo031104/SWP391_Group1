@@ -108,164 +108,237 @@
         </header>
 
         <section class="view-panel active">
-            <c:if test="${not empty sessionScope.errorMsg}">
-                <div style="background: #fdeaea; color: #d32f2f; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-                    <i data-lucide="alert-circle" style="vertical-align: middle; margin-right: 5px;"></i>
-                    ${sessionScope.errorMsg}
-                </div>
-                <c:remove var="errorMsg" scope="session"/>
-            </c:if>
+            
+            <div id="toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px;"></div>
 
-            <div class="content-card">
-                <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
-                    <h3 class="card-title">Danh Sách Vai Trò (Roles)</h3>
-                    <button class="btn btn-primary" onclick="openRoleModal('create')">
-                        <i data-lucide="plus"></i> Tạo Vai Trò Mới
-                    </button>
+            <div class="role-management-container" style="display: flex; gap: 30px; margin-top: 20px; align-items: stretch; height: calc(100vh - 120px);">
+                
+                <!-- Left Panel -->
+                <div class="left-panel" style="width: 280px; background: #FFFFFF; border-radius: 16px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; flex-direction: column; border: 1px solid #E5E7EB;">
+                    <h3 style="color: #1e293b; margin-top: 0; margin-bottom: 20px; font-size: 18px; font-weight: 600;">Danh sách vai trò</h3>
+                    
+                    <div style="position: relative; margin-bottom: 15px;">
+                        <i data-lucide="search" style="position: absolute; left: 12px; top: 10px; width: 16px; color: #9ca3af;"></i>
+                        <input type="text" id="roleSearch" placeholder="Tìm kiếm vai trò..." style="width: 100%; padding: 10px 10px 10px 35px; border: 1px solid #E5E7EB; border-radius: 8px; font-size: 14px; outline: none; transition: border-color 0.2s;" onkeyup="filterRoles()">
+                    </div>
+
+                    <div id="roleList" style="display: flex; flex-direction: column; gap: 8px; flex: 1; overflow-y: auto; margin-bottom: 15px; padding-right: 5px;">
+                        <c:forEach var="role" items="${roles}">
+                            <div class="role-item" data-role-id="${role.roleId}" data-role-name="${role.roleName}" data-role-desc="${role.description}" onclick="selectRole(${role.roleId}, this)" style="padding: 12px 15px; border-radius: 8px; background: #F8FAFC; color: #334155; cursor: pointer; border: 1px solid transparent; transition: all 0.2s; position: relative;">
+                                <div style="font-weight: 600; font-size: 15px;">${role.roleName}</div>
+                                <div style="font-size: 12px; color: #64748b; margin-top: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${empty role.description ? 'Chưa có mô tả' : role.description}</div>
+                                <div style="font-size: 11px; color: #94a3b8; margin-top: 6px;"><i data-lucide="users" style="width: 12px; height: 12px; vertical-align: middle;"></i> ${role.userCount} Users</div>
+                            </div>
+                        </c:forEach>
+                    </div>
+
+                    <!-- role-actions removed -->
                 </div>
-                <div class="card-body table-responsive" style="padding: 0;">
-                    <table class="admin-table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Tên Vai Trò</th>
-                                <th>Mô Tả</th>
-                                <th>Quyền Hạn Hiện Tại</th>
-                                <th style="width: 250px;">Thao Tác</th>
-                            </tr>
-                        </thead>
-                        <tbody id="rolesTableBody">
-                            <c:forEach var="role" items="${roles}">
-                                <tr>
-                                    <td>#${role.roleId}</td>
-                                    <td><strong>${role.roleName}</strong></td>
-                                    <td>${role.description}</td>
-                                    <td>
-                                        <c:choose>
-                                            <c:when test="${empty role.permissions}">
-                                                <span style="color: #999; font-size: 13px;">Chưa gán quyền</span>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <details style="cursor: pointer; outline: none;">
-                                                    <summary style="font-weight: 500; color: #4f46e5; font-size: 13px; margin-bottom: 5px;">Xem danh sách quyền hạn</summary>
-                                                    <div style="margin-top: 5px; max-height: 150px; overflow-y: auto; padding-right: 5px;">
-                                                        <c:forEach var="p" items="${role.permissions}">
-                                                            <span class="permission-badge">${p.moduleName}: ${p.action}</span>
-                                                        </c:forEach>
-                                                    </div>
-                                                </details>
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </td>
-                                    <td>
-                                        <div style="display: flex; gap: 5px;">
-                                            <button class="btn btn-secondary btn-sm" onclick="openPermModal(${role.roleId}, '${role.roleName}')" title="Phân quyền">
-                                                <i data-lucide="shield"></i> Quyền
-                                            </button>
-                                            <button class="btn btn-secondary btn-sm" onclick="openRoleModal('edit', ${role.roleId}, '${role.roleName}', '${role.description}')" title="Sửa">
-                                                <i data-lucide="edit"></i>
-                                            </button>
-                                            <c:if test="${role.roleId != 1 && role.roleId != 4}">
-                                                <form action="${pageContext.request.contextPath}/admin/roles" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc muốn xóa vai trò này?');">
-                                                    <input type="hidden" name="action" value="deleteRole">
-                                                    <input type="hidden" name="roleId" value="${role.roleId}">
-                                                    <button type="submit" class="btn btn-sm" style="background:#fff0f0; color:#dc2626; border:1px solid #fecaca;" title="Xóa">
-                                                        <i data-lucide="trash-2"></i>
-                                                    </button>
-                                                </form>
-                                            </c:if>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </c:forEach>
-                        </tbody>
-                    </table>
+
+                <!-- Right Panel -->
+                <div class="right-panel" style="flex: 1; background: #FFFFFF; border-radius: 16px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #E5E7EB; display: flex; flex-direction: column;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px;">
+                        <div>
+                            <h3 style="color: #1e293b; margin-top: 0; margin-bottom: 5px; font-size: 20px; font-weight: 600;">Ma trận phân quyền</h3>
+                            <p style="color: #64748b; margin: 0; font-size: 14px;">Thiết lập quyền truy cập cho vai trò được chọn</p>
+                        </div>
+                        <div id="unsavedBadge" style="display: none; background: #fef3c7; color: #d97706; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; align-items: center; gap: 6px;">
+                            <span style="font-size: 10px;">●</span> Chưa lưu
+                        </div>
+                    </div>
+                    
+                    <form id="permissionForm" onsubmit="submitPermissions(event)" style="display: flex; flex-direction: column; flex: 1; overflow: hidden;">
+                        <input type="hidden" id="permRoleIdInput" name="roleId" value="">
+                        
+                        <div style="flex: 1; overflow-y: auto; padding-right: 5px;">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead style="position: sticky; top: 0; background: #F8FAFC; z-index: 10; border-bottom: 2px solid #E5E7EB;">
+                                    <tr>
+                                        <th style="padding: 15px; text-align: left; font-weight: 600; color: #334155;">Chức năng</th>
+                                        <th style="padding: 15px; text-align: center; font-weight: 600; color: #334155;">
+                                            <div style="display: flex; flex-direction: column; align-items: center; gap: 5px;">
+                                                Xem
+                                                <input type="checkbox" class="custom-checkbox col-select" data-col="read" onchange="toggleColumn('read', this.checked)">
+                                            </div>
+                                        </th>
+                                        <th style="padding: 15px; text-align: center; font-weight: 600; color: #334155;">
+                                            <div style="display: flex; flex-direction: column; align-items: center; gap: 5px;">
+                                                Thêm
+                                                <input type="checkbox" class="custom-checkbox col-select" data-col="create" onchange="toggleColumn('create', this.checked)">
+                                            </div>
+                                        </th>
+                                        <th style="padding: 15px; text-align: center; font-weight: 600; color: #334155;">
+                                            <div style="display: flex; flex-direction: column; align-items: center; gap: 5px;">
+                                                Sửa
+                                                <input type="checkbox" class="custom-checkbox col-select" data-col="update" onchange="toggleColumn('update', this.checked)">
+                                            </div>
+                                        </th>
+                                        <th style="padding: 15px; text-align: center; font-weight: 600; color: #334155;">
+                                            <div style="display: flex; flex-direction: column; align-items: center; gap: 5px;">
+                                                Xóa
+                                                <input type="checkbox" class="custom-checkbox col-select" data-col="delete" onchange="toggleColumn('delete', this.checked)">
+                                            </div>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody id="matrixBody">
+                                    <!-- Generated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #E5E7EB; display: flex; justify-content: flex-end; gap: 12px; align-items: center;">
+                            <span id="unsavedText" style="color: #F59E0B; font-weight: 500; font-size: 14px; display: none; margin-right: 10px;">
+                                <i data-lucide="alert-triangle" style="width: 16px; vertical-align: text-bottom;"></i> Bạn có thay đổi chưa được lưu
+                            </span>
+                            <button type="button" class="btn" id="cancelPermBtn" onclick="discardChanges()" style="background: transparent; color: #EF4444; border: 1px solid transparent; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background 0.2s;">
+                                Hủy thay đổi
+                            </button>
+                            <button type="button" class="btn" id="resetPermBtn" onclick="restoreDefaults()" style="background: #F1F5F9; color: #475569; border: 1px solid #E5E7EB; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background 0.2s;">
+                                Khôi phục mặc định
+                            </button>
+                            <button type="submit" class="btn btn-primary" id="savePermBtn" style="background: #2563EB; color: white; border: none; padding: 10px 25px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background 0.2s; box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);">
+                                Lưu thay đổi
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </section>
     </main>
 </div>
 
-<div id="permModal" class="modal">
-    <div class="modal-content" style="width: 70%;">
-        <span class="close" onclick="closeModal('permModal')">&times;</span>
-        <h3 id="permModalTitle" style="margin-top: 0; margin-bottom: 15px; color: var(--text-dark); font-family: 'Outfit', sans-serif;">Cập Nhật Quyền Hạn (Ma Trận)</h3>
-        
-        <form id="permissionForm" onsubmit="submitPermissions(event)">
-            <input type="hidden" id="permRoleIdInput" name="roleId" value="">
-            
-            <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
-                <table class="admin-table" style="width: 100%; border-collapse: collapse;">
-                    <thead style="position: sticky; top: 0; background: #f8fafc; z-index: 1;">
-                        <tr>
-                            <th style="border-bottom: 2px solid #ddd; padding: 10px;">Module</th>
-                            <th style="border-bottom: 2px solid #ddd; padding: 10px; text-align: center;">Tất Cả</th>
-                            <th style="border-bottom: 2px solid #ddd; padding: 10px; text-align: center;">Read</th>
-                            <th style="border-bottom: 2px solid #ddd; padding: 10px; text-align: center;">Create</th>
-                            <th style="border-bottom: 2px solid #ddd; padding: 10px; text-align: center;">Update</th>
-                            <th style="border-bottom: 2px solid #ddd; padding: 10px; text-align: center;">Delete</th>
-                            <th style="border-bottom: 2px solid #ddd; padding: 10px; text-align: center;">Other (Approve, Export...)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="matrixBody">
-                        </tbody>
-                </table>
-            </div>
-            
-            <div id="ajaxMsg" style="margin-top: 10px; display: none; padding: 10px; border-radius: 4px;"></div>
-
-            <div style="text-align: right; margin-top: 25px; padding-top: 15px; border-top: 1px solid #eaeaea;">
-                <button type="button" class="btn btn-secondary" onclick="closeModal('permModal')" style="margin-right: 10px;">Đóng</button>
-                <button type="submit" class="btn btn-primary" id="savePermBtn"><i data-lucide="save" style="width: 16px; height: 16px; margin-right: 5px;"></i> Lưu Quyền</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<div id="roleModal" class="modal">
-    <div class="modal-content small">
-        <span class="close" onclick="closeModal('roleModal')">&times;</span>
-        <h3 id="roleModalTitle" style="margin-top: 0; margin-bottom: 15px; color: var(--text-dark); font-family: 'Outfit', sans-serif;">Tạo Vai Trò</h3>
+<!-- Modals -->
+<div id="roleModal" class="modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(15, 23, 42, 0.5); backdrop-filter: blur(4px);">
+    <div class="modal-content" style="background-color: #fff; margin: 10% auto; padding: 30px; border-radius: 16px; width: 400px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);">
+        <h3 id="roleModalTitle" style="margin-top: 0; margin-bottom: 20px; color: #1e293b; font-size: 20px; font-weight: 600;">Tạo Vai Trò</h3>
         
         <form action="${pageContext.request.contextPath}/admin/roles" method="post">
             <input type="hidden" name="action" id="roleActionInput" value="createRole">
             <input type="hidden" id="roleIdInput" name="roleId" value="">
             
-            <div class="form-group">
-                <label>Tên Vai Trò (Role Name) *</label>
-                <input type="text" id="roleNameInput" name="roleName" required placeholder="VD: Marketing Manager">
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #334155; font-size: 14px;">Tên Vai Trò *</label>
+                <input type="text" id="roleNameInput" name="roleName" required placeholder="VD: Content Manager" style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 14px; outline: none;">
             </div>
             
-            <div class="form-group">
-                <label>Mô Tả (Description)</label>
-                <textarea id="roleDescInput" name="description" rows="3" placeholder="Mô tả chức năng của vai trò..."></textarea>
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #334155; font-size: 14px;">Mô Tả</label>
+                <textarea id="roleDescInput" name="description" rows="3" placeholder="Mô tả chức năng của vai trò..." style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 14px; outline: none; resize: vertical;"></textarea>
             </div>
             
-            <div style="text-align: right; margin-top: 20px;">
-                <button type="button" class="btn btn-secondary" onclick="closeModal('roleModal')" style="margin-right: 10px;">Hủy</button>
-                <button type="submit" class="btn btn-primary"><i data-lucide="save" style="width: 16px; height: 16px; margin-right: 5px;"></i> Lưu Thông Tin</button>
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button type="button" onclick="closeModal('roleModal')" style="padding: 10px 20px; border: 1px solid #cbd5e1; border-radius: 8px; background: white; color: #475569; font-weight: 600; cursor: pointer;">Hủy</button>
+                <button type="submit" style="padding: 10px 20px; border: none; border-radius: 8px; background: #2563EB; color: white; font-weight: 600; cursor: pointer;">Lưu</button>
             </div>
         </form>
     </div>
 </div>
 
+<div id="deleteModal" class="modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(15, 23, 42, 0.5); backdrop-filter: blur(4px);">
+    <div class="modal-content" style="background-color: #fff; margin: 15% auto; padding: 30px; border-radius: 16px; width: 400px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); text-align: center;">
+        <div style="width: 50px; height: 50px; border-radius: 50%; background: #fee2e2; color: #ef4444; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+            <i data-lucide="alert-triangle" style="width: 24px; height: 24px;"></i>
+        </div>
+        <h3 style="margin-top: 0; margin-bottom: 10px; color: #1e293b; font-size: 20px; font-weight: 600;">Xóa vai trò?</h3>
+        <p style="color: #64748b; margin-bottom: 25px; font-size: 15px;">Bạn có chắc chắn muốn xóa vai trò này? Hành động này không thể hoàn tác.</p>
+        
+        <form action="${pageContext.request.contextPath}/admin/roles" method="post" style="display: flex; justify-content: center; gap: 12px;">
+            <input type="hidden" name="action" value="deleteRole">
+            <input type="hidden" name="roleId" id="deleteRoleIdInput" value="">
+            
+            <button type="button" onclick="closeModal('deleteModal')" style="flex: 1; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; background: white; color: #475569; font-weight: 600; cursor: pointer;">Hủy</button>
+            <button type="submit" style="flex: 1; padding: 10px; border: none; border-radius: 8px; background: #EF4444; color: white; font-weight: 600; cursor: pointer;">Xóa</button>
+        </form>
+    </div>
+</div>
+
+<style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+    .role-item.active {
+        background: #EFF6FF !important;
+        border: 1px solid #BFDBFE !important;
+        border-left: 4px solid #3B82F6 !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+    .role-item.active .lucide {
+        color: #3B82F6 !important;
+    }
+    .role-item:hover:not(.active) {
+        background: #F1F5F9 !important;
+        border-color: #E2E8F0 !important;
+    }
+    .custom-checkbox {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        accent-color: #3B82F6;
+        border-radius: 4px;
+        transition: all 0.2s;
+    }
+    .custom-checkbox:hover {
+        transform: scale(1.1);
+    }
+    .btn-ghost:hover {
+        background: #f1f5f9 !important;
+    }
+    td, th { border-bottom: 1px solid #F1F5F9; }
+    
+    .toast {
+        padding: 12px 20px;
+        border-radius: 8px;
+        color: white;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        animation: slideIn 0.3s ease forwards;
+        font-size: 14px;
+    }
+    .toast.success { background: #10B981; }
+    .toast.error { background: #EF4444; }
+    .toast.warning { background: #F59E0B; }
+    
+    @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOut {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+    }
+</style>
+
 <script>
-    // Khởi tạo các biểu tượng Lucide ban đầu
     lucide.createIcons();
     
-    // SỬA LỖI: Bỏ chữ "ge" thừa ở đây
+    // Setup Data
     const allPermissions = [
         <c:forEach var="p" items="${allPermissions}">
-            { id: ${p.permissionId}, module: "${p.moduleName}", action: "${p.action}" },
+            { id: ${p.permissionId}, module: "${p.moduleName}".trim(), action: "${p.action}".trim() },
         </c:forEach>
     ];
 
-    // Group permissions by Module
-    const modules = {};
-    allPermissions.forEach(p => {
-        if(!modules[p.module]) modules[p.module] = [];
-        modules[p.module].push(p);
-    });
+    const moduleNames = {
+        'Tour Management': 'Quản lý Tour',
+        'Booking Management': 'Quản lý Booking',
+        'User Management': 'Quản lý Người dùng',
+        'Role Management': 'Quản lý Vai trò',
+        'Matching Management': 'Quản lý Ghép đôi bạn đồng hành',
+        'Request Management': 'Quản lý Yêu cầu kết nối',
+        'Review Management': 'Quản lý Đánh giá',
+        'Payment Management': 'Quản lý Thanh toán',
+        'System Settings': 'Báo cáo hệ thống',
+        'Content Management': 'Quản lý Nội dung'
+    };
+
+    const displayModules = Object.keys(moduleNames);
 
     const rolePermissionsMap = {
         <c:forEach var="role" items="${roles}">
@@ -277,65 +350,190 @@
         </c:forEach>
     };
 
+    let currentRoleId = null;
+    let initialPermissions = [];
+
+    function selectRole(roleId, el) {
+        if (hasUnsavedChanges()) {
+            if (!confirm("Bạn có thay đổi chưa được lưu. Bạn có chắc muốn chuyển đổi vai trò?")) {
+                return;
+            }
+        }
+    
+        currentRoleId = roleId;
+        document.getElementById('permRoleIdInput').value = roleId;
+        
+        document.querySelectorAll('.role-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        el.classList.add('active');
+        
+        
+        initialPermissions = [...(rolePermissionsMap[roleId] || [])];
+        renderMatrix(roleId);
+        checkUnsaved();
+    }
+
     function renderMatrix(roleId) {
         const tbody = document.getElementById('matrixBody');
         tbody.innerHTML = '';
         const rolePerms = rolePermissionsMap[roleId] || [];
 
-        for (const mod in modules) {
-            const perms = modules[mod];
+        displayModules.forEach(mod => {
+            const perms = allPermissions.filter(p => p.module === mod);
+            if(perms.length === 0) return;
+
+            let readCb = '', createCb = '', updateCb = '', deleteCb = '';
             
-            let readBox = '', createBox = '', updateBox = '', deleteBox = '', otherBox = '';
             perms.forEach(p => {
                 const isChecked = rolePerms.includes(p.id) ? 'checked' : '';
-                const cb = `<label class="matrix-label" style="display:block; margin: 3px 0; cursor: pointer; color: #334155;"><input type="checkbox" name="permissions[]" value="\${p.id}" class="chk-mod-\${mod}" \${isChecked}> <span class="perm-text" style="color: #334155 !important;">\${p.action}</span></label>`;
+                const cb = `<input type="checkbox" name="permissions[]" value="\${p.id}" class="custom-checkbox row-mod-\${mod.replace(/\s+/g, '')} col-act-\${p.action.toLowerCase()}" \${isChecked} onchange="checkUnsaved()">`;
                 
-                if(p.action.toUpperCase() === 'READ') readBox += cb;
-                else if(p.action.toUpperCase() === 'CREATE') createBox += cb;
-                else if(p.action.toUpperCase() === 'UPDATE') updateBox += cb;
-                else if(p.action.toUpperCase() === 'DELETE') deleteBox += cb;
-                else otherBox += cb;
+                if(p.action.toUpperCase() === 'READ') readCb = cb;
+                else if(p.action.toUpperCase() === 'CREATE') createCb = cb;
+                else if(p.action.toUpperCase() === 'UPDATE') updateCb = cb;
+                else if(p.action.toUpperCase() === 'DELETE') deleteCb = cb;
             });
 
             const row = `
-                <tr style="border-bottom: 1px solid #eee;">
-                    <td style="padding: 10px;"><strong>\${mod}</strong></td>
-                    <td style="padding: 10px; text-align: center;"><input type="checkbox" onchange="toggleModule('\${mod}', this.checked)"></td>
-                    <td style="padding: 10px; text-align: left; vertical-align: top;">\${readBox}</td>
-                    <td style="padding: 10px; text-align: left; vertical-align: top;">\${createBox}</td>
-                    <td style="padding: 10px; text-align: left; vertical-align: top;">\${updateBox}</td>
-                    <td style="padding: 10px; text-align: left; vertical-align: top;">\${deleteBox}</td>
-                    <td style="padding: 10px; text-align: left; vertical-align: top;">\${otherBox}</td>
+                <tr>
+                    <td style="padding: 15px; font-weight: 500; color: #334155;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <input type="checkbox" class="custom-checkbox" onchange="toggleRow('\${mod.replace(/\s+/g, '')}', this.checked)">
+                            \${moduleNames[mod]}
+                        </div>
+                    </td>
+                    <td style="padding: 15px; text-align: center;">\${readCb}</td>
+                    <td style="padding: 15px; text-align: center;">\${createCb}</td>
+                    <td style="padding: 15px; text-align: center;">\${updateCb}</td>
+                    <td style="padding: 15px; text-align: center;">\${deleteCb}</td>
                 </tr>
             `;
             tbody.innerHTML += row;
+        });
+        
+        // Reset column headers
+        document.querySelectorAll('.col-select').forEach(cb => cb.checked = false);
+    }
+
+    function toggleRow(modClass, isChecked) {
+        document.querySelectorAll(`.row-mod-\${modClass}`).forEach(cb => {
+            cb.checked = isChecked;
+        });
+        checkUnsaved();
+    }
+
+    function toggleColumn(actClass, isChecked) {
+        document.querySelectorAll(`.col-act-\${actClass}`).forEach(cb => {
+            cb.checked = isChecked;
+        });
+        checkUnsaved();
+    }
+
+    function hasUnsavedChanges() {
+        const form = document.getElementById('permissionForm');
+        const formData = new FormData(form);
+        const currentPerms = formData.getAll('permissions[]').map(Number);
+        
+        if (currentPerms.length !== initialPermissions.length) return true;
+        
+        const sortedCurrent = [...currentPerms].sort();
+        const sortedInitial = [...initialPermissions].sort();
+        
+        for (let i = 0; i < sortedCurrent.length; i++) {
+            if (sortedCurrent[i] !== sortedInitial[i]) return true;
+        }
+        return false;
+    }
+
+    function checkUnsaved() {
+        const hasChanges = hasUnsavedChanges();
+        document.getElementById('unsavedBadge').style.display = hasChanges ? 'flex' : 'none';
+        document.getElementById('unsavedText').style.display = hasChanges ? 'inline-block' : 'none';
+    }
+
+    function discardChanges() {
+        if (!hasUnsavedChanges()) return;
+        renderMatrix(currentRoleId);
+        checkUnsaved();
+    }
+
+    function restoreDefaults() {
+        if (confirm("Khôi phục quyền mặc định cho vai trò này? Tất cả dữ liệu chưa lưu sẽ mất.")) {
+            document.querySelectorAll('#matrixBody input[type="checkbox"]').forEach(cb => cb.checked = false);
+            checkUnsaved();
         }
     }
 
-    function toggleModule(mod, checked) {
-        document.querySelectorAll(`.chk-mod-\${mod}`).forEach(cb => {
-            cb.checked = checked;
+    // Modal Handlers
+    function openRoleModal(mode) {
+        const el = document.querySelector('.role-item.active');
+        if (mode === 'create') {
+            document.getElementById('roleModalTitle').innerText = 'Tạo Vai Trò Mới';
+            document.getElementById('roleActionInput').value = 'createRole';
+            document.getElementById('roleIdInput').value = '';
+            document.getElementById('roleNameInput').value = '';
+            document.getElementById('roleDescInput').value = '';
+        } else {
+            if (!el) return showToast('warning', 'Vui lòng chọn vai trò để sửa');
+            document.getElementById('roleModalTitle').innerText = 'Sửa Vai Trò';
+            document.getElementById('roleActionInput').value = 'updateRole';
+            document.getElementById('roleIdInput').value = el.dataset.roleId;
+            document.getElementById('roleNameInput').value = el.dataset.roleName;
+            document.getElementById('roleDescInput').value = el.dataset.roleDesc;
+        }
+        document.getElementById('roleModal').style.display = 'block';
+    }
+
+    function confirmDeleteRole() {
+        if (!currentRoleId) return showToast('warning', 'Vui lòng chọn vai trò để xóa');
+        document.getElementById('deleteRoleIdInput').value = currentRoleId;
+        document.getElementById('deleteModal').style.display = 'block';
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).style.display = 'none';
+    }
+
+    function filterRoles() {
+        const val = document.getElementById('roleSearch').value.toLowerCase();
+        document.querySelectorAll('.role-item').forEach(item => {
+            if (item.dataset.roleName.toLowerCase().includes(val)) {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
         });
     }
 
-    function openPermModal(roleId, roleName) {
-        document.getElementById('permModalTitle').innerText = 'Cập Nhật Quyền Hạn (Ma Trận): ' + roleName;
-        document.getElementById('permRoleIdInput').value = roleId;
+    // Toasts
+    function showToast(type, msg) {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
         
-        document.getElementById('ajaxMsg').style.display = 'none';
-        renderMatrix(roleId);
+        let icon = 'check-circle';
+        if (type === 'error') icon = 'x-circle';
+        if (type === 'warning') icon = 'alert-triangle';
         
-        document.getElementById('permModal').style.display = 'block';
+        toast.innerHTML = `<i data-lucide="${icon}" style="width: 20px;"></i> ${msg}`;
+        container.appendChild(toast);
+        lucide.createIcons();
+        
+        setTimeout(() => {
+            toast.style.animation = 'slideOut 0.3s ease forwards';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
     }
 
-    // AJAX Submission
+    // Ajax Submission
     function submitPermissions(e) {
         e.preventDefault();
-        const btn = document.getElementById('savePermBtn');
-        const msgDiv = document.getElementById('ajaxMsg');
+        if (!currentRoleId) return;
         
+        const btn = document.getElementById('savePermBtn');
         btn.disabled = true;
-        btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Đang lưu...';
+        btn.innerText = 'Đang lưu...';
         
         const form = document.getElementById('permissionForm');
         const formData = new FormData(form);
@@ -348,66 +546,47 @@
         })
         .then(response => response.json())
         .then(data => {
-            msgDiv.style.display = 'block';
             if(data.success) {
-                msgDiv.style.background = '#d1e7dd';
-                msgDiv.style.color = '#0f5132';
-                msgDiv.innerText = data.message;
-                setTimeout(() => window.location.reload(), 1000);
+                showToast('success', 'Cập nhật phân quyền thành công');
+                const newPerms = [];
+                formData.getAll('permissions[]').forEach(val => newPerms.push(parseInt(val)));
+                rolePermissionsMap[currentRoleId] = newPerms;
+                initialPermissions = [...newPerms];
+                checkUnsaved();
             } else {
-                msgDiv.style.background = '#f8d7da';
-                msgDiv.style.color = '#842029';
-                msgDiv.innerText = "Lỗi: " + data.message;
-                btn.disabled = false;
-                btn.innerHTML = '<i data-lucide="save" style="width: 16px; height: 16px; margin-right: 5px;"></i> Lưu Quyền';
-                lucide.createIcons(); // Tối ưu: Gọi lại hàm render để load lại icon Lucide
+                showToast('error', 'Không thể cập nhật phân quyền: ' + data.message);
             }
         })
         .catch(err => {
-            msgDiv.style.display = 'block';
-            msgDiv.style.background = '#f8d7da';
-            msgDiv.style.color = '#842029';
-            msgDiv.innerText = "Đã xảy ra lỗi mạng!";
+            showToast('error', 'Đã xảy ra lỗi mạng!');
+        })
+        .finally(() => {
             btn.disabled = false;
-            btn.innerHTML = '<i data-lucide="save" style="width: 16px; height: 16px; margin-right: 5px;"></i> Lưu Quyền';
-            lucide.createIcons(); // Tối ưu: Gọi lại hàm render để load lại icon Lucide
+            btn.innerText = 'Lưu thay đổi';
         });
     }
 
-    function openRoleModal(mode, id = '', name = '', desc = '') {
-        if(mode === 'create') {
-            document.getElementById('roleModalTitle').innerText = 'Tạo Vai Trò Mới';
-            document.getElementById('roleActionInput').value = 'createRole';
-            document.getElementById('roleIdInput').value = '';
-            document.getElementById('roleNameInput').value = '';
-            document.getElementById('roleDescInput').value = '';
-        } else {
-            document.getElementById('roleModalTitle').innerText = 'Sửa Vai Trò';
-            document.getElementById('roleActionInput').value = 'updateRole';
-            document.getElementById('roleIdInput').value = id;
-            document.getElementById('roleNameInput').value = name;
-            document.getElementById('roleDescInput').value = desc;
+    window.addEventListener('DOMContentLoaded', () => {
+        const firstRole = document.querySelector('.role-item');
+        if (firstRole) {
+            firstRole.click();
         }
-        document.getElementById('roleModal').style.display = 'block';
-    }
+        // Show server message if any
+        <c:if test="${not empty sessionScope.errorMsg}">
+            showToast('error', '${sessionScope.errorMsg}');
+            <c:remove var="errorMsg" scope="session"/>
+        </c:if>
+        <c:if test="${not empty sessionScope.successMsg}">
+            showToast('success', '${sessionScope.successMsg}');
+            <c:remove var="successMsg" scope="session"/>
+        </c:if>
+    });
 
-    function closeModal(id) {
-        document.getElementById(id).style.display = 'none';
-    }
-
-    // Table filtering logic
-    document.getElementById('searchInput').addEventListener('keyup', function() {
-        var searchValue = this.value.toLowerCase();
-        var tableBody = document.getElementById('rolesTableBody');
-        var rows = tableBody.getElementsByTagName('tr');
-
-        for (var i = 0; i < rows.length; i++) {
-            var rowText = rows[i].textContent.toLowerCase();
-            if (rowText.includes(searchValue)) {
-                rows[i].style.display = '';
-            } else {
-                rows[i].style.display = 'none';
-            }
+    // Detect navigation attempts with unsaved changes
+    window.addEventListener('beforeunload', (e) => {
+        if (hasUnsavedChanges()) {
+            e.preventDefault();
+            e.returnValue = '';
         }
     });
 </script>

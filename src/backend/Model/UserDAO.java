@@ -477,9 +477,10 @@ public class UserDAO extends DBContext {
 
     public List<User> getAllUsers() {
         List<User> list = new ArrayList<>();
-        String sql = "SELECT u.UserID, u.Email, u.FullName, u.PhoneNumber, u.IsActive, r.RoleName "
+        String sql = "SELECT u.UserID, u.Email, u.FullName, u.PhoneNumber, u.IsActive, u.CreatedAt, r.RoleName, p.AvatarURL "
                    + "FROM [User] u "
                    + "JOIN Role r ON u.RoleID = r.RoleID "
+                   + "LEFT JOIN UserProfile p ON u.UserID = p.UserID "
                    + "ORDER BY u.UserID DESC";
         try (PreparedStatement ps = connection.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -490,10 +491,15 @@ public class UserDAO extends DBContext {
                 user.setFullName(rs.getString("FullName"));
                 user.setPhoneNumber(rs.getString("PhoneNumber"));
                 user.setIsActive(rs.getBoolean("IsActive"));
+                user.setCreatedAt(rs.getTimestamp("CreatedAt"));
                 
                 Role role = new Role();
                 role.setRoleName(rs.getString("RoleName"));
                 user.setRole(role);
+                
+                UserProfile profile = new UserProfile();
+                profile.setAvatarUrl(rs.getString("AvatarURL"));
+                user.setProfile(profile);
                 
                 list.add(user);
             }
@@ -513,6 +519,74 @@ public class UserDAO extends DBContext {
             Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
+    }
+    public boolean updateUserRole(int userId, int roleId) {
+        String sql = "UPDATE [User] SET RoleID = ?, UpdatedAt = SYSDATETIME() WHERE UserID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, roleId);
+            ps.setInt(2, userId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
+    public String deleteUserWithCheck(int userId) {
+        String checkBookingSql = "SELECT COUNT(*) FROM Booking WHERE CustomerID = ?";
+        try (PreparedStatement psCheck = connection.prepareStatement(checkBookingSql)) {
+            psCheck.setInt(1, userId);
+            ResultSet rs = psCheck.executeQuery();
+            if (rs.next() && rs.getInt(1) > 0) {
+                return "has_booking";
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+            return "error";
+        }
+
+        try {
+            connection.setAutoCommit(false);
+            
+            String[] deleteQueries = {
+                "DELETE FROM Notification WHERE UserID = ?",
+                "DELETE FROM TravelPreference WHERE UserId = ?",
+                "DELETE FROM PasswordRecovery WHERE UserID = ?",
+                "DELETE FROM AccountActivityLog WHERE UserID = ?",
+                "DELETE FROM FavoriteTour WHERE CustomerID = ?",
+                "DELETE FROM GuideProfile WHERE UserID = ?",
+                "DELETE FROM UserProfile WHERE UserID = ?",
+                "DELETE FROM BuddyMatch WHERE CustomerID = ? OR MatchedUserID = ?",
+                "DELETE FROM BuddyRequest WHERE SenderID = ? OR ReceiverID = ?",
+                "DELETE FROM ChatMessage WHERE SenderID = ?",
+                "DELETE FROM ConversationParticipant WHERE UserID = ?",
+                "DELETE FROM Review WHERE CustomerID = ?",
+                "DELETE FROM TourAssignment WHERE GuideID = ? OR AssignedBy = ?",
+                "DELETE FROM Audit_Log WHERE AdminID = ?"
+            };
+            
+            for (String q : deleteQueries) {
+                try (PreparedStatement ps = connection.prepareStatement(q)) {
+                    ps.setInt(1, userId);
+                    if (q.contains("OR")) {
+                        ps.setInt(2, userId);
+                    }
+                    ps.executeUpdate();
+                }
+            }
+
+            try (PreparedStatement ps2 = connection.prepareStatement("DELETE FROM [User] WHERE UserID = ?")) {
+                ps2.setInt(1, userId);
+                int rows = ps2.executeUpdate();
+                connection.commit();
+                return rows > 0 ? "success" : "not_found";
+            }
+        } catch (SQLException ex) {
+            try { connection.rollback(); } catch(SQLException ignored) {}
+            return "fk_constraint";
+        } finally {
+            try { connection.setAutoCommit(true); } catch(SQLException ignored) {}
+        }
     }
 }
 

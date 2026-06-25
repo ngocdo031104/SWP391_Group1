@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
 <c:if test="${empty sessionUser}">
     <c:redirect url="/login" />
 </c:if>
@@ -593,9 +594,9 @@
                             <span class="count">${topMatches.size()} người phù hợp</span>
                             <div class="sort-by">
                                 Sắp xếp: 
-                                <select>
-                                    <option>Phù hợp nhất</option>
-                                    <option>Mới nhất</option>
+                                <select id="matchSortSelect" onchange="sortMatches()">
+                                    <option value="match">Phù hợp nhất</option>
+                                    <option value="newest">Mới nhất</option>
                                 </select>
                             </div>
                         </div>
@@ -609,7 +610,7 @@
                         </c:if>
                         
                         <c:forEach var="m" items="${topMatches}">
-                            <div class="match-card">
+                            <div class="match-card" data-match="${m.matchPercentage}" data-id="${m.user.userId}">
                                 <div class="match-card-cover">
                                     <div class="match-badge">${m.matchPercentage}% Phù hợp</div>
                                     <button class="btn-heart"><i data-lucide="heart" style="width: 16px;"></i></button>
@@ -646,7 +647,14 @@
                                     </div>
                                     <div class="match-details">
                                         <div><i data-lucide="calendar" style="width: 14px;"></i> ${not empty m.preference.startDate ? m.preference.startDate : 'Anytime'}</div>
-                                        <div><i data-lucide="dollar-sign" style="width: 14px;"></i> ${m.preference.maxBudget > 0 ? m.preference.maxBudget : 'Flexible'}</div>
+                                        <div><i data-lucide="dollar-sign" style="width: 14px;"></i> 
+                                            <c:choose>
+                                                <c:when test="${m.preference.maxBudget > 0}">
+                                                    <fmt:formatNumber value="${m.preference.maxBudget}" type="number" pattern="#,##0"/>
+                                                </c:when>
+                                                <c:otherwise>Flexible</c:otherwise>
+                                            </c:choose>
+                                        </div>
                                     </div>
                                     <div class="card-actions">
                                         <a href="javascript:void(0)" 
@@ -700,7 +708,7 @@
                                     </c:choose>
                                     <div class="request-details">
                                         <h4>${req.sender.fullName}</h4>
-                                        <p>${req.sender.email} &bull; <i data-lucide="clock" style="width:12px"></i> ${req.createdAt}</p>
+                                        <p>${req.sender.email} &bull; <i data-lucide="clock" style="width:12px"></i> <fmt:formatDate value="${req.createdAt}" pattern="yyyy-MM-dd HH:mm"/></p>
                                     </div>
                                 </div>
                                 <div class="request-actions">
@@ -748,7 +756,7 @@
                                     </c:choose>
                                     <div class="request-details">
                                         <h4>Đã gửi đến: ${req.sender.fullName}</h4>
-                                        <p>${req.sender.email} &bull; <i data-lucide="clock" style="width:12px"></i> ${req.createdAt}</p>
+                                        <p>${req.sender.email} &bull; <i data-lucide="clock" style="width:12px"></i> <fmt:formatDate value="${req.createdAt}" pattern="yyyy-MM-dd HH:mm"/></p>
                                     </div>
                                 </div>
                                 <div class="request-actions">
@@ -823,7 +831,7 @@
                 <div class="sidebar-widget">
                     <div class="widget-header">
                         <h3>Hồ sơ Matching của bạn</h3>
-                        <a href="#"><i data-lucide="edit-2" style="width: 14px;"></i> Sửa</a>
+                        <a href="${pageContext.request.contextPath}/profile"><i data-lucide="edit-2" style="width: 14px;"></i> Sửa</a>
                     </div>
                     <div class="my-profile-mini">
                         <c:choose>
@@ -849,44 +857,35 @@
                         <div class="comp-bar-bg">
                             <div class="comp-bar-fill" style="width: ${completeness}%;"></div>
                         </div>
-                        <a href="#" class="comp-link">Thêm chi tiết để match tốt hơn! <i data-lucide="chevron-right" style="width: 14px;"></i></a>
+                        <a href="${pageContext.request.contextPath}/profile" class="comp-link">Thêm chi tiết để match tốt hơn! <i data-lucide="chevron-right" style="width: 14px;"></i></a>
                     </div>
                 </div>
 
                 <div class="sidebar-widget">
                     <div class="widget-header">
                         <h3>Điểm đến phổ biến</h3>
-                        <a href="#">Xem tất cả</a>
+                        <a href="${pageContext.request.contextPath}/home#destinations">Xem tất cả</a>
                     </div>
                     <ul class="dest-list">
-                        <li class="dest-item">
-                            <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=100&q=80">
-                            <div class="dest-info">
-                                <h5>Bali, Indonesia</h5>
-                                <p>1,234 travelers</p>
-                            </div>
-                        </li>
-                        <li class="dest-item">
-                            <img src="https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?auto=format&fit=crop&w=100&q=80">
-                            <div class="dest-info">
-                                <h5>Thụy Sĩ (Switzerland)</h5>
-                                <p>987 travelers</p>
-                            </div>
-                        </li>
-                        <li class="dest-item">
-                            <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=100&q=80">
-                            <div class="dest-info">
-                                <h5>Nhật Bản (Japan)</h5>
-                                <p>875 travelers</p>
-                            </div>
-                        </li>
-                        <li class="dest-item">
-                            <img src="https://images.unsplash.com/photo-1583417311029-7d8ab439569e?auto=format&fit=crop&w=100&q=80">
-                            <div class="dest-info">
-                                <h5>Thái Lan (Thailand)</h5>
-                                <p>765 travelers</p>
-                            </div>
-                        </li>
+                        <c:forEach var="dest" items="${destinations}" begin="0" end="3">
+                            <li class="dest-item" onclick="window.location.href='${pageContext.request.contextPath}/tourdiscovery?dest=${dest.name}'" style="cursor: pointer;" title="Tìm tour tại ${dest.name}">
+                                <c:choose>
+                                    <c:when test="${not empty dest.imageUrl && (dest.imageUrl.startsWith('http://') || dest.imageUrl.startsWith('https://'))}">
+                                        <img src="${dest.imageUrl}" alt="${dest.name}">
+                                    </c:when>
+                                    <c:when test="${not empty dest.imageUrl}">
+                                        <img src="${pageContext.request.contextPath}/${dest.imageUrl}" alt="${dest.name}">
+                                    </c:when>
+                                    <c:otherwise>
+                                        <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=100&q=80" alt="${dest.name}">
+                                    </c:otherwise>
+                                </c:choose>
+                                <div class="dest-info">
+                                    <h5>${dest.name}</h5>
+                                    <p>${dest.tourCount} tours</p>
+                                </div>
+                            </li>
+                        </c:forEach>
                     </ul>
                 </div>
 
@@ -977,6 +976,29 @@
 
     function closeProfileModal() {
         document.getElementById('profileModal').classList.remove('active');
+    }
+
+    function sortMatches() {
+        var sortBy = document.getElementById('matchSortSelect').value;
+        var grid = document.querySelector('.match-grid');
+        var cards = Array.from(grid.querySelectorAll('.match-card'));
+        
+        cards.sort(function(a, b) {
+            if (sortBy === 'match') {
+                var matchA = parseFloat(a.dataset.match) || 0;
+                var matchB = parseFloat(b.dataset.match) || 0;
+                return matchB - matchA; // Descending match %
+            } else if (sortBy === 'newest') {
+                var idA = parseInt(a.dataset.id) || 0;
+                var idB = parseInt(b.dataset.id) || 0;
+                return idB - idA; // Descending ID (newest user first)
+            }
+            return 0;
+        });
+        
+        cards.forEach(function(card) {
+            grid.appendChild(card);
+        });
     }
 </script>
 

@@ -91,13 +91,16 @@
       padding: 6px 14px; border: 1px solid var(--clr-border); 
       border-radius: 99px; cursor: pointer; transition: 0.2s;
       font-size: 0.85rem; color: var(--clr-text); user-select: none;
-      display: inline-block;
+      display: inline-flex; align-items: center;
     }
-    .tag:hover { border-color: var(--clr-primary); }
+    .tag i { display: none; margin-right: 6px; font-size: 0.8rem; }
+    .tag:hover { border-color: var(--clr-primary); background: #f8fafc; }
     .tag.selected { 
       background: var(--clr-primary-l); border-color: var(--clr-primary);
-      color: var(--clr-primary); font-weight: 500;
+      color: var(--clr-primary); font-weight: 600;
+      box-shadow: 0 2px 8px rgba(91, 33, 182, 0.15);
     }
+    .tag.selected i { display: inline-block; }
   </style>
 
 <div class="profile-wrapper">
@@ -390,7 +393,7 @@
 
     <!-- ── TAB 3: Preferences ── -->
     <div class="tab-content" id="tab-preferences">
-        <form action="${pageContext.request.contextPath}/profile/update" method="post" id="prefForm">
+        <form action="${pageContext.request.contextPath}/profile/update" method="post" id="prefForm" onsubmit="syncTagsBeforeSubmit()">
           <input type="hidden" name="action" value="updatePreferences">
           <div class="card">
             <div class="card-header">
@@ -484,8 +487,10 @@
                   <label class="form-label">Sở thích du lịch (Chọn nhiều)</label>
                   <input type="hidden" name="tags" id="travelTagsInput" value="${myPref.tags}">
                   <div class="tag-group">
-                    <c:forEach var="tag" items="${['Beach', 'Mountains', 'Culture', 'Food', 'Shopping', 'Adventure', 'Photography', 'Nightlife', 'Nature']}">
-                      <span class="tag" data-input="travelTagsInput" data-val="${tag}" onclick="toggleMultiTag(this)">${tag}</span>
+                    <c:set var="travelTagsMap" value="Beach:Biển,Mountains:Núi,Culture:Văn hóa,Food:Ẩm thực,Shopping:Mua sắm,Adventure:Phiêu lưu,Photography:Nhiếp ảnh,Nightlife:Đời sống về đêm,Nature:Thiên nhiên" />
+                    <c:forEach var="pair" items="${travelTagsMap.split(',')}">
+                      <c:set var="item" value="${pair.split(':')}" />
+                      <span class="tag" data-input="travelTagsInput" data-val="${item[0]}" onclick="toggleMultiTag(this)"><i class="fa fa-check"></i>${item[1]}</span>
                     </c:forEach>
                   </div>
                 </div>
@@ -494,8 +499,10 @@
                   <label class="form-label">Hoạt động ưa thích (Chọn nhiều)</label>
                   <input type="hidden" name="activityPreferences" id="activityTagsInput" value="${myPref.activityPreferences}">
                   <div class="tag-group">
-                    <c:forEach var="act" items="${['Hiking', 'Camping', 'Sightseeing', 'Local Experiences', 'Water Sports', 'Museums']}">
-                      <span class="tag" data-input="activityTagsInput" data-val="${act}" onclick="toggleMultiTag(this)">${act}</span>
+                    <c:set var="actTagsMap" value="Hiking:Đi bộ đường dài,Camping:Cắm trại,Sightseeing:Ngắm cảnh,Local Experiences:Trải nghiệm địa phương,Water Sports:Thể thao dưới nước,Museums:Bảo tàng" />
+                    <c:forEach var="pair" items="${actTagsMap.split(',')}">
+                      <c:set var="item" value="${pair.split(':')}" />
+                      <span class="tag" data-input="activityTagsInput" data-val="${item[0]}" onclick="toggleMultiTag(this)"><i class="fa fa-check"></i>${item[1]}</span>
                     </c:forEach>
                   </div>
                 </div>
@@ -605,6 +612,13 @@ function switchTab(name, btn) {
   btn.classList.add('active');
 }
 
+/* Restore active tab if provided by server */
+const serverActiveTab = "${activeTab}";
+if (serverActiveTab) {
+  const targetBtn = document.querySelector('.tab-btn[onclick*="' + serverActiveTab + '"]');
+  if (targetBtn) switchTab(serverActiveTab, targetBtn);
+}
+
 /* ── Avatar preview ── */
 function previewAvatar(input) {
   if (!input.files[0]) return;
@@ -648,18 +662,43 @@ function calcCompletion() {
 calcCompletion();
 
 /* ── Tags Initialization ── */
-document.querySelectorAll('input[type="hidden"][id$="TagsInput"]').forEach(input => {
-  const savedVals = (input.value || '').split(',').map(s => s.trim());
-  document.querySelectorAll(`.tag[data-input="${input.id}"]`).forEach(tag => {
-    if (savedVals.includes(tag.dataset.val)) tag.classList.add('selected');
-  });
-});
+var tagInputs = document.querySelectorAll('input[type="hidden"][id$="TagsInput"]');
+for (var i = 0; i < tagInputs.length; i++) {
+  var input = tagInputs[i];
+  var savedVals = (input.value || '').split(',');
+  for(var k=0; k<savedVals.length; k++) savedVals[k] = savedVals[k].trim();
+  
+  var tags = document.querySelectorAll('.tag[data-input="' + input.id + '"]');
+  for (var j = 0; j < tags.length; j++) {
+    var tag = tags[j];
+    if (savedVals.indexOf(tag.dataset.val) !== -1) {
+      tag.classList.add('selected');
+    }
+  }
+}
 
 function toggleMultiTag(el) {
   el.classList.toggle('selected');
-  const inputId = el.dataset.input;
-  const selected = [...document.querySelectorAll(`.tag[data-input="${inputId}"].selected`)].map(t => t.dataset.val);
-  document.getElementById(inputId).value = selected.join(', ');
+  var inputId = el.dataset.input;
+  var selectedTags = document.querySelectorAll('.tag[data-input="' + inputId + '"].selected');
+  var vals = [];
+  for(var i = 0; i < selectedTags.length; i++) {
+     vals.push(selectedTags[i].dataset.val);
+  }
+  document.getElementById(inputId).value = vals.join(', ');
+}
+
+function syncTagsBeforeSubmit() {
+  var tagInputs = document.querySelectorAll('input[type="hidden"][id$="TagsInput"]');
+  for (var i = 0; i < tagInputs.length; i++) {
+    var input = tagInputs[i];
+    var selectedTags = document.querySelectorAll('.tag[data-input="' + input.id + '"].selected');
+    var vals = [];
+    for(var j = 0; j < selectedTags.length; j++) {
+       vals.push(selectedTags[j].dataset.val);
+    }
+    input.value = vals.join(', ');
+  }
 }
 
 const dobInputProfile = document.getElementById('dob');

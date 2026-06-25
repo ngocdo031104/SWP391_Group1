@@ -245,6 +245,7 @@ public class ProfileController extends HttpServlet {
                      return;
                 }
                 request.setAttribute("successMessage", "Cập nhật sở thích du lịch thành công");
+                request.setAttribute("activeTab", "preferences");
                 doGet(request, response);
                 return;
             }
@@ -253,6 +254,7 @@ public class ProfileController extends HttpServlet {
             boolean success = userDAO.updateProfile(user, profile);
             request.setAttribute(success ? "successMessage" : "errorMessage",
                     success ? "Cập nhật thông tin thành công" : "Không thể cập nhật thông tin");
+            request.setAttribute("activeTab", "info");
 
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -398,6 +400,7 @@ public class ProfileController extends HttpServlet {
 
             request.setAttribute(success ? "successMessage" : "errorMessage",
                     success ? "Đổi mật khẩu thành công" : "Không thể đổi mật khẩu");
+            request.setAttribute("activeTab", "security");
 
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -410,6 +413,7 @@ public class ProfileController extends HttpServlet {
     private void updateNotifications(HttpServletRequest request, HttpServletResponse response, User sessionUser)
             throws ServletException, IOException {
         request.setAttribute("successMessage", "Cập nhật cài đặt thông báo thành công");
+        request.setAttribute("activeTab", "notifications");
         doGet(request, response);
     }
 
