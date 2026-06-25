@@ -176,8 +176,8 @@ public class GuideDAO extends DBContext {
             return ps.executeUpdate() > 0;
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Lỗi khi chèn Guide Profile mới", ex);
+            throw new RuntimeException("SQL Error in insertGuideProfile: " + ex.getMessage(), ex);
         }
-        return false;
     }
 
     /**
@@ -202,8 +202,8 @@ public class GuideDAO extends DBContext {
             return ps.executeUpdate() > 0;
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Lỗi khi cập nhật Guide Profile của UserID: " + profile.getUserId(), ex);
+            throw new RuntimeException("SQL Error in updateGuideProfile: " + ex.getMessage(), ex);
         }
-        return false;
     }
 
     /**
@@ -218,20 +218,20 @@ public class GuideDAO extends DBContext {
      * @return true nếu phân công thành công hoàn tất, ngược lại rollback và trả về false.
      */
     public boolean assignGuideToSchedule(int scheduleId, int guideId, int assignedBy, String notes) {
-        String updateScheduleSql = "UPDATE TourSchedule SET GuideID = ?, TourStatus = 'Scheduled' WHERE ScheduleID = ?";
+        String insertStatusSql = "INSERT INTO TourStatus (ScheduleID, Status, Notes, UpdatedBy, UpdatedAt) VALUES (?, 'Scheduled', N'Phân công Hướng dẫn viên', ?, SYSDATETIME())";
         String insertAssignmentSql = "INSERT INTO TourAssignment (ScheduleID, GuideID, AssignedBy, AssignedAt, Notes) VALUES (?, ?, ?, SYSDATETIME(), ?)";
 
         try {
             // Thiết lập chế độ chạy Transaction thủ công
             connection.setAutoCommit(false);
 
-            try (PreparedStatement psUpdate = connection.prepareStatement(updateScheduleSql);
+            try (PreparedStatement psStatus = connection.prepareStatement(insertStatusSql);
                  PreparedStatement psInsert = connection.prepareStatement(insertAssignmentSql)) {
                 
-                // Bước 1: Cập nhật TourSchedule
-                psUpdate.setInt(1, guideId);
-                psUpdate.setInt(2, scheduleId);
-                psUpdate.executeUpdate();
+                // Bước 1: Thêm lịch sử trạng thái
+                psStatus.setInt(1, scheduleId);
+                psStatus.setInt(2, assignedBy);
+                psStatus.executeUpdate();
 
                 // Bước 2: Chèn bản ghi lịch sử phân công TourAssignment
                 psInsert.setInt(1, scheduleId);
@@ -266,7 +266,8 @@ public class GuideDAO extends DBContext {
     public List<TourAssignment> getAssignmentsByGuideId(int guideId) {
         List<TourAssignment> list = new ArrayList<>();
         String sql = "SELECT ta.AssignmentID, ta.ScheduleID, ta.GuideID, ta.AssignedBy, ta.AssignedAt, ta.Notes, "
-                   + "ts.DepartureDate, ts.ReturnDate, ts.TotalSeats, ts.AvailableSeats, ts.PriceAdult, ts.Transportation, ts.Status as SchedStatus, ts.TourStatus, "
+                   + "ts.DepartureDate, ts.ReturnDate, ts.TotalSeats, ts.AvailableSeats, ts.PriceAdult, ts.Transportation, ts.Status as SchedStatus, "
+                   + "(SELECT TOP 1 tst.Status FROM TourStatus tst WHERE tst.ScheduleID = ts.ScheduleID ORDER BY tst.UpdatedAt DESC) as TourStatus, "
                    + "t.TourID, t.TourName, t.Destination, t.DurationDays "
                    + "FROM TourAssignment ta "
                    + "JOIN TourSchedule ts ON ta.ScheduleID = ts.ScheduleID "

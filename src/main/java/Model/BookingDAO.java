@@ -306,6 +306,40 @@ public class BookingDAO extends DBContext {
         return false;
     }
 
+    /**
+     * Gets participants for a specific schedule, considering only valid bookings.
+     * @param scheduleId the schedule ID
+     * @return list of confirmed/completed participants
+     */
+    public List<BookingParticipant> getParticipantsByScheduleId(int scheduleId) {
+        List<BookingParticipant> list = new ArrayList<>();
+        String sql = "SELECT bp.ParticipantID, bp.BookingID, bp.FullName, bp.AgeType, bp.PhoneNumber, bp.Email, bp.IsLeader, bp.CreatedAt "
+                   + "FROM BookingParticipant bp "
+                   + "JOIN Booking b ON bp.BookingID = b.BookingID "
+                   + "WHERE b.ScheduleID = ? AND b.Status IN ('Confirmed', 'Completed', 'Paid')";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, scheduleId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    BookingParticipant p = new BookingParticipant(
+                        rs.getInt("ParticipantID"),
+                        rs.getInt("BookingID"),
+                        rs.getString("FullName"),
+                        rs.getString("AgeType"),
+                        rs.getString("PhoneNumber"),
+                        rs.getString("Email"),
+                        rs.getBoolean("IsLeader"),
+                        rs.getTimestamp("CreatedAt")
+                    );
+                    list.add(p);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(BookingDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return list;
+    }
+
     private List<BookingParticipant> getParticipantsByBookingId(int bookingId) {
         List<BookingParticipant> list = new ArrayList<>();
         String sql = "SELECT ParticipantID, BookingID, FullName, AgeType, PhoneNumber, Email, IsLeader, CreatedAt FROM BookingParticipant WHERE BookingID = ?";
