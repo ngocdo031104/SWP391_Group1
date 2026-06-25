@@ -56,7 +56,7 @@
                 </a>
             </li>
             <li>
-                <a href="#">
+                <a href="${pageContext.request.contextPath}/admin/analytics">
                     <i data-lucide="bar-chart-3"></i>
                     <span>Thống Kê Chi Tiết</span>
                 </a>

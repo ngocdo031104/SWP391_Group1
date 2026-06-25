@@ -55,7 +55,7 @@
                 </a>
             </li>
             <li>
-                <a href="#">
+                <a href="${pageContext.request.contextPath}/admin/analytics">
                     <i data-lucide="bar-chart-3"></i>
                     <span>Thống Kê Chi Tiết</span>
                 </a>
@@ -118,9 +118,11 @@
             <button class="tab-btn active" onclick="switchTab(event, 'tab-schedules')">
                 <i data-lucide="calendar-days"></i> Lịch Khởi Hành & Giá
             </button>
+            <!-- Temporarily hidden as requested
             <button class="tab-btn" onclick="switchTab(event, 'tab-coupons')">
                 <i data-lucide="ticket"></i> Chương Trình Khuyến Mãi (Coupons)
             </button>
+            -->
         </div>
 
         <!-- ── TAB 1: SCHEDULES MANAGEMENT ── -->
@@ -172,6 +174,7 @@
         </section>
 
         <!-- ── TAB 2: COUPONS MANAGEMENT ── -->
+        <%-- Temporarily hidden as requested
         <section class="tab-panel" id="tab-coupons">
             <div class="control-bar">
                 <div class="selector-group">
@@ -255,6 +258,7 @@
                 </table>
             </div>
         </section>
+        --%>
     </main>
 </div>
 
@@ -348,6 +352,7 @@
 </div>
 
 <!-- ── MODAL 2: COUPON FORM (ADD/EDIT) ── -->
+<%-- Temporarily hidden as requested
 <div class="modal-backdrop" id="coupon-modal">
     <div class="modal-dialog">
         <div class="modal-header">
@@ -408,6 +413,7 @@
         </form>
     </div>
 </div>
+--%>
 
 <!-- JS Controller Logic -->
 <script>

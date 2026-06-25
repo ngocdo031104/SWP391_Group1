@@ -192,7 +192,7 @@ public class LoginController extends HttpServlet {
                 case "Accountant":
                     response.sendRedirect(
                             request.getContextPath()
-                                    + "/accountant/dashboard"
+                                    + "/admin/analytics"
                     );
                     break;
 

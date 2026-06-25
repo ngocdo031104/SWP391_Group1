@@ -55,7 +55,7 @@
                 </a>
             </li>
             <li>
-                <a href="#">
+                <a href="${pageContext.request.contextPath}/admin/analytics">
                     <i data-lucide="bar-chart-3"></i>
                     <span>Thống Kê Chi Tiết</span>
                 </a>
@@ -149,15 +149,26 @@
                 <i data-lucide="x"></i>
             </button>
         </div>
-        <form id="media-form" onsubmit="saveMedia(event)">
+        <form id="media-form" onsubmit="saveMedia(event)" enctype="multipart/form-data">
             <input type="hidden" name="action" id="media-action" value="addMedia">
             <input type="hidden" name="mediaId" id="form-media-id" value="">
             <input type="hidden" name="tourId" id="form-media-tour-id" value="">
             <div class="modal-body">
                 <div class="form-grid">
                     <div class="form-group form-grid-full">
+                        <label>Nguồn phương tiện</label>
+                        <select name="mediaSource" id="form-media-source" class="form-control" onchange="toggleMediaSource()">
+                            <option value="url">Đường dẫn URL (External Link)</option>
+                            <option value="local">Tải ảnh từ thiết bị (Local File)</option>
+                        </select>
+                    </div>
+                    <div class="form-group form-grid-full" id="group-media-url">
                         <label>Đường dẫn Media URL *</label>
                         <input type="url" name="mediaUrl" id="form-media-url" class="form-control" placeholder="https://example.com/image.jpg hoặc link YouTube" required>
+                    </div>
+                    <div class="form-group form-grid-full" id="group-media-file" style="display: none;">
+                        <label>Chọn tệp từ thiết bị *</label>
+                        <input type="file" name="mediaFile" id="form-media-file" class="form-control" accept="image/*,video/*">
                     </div>
                     <div class="form-group">
                         <label>Loại Phương Tiện</label>
@@ -299,10 +310,15 @@
                     const visibilityIcon = m.isVisible ? 'eye' : 'eye-off';
                     const visibilityColor = m.isVisible ? '' : 'style="color: var(--error-red);"';
 
+                    let displayUrl = m.mediaUrl;
+                    if (displayUrl && !displayUrl.startsWith('http') && !displayUrl.startsWith('/')) {
+                        displayUrl = '${pageContext.request.contextPath}/' + displayUrl;
+                    }
+
                     // Thumbnail image
                     let previewHtml = '';
                     if (isImg) {
-                        previewHtml = `<img src="\${m.mediaUrl}" alt="Media Preview" class="media-preview" onerror="this.src='https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=300'">`;
+                        previewHtml = `<img src="\${displayUrl}" alt="Media Preview" class="media-preview" onerror="this.src='https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=300'">`;
                     } else {
                         // Video placeholder
                         previewHtml = `
@@ -323,7 +339,7 @@
                                         <span class="control-label" style="font-size: 0.8rem; font-weight: 700;">#\${m.sortOrder}</span>
                                     </div>
                                     
-                                    <div class="media-caption-text" onclick="openLightbox('\${m.mediaUrl}', '\${m.mediaType}', '\${m.caption}')">
+                                    <div class="media-caption-text" onclick="openLightbox('\${displayUrl}', '\${m.mediaType}', '\${m.caption}')">
                                         \${m.caption || 'Xem ảnh/video lớn'}
                                     </div>
                                     
@@ -386,6 +402,9 @@
         // Gán sortOrder mặc định bằng số lượng hiện tại
         document.getElementById("form-media-sort").value = currentMediaList.length;
 
+        document.getElementById("form-media-source").value = "url";
+        toggleMediaSource();
+
         openModal("media-modal");
     }
 
@@ -401,21 +420,45 @@
         document.getElementById("form-media-visible").value = m.isVisible ? "true" : "false";
         document.getElementById("form-media-caption").value = m.caption || "";
 
+        document.getElementById("form-media-source").value = "url";
+        toggleMediaSource();
+
         openModal("media-modal");
+    }
+
+    function toggleMediaSource() {
+        const source = document.getElementById("form-media-source").value;
+        const groupUrl = document.getElementById("group-media-url");
+        const groupFile = document.getElementById("group-media-file");
+        const inputUrl = document.getElementById("form-media-url");
+        const inputFile = document.getElementById("form-media-file");
+        const isEdit = document.getElementById("media-action").value === "editMedia";
+        
+        if (source === "local") {
+            groupUrl.style.display = "none";
+            inputUrl.removeAttribute("required");
+            groupFile.style.display = "block";
+            if (!isEdit) {
+                inputFile.setAttribute("required", "required");
+            } else {
+                inputFile.removeAttribute("required");
+            }
+        } else {
+            groupUrl.style.display = "block";
+            inputUrl.setAttribute("required", "required");
+            groupFile.style.display = "none";
+            inputFile.removeAttribute("required");
+        }
     }
 
     function saveMedia(e) {
         e.preventDefault();
         const form = document.getElementById("media-form");
         const formData = new FormData(form);
-        const params = new URLSearchParams(formData);
 
         fetch("", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: params.toString()
+            body: formData
         })
         .then(res => res.json())
         .then(res => {

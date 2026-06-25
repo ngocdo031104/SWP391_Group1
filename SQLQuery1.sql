@@ -691,6 +691,46 @@ VALUES
 GO
 
 -- ============================================================
+-- SEED TOUR MEDIA
+-- ============================================================
+INSERT INTO TourMedia (TourID, MediaURL, MediaType, Caption, SortOrder, IsVisible, UploadedBy) VALUES
+-- Tour 1 (Hạ Long)
+(1, 'assets/images/tour_halong.png', 'Image', N'Vịnh Hạ Long từ trên cao', 1, 1, NULL),
+(1, 'assets/images/tour_phuquoc.png', 'Image', N'Resort bên bờ biển', 2, 1, NULL),
+(1, 'assets/images/hero_beach.png', 'Image', N'Bình minh trên biển', 3, 1, NULL),
+(1, 'assets/images/tour_dalat.png', 'Image', N'Rừng thông Đà Lạt', 4, 1, NULL),
+(1, 'assets/images/tour_danang.png', 'Image', N'Cầu Rồng Đà Nẵng', 5, 1, NULL),
+
+-- Tour 2 (Đà Nẵng)
+(2, 'assets/images/tour_danang.png', 'Image', N'Cầu Vàng Bà Nà Hills', 1, 1, NULL),
+(2, 'assets/images/tour_hoian.png', 'Image', N'Phố cổ Hội An về đêm', 2, 1, NULL),
+(2, 'assets/images/hero_beach.png', 'Image', N'Bãi biển Mỹ Khê', 3, 1, NULL),
+(2, 'assets/images/tour_dalat.png', 'Image', N'Thung lũng tình yêu', 4, 1, NULL),
+(2, 'assets/images/tour_halong.png', 'Image', N'Khám phá hang động', 5, 1, NULL),
+
+-- Tour 3 (Sapa)
+(3, 'assets/images/tour_sapa.png', 'Image', N'Bản Cát Cát Sapa', 1, 1, NULL),
+(3, 'assets/images/tour_dalat.png', 'Image', N'Trekking rừng thông', 2, 1, NULL),
+(3, 'assets/images/tour_hagiang.png', 'Image', N'Ruộng bậc thang miền Bắc', 3, 1, NULL),
+(3, 'assets/images/hero_beach.png', 'Image', N'Cảnh quan đồi núi', 4, 1, NULL),
+(3, 'assets/images/tour_halong.png', 'Image', N'Đỉnh Fansipan', 5, 1, NULL),
+
+-- Tour 4 (Huế)
+(4, 'assets/images/tour_hoian.png', 'Image', N'Đại nội Huế cổ kính', 1, 1, NULL),
+(4, 'assets/images/tour_danang.png', 'Image', N'Lăng Khải Định', 2, 1, NULL),
+(4, 'assets/images/tour_halong.png', 'Image', N'Chùa Thiên Mụ', 3, 1, NULL),
+(4, 'assets/images/tour_dalat.png', 'Image', N'Sông Hương thơ mộng', 4, 1, NULL),
+(4, 'assets/images/hero_beach.png', 'Image', N'Ẩm thực cung đình Huế', 5, 1, NULL),
+
+-- Tour 5 (Hà Nội)
+(5, 'assets/images/tour_sapa.png', 'Image', N'Hồ Hoàn Kiếm', 1, 1, NULL),
+(5, 'assets/images/tour_halong.png', 'Image', N'Lăng Chủ tịch Hồ Chí Minh', 2, 1, NULL),
+(5, 'assets/images/tour_hagiang.png', 'Image', N'Phố cổ Hà Nội', 3, 1, NULL),
+(5, 'assets/images/tour_dalat.png', 'Image', N'Văn Miếu Quốc Tử Giám', 4, 1, NULL),
+(5, 'assets/images/hero_beach.png', 'Image', N'Chùa Một Cột', 5, 1, NULL);
+GO
+
+-- ============================================================
 -- USEFUL VIEWS
 -- ============================================================
 

@@ -14,12 +14,20 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
+import java.io.File;
 
 @WebServlet(name = "AdminMediaController", urlPatterns = {"/admin/media"})
+@MultipartConfig(
+    fileSizeThreshold = 1024 * 1024 * 2, // 2 MB
+    maxFileSize = 1024 * 1024 * 10,      // 10 MB limit for single file
+    maxRequestSize = 1024 * 1024 * 50    // 50 MB limit for total request
+)
 public class AdminMediaController extends HttpServlet {
 
     private static final Logger LOGGER = Logger.getLogger(AdminMediaController.class.getName());
@@ -31,8 +39,12 @@ public class AdminMediaController extends HttpServlet {
         // 1. Kiểm tra quyền Admin
         User sessionUser = (User) request.getSession().getAttribute("sessionUser");
         String userRole = (String) request.getSession().getAttribute("userRole");
-        if (sessionUser == null || (sessionUser.getRoleId() != 1 && !"Admin".equals(userRole))) {
+        if (sessionUser == null) {
             response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+        if (sessionUser.getRoleId() != 1 && !"Admin".equals(userRole)) {
+            response.sendRedirect(request.getContextPath() + "/admin/analytics");
             return;
         }
 
@@ -117,15 +129,36 @@ public class AdminMediaController extends HttpServlet {
                 mediaDAO = new TourMediaDAO();
                 
                 int tourId = parseInt(request.getParameter("tourId"), 0);
+                String mediaSource = request.getParameter("mediaSource"); // "url" or "local"
                 String mediaUrl = request.getParameter("mediaUrl");
                 String mediaType = request.getParameter("mediaType"); // Image, Video
                 String caption = request.getParameter("caption");
                 int sortOrder = parseInt(request.getParameter("sortOrder"), 0);
                 boolean isVisible = "true".equalsIgnoreCase(request.getParameter("isVisible"));
 
+                if ("local".equalsIgnoreCase(mediaSource)) {
+                    Part filePart = request.getPart("mediaFile");
+                    if (filePart != null && filePart.getSize() > 0) {
+                        String submittedName = filePart.getSubmittedFileName();
+                        String ext = ".jpg";
+                        if (submittedName != null && submittedName.contains(".")) {
+                            ext = submittedName.substring(submittedName.lastIndexOf("."));
+                        }
+                        String uniqueName = "tour_" + tourId + "_" + System.currentTimeMillis() + ext;
+                        String uploadDir = request.getServletContext().getRealPath("") + File.separator + "assets" + File.separator + "images";
+                        File dir = new File(uploadDir);
+                        if (!dir.exists()) {
+                            dir.mkdirs();
+                        }
+                        String filePath = uploadDir + File.separator + uniqueName;
+                        filePart.write(filePath);
+                        mediaUrl = "assets/images/" + uniqueName;
+                    }
+                }
+
                 if (tourId <= 0 || mediaUrl == null || mediaUrl.trim().isEmpty() || mediaType == null) {
                     result.addProperty("status", "error");
-                    result.addProperty("message", "Vui lòng nhập đầy đủ thông tin hợp lệ (Đường dẫn Media URL không được để trống).");
+                    result.addProperty("message", "Vui lòng nhập đầy đủ thông tin hợp lệ (Đường dẫn Media URL hoặc Tệp tải lên không được để trống).");
                 } else {
                     TourMedia media = new TourMedia();
                     media.setTourId(tourId);

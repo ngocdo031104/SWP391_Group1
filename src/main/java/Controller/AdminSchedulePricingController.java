@@ -36,8 +36,12 @@ public class AdminSchedulePricingController extends HttpServlet {
         // 1. Kiểm tra quyền Admin
         User sessionUser = (User) request.getSession().getAttribute("sessionUser");
         String userRole = (String) request.getSession().getAttribute("userRole");
-        if (sessionUser == null || (sessionUser.getRoleId() != 1 && !"Admin".equals(userRole))) {
+        if (sessionUser == null) {
             response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+        if (sessionUser.getRoleId() != 1 && !"Admin".equals(userRole)) {
+            response.sendRedirect(request.getContextPath() + "/admin/analytics");
             return;
         }
 
