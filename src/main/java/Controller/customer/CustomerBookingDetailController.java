@@ -3,7 +3,9 @@ package Controller.customer;
 import Entities.Booking;
 import Entities.Payment;
 import Entities.User;
+import Entities.CancellationRequest;
 import Model.BookingDAO;
+import Model.CancellationRequestDAO;
 import Model.PaymentDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -55,8 +57,12 @@ public class CustomerBookingDetailController extends HttpServlet {
             paymentDAO = new PaymentDAO();
             Payment payment = paymentDAO.getPaymentByBookingId(booking.getBookingId());
 
+            CancellationRequestDAO cancelDAO = new CancellationRequestDAO();
+            CancellationRequest pendingCancel = cancelDAO.getPendingRequestByBookingId(booking.getBookingId());
+
             request.setAttribute("booking", booking);
             request.setAttribute("payment", payment);
+            request.setAttribute("pendingCancel", pendingCancel);
             
             request.getRequestDispatcher("/customer/booking-detail.jsp").forward(request, response);
         } catch (Exception e) {

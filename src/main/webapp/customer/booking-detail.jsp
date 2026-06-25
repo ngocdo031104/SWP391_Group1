@@ -70,6 +70,25 @@
         transition: all 0.2s;
         border: 1px solid transparent;
         cursor: pointer;
+        font-size: 0.95rem;
+    }
+    
+    .btn-danger {
+        background: #fee2e2;
+        color: #dc2626;
+        border-color: #fca5a5;
+    }
+    .btn-danger:hover {
+        background: #fecaca;
+        color: #b91c1c;
+    }
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s;
+        border: 1px solid transparent;
+        cursor: pointer;
     }
     
     .btn-outline {
@@ -255,6 +274,30 @@
             <a href="${pageContext.request.contextPath}/customer/booking/history" class="btn-action btn-outline">
                 <i data-lucide="arrow-left" style="width: 18px; height: 18px;"></i> Quay lại
             </a>
+            
+            <%-- Nút Yêu cầu Hủy --%>
+            <c:if test="${booking.status eq 'Success'}">
+                <c:choose>
+                    <c:when test="${not empty pendingCancel}">
+                        <span class="btn-action btn-outline" style="cursor: default; background: #f8fafc; color: #94a3b8; border-color: #e2e8f0;">
+                            <i data-lucide="clock" style="width: 18px; height: 18px;"></i> Đang xử lý yêu cầu hủy
+                        </span>
+                    </c:when>
+                    <c:otherwise>
+                        <%-- Check days before departure (server-side via jsp tags or JS) --%>
+                        <jsp:useBean id="now" class="java.util.Date" />
+                        <c:set var="diffInMillies" value="${booking.schedule.departureDate.time - now.time}" />
+                        <c:set var="diffInDays" value="${diffInMillies / (1000 * 60 * 60 * 24)}" />
+                        
+                        <c:if test="${diffInDays > 7}">
+                            <button type="button" class="btn-action btn-danger" onclick="openCancelModal()">
+                                <i data-lucide="x-circle" style="width: 18px; height: 18px;"></i> Yêu cầu hủy
+                            </button>
+                        </c:if>
+                    </c:otherwise>
+                </c:choose>
+            </c:if>
+
             <%-- Liên kết sang hóa đơn: dựa vào CustomerInvoiceController --%>
             <c:if test="${booking.status ne 'Cancelled'}">
                 <a href="${pageContext.request.contextPath}/customer/booking/invoice?code=${booking.bookingCode}" class="btn-action btn-primary">
@@ -263,6 +306,22 @@
             </c:if>
         </div>
     </div>
+
+    <%-- Thông báo kết quả Hủy --%>
+    <c:if test="${not empty sessionScope.cancelSuccess}">
+        <div style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #059669; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+            <i data-lucide="check-circle" style="vertical-align: middle; margin-right: 8px;"></i>
+            ${sessionScope.cancelSuccess}
+        </div>
+        <c:remove var="cancelSuccess" scope="session" />
+    </c:if>
+    <c:if test="${not empty sessionScope.cancelError}">
+        <div style="background: #fee2e2; border: 1px solid #fca5a5; color: #dc2626; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+            <i data-lucide="alert-circle" style="vertical-align: middle; margin-right: 8px;"></i>
+            ${sessionScope.cancelError}
+        </div>
+        <c:remove var="cancelError" scope="session" />
+    </c:if>
 
     <div class="detail-grid">
         <!-- Cột Trái: Thông tin Tour & Danh sách khách -->
@@ -372,6 +431,140 @@
         </div>
     </div>
 </main>
+
+<%-- Modal Yêu cầu Hủy --%>
+<style>
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(15, 23, 42, 0.6);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(4px);
+    }
+    .modal-content {
+        background: #fff;
+        width: 100%;
+        max-width: 550px;
+        border-radius: 12px;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        padding: 30px;
+        position: relative;
+    }
+    .modal-close {
+        position: absolute;
+        top: 20px; right: 20px;
+        background: none; border: none;
+        color: #94a3b8; cursor: pointer;
+        transition: color 0.2s;
+    }
+    .modal-close:hover { color: #1e293b; }
+    .modal-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.5rem; color: #1e293b;
+        margin: 0 0 15px 0;
+    }
+    .terms-box {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        padding: 15px; border-radius: 8px;
+        font-size: 0.95rem; color: #475569;
+        margin-bottom: 20px;
+    }
+    .form-group {
+        margin-bottom: 15px;
+    }
+    .form-group label {
+        display: block; margin-bottom: 6px;
+        font-weight: 500; color: #334155; font-size: 0.95rem;
+    }
+    .form-control {
+        width: 100%; padding: 10px 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        font-family: inherit; font-size: 1rem;
+        background: #f8fafc;
+        color: #475569;
+    }
+    .form-control:focus { outline: none; border-color: #3b82f6; }
+    textarea.form-control { resize: vertical; background: #fff; color: #1e293b; }
+    .modal-actions {
+        display: flex; justify-content: flex-end; gap: 10px;
+        margin-top: 25px;
+    }
+</style>
+
+<div class="modal-overlay" id="cancelModal">
+    <div class="modal-content">
+        <button class="modal-close" onclick="closeCancelModal()"><i data-lucide="x"></i></button>
+        <h3 class="modal-title">Yêu cầu hủy & hoàn tiền</h3>
+        
+        <div class="terms-box">
+            <strong>Điều kiện hoàn tiền:</strong><br/>
+            Bạn đang yêu cầu hủy trước ngày khởi hành <b>hơn 7 ngày</b>, đủ điều kiện xem xét hoàn tiền theo chính sách của TourBuddy. Xin lưu ý hệ thống sẽ tiếp nhận và phản hồi trong 2-3 ngày làm việc.
+        </div>
+
+        <c:set var="leaderName" value=""/>
+        <c:set var="leaderPhone" value=""/>
+        <c:set var="leaderEmail" value=""/>
+        <c:forEach var="p" items="${booking.participants}">
+            <c:if test="${p.isLeader}">
+                <c:set var="leaderName" value="${p.fullName}"/>
+                <c:set var="leaderPhone" value="${p.phoneNumber}"/>
+                <c:set var="leaderEmail" value="${p.email}"/>
+            </c:if>
+        </c:forEach>
+
+        <form action="${pageContext.request.contextPath}/customer/booking/cancel" method="post" id="cancelForm">
+            <input type="hidden" name="bookingCode" value="${booking.bookingCode}">
+            
+            <div class="form-group">
+                <label>Trưởng đoàn đại diện</label>
+                <input type="text" class="form-control" value="${leaderName}" readonly>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="form-group">
+                    <label>Số điện thoại</label>
+                    <input type="text" class="form-control" value="${leaderPhone}" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Email liên hệ</label>
+                    <input type="text" class="form-control" value="${leaderEmail}" readonly>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Lý do hủy / Ghi chú bổ sung <span style="color:#dc2626;">*</span></label>
+                <textarea class="form-control" name="reason" rows="3" required placeholder="Vui lòng cho chúng tôi biết lý do bạn muốn hủy đơn này..."></textarea>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-action btn-outline" onclick="closeCancelModal()">Không, quay lại</button>
+                <button type="submit" class="btn-action btn-danger" style="color: white; background: #dc2626;">Xác nhận Gửi yêu cầu</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openCancelModal() {
+        document.getElementById('cancelModal').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+    function closeCancelModal() {
+        document.getElementById('cancelModal').style.display = 'none';
+        document.body.style.overflow = '';
+    }
+    // Đóng modal khi click ra ngoài
+    document.getElementById('cancelModal').addEventListener('click', function(e) {
+        if(e.target === this) {
+            closeCancelModal();
+        }
+    });
+</script>
 
 <script>
     lucide.createIcons();

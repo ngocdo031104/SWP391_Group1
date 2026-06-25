@@ -443,4 +443,88 @@ public class BookingDAO extends DBContext {
         }
         return false;
     }
+
+    /**
+     * Cancels a booking, releases seats in TourSchedule, and logs the change in BookingHistory.
+     * Usually called by staff when approving a cancellation request, or by system/customer for unpaid bookings.
+     */
+    public boolean cancelBookingAndReleaseSeats(int bookingId, int changedBy, String reason) {
+        String getBookingSql = "SELECT ScheduleID, NumParticipants, Status FROM Booking WHERE BookingID = ?";
+        String updateSeatsSql = "UPDATE TourSchedule SET AvailableSeats = CASE "
+                + "WHEN AvailableSeats + ? > TotalSeats THEN TotalSeats ELSE AvailableSeats + ? END "
+                + "WHERE ScheduleID = ?";
+        String cancelBookingSql = "UPDATE Booking SET Status = 'Cancelled', UpdatedAt = SYSDATETIME() WHERE BookingID = ?";
+        String insertHistorySql = "INSERT INTO BookingHistory (BookingID, OldStatus, NewStatus, ChangedBy, Reason, ChangedAt) "
+                + "VALUES (?, ?, 'Cancelled', ?, ?, SYSDATETIME())";
+
+        try {
+            connection.setAutoCommit(false);
+
+            int scheduleId = 0;
+            int numParticipants = 0;
+            String oldStatus = "";
+
+            try (PreparedStatement psGet = connection.prepareStatement(getBookingSql)) {
+                psGet.setInt(1, bookingId);
+                try (ResultSet rs = psGet.executeQuery()) {
+                    if (rs.next()) {
+                        scheduleId = rs.getInt("ScheduleID");
+                        numParticipants = rs.getInt("NumParticipants");
+                        oldStatus = rs.getString("Status");
+                    } else {
+                        throw new SQLException("Booking not found");
+                    }
+                }
+            }
+
+            if ("Cancelled".equals(oldStatus)) {
+                connection.rollback();
+                return false; // Already cancelled
+            }
+
+            // Release seats
+            try (PreparedStatement psSeats = connection.prepareStatement(updateSeatsSql)) {
+                psSeats.setInt(1, numParticipants);
+                psSeats.setInt(2, numParticipants);
+                psSeats.setInt(3, scheduleId);
+                psSeats.executeUpdate();
+            }
+
+            // Update booking status
+            try (PreparedStatement psCancel = connection.prepareStatement(cancelBookingSql)) {
+                psCancel.setInt(1, bookingId);
+                psCancel.executeUpdate();
+            }
+
+            // Insert history
+            try (PreparedStatement psHistory = connection.prepareStatement(insertHistorySql)) {
+                psHistory.setInt(1, bookingId);
+                psHistory.setString(2, oldStatus);
+                if (changedBy > 0) {
+                    psHistory.setInt(3, changedBy);
+                } else {
+                    psHistory.setNull(3, java.sql.Types.INTEGER);
+                }
+                psHistory.setString(4, reason);
+                psHistory.executeUpdate();
+            }
+
+            connection.commit();
+            return true;
+        } catch (SQLException ex) {
+            try {
+                if (connection != null) connection.rollback();
+            } catch (SQLException rollbackEx) {
+                Logger.getLogger(BookingDAO.class.getName()).log(Level.SEVERE, null, rollbackEx);
+            }
+            Logger.getLogger(BookingDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if (connection != null) connection.setAutoCommit(true);
+            } catch (SQLException ex) {
+                Logger.getLogger(BookingDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return false;
+    }
 }
