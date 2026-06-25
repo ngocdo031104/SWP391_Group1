@@ -43,13 +43,13 @@
                 </a>
             </li>
             <li>
-                <a href="#">
+                <a href="${pageContext.request.contextPath}/admin/schedules">
                     <i data-lucide="calendar"></i>
                     <span>Lịch Trình & Giá</span>
                 </a>
             </li>
             <li>
-                <a href="#">
+                <a href="${pageContext.request.contextPath}/admin/media">
                     <i data-lucide="image"></i>
                     <span>Thư Viện Media</span>
                 </a>

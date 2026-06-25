@@ -1,11 +1,13 @@
 package Model;
 
-// Người làm: Dương
+// Người làm: Dương (Updated by Antigravity)
 // Thời gian tạo: 04/06/2026
 // Chức năng: DAO xử lý dữ liệu bảng TourSchedule.
-// Ý nghĩa: Cung cấp lịch khởi hành cho luồng booking Customer, lấy trực tiếp DepartureDate, ReturnDate, số ghế, giá và trạng thái từ database.
+// Ý nghĩa: Cung cấp lịch khởi hành cho luồng booking Customer và các tác vụ CRUD của Admin.
 
 import Entities.TourSchedule;
+import Entities.User;
+import Entities.UserProfile;
 import Utils.DBContext;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,14 +20,12 @@ import java.util.logging.Logger;
 public class TourScheduleDAO extends DBContext {
 
     // Câu SELECT dùng chung cho các hàm lấy lịch khởi hành.
-    // Chỉ lấy các cột thực tế có trong bảng TourSchedule để tránh lỗi SQL làm danh sách lịch bị rỗng.
     private static final String SCHEDULE_SELECT =
             "SELECT ScheduleID, TourID, DepartureDate, ReturnDate, TotalSeats, AvailableSeats, "
             + "PriceAdult, PriceChild, PriceInfant, Transportation, Status, TourStatus, CreatedAt "
             + "FROM TourSchedule ";
 
     // Lấy toàn bộ lịch khởi hành thuộc một tour từ bảng TourSchedule.
-    // Hàm không lọc cứng theo ngày hiện tại để dữ liệu seed/test trong DB vẫn hiện DepartureDate trên màn booking.
     public List<TourSchedule> getSchedulesByTourId(int tourId) {
         List<TourSchedule> schedules = new ArrayList<>();
         String sql = SCHEDULE_SELECT
@@ -45,8 +45,66 @@ public class TourScheduleDAO extends DBContext {
         return schedules;
     }
 
+    // Lấy toàn bộ lịch khởi hành cho Admin (bao gồm cả lịch cũ và thông tin Hướng dẫn viên).
+    public List<TourSchedule> getSchedulesByTourIdForAdmin(int tourId) {
+        List<TourSchedule> list = new ArrayList<>();
+        String sql = "SELECT ts.ScheduleID, ts.TourID, ts.DepartureDate, ts.ReturnDate, ts.TotalSeats, ts.AvailableSeats, "
+                   + "ts.PriceAdult, ts.PriceChild, ts.PriceInfant, ts.Transportation, ts.Status, ts.CreatedAt, "
+                   + "ts.GuideID, ts.TourStatus, "
+                   + "u.Email, u.FullName, u.PhoneNumber, "
+                   + "up.AvatarURL "
+                   + "FROM TourSchedule ts "
+                   + "LEFT JOIN [User] u ON ts.GuideID = u.UserID "
+                   + "LEFT JOIN UserProfile up ON u.UserID = up.UserID "
+                   + "WHERE ts.TourID = ? "
+                   + "ORDER BY ts.DepartureDate DESC";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, tourId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    TourSchedule sched = new TourSchedule(
+                        rs.getInt("ScheduleID"),
+                        rs.getInt("TourID"),
+                        rs.getDate("DepartureDate"),
+                        rs.getDate("ReturnDate"),
+                        rs.getInt("TotalSeats"),
+                        rs.getInt("AvailableSeats"),
+                        rs.getDouble("PriceAdult"),
+                        rs.getDouble("PriceChild"),
+                        rs.getDouble("PriceInfant"),
+                        rs.getString("Transportation"),
+                        rs.getString("Status"),
+                        rs.getTimestamp("CreatedAt")
+                    );
+                    
+                    int guideId = rs.getInt("GuideID");
+                    if (!rs.wasNull()) {
+                        sched.setGuideId(guideId);
+                        sched.setTourStatus(rs.getString("TourStatus"));
+                        
+                        User u = new User();
+                        u.setUserId(guideId);
+                        u.setEmail(rs.getString("Email"));
+                        u.setFullName(rs.getString("FullName"));
+                        u.setPhoneNumber(rs.getString("PhoneNumber"));
+                        
+                        UserProfile up = new UserProfile();
+                        up.setUserId(guideId);
+                        up.setAvatarUrl(rs.getString("AvatarURL"));
+                        u.setProfile(up);
+                        
+                        sched.setGuide(u);
+                    }
+                    list.add(sched);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TourScheduleDAO.class.getName()).log(Level.SEVERE, "getSchedulesByTourIdForAdmin failed", ex);
+        }
+        return list;
+    }
+
     // Lấy một lịch khởi hành theo cả ScheduleID và TourID.
-    // Mục đích là validate lịch khách chọn thật sự thuộc tour hiện tại, tránh submit scheduleId của tour khác.
     public TourSchedule getScheduleByIdForTour(int scheduleId, int tourId) {
         String sql = SCHEDULE_SELECT
                 + "WHERE ScheduleID = ? AND TourID = ?";
@@ -65,8 +123,85 @@ public class TourScheduleDAO extends DBContext {
         return null;
     }
 
-    // mapSchedule chuyển một dòng ResultSet thành entity TourSchedule.
-    // Các trường ngày khởi hành, ngày về, số ghế và giá được lấy trực tiếp từ bảng TourSchedule để booking tính tiền đúng theo lịch đã chọn.
+    // Thêm lịch khởi hành mới
+    public int insertSchedule(TourSchedule schedule) {
+        String sql = "INSERT INTO TourSchedule (TourID, DepartureDate, ReturnDate, TotalSeats, AvailableSeats, "
+                   + "PriceAdult, PriceChild, PriceInfant, Transportation, Status, GuideID, TourStatus, CreatedAt) "
+                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, SYSDATETIME())";
+        try (PreparedStatement ps = connection.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS)) {
+            ps.setInt(1, schedule.getTourId());
+            ps.setDate(2, schedule.getDepartureDate());
+            ps.setDate(3, schedule.getReturnDate());
+            ps.setInt(4, schedule.getTotalSeats());
+            ps.setInt(5, schedule.getAvailableSeats());
+            ps.setDouble(6, schedule.getPriceAdult());
+            ps.setDouble(7, schedule.getPriceChild());
+            ps.setDouble(8, schedule.getPriceInfant());
+            ps.setString(9, schedule.getTransportation());
+            ps.setString(10, schedule.getStatus());
+            if (schedule.getGuideId() != null && schedule.getGuideId() > 0) {
+                ps.setInt(11, schedule.getGuideId());
+            } else {
+                ps.setNull(11, java.sql.Types.INTEGER);
+            }
+            ps.setString(12, schedule.getTourStatus() != null ? schedule.getTourStatus() : "Scheduled");
+            
+            int affected = ps.executeUpdate();
+            if (affected > 0) {
+                try (ResultSet keys = ps.getGeneratedKeys()) {
+                    if (keys.next()) {
+                        return keys.getInt(1);
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TourScheduleDAO.class.getName()).log(Level.SEVERE, "insertSchedule failed", ex);
+        }
+        return -1;
+    }
+
+    // Cập nhật lịch khởi hành
+    public boolean updateSchedule(TourSchedule schedule) {
+        String sql = "UPDATE TourSchedule SET DepartureDate = ?, ReturnDate = ?, TotalSeats = ?, AvailableSeats = ?, "
+                   + "PriceAdult = ?, PriceChild = ?, PriceInfant = ?, Transportation = ?, Status = ?, GuideID = ?, TourStatus = ? "
+                   + "WHERE ScheduleID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setDate(1, schedule.getDepartureDate());
+            ps.setDate(2, schedule.getReturnDate());
+            ps.setInt(3, schedule.getTotalSeats());
+            ps.setInt(4, schedule.getAvailableSeats());
+            ps.setDouble(5, schedule.getPriceAdult());
+            ps.setDouble(6, schedule.getPriceChild());
+            ps.setDouble(7, schedule.getPriceInfant());
+            ps.setString(8, schedule.getTransportation());
+            ps.setString(9, schedule.getStatus());
+            if (schedule.getGuideId() != null && schedule.getGuideId() > 0) {
+                ps.setInt(10, schedule.getGuideId());
+            } else {
+                ps.setNull(10, java.sql.Types.INTEGER);
+            }
+            ps.setString(11, schedule.getTourStatus());
+            ps.setInt(12, schedule.getScheduleId());
+            
+            return ps.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(TourScheduleDAO.class.getName()).log(Level.SEVERE, "updateSchedule failed", ex);
+        }
+        return false;
+    }
+
+    // Xóa lịch khởi hành
+    public boolean deleteSchedule(int scheduleId) {
+        String sql = "DELETE FROM TourSchedule WHERE ScheduleID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, scheduleId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(TourScheduleDAO.class.getName()).log(Level.SEVERE, "deleteSchedule failed", ex);
+        }
+        return false;
+    }
+
     private TourSchedule mapSchedule(ResultSet rs) throws SQLException {
         TourSchedule schedule = new TourSchedule(
                 rs.getInt("ScheduleID"),
@@ -83,7 +218,6 @@ public class TourScheduleDAO extends DBContext {
                 rs.getTimestamp("CreatedAt")
         );
 
-        // TourStatus mô tả trạng thái vận hành của lịch, ví dụ Scheduled/InProgress/Completed nếu database có lưu giá trị này.
         schedule.setTourStatus(rs.getString("TourStatus"));
         return schedule;
     }
