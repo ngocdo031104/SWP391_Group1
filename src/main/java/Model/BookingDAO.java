@@ -241,6 +241,53 @@ public class BookingDAO extends DBContext {
         return null;
     }
 
+    // Dương làm phần này: lấy thông tin booking kèm thông tin Tour và TourSchedule bằng cách JOIN 3 bảng.
+    // Mục đích là phục vụ trang hóa đơn, nơi cần hiển thị tên tour, điểm đến, ngày đi, ngày về
+    // và phương tiện di chuyển. Dùng hàm này thay cho getBookingByCode khi cần render hóa đơn.
+    public Booking getBookingWithTourByCode(String bookingCode) {
+        // SQL JOIN Booking -> TourSchedule -> Tour để lấy hết thông tin cần thiết trong một lần truy vấn
+        String sql = "SELECT b.BookingID, b.BookingCode, b.ScheduleID, b.CustomerID, b.NumParticipants, "
+                   + "b.BaseAmount, b.VATAmount, b.DiscountAmount, b.TotalAmount, b.Status, b.Notes, b.CouponID, b.CreatedAt, b.UpdatedAt, "
+                   + "s.DepartureDate, s.ReturnDate, s.Transportation, "
+                   + "t.TourName, t.Destination, t.DurationDays "
+                   + "FROM Booking b "
+                   + "JOIN TourSchedule s ON b.ScheduleID = s.ScheduleID "
+                   + "JOIN Tour t ON s.TourID = t.TourID "
+                   + "WHERE b.BookingCode = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, bookingCode);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    // mapBooking xử lý các cột thuần Booking; các cột JOIN được đọc thêm bên dưới
+                    Booking booking = mapBooking(rs);
+                    // Load danh sách người tham gia để hiển thị trên hóa đơn
+                    booking.setParticipants(getParticipantsByBookingId(booking.getBookingId()));
+
+                    // Tạo đối tượng TourSchedule chứa thông tin lịch trình cần thiết cho hóa đơn
+                    Entities.TourSchedule schedule = new Entities.TourSchedule();
+                    schedule.setScheduleId(booking.getScheduleId());
+                    schedule.setDepartureDate(rs.getDate("DepartureDate"));
+                    schedule.setReturnDate(rs.getDate("ReturnDate"));
+                    schedule.setTransportation(rs.getString("Transportation"));
+
+                    // Tạo đối tượng Tour chứa tên tour, điểm đến và số ngày để hiển thị trên hóa đơn
+                    Entities.Tour tour = new Entities.Tour();
+                    tour.setTourName(rs.getString("TourName"));
+                    tour.setDestination(rs.getString("Destination"));
+                    tour.setDurationDays(rs.getInt("DurationDays"));
+
+                    // Lắp ghép: tour vào schedule, schedule vào booking để JSP truy cập qua EL
+                    schedule.setTour(tour);
+                    booking.setSchedule(schedule);
+                    return booking;
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(BookingDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
     /**
      * Updates booking status (e.g. Confirmed, Cancelled, Completed).
      * @param bookingId booking ID

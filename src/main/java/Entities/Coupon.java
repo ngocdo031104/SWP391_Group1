@@ -10,6 +10,7 @@ public class Coupon implements Serializable {
     private String discountType; // Percentage or FixedAmount
     private double discountValue;
     private double minOrderAmount;
+    private Double maxDiscountAmount; // Cho phép NULL
     private Integer maxUses;
     private int usedCount;
     private Date startDate;
@@ -21,12 +22,13 @@ public class Coupon implements Serializable {
     public Coupon() {
     }
 
-    public Coupon(int couponId, String couponCode, String discountType, double discountValue, double minOrderAmount, Integer maxUses, int usedCount, Date startDate, Date endDate, boolean isActive, Integer createdBy, Timestamp createdAt) {
+    public Coupon(int couponId, String couponCode, String discountType, double discountValue, double minOrderAmount, Double maxDiscountAmount, Integer maxUses, int usedCount, Date startDate, Date endDate, boolean isActive, Integer createdBy, Timestamp createdAt) {
         this.couponId = couponId;
         this.couponCode = couponCode;
         this.discountType = discountType;
         this.discountValue = discountValue;
         this.minOrderAmount = minOrderAmount;
+        this.maxDiscountAmount = maxDiscountAmount;
         this.maxUses = maxUses;
         this.usedCount = usedCount;
         this.startDate = startDate;
@@ -74,6 +76,14 @@ public class Coupon implements Serializable {
 
     public void setMinOrderAmount(double minOrderAmount) {
         this.minOrderAmount = minOrderAmount;
+    }
+
+    public Double getMaxDiscountAmount() {
+        return maxDiscountAmount;
+    }
+
+    public void setMaxDiscountAmount(Double maxDiscountAmount) {
+        this.maxDiscountAmount = maxDiscountAmount;
     }
 
     public Integer getMaxUses() {

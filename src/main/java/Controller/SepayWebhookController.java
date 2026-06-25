@@ -10,6 +10,8 @@ import Entities.Payment;
 import Model.BookingDAO;
 import Model.CouponDAO;
 import Model.PaymentDAO;
+import Model.InvoiceDAO;
+import Entities.Invoice;
 import Utils.SepayConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -61,6 +63,7 @@ public class SepayWebhookController extends HttpServlet {
         BookingDAO bookingDAO = null;
         PaymentDAO paymentDAO = null;
         CouponDAO couponDAO = null;
+        InvoiceDAO invoiceDAO = null;
         try {
             bookingDAO = new BookingDAO();
             paymentDAO = new PaymentDAO();
@@ -84,6 +87,29 @@ public class SepayWebhookController extends HttpServlet {
                 payment.setPaidAt(parsePaidAt(transactionDate));
                 payment.setGatewayResponse(payload);
                 paymentDAO.createPayment(payment);
+
+                // Dương làm phần này: tự động tạo hóa đơn ngay sau khi payment được ghi nhận.
+                // Kiểm tra trước xem hóa đơn đã tồn tại chưa để tránh tạo trùng nếu SePay
+                // gửi webhook nhiều lần cho cùng một giao dịch.
+                invoiceDAO = new InvoiceDAO();
+                Invoice invoice = invoiceDAO.getInvoiceByBookingId(booking.getBookingId());
+                if (invoice == null) {
+                    invoice = new Invoice();
+                    // Mã hóa đơn dạng INV-{bookingId}-{5 chữ số cuối milliseconds} để đảm bảo duy nhất
+                    invoice.setInvoiceCode("INV-" + booking.getBookingId() + "-" + (System.currentTimeMillis() % 100000));
+                    invoice.setBookingId(booking.getBookingId());
+                    // Liên kết PaymentID vừa được tạo phía trên để hóa đơn trỏ đúng giao dịch
+                    invoice.setPaymentId(payment.getPaymentId());
+                    // SubTotal lấy BaseAmount (tiền tour gốc chưa cộng VAT và chưa trừ giảm giá)
+                    invoice.setSubTotal(booking.getBaseAmount());
+                    // VATRate đọc từ default constraint của bảng Invoice trong DB; fallback 8.0 nếu không đọc được
+                    Double vatRate = invoiceDAO.getDefaultVatRatePercent();
+                    invoice.setVatRate(vatRate != null ? vatRate : 8.0);
+                    invoice.setVatAmount(booking.getVatAmount());
+                    invoice.setDiscountAmount(booking.getDiscountAmount());
+                    invoice.setTotalAmount(booking.getTotalAmount());
+                    invoiceDAO.createInvoice(invoice);
+                }
             }
 
             bookingDAO.updateBookingStatus(booking.getBookingId(), "Success");
@@ -94,6 +120,9 @@ public class SepayWebhookController extends HttpServlet {
 
             response.getWriter().write("{\"success\":true,\"matched\":true,\"bookingCode\":\"" + escapeJson(bookingCode) + "\"}");
         } finally {
+            if (invoiceDAO != null) {
+                invoiceDAO.close();
+            }
             if (couponDAO != null) {
                 couponDAO.close();
             }

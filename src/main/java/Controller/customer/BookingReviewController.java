@@ -10,6 +10,7 @@ import Entities.Booking;
 import Entities.Tour;
 import Entities.User;
 import Model.BookingDAO;
+import Model.CouponDAO;
 import Model.TourDAO;
 import Model.TourScheduleDAO;
 import jakarta.servlet.ServletException;
@@ -37,6 +38,18 @@ public class BookingReviewController extends HttpServlet {
         if (draft == null) {
             response.sendRedirect(request.getContextPath() + "/tourdiscovery");
             return;
+        }
+
+        String successMessage = (String) request.getSession().getAttribute("successMessage");
+        if (successMessage != null) {
+            request.setAttribute("successMessage", successMessage);
+            request.getSession().removeAttribute("successMessage");
+        }
+        
+        String errorMessage = (String) request.getSession().getAttribute("errorMessage");
+        if (errorMessage != null) {
+            request.setAttribute("errorMessage", errorMessage);
+            request.getSession().removeAttribute("errorMessage");
         }
 
         TourDAO tourDAO = null;
@@ -80,6 +93,57 @@ public class BookingReviewController extends HttpServlet {
         User user = session != null ? (User) session.getAttribute("sessionUser") : null;
         if (draft == null || user == null) {
             response.sendRedirect(request.getContextPath() + "/tourdiscovery");
+            return;
+        }
+
+        String action = request.getParameter("action");
+
+        // Dương làm đoạn này: Xử lý áp dụng mã khuyến mãi ngay tại màn hình review trước khi tạo booking
+        if ("applyCoupon".equals(action)) {
+            CouponDAO couponDAO = null;
+            String couponCode = BookingFlowSupport.safeTrim(request.getParameter("couponCode")).toUpperCase();
+            
+            if (!couponCode.isEmpty()) {
+                try {
+                    couponDAO = new CouponDAO();
+                    Entities.Coupon coupon = couponDAO.getCouponByCode(couponCode);
+                    if (coupon == null) {
+                        session.setAttribute("errorMessage", "Mã giảm giá không hợp lệ hoặc đã hết hiệu lực.");
+                        response.sendRedirect(request.getContextPath() + "/customer/booking/review");
+                        return;
+                    }
+                    if (draft.baseAmount < coupon.getMinOrderAmount()) {
+                        session.setAttribute("errorMessage", "Đơn hàng chưa đạt giá trị tối thiểu của mã giảm giá.");
+                        response.sendRedirect(request.getContextPath() + "/customer/booking/review");
+                        return;
+                    }
+                    
+                    draft.couponId = coupon.getCouponId();
+                    draft.couponCode = coupon.getCouponCode();
+                    draft.discountAmount = BookingFlowSupport.calculateDiscount(draft.baseAmount, coupon);
+                    
+                    double taxableAmount = Math.max(0, draft.baseAmount - draft.discountAmount);
+                    draft.vatAmount = BookingFlowSupport.calculateVatAmount(taxableAmount, draft.vatRatePercent);
+                    draft.totalAmount = taxableAmount + draft.vatAmount;
+                    
+                    session.setAttribute("bookingDraft", draft);
+                    session.setAttribute("successMessage", "Đã áp dụng mã giảm giá thành công.");
+                } finally {
+                    if (couponDAO != null) {
+                        couponDAO.close();
+                    }
+                }
+            } else {
+                // Nếu khách hàng xóa mã giảm giá
+                draft.couponId = null;
+                draft.couponCode = "";
+                draft.discountAmount = 0.0;
+                double taxableAmount = draft.baseAmount;
+                draft.vatAmount = BookingFlowSupport.calculateVatAmount(taxableAmount, draft.vatRatePercent);
+                draft.totalAmount = taxableAmount + draft.vatAmount;
+                session.setAttribute("bookingDraft", draft);
+            }
+            response.sendRedirect(request.getContextPath() + "/customer/booking/review");
             return;
         }
 

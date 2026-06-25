@@ -107,23 +107,13 @@
                         <p>Ngân hàng: <strong>Tiền Phong Bank (TPBank)</strong></p>
                         <p>Số tài khoản: <strong><%= SepayConfig.ACCOUNT_NO %></strong></p>
                         <p>Chủ tài khoản: <strong><%= SepayConfig.ACCOUNT_NAME %></strong></p>
-                        <p>Số tiền: <strong><%= money.format(qrAmount) %> đ</strong></p>
+                        <p>Số tiền: <strong><%= money.format(qrAmount) %> đ</strong></p>
                         <p>Nội dung chuyển khoản: <strong><%= qrContent %></strong></p>
                     </div>
                 </form>
 
                 <aside class="payment-side">
-                    <%-- Coupon chỉ xuất hiện ở màn payment theo yêu cầu, không nằm ở màn tạo booking. --%>
-                    <div class="coupon-card">
-                        <h3>Sử dụng mã khuyến mãi</h3>
-                        <div class="coupon-row">
-                            <input class="booking-input" type="text" name="couponCode" id="payment-coupon-code" form="payment-form" placeholder="Nhập mã ví dụ: WELCOME10">
-                            <button type="button" id="coupon-preview-btn">Áp dụng</button>
-                        </div>
-                        <div class="field-error" id="coupon-error"></div>
-                    </div>
-
-                    <%-- Tóm tắt số tiền hiện tại của đơn; khi bấm cập nhật QR, controller sẽ tính lại coupon lần cuối ở server. --%>
+                    <%-- Tóm tắt số tiền hiện tại của đơn --%>
                     <div class="payment-summary-card">
                         <h3>Tóm tắt thanh toán đơn đặt</h3>
                         <p><strong><%= tour != null ? tour.getTourName() : "TourBuddy" %></strong></p>
@@ -135,7 +125,6 @@
                             <div><dt>Giảm giá</dt><dd>-<%= money.format(draft != null ? draft.discountAmount : 0) %> đ</dd></div>
                         </dl>
                         <div class="summary-total light"><span>Số tiền cần chuyển</span><strong><%= money.format(draft != null ? draft.totalAmount : 0) %> đ</strong></div>
-                        <button type="submit" form="payment-form" class="booking-primary-btn full-width">Cập nhật coupon và mã QR</button>
                     </div>
                 </aside>
             </div>

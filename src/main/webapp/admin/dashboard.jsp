@@ -44,6 +44,12 @@
                 </a>
             </li>
             <li>
+                <a href="${pageContext.request.contextPath}/admin/coupons">
+                    <i data-lucide="tag"></i>
+                    <span>Quản Lý Coupon</span>
+                </a>
+            </li>
+            <li>
                 <a href="#">
                     <i data-lucide="calendar"></i>
                     <span>Lịch Trình & Giá</span>

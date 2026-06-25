@@ -7,10 +7,8 @@ package Controller.customer;
 
 import Controller.customer.BookingFlowSupport.BookingDraft;
 import Entities.Booking;
-import Entities.Coupon;
 import Entities.Tour;
 import Model.BookingDAO;
-import Model.CouponDAO;
 import Model.InvoiceDAO;
 import Model.TourDAO;
 import Model.TourScheduleDAO;
@@ -96,54 +94,18 @@ BookingDAO bookingDAO = null;
             }
         }
 
-        // couponCode chỉ được xử lý ở màn payment theo yêu cầu nghiệp vụ.
-        // Nếu coupon hợp lệ, draft được cập nhật lại discount/vat/total trước khi tạo lại VietQR.
-        CouponDAO couponDAO = null;
-        String couponCode = BookingFlowSupport.safeTrim(request.getParameter("couponCode")).toUpperCase();
-        if (!couponCode.isEmpty()) {
-            couponDAO = new CouponDAO();
-            Coupon coupon = couponDAO.getCouponByCode(couponCode);
-            if (coupon == null) {
-                closeCouponDao(couponDAO);
-                forwardPayment(request, response, draft, "Mã giảm giá không hợp lệ hoặc đã hết hiệu lực.");
-                return;
-            }
-            if (draft.baseAmount < coupon.getMinOrderAmount()) {
-                closeCouponDao(couponDAO);
-                forwardPayment(request, response, draft, "Đơn hàng chưa đạt giá trị tối thiểu của mã giảm giá.");
-                return;
-            }
 
-            draft.couponId = coupon.getCouponId();
-            draft.couponCode = coupon.getCouponCode();
-            draft.discountAmount = BookingFlowSupport.calculateDiscount(draft.baseAmount, coupon);
-            double taxableAmount = Math.max(0, draft.baseAmount - draft.discountAmount);
-            // Dùng VATRate đã đọc từ bảng Invoice; nếu không có rate hợp lệ thì dừng để tránh tính sai tiền.
-            Double vatRatePercent = ensureVatRatePercent(draft);
-            if (vatRatePercent == null) {
-                closeCouponDao(couponDAO);
-                forwardPayment(request, response, draft, "Chưa cấu hình VATRate hợp lệ trong bảng Invoice. Vui lòng kiểm tra database.");
-                return;
-            }
-            draft.vatRatePercent = vatRatePercent;
-            draft.vatAmount = BookingFlowSupport.calculateVatAmount(taxableAmount, vatRatePercent);
-            draft.totalAmount = taxableAmount + draft.vatAmount;
-        }
 
         BookingDAO bookingDAO = null;
         try {
             bookingDAO = new BookingDAO();
-            // Dương làm đoạn này: cập nhật lại số tiền booking nếu khách áp dụng coupon trước khi quét VietQR.
-            // Payment chưa được tạo ở đây; hệ thống chỉ tạo Payment khi SePay webhook báo giao dịch tiền vào hợp lệ.
+            // Cập nhật lại số tiền nếu có thay đổi (chỉ mang tính an toàn)
             bookingDAO.updateBookingFinancials(draft.bookingId, draft.discountAmount, draft.vatAmount, draft.totalAmount, draft.couponId);
             session.setAttribute("bookingDraft", draft);
-            forwardPayment(request, response, draft, "Mã QR đã được cập nhật. Vui lòng chuyển khoản đúng số tiền và nội dung booking để SePay xác nhận tự động.");
+            forwardPayment(request, response, draft, "Đã làm mới thông tin. Vui lòng chuyển khoản đúng số tiền và nội dung booking để SePay xác nhận tự động.");
         } finally {
             if (bookingDAO != null) {
                 bookingDAO.close();
-            }
-            if (couponDAO != null) {
-                couponDAO.close();
             }
         }
     }
@@ -198,10 +160,5 @@ BookingDAO bookingDAO = null;
         return session != null ? (BookingDraft) session.getAttribute("bookingDraft") : null;
     }
 
-    // Đóng CouponDAO sớm ở các nhánh lỗi coupon để tránh giữ connection không cần thiết.
-    private void closeCouponDao(CouponDAO couponDAO) {
-        if (couponDAO != null) {
-            couponDAO.close();
-        }
     }
-}
+
