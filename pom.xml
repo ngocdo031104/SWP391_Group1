@@ -83,6 +83,7 @@
 
     <build>
         <finalName>TourBuddy</finalName>
+        <sourceDirectory>src/backend</sourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -99,6 +100,7 @@
                 <version>3.4.0</version>
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
+                    <warSourceDirectory>src/frontend</warSourceDirectory>
                 </configuration>
             </plugin>
         </plugins>
