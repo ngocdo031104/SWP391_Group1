@@ -36,7 +36,12 @@
             <i data-lucide="badge-check"></i>
             <h1>Đã ghi nhận thanh toán</h1>
             <p>Mã booking của bạn là <strong><%= bookingCode %></strong>. Đơn đã được ghi nhận thanh toán và chuyển sang trạng thái Success.</p>
-            <a class="booking-primary-btn inline-link" href="${pageContext.request.contextPath}/home">Về trang chủ</a>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: 1rem;">
+                <a class="booking-primary-btn inline-link" href="${pageContext.request.contextPath}/customer/booking/invoice?code=<%= bookingCode %>">
+                    <i data-lucide="file-text" style="width:16px;height:16px;vertical-align:middle;margin-right:6px;"></i>Xem hóa đơn
+                </a>
+                <a class="booking-primary-btn inline-link" href="${pageContext.request.contextPath}/home">Về trang chủ</a>
+            </div>
         </section>
     </div>
 </main>

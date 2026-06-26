@@ -78,4 +78,32 @@ public class PaymentDAO extends DBContext {
         }
         return false;
     }
+
+    // Dương làm phần này: lấy thông tin thanh toán theo mã đơn đặt
+    public Payment getPaymentByBookingId(int bookingId) {
+        String sql = "SELECT PaymentID, BookingID, PaymentMethod, TransactionRef, Amount, Currency, Status, PaidAt, GatewayResponse, CreatedAt "
+                   + "FROM Payment WHERE BookingID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, bookingId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new Payment(
+                        rs.getInt("PaymentID"),
+                        rs.getInt("BookingID"),
+                        rs.getString("PaymentMethod"),
+                        rs.getString("TransactionRef"),
+                        rs.getDouble("Amount"),
+                        rs.getString("Currency"),
+                        rs.getString("Status"),
+                        rs.getTimestamp("PaidAt"),
+                        rs.getString("GatewayResponse"),
+                        rs.getTimestamp("CreatedAt")
+                    );
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(PaymentDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
 }

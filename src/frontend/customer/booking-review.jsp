@@ -1,4 +1,4 @@
-﻿<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.text.NumberFormat" %>
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="java.util.Locale" %>
@@ -95,21 +95,40 @@
                         </div>
                     </div>
                 </div>
-
-                <%-- Thẻ tổng kết tiền: ở bước này coupon chưa nhập nên giảm giá thường là 0. --%>
-                <div class="review-payment-card">
-                    <h3>Tổng kết thanh toán đơn đặt</h3>
-                    <dl>
-                        <div><dt>Tiền tour cơ bản</dt><dd><%= money.format(draft != null ? draft.baseAmount : 0) %> đ</dd></div>
-                        <div><dt>Thuế VAT du lịch (<%= draft != null ? money.format(draft.vatRatePercent) : "0" %>%)</dt><dd><%= money.format(draft != null ? draft.vatAmount : 0) %> đ</dd></div>
-                        <div><dt>Giảm giá</dt><dd>-<%= money.format(draft != null ? draft.discountAmount : 0) %> đ</dd></div>
-                    </dl>
-                    <div class="summary-total light"><span>Tổng thanh toán</span><strong><%= money.format(draft != null ? draft.totalAmount : 0) %> đ</strong></div>
-                    <%-- Submit form này mới tạo booking trong DB rồi chuyển sang màn payment. --%>
-                    <form method="post" action="${pageContext.request.contextPath}/customer/booking/review">
-                        <input type="hidden" name="action" value="confirm">
-                        <button type="submit" class="booking-primary-btn full-width">Chuyển sang thanh toán <i data-lucide="arrow-right"></i></button>
-                    </form>
+
+                <%-- Cột bên phải: Coupon và Tổng kết tiền --%>
+                <div>
+                    <%-- Dương làm phần này: Chuyển form nhập coupon sang màn hình review --%>
+                    <div class="coupon-card" style="margin-bottom: 20px; padding: 20px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                        <h3 style="font-size: 1.1rem; margin-bottom: 15px; color: #1a202c;">Sử dụng mã khuyến mãi</h3>
+                        <form method="post" action="${pageContext.request.contextPath}/customer/booking/review" style="display: flex; gap: 10px;">
+                            <input type="hidden" name="action" value="applyCoupon">
+                            <input class="booking-input" type="text" name="couponCode" value="<%= draft != null && draft.couponCode != null ? draft.couponCode : "" %>" placeholder="Nhập mã ví dụ: WELCOME10" style="flex: 1; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                            <button type="submit" class="booking-primary-btn" style="padding: 10px 20px; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer;">Áp dụng</button>
+                        </form>
+                        <% if (request.getAttribute("errorMessage") != null) { %>
+                            <div class="field-error" style="color: #ef4444; margin-top: 8px; font-size: 0.9rem;"><%= request.getAttribute("errorMessage") %></div>
+                        <% } %>
+                        <% if (request.getAttribute("successMessage") != null) { %>
+                            <div style="color: #10b981; margin-top: 8px; font-size: 0.9rem;"><%= request.getAttribute("successMessage") %></div>
+                        <% } %>
+                    </div>
+
+                    <%-- Thẻ tổng kết tiền: ở bước này coupon chưa nhập nên giảm giá thường là 0. --%>
+                    <div class="review-payment-card">
+                        <h3>Tổng kết thanh toán đơn đặt</h3>
+                        <dl>
+                            <div><dt>Tiền tour cơ bản</dt><dd><%= money.format(draft != null ? draft.baseAmount : 0) %> đ</dd></div>
+                            <div><dt>Thuế VAT du lịch (<%= draft != null ? money.format(draft.vatRatePercent) : "0" %>%)</dt><dd><%= money.format(draft != null ? draft.vatAmount : 0) %> đ</dd></div>
+                            <div><dt>Giảm giá</dt><dd>-<%= money.format(draft != null ? draft.discountAmount : 0) %> đ</dd></div>
+                        </dl>
+                        <div class="summary-total light"><span>Tổng thanh toán</span><strong><%= money.format(draft != null ? draft.totalAmount : 0) %> đ</strong></div>
+                        <%-- Submit form này mới tạo booking trong DB rồi chuyển sang màn payment. --%>
+                        <form method="post" action="${pageContext.request.contextPath}/customer/booking/review">
+                            <input type="hidden" name="action" value="confirm">
+                            <button type="submit" class="booking-primary-btn full-width">Chuyển sang thanh toán <i data-lucide="arrow-right"></i></button>
+                        </form>
+                    </div>
                 </div>
 
                 <%-- Dương làm đoạn này: ghi chú khách được đưa xuống dưới và trải rộng toàn bộ vùng review để không bị lệch sang cột phải. --%>

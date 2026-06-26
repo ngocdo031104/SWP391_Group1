@@ -205,7 +205,7 @@ CREATE TABLE Booking (
     TotalAmount     DECIMAL(18,2) NOT NULL,
     Status          NVARCHAR(30)  NOT NULL DEFAULT 'PendingPayment'
                         CHECK (Status IN ('PendingPayment','PendingApproval','Confirmed',
-                                          'Rejected','Cancelled','Completed')),
+                                          'Rejected','Cancelled','Completed','Success')),
     Notes           NVARCHAR(500) NULL,
     CouponID        INT           NULL,   -- FK added after Coupon table
     CreatedAt       DATETIME2     NOT NULL DEFAULT SYSDATETIME(),

@@ -218,6 +218,44 @@ public class BookingDAO extends DBContext {
         return list;
     }
 
+    // Dương làm phần này: lấy danh sách booking kèm thông tin Tour để hiển thị Lịch sử Tour
+    public List<Booking> getBookingsWithTourByCustomerId(int customerId) {
+        List<Booking> list = new ArrayList<>();
+        String sql = "SELECT b.BookingID, b.BookingCode, b.ScheduleID, b.CustomerID, b.NumParticipants, "
+                   + "b.BaseAmount, b.VATAmount, b.DiscountAmount, b.TotalAmount, b.Status, b.Notes, b.CouponID, b.CreatedAt, b.UpdatedAt, "
+                   + "s.DepartureDate, s.ReturnDate, s.Transportation, "
+                   + "t.TourName, t.Destination, t.DurationDays "
+                   + "FROM Booking b "
+                   + "JOIN TourSchedule s ON b.ScheduleID = s.ScheduleID "
+                   + "JOIN Tour t ON s.TourID = t.TourID "
+                   + "WHERE b.CustomerID = ? ORDER BY b.CreatedAt DESC";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, customerId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Booking booking = mapBooking(rs);
+                    Entities.TourSchedule schedule = new Entities.TourSchedule();
+                    schedule.setScheduleId(booking.getScheduleId());
+                    schedule.setDepartureDate(rs.getDate("DepartureDate"));
+                    schedule.setReturnDate(rs.getDate("ReturnDate"));
+                    schedule.setTransportation(rs.getString("Transportation"));
+
+                    Entities.Tour tour = new Entities.Tour();
+                    tour.setTourName(rs.getString("TourName"));
+                    tour.setDestination(rs.getString("Destination"));
+                    tour.setDurationDays(rs.getInt("DurationDays"));
+
+                    schedule.setTour(tour);
+                    booking.setSchedule(schedule);
+                    list.add(booking);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(BookingDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return list;
+    }
+
     /**
      * Gets details of a booking using its unique booking code.
      * @param bookingCode unique booking code
@@ -232,6 +270,53 @@ public class BookingDAO extends DBContext {
                 if (rs.next()) {
                     Booking booking = mapBooking(rs);
                     booking.setParticipants(getParticipantsByBookingId(booking.getBookingId()));
+                    return booking;
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(BookingDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    // Dương làm phần này: lấy thông tin booking kèm thông tin Tour và TourSchedule bằng cách JOIN 3 bảng.
+    // Mục đích là phục vụ trang hóa đơn, nơi cần hiển thị tên tour, điểm đến, ngày đi, ngày về
+    // và phương tiện di chuyển. Dùng hàm này thay cho getBookingByCode khi cần render hóa đơn.
+    public Booking getBookingWithTourByCode(String bookingCode) {
+        // SQL JOIN Booking -> TourSchedule -> Tour để lấy hết thông tin cần thiết trong một lần truy vấn
+        String sql = "SELECT b.BookingID, b.BookingCode, b.ScheduleID, b.CustomerID, b.NumParticipants, "
+                   + "b.BaseAmount, b.VATAmount, b.DiscountAmount, b.TotalAmount, b.Status, b.Notes, b.CouponID, b.CreatedAt, b.UpdatedAt, "
+                   + "s.DepartureDate, s.ReturnDate, s.Transportation, "
+                   + "t.TourName, t.Destination, t.DurationDays "
+                   + "FROM Booking b "
+                   + "JOIN TourSchedule s ON b.ScheduleID = s.ScheduleID "
+                   + "JOIN Tour t ON s.TourID = t.TourID "
+                   + "WHERE b.BookingCode = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, bookingCode);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    // mapBooking xử lý các cột thuần Booking; các cột JOIN được đọc thêm bên dưới
+                    Booking booking = mapBooking(rs);
+                    // Load danh sách người tham gia để hiển thị trên hóa đơn
+                    booking.setParticipants(getParticipantsByBookingId(booking.getBookingId()));
+
+                    // Tạo đối tượng TourSchedule chứa thông tin lịch trình cần thiết cho hóa đơn
+                    Entities.TourSchedule schedule = new Entities.TourSchedule();
+                    schedule.setScheduleId(booking.getScheduleId());
+                    schedule.setDepartureDate(rs.getDate("DepartureDate"));
+                    schedule.setReturnDate(rs.getDate("ReturnDate"));
+                    schedule.setTransportation(rs.getString("Transportation"));
+
+                    // Tạo đối tượng Tour chứa tên tour, điểm đến và số ngày để hiển thị trên hóa đơn
+                    Entities.Tour tour = new Entities.Tour();
+                    tour.setTourName(rs.getString("TourName"));
+                    tour.setDestination(rs.getString("Destination"));
+                    tour.setDurationDays(rs.getInt("DurationDays"));
+
+                    // Lắp ghép: tour vào schedule, schedule vào booking để JSP truy cập qua EL
+                    schedule.setTour(tour);
+                    booking.setSchedule(schedule);
                     return booking;
                 }
             }
@@ -269,7 +354,7 @@ public class BookingDAO extends DBContext {
         String sql = "SELECT bp.ParticipantID, bp.BookingID, bp.FullName, bp.AgeType, bp.PhoneNumber, bp.Email, bp.IsLeader, bp.CreatedAt "
                    + "FROM BookingParticipant bp "
                    + "JOIN Booking b ON bp.BookingID = b.BookingID "
-                   + "WHERE b.ScheduleID = ? AND b.Status IN ('Confirmed', 'Completed', 'Paid')";
+                   + "WHERE b.ScheduleID = ? AND b.Status IN ('Confirmed', 'Completed', 'Success')";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, scheduleId);
             try (ResultSet rs = ps.executeQuery()) {
@@ -355,6 +440,90 @@ public class BookingDAO extends DBContext {
             return ps.executeUpdate() > 0;
         } catch (SQLException ex) {
             Logger.getLogger(BookingDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
+    /**
+     * Cancels a booking, releases seats in TourSchedule, and logs the change in BookingHistory.
+     * Usually called by staff when approving a cancellation request, or by system/customer for unpaid bookings.
+     */
+    public boolean cancelBookingAndReleaseSeats(int bookingId, int changedBy, String reason) {
+        String getBookingSql = "SELECT ScheduleID, NumParticipants, Status FROM Booking WHERE BookingID = ?";
+        String updateSeatsSql = "UPDATE TourSchedule SET AvailableSeats = CASE "
+                + "WHEN AvailableSeats + ? > TotalSeats THEN TotalSeats ELSE AvailableSeats + ? END "
+                + "WHERE ScheduleID = ?";
+        String cancelBookingSql = "UPDATE Booking SET Status = 'Cancelled', UpdatedAt = SYSDATETIME() WHERE BookingID = ?";
+        String insertHistorySql = "INSERT INTO BookingHistory (BookingID, OldStatus, NewStatus, ChangedBy, Reason, ChangedAt) "
+                + "VALUES (?, ?, 'Cancelled', ?, ?, SYSDATETIME())";
+
+        try {
+            connection.setAutoCommit(false);
+
+            int scheduleId = 0;
+            int numParticipants = 0;
+            String oldStatus = "";
+
+            try (PreparedStatement psGet = connection.prepareStatement(getBookingSql)) {
+                psGet.setInt(1, bookingId);
+                try (ResultSet rs = psGet.executeQuery()) {
+                    if (rs.next()) {
+                        scheduleId = rs.getInt("ScheduleID");
+                        numParticipants = rs.getInt("NumParticipants");
+                        oldStatus = rs.getString("Status");
+                    } else {
+                        throw new SQLException("Booking not found");
+                    }
+                }
+            }
+
+            if ("Cancelled".equals(oldStatus)) {
+                connection.rollback();
+                return false; // Already cancelled
+            }
+
+            // Release seats
+            try (PreparedStatement psSeats = connection.prepareStatement(updateSeatsSql)) {
+                psSeats.setInt(1, numParticipants);
+                psSeats.setInt(2, numParticipants);
+                psSeats.setInt(3, scheduleId);
+                psSeats.executeUpdate();
+            }
+
+            // Update booking status
+            try (PreparedStatement psCancel = connection.prepareStatement(cancelBookingSql)) {
+                psCancel.setInt(1, bookingId);
+                psCancel.executeUpdate();
+            }
+
+            // Insert history
+            try (PreparedStatement psHistory = connection.prepareStatement(insertHistorySql)) {
+                psHistory.setInt(1, bookingId);
+                psHistory.setString(2, oldStatus);
+                if (changedBy > 0) {
+                    psHistory.setInt(3, changedBy);
+                } else {
+                    psHistory.setNull(3, java.sql.Types.INTEGER);
+                }
+                psHistory.setString(4, reason);
+                psHistory.executeUpdate();
+            }
+
+            connection.commit();
+            return true;
+        } catch (SQLException ex) {
+            try {
+                if (connection != null) connection.rollback();
+            } catch (SQLException rollbackEx) {
+                Logger.getLogger(BookingDAO.class.getName()).log(Level.SEVERE, null, rollbackEx);
+            }
+            Logger.getLogger(BookingDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if (connection != null) connection.setAutoCommit(true);
+            } catch (SQLException ex) {
+                Logger.getLogger(BookingDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         return false;
     }
