@@ -191,6 +191,13 @@ BEGIN
 END
 GO
 
+-- Alter Coupon table to support MaxDiscountAmount
+IF NOT EXISTS(SELECT 1 FROM sys.columns WHERE Name = N'MaxDiscountAmount' AND Object_ID = Object_ID(N'Coupon'))
+BEGIN
+    ALTER TABLE Coupon ADD MaxDiscountAmount DECIMAL(18, 2) NULL;
+END
+GO
+
 
 -- ============================================================
 -- 3. SETUP & SEED TARGET ACCOUNTS
