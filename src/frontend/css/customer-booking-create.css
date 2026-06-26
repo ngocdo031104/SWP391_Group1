@@ -1,0 +1,296 @@
+/*
+ * Người làm: Dương
+ * Thời gian tạo: 04/06/2026
+ * Chức năng: CSS cho màn Customer tạo booking.
+ * Ý nghĩa: Định dạng phần chọn lịch khởi hành, bộ tăng giảm số người, form người tham gia và tổng quan đơn đặt.
+ */
+@import url('customer-booking-common.css?v=2.1');
+
+/* Layout 2 cột: form tạo booking bên trái và tổng quan tour bên phải. */
+.booking-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 330px;
+    gap: 24px;
+    align-items: start;
+}
+
+/* Lưới lịch khởi hành tự co giãn theo số lượng schedule. */
+.schedule-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+}
+
+/* Card lịch khởi hành là label bọc radio để khách bấm cả card cũng chọn được lịch. */
+.schedule-card {
+    display: grid;
+    gap: 6px;
+    border: 1px solid #cbd8e8;
+    border-radius: 8px;
+    padding: 14px;
+    cursor: pointer;
+    color: #30445e;
+}
+
+/* Khi radio bên trong được checked, card đổi màu để thể hiện lịch đang chọn. */
+.schedule-card:has(input:checked) {
+    border-color: #0ea5e9;
+    background: #eefaff;
+    box-shadow: inset 0 0 0 1px #0ea5e9;
+}
+
+/* Radio được ẩn về mặt thị giác vì trạng thái chọn đã thể hiện trên card. */
+.schedule-card input {
+    position: absolute;
+    opacity: 0;
+}
+
+.schedule-card strong {
+    color: #102033;
+}
+
+.schedule-card span,
+.schedule-card small {
+    font-size: 0.85rem;
+}
+
+/* Bộ tăng/giảm số người gồm nút trừ, ô số lượng readonly và nút cộng. */
+.participant-counter {
+    display: inline-grid;
+    grid-template-columns: 40px 56px 40px;
+    gap: 8px;
+    align-items: center;
+}
+
+.participant-counter button,
+.participant-counter input {
+    height: 38px;
+    border: 1px solid #cbd8e8;
+    border-radius: 8px;
+    background: #ffffff;
+    text-align: center;
+    font-weight: 800;
+}
+
+/* Ghi chú giới hạn số người giúp khách hiểu lý do không nhập quá 10 người. */
+.booking-note {
+    margin: 12px 0;
+    padding: 10px 12px;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    border-radius: 8px;
+    color: #9a3412;
+    font-size: 0.9rem;
+}
+
+/* Danh sách form người tham gia do JS sinh động theo số lượng khách. */
+.participant-list {
+    display: grid;
+    gap: 14px;
+}
+
+/* Card từng người tham gia, chứa tên, vai trò, số điện thoại và email. */
+.participant-card {
+    border: 1px solid #17243a;
+    border-radius: 8px;
+    padding: 14px;
+}
+
+/* Header card phân biệt người đại diện và khách đi cùng. */
+.participant-card-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.participant-card-head span {
+    color: #05896b;
+    font-weight: 800;
+    font-size: 0.78rem;
+}
+
+/* Lưới field thông tin khách giúp các ô nhập nằm trên một hàng ở desktop. */
+.participant-fields {
+    display: grid;
+    grid-template-columns: 1.3fr 0.9fr 1fr 1.2fr;
+    gap: 12px;
+}
+
+.participant-fields label {
+    display: grid;
+    gap: 6px;
+    color: #344966;
+    font-weight: 700;
+    font-size: 0.82rem;
+}
+
+.participant-fields input,
+.participant-fields select {
+    width: 100%;
+    height: 40px;
+    border: 1px solid #b9c8db;
+    border-radius: 6px;
+    padding: 0 10px;
+    color: #17243a;
+    background: #ffffff;
+}
+
+/* Cột tổng quan sticky để khách luôn thấy tour và giá tham khảo khi cuộn form dài. */
+.booking-summary {
+    position: sticky;
+    top: 96px;
+}
+
+/* Card tổng quan dùng nền đậm để phân biệt với form nhập liệu. */
+.summary-card {
+    padding: 22px;
+    background: #0f2344;
+    color: #ffffff;
+}
+
+.summary-card small {
+    color: #75d7ff;
+    text-transform: uppercase;
+    font-weight: 800;
+}
+
+.summary-card h2 {
+    margin: 8px 0 18px;
+    font-size: 1.15rem;
+    letter-spacing: 0;
+}
+
+.summary-card dl {
+    display: grid;
+    gap: 12px;
+    margin: 0;
+}
+
+.summary-card dl div {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+    padding-bottom: 10px;
+}
+
+.summary-card dt {
+    color: #b7c6da;
+}
+
+.summary-card dd {
+    margin: 0;
+    text-align: right;
+    font-weight: 700;
+}
+
+/* Tổng tiền tạm tính được tách cuối card để người dùng dễ nhận ra giá tham khảo. */
+.summary-total {
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(255,255,255,0.28);
+}
+
+.summary-total span {
+    display: block;
+    color: #b7c6da;
+    margin-bottom: 6px;
+}
+
+.summary-total strong {
+    color: #67e8f9;
+    font-size: 1.5rem;
+}
+
+/* Responsive: form, sidebar và field người tham gia xếp một cột trên màn nhỏ. */
+@media (max-width: 900px) {
+    .booking-layout,
+    .participant-fields {
+        grid-template-columns: 1fr;
+    }
+
+    .booking-summary {
+        position: static;
+    }
+}
+
+/* Dương làm đoạn này: card participant dùng position relative để đặt nút xoá ở góc phải trên. */
+.participant-card {
+    position: relative;
+}
+
+/* Nút thùng rác nhỏ chỉ xuất hiện trên người đi cùng, giúp xoá nhanh một participant cụ thể. */
+.remove-participant-btn {
+    width: 30px;
+    height: 30px;
+    display: inline-grid;
+    place-items: center;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    background: #fff5f5;
+    color: #dc2626;
+    cursor: pointer;
+}
+
+.remove-participant-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+.remove-participant-btn:hover {
+    background: #fee2e2;
+    border-color: #f87171;
+}
+
+/* Hiển thị nhóm tuổi cố định của trưởng đoàn như text thường trong ô readonly để không bị bôi đậm quá nổi bật. */
+.leader-age-fixed {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    border: 1px solid #b9c8db;
+    border-radius: 6px;
+    padding: 0 10px;
+    background: #ffffff;
+    color: #17243a;
+    font-weight: 400;
+}
+/* Dương làm đoạn này: khu vực ghi chú nằm ngay dưới tiêu đề section và chiếm trọn chiều ngang form. */
+.booking-note-field {
+    display: block;
+    width: 100%;
+}
+
+/* Textarea ghi chú tự tăng chiều cao bằng JS, tắt kéo tay để giao diện không bị méo layout. */
+.booking-note-field textarea {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 72px;
+    max-height: 260px;
+    resize: none !important;
+    overflow: hidden !important;
+    border: 1px solid #c8d7ea;
+    border-radius: 8px;
+    padding: 13px 14px;
+    color: #17243a;
+    background: #ffffff;
+    font: inherit;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    box-shadow: inset 0 1px 0 rgba(15, 35, 68, 0.03);
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+/* Khi khách đang nhập ghi chú, viền xanh giúp nhận biết focus rõ ràng nhưng vẫn nhẹ mắt. */
+.booking-note-field textarea:focus {
+    outline: none;
+    border-color: #0ea5e9;
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.14);
+}
+
+.booking-note-field textarea::placeholder {
+    color: #8190a5;
+}
