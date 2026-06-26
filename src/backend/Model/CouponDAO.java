@@ -192,5 +192,17 @@ public class CouponDAO extends DBContext {
         }
         return false;
     }
+
+    // Dương làm phần này: xóa coupon
+    public boolean deleteCoupon(int couponId) {
+        String sql = "DELETE FROM Coupon WHERE CouponID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, couponId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(CouponDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
 }
 
