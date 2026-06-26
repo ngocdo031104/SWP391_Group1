@@ -2,6 +2,7 @@ package Controller;
 
 import Entities.Tour;
 import Entities.TourCategory;
+import Entities.User;
 import Model.TourDAO;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -21,6 +22,18 @@ public class AdminTourController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
+        User sessionUser = (User) request.getSession().getAttribute("sessionUser");
+        String userRole = (String) request.getSession().getAttribute("userRole");
+        if (sessionUser == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+        if (sessionUser.getRoleId() != 1 && !"Admin".equals(userRole)) {
+            response.sendRedirect(request.getContextPath() + "/admin/analytics");
+            return;
+        }
+
         // Kiểm tra xem request này có phải là AJAX fetch không.
         // Phía JS client (admin-tour.js) sẽ truyền parameter ?ajax=true khi cần lấy dữ liệu JSON.
         String ajax = request.getParameter("ajax");
@@ -170,6 +183,17 @@ public class AdminTourController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
+        User sessionUser = (User) request.getSession().getAttribute("sessionUser");
+        String userRole = (String) request.getSession().getAttribute("userRole");
+        if (sessionUser == null || (sessionUser.getRoleId() != 1 && !"Admin".equals(userRole))) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            try (PrintWriter out = response.getWriter()) {
+                out.print("{\"status\":\"error\",\"message\":\"Access Denied\"}");
+            }
+            return;
+        }
+
         // Thiết lập bộ mã UTF-8 để đảm bảo khi đọc form tiếng Việt không bị lỗi hiển thị
         response.setContentType("application/json;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");

@@ -79,7 +79,7 @@ public class GoogleLoginController extends HttpServlet {
                     response.sendRedirect(request.getContextPath() + "/guide/dashboard");
                     break;
                 case "Accountant":
-                    response.sendRedirect(request.getContextPath() + "/accountant/dashboard");
+                    response.sendRedirect(request.getContextPath() + "/admin/analytics");
                     break;
                 default:
                     response.sendRedirect(request.getContextPath() + "/home");
