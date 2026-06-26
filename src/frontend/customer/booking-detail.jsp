@@ -82,15 +82,7 @@
         background: #fecaca;
         color: #b91c1c;
     }
-        padding: 8px 16px;
-        border-radius: 6px;
-        font-weight: 500;
-        text-decoration: none;
-        transition: all 0.2s;
-        border: 1px solid transparent;
-        cursor: pointer;
-    }
-    
+
     .btn-outline {
         background: transparent;
         border-color: #cbd5e1;

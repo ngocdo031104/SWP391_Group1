@@ -485,7 +485,7 @@
         const checkedBoxes = document.querySelectorAll('.row-checkbox:checked');
         if (checkedBoxes.length === 0) return;
         
-        if (confirm(`Bạn có chắc muốn ${status ? 'mở khóa' : 'khóa'} ${checkedBoxes.length} tài khoản này?`)) {
+        if (confirm(`Bạn có chắc muốn \${status ? 'mở khóa' : 'khóa'} \${checkedBoxes.length} tài khoản này?`)) {
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = '?action=bulkToggleStatus&status=' + status;
@@ -506,7 +506,7 @@
         const checkedBoxes = document.querySelectorAll('.row-checkbox:checked');
         if (checkedBoxes.length === 0) return;
         
-        if (confirm(`Bạn có thực sự muốn xóa vĩnh viễn ${checkedBoxes.length} tài khoản này? Hành động này không thể hoàn tác và sẽ xóa toàn bộ dữ liệu hồ sơ liên quan!`)) {
+        if (confirm(`Bạn có thực sự muốn xóa vĩnh viễn \${checkedBoxes.length} tài khoản này? Hành động này không thể hoàn tác và sẽ xóa toàn bộ dữ liệu hồ sơ liên quan!`)) {
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = '?action=bulkDeleteUsers';
