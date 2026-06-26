@@ -87,7 +87,7 @@ public class AdminSchedulePricingController extends HttpServlet {
                 CouponDAO couponDAO = null;
                 try {
                     couponDAO = new CouponDAO();
-                    List<Coupon> coupons = couponDAO.getAllCouponsAdmin();
+                    List<Coupon> coupons = couponDAO.getAllCoupons();
                     String json = new Gson().toJson(coupons);
                     try (PrintWriter out = response.getWriter()) {
                         out.print(json);
@@ -116,7 +116,7 @@ public class AdminSchedulePricingController extends HttpServlet {
 
             List<Tour> tours = tourDAO.getAllToursAdmin();
             List<GuideProfile> guides = guideDAO.getAllGuides();
-            List<Coupon> coupons = couponDAO.getAllCouponsAdmin();
+            List<Coupon> coupons = couponDAO.getAllCoupons();
 
             request.setAttribute("tours", tours);
             request.setAttribute("guides", guides);
@@ -313,7 +313,7 @@ public class AdminSchedulePricingController extends HttpServlet {
 
                         boolean success = false;
                         if ("addCoupon".equalsIgnoreCase(action)) {
-                            success = couponDAO.insertCoupon(coupon);
+                            success = couponDAO.createCoupon(coupon);
                         } else {
                             int couponId = parseInt(request.getParameter("couponId"), 0);
                             coupon.setCouponId(couponId);
@@ -342,7 +342,7 @@ public class AdminSchedulePricingController extends HttpServlet {
                 couponDAO = new CouponDAO();
                 int couponId = parseInt(request.getParameter("couponId"), 0);
                 boolean isActive = "true".equalsIgnoreCase(request.getParameter("isActive"));
-                boolean success = couponDAO.toggleCouponStatus(couponId, isActive);
+                boolean success = couponDAO.toggleStatus(couponId, isActive);
                 if (success) {
                     result.addProperty("status", "success");
                     result.addProperty("message", "Cập nhật trạng thái thành công!");
