@@ -238,13 +238,32 @@ public class AdminSchedulePricingController extends HttpServlet {
             try {
                 scheduleDAO = new TourScheduleDAO();
                 int scheduleId = parseInt(request.getParameter("scheduleId"), 0);
-                boolean success = scheduleDAO.deleteSchedule(scheduleId);
-                if (success) {
-                    result.addProperty("status", "success");
-                    result.addProperty("message", "Xóa lịch trình thành công!");
-                } else {
+                TourSchedule schedule = scheduleDAO.getScheduleById(scheduleId);
+                if (schedule == null) {
                     result.addProperty("status", "error");
-                    result.addProperty("message", "Không thể xóa lịch trình này (đang có đơn hàng hoặc liên kết dữ liệu).");
+                    result.addProperty("message", "Lịch trình không tồn tại.");
+                } else {
+                    String tourStatus = schedule.getTourStatus();
+                    if (tourStatus != null && !tourStatus.equalsIgnoreCase("Preparing") 
+                            && !tourStatus.equalsIgnoreCase("Completed") 
+                            && !tourStatus.equalsIgnoreCase("Cancelled")) {
+                        
+                        String statusName = tourStatus;
+                        if ("Scheduled".equalsIgnoreCase(tourStatus)) statusName = "Scheduled (Lên lịch khởi hành)";
+                        else if ("InProgress".equalsIgnoreCase(tourStatus)) statusName = "InProgress (Đang đi)";
+                        
+                        result.addProperty("status", "error");
+                        result.addProperty("message", "Không thể xóa lịch khởi hành đang ở trạng thái '" + statusName + "'. Chỉ có thể xóa lịch khởi hành ở trạng thái Chuẩn bị, Hoàn thành hoặc Hủy đoàn.");
+                    } else {
+                        boolean success = scheduleDAO.deleteSchedule(scheduleId);
+                        if (success) {
+                            result.addProperty("status", "success");
+                            result.addProperty("message", "Xóa lịch trình thành công!");
+                        } else {
+                            result.addProperty("status", "error");
+                            result.addProperty("message", "Không thể xóa lịch trình này (đang có đơn hàng hoặc liên kết dữ liệu).");
+                        }
+                    }
                 }
             } catch (Exception e) {
                 LOGGER.log(Level.SEVERE, "Delete schedule error", e);

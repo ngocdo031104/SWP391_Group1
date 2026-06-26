@@ -164,7 +164,7 @@
                     </div>
                     <div class="form-group form-grid-full" id="group-media-url">
                         <label>Đường dẫn Media URL *</label>
-                        <input type="url" name="mediaUrl" id="form-media-url" class="form-control" placeholder="https://example.com/image.jpg hoặc link YouTube" required>
+                        <input type="text" name="mediaUrl" id="form-media-url" class="form-control" placeholder="Nhập URL (https://...) hoặc đường dẫn nội bộ (ví dụ: assets/images/tour_sapa.png)" required>
                     </div>
                     <div class="form-group form-grid-full" id="group-media-file" style="display: none;">
                         <label>Chọn tệp từ thiết bị *</label>

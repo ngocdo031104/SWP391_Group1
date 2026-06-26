@@ -541,7 +541,7 @@
                                     <button class="btn-icon edit" title="Sửa" onclick="openEditScheduleModal(\${JSON.stringify(s).replace(/"/g, '&quot;')})">
                                         <i data-lucide="edit-3"></i>
                                     </button>
-                                    <button class="btn-icon delete" title="Xóa" onclick="deleteSchedule(\${s.scheduleId})">
+                                    <button class="btn-icon delete" title="Xóa" onclick="deleteSchedule(\${s.scheduleId}, '\${s.tourStatus}')">
                                         <i data-lucide="trash-2"></i>
                                     </button>
                                 </div>
@@ -634,7 +634,15 @@
         });
     }
 
-    function deleteSchedule(scheduleId) {
+    function deleteSchedule(scheduleId, tourStatus) {
+        if (tourStatus && tourStatus !== 'Preparing' && tourStatus !== 'Completed' && tourStatus !== 'Cancelled') {
+            let statusText = tourStatus;
+            if (tourStatus === 'Scheduled') statusText = 'Scheduled (Lên lịch khởi hành)';
+            else if (tourStatus === 'InProgress') statusText = 'InProgress (Đang đi)';
+            alert(`Không thể xóa lịch khởi hành đang ở trạng thái '${statusText}'. Chỉ cho phép xóa khi ở trạng thái Chuẩn bị, Hoàn thành hoặc Hủy đoàn.`);
+            return;
+        }
+
         if (!confirm("Bạn có chắc chắn muốn xóa lịch khởi hành này? Hành động này không thể hoàn tác.")) {
             return;
         }

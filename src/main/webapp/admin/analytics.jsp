@@ -112,7 +112,16 @@
                         <option value="TourPerformance">Hiệu Suất Tour</option>
                         <option value="GuideActivity">Hoạt Động HDV</option>
                     </select>
-                    <button id="btn-save-snapshot" class="btn-action btn-primary">Chụp Snapshot</button>
+                    <c:choose>
+                        <c:when test="${isAccountant}">
+                            <button id="btn-save-snapshot" class="btn-action btn-primary">Chụp Snapshot</button>
+                        </c:when>
+                        <c:otherwise>
+                            <button class="btn-action btn-primary" style="opacity: 0.5; cursor: not-allowed; display: flex; align-items: center; gap: 4px;" disabled title="Chỉ dành cho Kế toán viên">
+                                <i data-lucide="lock" style="width:14px; height:14px;"></i> Chụp Snapshot
+                            </button>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
 
                 <div class="profile-user" style="display: flex; align-items: center; gap: 10px;">

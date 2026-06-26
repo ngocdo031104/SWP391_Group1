@@ -123,6 +123,22 @@ public class TourScheduleDAO extends DBContext {
         return null;
     }
 
+    // Lấy một lịch khởi hành theo ScheduleID.
+    public TourSchedule getScheduleById(int scheduleId) {
+        String sql = SCHEDULE_SELECT + "WHERE ScheduleID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, scheduleId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return mapSchedule(rs);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TourScheduleDAO.class.getName()).log(Level.SEVERE, "getScheduleById failed", ex);
+        }
+        return null;
+    }
+
     // Thêm lịch khởi hành mới
     public int insertSchedule(TourSchedule schedule) {
         String sql = "INSERT INTO TourSchedule (TourID, DepartureDate, ReturnDate, TotalSeats, AvailableSeats, "
