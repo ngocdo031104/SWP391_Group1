@@ -553,7 +553,7 @@
 /* ── Toasts Alert System ── */
 .toast-container {
     position: fixed;
-    bottom: 2rem;
+    top: 1.5rem;
     right: 2rem;
     z-index: 2000;
     display: flex;

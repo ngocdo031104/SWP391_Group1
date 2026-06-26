@@ -13,6 +13,7 @@ public class TourMedia implements Serializable {
     private boolean isVisible;
     private Integer uploadedBy;
     private Timestamp uploadedAt;
+    private String uploaderName; // Thuộc tính bổ sung để hiển thị tên người tải lên
 
     public TourMedia() {
     }
@@ -27,6 +28,11 @@ public class TourMedia implements Serializable {
         this.isVisible = isVisible;
         this.uploadedBy = uploadedBy;
         this.uploadedAt = uploadedAt;
+    }
+
+    public TourMedia(int mediaId, int tourId, String mediaUrl, String mediaType, String caption, int sortOrder, boolean isVisible, Integer uploadedBy, Timestamp uploadedAt, String uploaderName) {
+        this(mediaId, tourId, mediaUrl, mediaType, caption, sortOrder, isVisible, uploadedBy, uploadedAt);
+        this.uploaderName = uploaderName;
     }
 
     public int getMediaId() {
@@ -99,5 +105,13 @@ public class TourMedia implements Serializable {
 
     public void setUploadedAt(Timestamp uploadedAt) {
         this.uploadedAt = uploadedAt;
+    }
+
+    public String getUploaderName() {
+        return uploaderName;
+    }
+
+    public void setUploaderName(String uploaderName) {
+        this.uploaderName = uploaderName;
     }
 }
