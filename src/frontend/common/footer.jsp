@@ -8,20 +8,20 @@
                 </a>
                 <p class="footer-desc">Kiến tạo hành trình du lịch cao cấp và lịch trình nghỉ dưỡng đặt riêng tại những điểm đến tuyệt đẹp khắp Việt Nam từ năm 2021.</p>
                 <div class="social-links">
-                    <a href="#" class="btn-icon" aria-label="Facebook"><i data-lucide="facebook"></i></a>
-                    <a href="#" class="btn-icon" aria-label="Instagram"><i data-lucide="instagram"></i></a>
-                    <a href="#" class="btn-icon" aria-label="Twitter"><i data-lucide="twitter"></i></a>
-                    <a href="#" class="btn-icon" aria-label="YouTube"><i data-lucide="youtube"></i></a>
+                    <a href="https://facebook.com/TourBuddyVN" class="btn-icon" aria-label="Facebook"><i data-lucide="facebook"></i></a>
+                    <a href="https://instagram.com/tourbuddy.vn" class="btn-icon" aria-label="Instagram"><i data-lucide="instagram"></i></a>
+                    <a href="https://twitter.com/TourBuddyVN" class="btn-icon" aria-label="Twitter"><i data-lucide="twitter"></i></a>
+                    <a href="https://youtube.com/@TourBuddyVN" class="btn-icon" aria-label="YouTube"><i data-lucide="youtube"></i></a>
                 </div>
             </div>
 
             <div class="footer-col">
                 <h3>Khám Phá</h3>
                 <ul class="footer-links">
-                    <li><a href="#tours">Gói Tour Cao Cấp</a></li>
-                    <li><a href="#destinations">Điểm Đến Hot</a></li>
-                    <li><a href="#promotions">Ưu Đãi Đặc Biệt</a></li>
-                    <li><a href="#categories-section">Tour Mạo Hiểm</a></li>
+                    <li><a href="${pageContext.request.contextPath}/tourdiscovery">Gói Tour Cao Cấp</a></li>
+                    <li><a href="${pageContext.request.contextPath}/tourdiscovery">Điểm Đến Hot</a></li>
+                    <li><a href="${pageContext.request.contextPath}/home#promotions">Ưu Đãi Đặc Biệt</a></li>
+                    <li><a href="${pageContext.request.contextPath}/tourdiscovery?category=adventure">Tour Mạo Hiểm</a></li>
                 </ul>
             </div>
 

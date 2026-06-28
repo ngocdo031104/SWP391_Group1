@@ -86,7 +86,7 @@
                                 <c:if test="${sessionUser.role.roleName eq 'Admin'}">
                                     <a href="${pageContext.request.contextPath}/admin/dashboard" id="dropdown-admin-link"><i data-lucide="shield-alert"></i> Quản Trị (Admin)</a>
                                 </c:if>
-                                <a href="#" id="dropdown-settings-link"><i data-lucide="settings"></i> Cài Đặt</a>
+                                <a href="${pageContext.request.contextPath}/profile" id="dropdown-settings-link"><i data-lucide="settings"></i> Cài Đặt</a>
                                 <a href="${pageContext.request.contextPath}/logout" class="logout-btn" id="dropdown-logout-btn"><i data-lucide="log-out"></i> Đăng Xuất</a>
                             </div>
                         </div>
