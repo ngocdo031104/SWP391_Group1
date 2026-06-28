@@ -1,4 +1,4 @@
-﻿<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
 <%@ page import="Entities.Tour" %>
 <%@ page import="Entities.TourCategory" %>
@@ -545,7 +545,7 @@
                                 <span>Cổng đăng ký trực tuyến chính thức</span>
                             </div>
                             <button type="button" class="btn btn-primary btn-payment-cta" id="go-payment-btn"
-                                    onclick="window.location.href='${pageContext.request.contextPath}/customer/booking/create?tourId=<%= activeTour != null ? activeTour.getTourId() : 1 %>'">
+                                    onclick="if (<%= isLoggedIn %>) { window.location.href='${pageContext.request.contextPath}/customer/booking/create?tourId=<%= activeTour != null ? activeTour.getTourId() : 1 %>' } else { alert('Vui lòng đăng nhập để thực hiện đặt tour!'); window.location.href='${pageContext.request.contextPath}/login'; }">
                                 <span class="btn-payment-text">
                                     <i data-lucide="compass"></i>
                                     Đăng ký tham gia ngay
