@@ -1,4 +1,4 @@
-﻿<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
 <%@ page import="Entities.Tour" %>
 <%@ page import="Entities.TourCategory" %>
@@ -233,7 +233,7 @@
                 %>
             </div>
 
-            <div class="view-more-container" id="view-more-tours-wrapper" style="display: none;">
+            <div class="view-more-container" id="view-more-tours-wrapper">
                 <button type="button" class="btn btn-secondary" id="btn-view-more-tours">
                     <span class="btn-label">Xem thêm tour</span>
                     <span id="btn-view-more-icon"><i data-lucide="chevron-down"></i></span>
@@ -273,7 +273,7 @@
                 %>
             </div>
 
-            <div class="view-more-container" id="view-more-dests-wrapper" style="display: none;">
+            <div class="view-more-container" id="view-more-dests-wrapper">
                 <button type="button" class="btn btn-secondary" id="btn-view-more-dests">
                     <span class="btn-label">Xem thêm điểm đến</span>
                     <span id="btn-view-more-dests-icon"><i data-lucide="chevron-down"></i></span>

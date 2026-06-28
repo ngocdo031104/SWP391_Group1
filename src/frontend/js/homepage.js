@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (matchesCategory) {
                 matchingCount++;
-                if (!isExpanded && matchingCount > 9) {
+                if (!isExpanded && matchingCount > 3) {
                     tour.style.display = 'none';
                 } else {
                     tour.style.display = 'flex';
@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Show/hide "Xem thêm" / "Thu gọn" button based on matchingCount
         if (viewMoreWrapper && viewMoreBtn) {
-            if (matchingCount > 9) {
+            if (matchingCount > 3) {
                 viewMoreWrapper.style.display = 'flex';
                 
                 const btnLabel = viewMoreBtn.querySelector('.btn-label');
@@ -330,7 +330,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateDestVisibility() {
         destCards.forEach((card, index) => {
-            if (!isDestsExpanded && index >= 6) {
+            if (!isDestsExpanded && index >= 3) {
                 card.style.display = 'none';
             } else {
                 card.style.display = '';
@@ -339,7 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Show/hide button based on count
         if (viewMoreDestsWrapper && viewMoreDestsBtn) {
-            if (destCards.length > 6) {
+            if (destCards.length > 3) {
                 viewMoreDestsWrapper.style.display = 'flex';
                 
                 const btnLabel = viewMoreDestsBtn.querySelector('.btn-label');
