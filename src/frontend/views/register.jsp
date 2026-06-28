@@ -266,8 +266,8 @@
             <div class="form-check">
               <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
               <label class="form-check-label" for="agreeTerms">
-                Tôi đồng ý với <a href="#">Điều khoản dịch vụ</a>
-                và <a href="#">Chính sách bảo mật</a> của TourBuddy
+                Tôi đồng ý với <a href="${pageContext.request.contextPath}/terms">Điều khoản dịch vụ</a>
+                và <a href="${pageContext.request.contextPath}/privacy">Chính sách bảo mật</a> của TourBuddy
               </label>
             </div>
             <span class="form-error" id="termsError" style="display:none">

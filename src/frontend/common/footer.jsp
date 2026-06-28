@@ -28,10 +28,10 @@
             <div class="footer-col">
                 <h3>Hỗ Trợ</h3>
                 <ul class="footer-links">
-                    <li><a href="#">Trung Tâm Trợ Giúp</a></li>
-                    <li><a href="#">Hướng Dẫn Đặt Tour</a></li>
-                    <li><a href="#">Chính Sách Hủy</a></li>
-                    <li><a href="#">Liên Hệ Hỗ Trợ</a></li>
+                    <li><a href="${pageContext.request.contextPath}/help">Trung Tâm Trợ Giúp</a></li>
+                    <li><a href="${pageContext.request.contextPath}/guide-booking">Hướng Dẫn Đặt Tour</a></li>
+                    <li><a href="${pageContext.request.contextPath}/policy/cancel">Chính Sách Hủy</a></li>
+                    <li><a href="${pageContext.request.contextPath}/contact">Liên Hệ Hỗ Trợ</a></li>
                 </ul>
             </div>
 

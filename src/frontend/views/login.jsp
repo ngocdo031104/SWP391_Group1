@@ -130,9 +130,9 @@
       </div>
 
       <div class="auth-footer-links">
-        <a href="#">Điều khoản dịch vụ</a><span>·</span>
-        <a href="#">Chính sách bảo mật</a><span>·</span>
-        <a href="#">Hỗ trợ</a>
+        <a href="${pageContext.request.contextPath}/terms">Điều khoản dịch vụ</a><span>·</span>
+        <a href="${pageContext.request.contextPath}/privacy">Chính sách bảo mật</a><span>·</span>
+        <a href="${pageContext.request.contextPath}/help">Hỗ trợ</a>
       </div>
 
     </div>
