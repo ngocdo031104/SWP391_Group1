@@ -72,15 +72,24 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Redirect search to Explore page
+    // Redirect search to Explore page with full parameters
     if (searchForm) {
         searchForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const destination = document.getElementById('search-dest').value.trim();
+            const date = document.getElementById('search-date').value;
+            const budget = document.getElementById('search-budget').value;
+            
             const params = new URLSearchParams();
             if (destination) params.set('dest', destination);
+            if (date) params.set('date', date);
+            if (budget) params.set('budget', budget);
+            
             const query = params.toString();
-            window.location.href = query ? `tourdiscovery?${query}` : 'tourdiscovery';
+            // Get context path dynamically if possible (assuming js is in context)
+            const contextPath = window.location.pathname.substring(0, window.location.pathname.indexOf('/', 1));
+            const path = contextPath ? `${contextPath}/tourdiscovery` : 'tourdiscovery';
+            window.location.href = query ? `${path}?${query}` : path;
         });
     }
 
