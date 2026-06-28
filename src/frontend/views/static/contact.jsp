@@ -15,6 +15,14 @@
             </div>
         <%
             }
+            String errorMessage = (String) request.getAttribute("errorMessage");
+            if (errorMessage != null) {
+        %>
+            <div style="background: #fef2f2; border: 1px solid #ef4444; color: #991b1b; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-weight: 500; font-size: 0.95rem;">
+                <%= errorMessage %>
+            </div>
+        <%
+            }
         %>
 
         <%

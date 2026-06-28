@@ -69,6 +69,36 @@
     </footer>
 
     <script src="${pageContext.request.contextPath}/js/navigation.js?v=2.1"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('newsletter-subscription-form');
+            if (form) {
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const email = document.getElementById('newsletter-email').value;
+                    
+                    fetch('${pageContext.request.contextPath}/newsletter/subscribe', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: 'email=' + encodeURIComponent(email)
+                    })
+                    .then(res => res.json())
+                    .then(res => {
+                        alert(res.message);
+                        if (res.status === 'success') {
+                            form.reset();
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        alert('Có lỗi hệ thống xảy ra. Vui lòng thử lại sau.');
+                    });
+                });
+            }
+        });
+    </script>
     <% 
         String extraScript = (String) request.getAttribute("extraScript");
         if (extraScript != null && !extraScript.trim().isEmpty()) {

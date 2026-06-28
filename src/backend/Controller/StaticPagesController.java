@@ -52,8 +52,21 @@ public class StaticPagesController extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/login");
                 return;
             }
-            // Giả lập nhận form liên hệ thành công
-            request.setAttribute("successMessage", "Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi trong vòng 24 giờ.");
+            
+            String name = request.getParameter("name");
+            String email = request.getParameter("email");
+            String subject = request.getParameter("subject");
+            String message = request.getParameter("message");
+            
+            Model.ContactMessageDAO contactDAO = new Model.ContactMessageDAO();
+            boolean success = contactDAO.insertMessage(name, email, subject, message);
+            contactDAO.close();
+            
+            if (success) {
+                request.setAttribute("successMessage", "Cảm ơn bạn đã liên hệ! Yêu cầu hỗ trợ của bạn đã được ghi nhận trên hệ thống và chúng tôi sẽ phản hồi trong vòng 24 giờ.");
+            } else {
+                request.setAttribute("errorMessage", "Đã có lỗi hệ thống xảy ra khi gửi tin. Vui lòng thử lại sau.");
+            }
             request.getRequestDispatcher("/views/static/contact.jsp").forward(request, response);
         } else {
             doGet(request, response);
