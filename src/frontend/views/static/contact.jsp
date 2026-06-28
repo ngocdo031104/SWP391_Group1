@@ -17,15 +17,22 @@
             }
         %>
 
+        <%
+            // Lấy thông tin user đăng nhập
+            Entities.User currentUser = (Entities.User) session.getAttribute("sessionUser");
+            String fullName = currentUser != null ? currentUser.getFullName() : "";
+            String email = currentUser != null ? currentUser.getEmail() : "";
+        %>
+
         <form action="${pageContext.request.contextPath}/contact" method="POST" style="display: flex; flex-direction: column; gap: 20px;">
             <div style="display: flex; flex-direction: column; gap: 8px;">
                 <label for="contact-name" style="font-weight: 600; color: #334155; font-size: 0.95rem;">Họ và Tên *</label>
-                <input type="text" id="contact-name" name="name" required style="padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; outline: none; transition: border 0.2s;" onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='#cbd5e1'">
+                <input type="text" id="contact-name" name="name" value="<%= fullName %>" readonly required style="padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; outline: none; background-color: #f1f5f9; cursor: not-allowed;">
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 8px;">
                 <label for="contact-email" style="font-weight: 600; color: #334155; font-size: 0.95rem;">Địa chỉ Email *</label>
-                <input type="email" id="contact-email" name="email" required style="padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; outline: none; transition: border 0.2s;" onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='#cbd5e1'">
+                <input type="email" id="contact-email" name="email" value="<%= email %>" readonly required style="padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; outline: none; background-color: #f1f5f9; cursor: not-allowed;">
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 8px;">
