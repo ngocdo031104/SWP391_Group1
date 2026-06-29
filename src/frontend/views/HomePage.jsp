@@ -281,15 +281,15 @@
 
                         <div class="promo-timer" id="flash-sale-timer">
                             <div class="timer-box">
-                                <span class="timer-num" id="timer-hours">08</span>
+                                <span class="timer-num" id="timer-hours">--</span>
                                 <span class="timer-label">Giờ</span>
                             </div>
                             <div class="timer-box">
-                                <span class="timer-num" id="timer-mins">45</span>
+                                <span class="timer-num" id="timer-mins">--</span>
                                 <span class="timer-label">Phút</span>
                             </div>
                             <div class="timer-box">
-                                <span class="timer-num" id="timer-secs">29</span>
+                                <span class="timer-num" id="timer-secs">--</span>
                                 <span class="timer-label">Giây</span>
                             </div>
                         </div>
