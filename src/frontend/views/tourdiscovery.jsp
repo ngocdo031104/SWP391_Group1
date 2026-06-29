@@ -347,22 +347,7 @@
                 if (categories != null) {
                     for (TourCategory cat : categories) {
                         if (cat.getCategoryId() == t.getCategoryId()) {
-                            String cName = cat.getCategoryName().toLowerCase();
-                            if (cName.contains("biển")) {
-                                catStr = "beach";
-                            } else if (cName.contains("núi") || cName.contains("trekking") || cName.contains("hiking")) {
-                                catStr = "hiking";
-                            } else if (cName.contains("văn hóa") || cName.contains("di sản") || cName.contains("cultural")) {
-                                catStr = "cultural";
-                            } else if (cName.contains("city") || cName.contains("mạo hiểm")) {
-                                catStr = "adventure";
-                            } else if (cName.contains("mice") || cName.contains("gia đình")) {
-                                catStr = "family";
-                            } else if (cName.contains("cao cấp") || cName.contains("luxury")) {
-                                catStr = "luxury";
-                            } else {
-                                catStr = "all";
-                            }
+                            catStr = Utils.CategoryHelper.toSlug(cat.getCategoryName());
                             break;
                         }
                     }
