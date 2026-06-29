@@ -17,6 +17,7 @@
     request.setAttribute("extraCss", "css/detail.css");
     request.setAttribute("bodyClass", "detail-page");
     Tour activeTour = (Tour) request.getAttribute("tour");
+    boolean isLoggedIn = (session.getAttribute("sessionUser") != null);
     
     List<Review> tourReviews = activeTour != null ? activeTour.getReviews() : null;
     int totalReviews = (tourReviews != null) ? tourReviews.size() : 0;
@@ -126,25 +127,13 @@
                         galleryImages.add(request.getContextPath() + "/" + mainImgUrl);
                     }
 
-                    // Fallbacks to pad up to 5 images
-                    String[] defaultPool = {
-                        "assets/images/tour_halong.png",
-                        "assets/images/tour_phuquoc.png",
-                        "assets/images/hero_beach.png",
-                        "assets/images/tour_dalat.png",
-                        "assets/images/tour_danang.png",
-                        "assets/images/tour_hoian.png",
-                        "assets/images/tour_sapa.png",
-                        "assets/images/tour_nhatrang.png",
-                        "assets/images/tour_hagiang.png"
-                    };
-                    int poolIdx = 0;
-                    while (galleryImages.size() < 5 && poolIdx < defaultPool.length) {
-                        String fallbackUrl = request.getContextPath() + "/" + defaultPool[poolIdx];
-                        if (!galleryImages.contains(fallbackUrl)) {
-                            galleryImages.add(fallbackUrl);
-                        }
-                        poolIdx++;
+                    // Pad up to 5 images using the main image to avoid displaying unrelated tours
+                    String resolvedMainImg = mainImgUrl;
+                    if (!resolvedMainImg.startsWith("http") && !resolvedMainImg.startsWith("/")) {
+                        resolvedMainImg = request.getContextPath() + "/" + resolvedMainImg;
+                    }
+                    while (galleryImages.size() < 5) {
+                        galleryImages.add(resolvedMainImg);
                     }
                 %>
                 <div class="gallery-item main-photo">
