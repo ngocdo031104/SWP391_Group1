@@ -897,7 +897,7 @@
                         <li><i data-lucide="check-circle-2"></i> Thêm ngày dự kiến chính xác</li>
                         <li><i data-lucide="check-circle-2"></i> Phản hồi tin nhắn nhanh chóng</li>
                     </ul>
-                    <a href="#" class="tips-link">Tìm hiểu thêm &rarr;</a>
+                    <a href="${pageContext.request.contextPath}/help#buddies" class="tips-link">Tìm hiểu thêm &rarr;</a>
                 </div>
 
             </div>

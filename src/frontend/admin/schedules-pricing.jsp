@@ -244,7 +244,17 @@
                         <select name="guideId" id="form-schedule-guide" class="form-control">
                             <option value="0">-- Chưa phân công --</option>
                             <c:forEach var="g" items="${guides}">
-                                <option value="${g.userId}">${g.user.fullName} (${g.specialization != null ? g.specialization : 'Đoàn'})</option>
+                                <option value="${g.userId}">
+                                    <c:choose>
+                                        <c:when test="${not empty g.user}">
+                                            ${g.user.fullName}
+                                        </c:when>
+                                        <c:otherwise>
+                                            Guide #${g.userId}
+                                        </c:otherwise>
+                                    </c:choose>
+                                    (${not empty g.specialization ? g.specialization : 'Đoàn'})
+                                </option>
                             </c:forEach>
                         </select>
                     </div>

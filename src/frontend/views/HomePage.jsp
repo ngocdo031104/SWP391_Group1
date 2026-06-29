@@ -1,4 +1,4 @@
-﻿<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
 <%@ page import="Entities.Tour" %>
 <%@ page import="Entities.TourCategory" %>
@@ -111,6 +111,9 @@
                             } else if (catName.toLowerCase().contains("cao cấp") || catName.toLowerCase().contains("luxury")) {
                                 icon = "gem";
                                 dataCategory = "luxury";
+                            } else {
+                                icon = "compass";
+                                dataCategory = "all";
                             }
                 %>
                 <div class="category-card" data-category="<%= dataCategory %>" id="cat-<%= cat.getCategoryId() %>">
@@ -135,20 +138,40 @@
                     List<Tour> featuredTours = (List<Tour>) request.getAttribute("featuredTours");
                     if (featuredTours != null && !featuredTours.isEmpty()) {
                         for (Tour tour : featuredTours) {
-                            // Map category ID to data category string
+                            // Map category name/id to data category string dynamically
                             String catClass = "all";
-                            if (tour.getCategoryId() == 1) catClass = "beach";
-                            else if (tour.getCategoryId() == 2) catClass = "hiking";
-                            else if (tour.getCategoryId() == 3) catClass = "cultural";
-                            else if (tour.getCategoryId() == 4) catClass = "adventure";
-                            else if (tour.getCategoryId() == 5) catClass = "family";
+                            
+                            // Find the corresponding category name to map correctly
+                            if (categories != null) {
+                                for (TourCategory cat : categories) {
+                                    if (cat.getCategoryId() == tour.getCategoryId()) {
+                                        String cName = cat.getCategoryName().toLowerCase();
+                                        if (cName.contains("biển")) {
+                                            catClass = "beach";
+                                        } else if (cName.contains("núi") || cName.contains("trekking") || cName.contains("hiking")) {
+                                            catClass = "hiking";
+                                        } else if (cName.contains("văn hóa") || cName.contains("di sản") || cName.contains("cultural")) {
+                                            catClass = "cultural";
+                                        } else if (cName.contains("city") || cName.contains("mạo hiểm")) {
+                                            catClass = "adventure";
+                                        } else if (cName.contains("mice") || cName.contains("gia đình")) {
+                                            catClass = "family";
+                                        } else if (cName.contains("cao cấp") || cName.contains("luxury")) {
+                                            catClass = "luxury";
+                                        } else {
+                                            catClass = "all";
+                                        }
+                                        break;
+                                    }
+                                }
+                            }
                             
                             // Determine image
                             String imgUrl = "assets/images/tour_halong.png"; // Fallback
                             if (tour.getMediaList() != null && !tour.getMediaList().isEmpty()) {
                                 imgUrl = tour.getMediaList().get(0).getMediaUrl();
                             } else {
-                                String dest = tour.getDestination().toLowerCase();
+                                String dest = (tour.getDestination() != null) ? tour.getDestination().toLowerCase() : "";
                                 if (dest.contains("đà nẵng")) imgUrl = "assets/images/tour_danang.png";
                                 else if (dest.contains("phú quốc")) imgUrl = "assets/images/tour_phuquoc.png";
                                 else if (dest.contains("hạ long")) imgUrl = "assets/images/tour_halong.png";
@@ -233,7 +256,7 @@
                 %>
             </div>
 
-            <div class="view-more-container" id="view-more-tours-wrapper" style="display: none;">
+            <div class="view-more-container" id="view-more-tours-wrapper">
                 <button type="button" class="btn btn-secondary" id="btn-view-more-tours">
                     <span class="btn-label">Xem thêm tour</span>
                     <span id="btn-view-more-icon"><i data-lucide="chevron-down"></i></span>
@@ -273,7 +296,7 @@
                 %>
             </div>
 
-            <div class="view-more-container" id="view-more-dests-wrapper" style="display: none;">
+            <div class="view-more-container" id="view-more-dests-wrapper">
                 <button type="button" class="btn btn-secondary" id="btn-view-more-dests">
                     <span class="btn-label">Xem thêm điểm đến</span>
                     <span id="btn-view-more-dests-icon"><i data-lucide="chevron-down"></i></span>

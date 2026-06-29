@@ -179,7 +179,15 @@
                 // Chuẩn hóa link YouTube sang link nhúng iframe
                 let embedUrl = mediaUrl;
                 if (mediaUrl.includes('watch?v=')) {
-                    const videoId = mediaUrl.split('v=')[1].split('&')[0];
+                    let videoId = '';
+                    const urlParts = mediaUrl.split('?');
+                    if (urlParts.length > 1) {
+                        const searchParams = new URLSearchParams(urlParts[1]);
+                        videoId = searchParams.get('v') || '';
+                    }
+                    if (!videoId) {
+                        videoId = mediaUrl.split('v=')[1].split('&')[0];
+                    }
                     embedUrl = `https://www.youtube.com/embed/${videoId}`;
                 } else if (mediaUrl.includes('youtu.be/')) {
                     const videoId = mediaUrl.split('youtu.be/')[1].split('?')[0];

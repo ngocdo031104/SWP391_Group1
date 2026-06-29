@@ -26,7 +26,7 @@
 <body>
 
 <nav class="navbar">
-  <a href="#" class="logo" id="nav-logo">
+  <a href="${pageContext.request.contextPath}/home" class="logo" id="nav-logo">
     <div class="logo-icon">T</div>
     <span>TourBuddy (Guide)</span>
   </a>
