@@ -91,19 +91,19 @@
                     <div class="kpi-icon"><i data-lucide="trending-up"></i></div>
                     <div class="kpi-label">Tổng doanh thu gần đây</div>
                     <div class="kpi-value" id="kpi-total-revenue">0 đ</div>
-                    <div class="kpi-trend up"><i data-lucide="arrow-up-right"></i> +12.5% so với tháng trước</div>
+                    <div class="kpi-trend" id="kpi-revenue-trend"><i data-lucide="arrow-up-right"></i> <span id="kpi-revenue-trend-text">--</span></div>
                 </div>
                 <div class="kpi-card">
                     <div class="kpi-icon"><i data-lucide="pie-chart"></i></div>
                     <div class="kpi-label">Doanh thu trung bình tháng</div>
                     <div class="kpi-value" id="kpi-avg-revenue">0 đ</div>
-                    <div class="kpi-trend up"><i data-lucide="arrow-up-right"></i> Ổn định</div>
+                    <div class="kpi-trend" id="kpi-avg-trend"><span id="kpi-avg-trend-text">--</span></div>
                 </div>
                 <div class="kpi-card">
                     <div class="kpi-icon"><i data-lucide="star"></i></div>
                     <div class="kpi-label">Danh mục dẫn đầu</div>
                     <div class="kpi-value" id="kpi-top-category" style="font-size: 1.4rem;">N/A</div>
-                    <div class="kpi-trend up">Hiệu suất cao nhất</div>
+                    <div class="kpi-trend" id="kpi-category-trend"><span id="kpi-category-trend-text">--</span></div>
                 </div>
             </div>
 

@@ -102,8 +102,75 @@ document.addEventListener("DOMContentLoaded", () => {
 
         monthlyList.forEach(item => totalRev += item.revenue);
         document.getElementById("kpi-total-revenue").innerText = formatCurrency(totalRev);
-        document.getElementById("kpi-avg-revenue").innerText = formatCurrency(monthlyList.length > 0 ? totalRev / monthlyList.length : 0);
-        document.getElementById("kpi-top-category").innerText = categoriesList.length > 0 ? categoriesList[0].category : "N/A";
+        
+        const avgRev = monthlyList.length > 0 ? totalRev / monthlyList.length : 0;
+        document.getElementById("kpi-avg-revenue").innerText = formatCurrency(avgRev);
+        
+        const topCatName = categoriesList.length > 0 ? categoriesList[0].category : "N/A";
+        document.getElementById("kpi-top-category").innerText = topCatName;
+
+        // 1. Tính toán Xu hướng Doanh thu gần đây (So sánh tháng cuối cùng vs tháng kề cuối)
+        const revTrendEl = document.getElementById("kpi-revenue-trend");
+        const revTrendText = document.getElementById("kpi-revenue-trend-text");
+        if (monthlyList.length >= 2) {
+            const lastMonthRev = monthlyList[monthlyList.length - 1].revenue;
+            const prevMonthRev = monthlyList[monthlyList.length - 2].revenue;
+            if (prevMonthRev > 0) {
+                const percentage = ((lastMonthRev - prevMonthRev) / prevMonthRev) * 100;
+                const formattedPercent = percentage.toFixed(1);
+                if (percentage >= 0) {
+                    revTrendEl.className = "kpi-trend up";
+                    revTrendEl.innerHTML = `<i data-lucide="arrow-up-right"></i> +${formattedPercent}% so với tháng trước`;
+                } else {
+                    revTrendEl.className = "kpi-trend down";
+                    revTrendEl.innerHTML = `<i data-lucide="arrow-down-right"></i> ${formattedPercent}% so với tháng trước`;
+                }
+            } else {
+                revTrendEl.className = "kpi-trend up";
+                revTrendText.innerText = "Tăng trưởng mới";
+            }
+        } else {
+            revTrendEl.className = "kpi-trend up";
+            revTrendText.innerText = "Thiếu dữ liệu so sánh";
+        }
+
+        // 2. Tính toán Xu hướng Doanh thu trung bình tháng (So sánh tháng cuối vs Doanh thu TB)
+        const avgTrendEl = document.getElementById("kpi-avg-trend");
+        const avgTrendText = document.getElementById("kpi-avg-trend-text");
+        if (monthlyList.length > 0 && avgRev > 0) {
+            const lastMonthRev = monthlyList[monthlyList.length - 1].revenue;
+            const dev = ((lastMonthRev - avgRev) / avgRev) * 100;
+            if (Math.abs(dev) < 10) {
+                avgTrendEl.className = "kpi-trend up";
+                avgTrendEl.innerHTML = `<i data-lucide="arrow-up-right"></i> Ổn định (độ lệch ${dev.toFixed(1)}%)`;
+            } else if (dev >= 10) {
+                avgTrendEl.className = "kpi-trend up";
+                avgTrendEl.innerHTML = `<i data-lucide="arrow-up-right"></i> Tăng trưởng (+${dev.toFixed(1)}%)`;
+            } else {
+                avgTrendEl.className = "kpi-trend down";
+                avgTrendEl.innerHTML = `<i data-lucide="arrow-down-right"></i> Suy giảm (${dev.toFixed(1)}%)`;
+            }
+        } else {
+            avgTrendEl.className = "kpi-trend up";
+            avgTrendText.innerText = "Ổn định";
+        }
+
+        // 3. Tính toán Hiệu suất của danh mục dẫn đầu (Tỷ trọng trên tổng doanh thu)
+        const catTrendEl = document.getElementById("kpi-category-trend");
+        const catTrendText = document.getElementById("kpi-category-trend-text");
+        if (categoriesList.length > 0 && totalRev > 0) {
+            const topCatRev = categoriesList[0].revenue;
+            const ratio = (topCatRev / totalRev) * 100;
+            catTrendEl.className = "kpi-trend up";
+            catTrendEl.innerHTML = `Chiếm ${ratio.toFixed(1)}% cơ cấu doanh thu`;
+        } else {
+            catTrendEl.className = "kpi-trend up";
+            catTrendText.innerText = "Hiệu suất cao nhất";
+        }
+
+        if (typeof lucide !== "undefined") {
+            lucide.createIcons({ attrs: { class: "lucide-icon" } });
+        }
 
         // Chart 1: Monthly Line Chart
         const months = monthlyList.map(item => item.month);
@@ -566,11 +633,36 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Confirmation wrapper for Export
+    // Confirmation wrapper for Export (Handles unloaded tab data)
     window.confirmExport = function(tableId, filename) {
         showConfirmation(
             "Bạn có chắc muốn xuất dữ liệu này không? Dữ liệu sẽ được kết xuất dưới dạng CSV và tải về máy tính của bạn.",
             () => {
+                const table = document.getElementById(tableId);
+                if (table) {
+                    const tbody = table.querySelector("tbody");
+                    // Nếu tbody chưa được load dữ liệu (chưa có dòng nào)
+                    if (!tbody || tbody.children.length === 0) {
+                        let type = "";
+                        if (tableId === "tour-performance-table") type = "performance";
+                        else if (tableId === "guide-activity-table") type = "guides";
+
+                        if (type) {
+                            fetchAnalytics(type, data => {
+                                if (type === "performance") {
+                                    renderPerformanceDashboard(data);
+                                } else if (type === "guides") {
+                                    renderGuidesDashboard(data);
+                                }
+                                // Xuất sau khi dữ liệu đã được render thành công vào DOM
+                                setTimeout(() => {
+                                    window.exportTableToCSV(tableId, filename);
+                                }, 150);
+                            });
+                            return;
+                        }
+                    }
+                }
                 window.exportTableToCSV(tableId, filename);
             }
         );

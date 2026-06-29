@@ -90,31 +90,8 @@
                     if (categories != null) {
                         for (TourCategory cat : categories) {
                             String catName = cat.getCategoryName();
-                            String icon = "compass";
-                            String dataCategory = "all";
-                            
-                            if (catName.toLowerCase().contains("biển")) {
-                                icon = "palmtree";
-                                dataCategory = "beach";
-                            } else if (catName.toLowerCase().contains("núi") || catName.toLowerCase().contains("trekking") || catName.toLowerCase().contains("hiking")) {
-                                icon = "mountain";
-                                dataCategory = "hiking";
-                            } else if (catName.toLowerCase().contains("văn hóa") || catName.toLowerCase().contains("di sản") || catName.toLowerCase().contains("cultural")) {
-                                icon = "landmark";
-                                dataCategory = "cultural";
-                            } else if (catName.toLowerCase().contains("city") || catName.toLowerCase().contains("mạo hiểm")) {
-                                icon = "map";
-                                dataCategory = "adventure";
-                            } else if (catName.toLowerCase().contains("mice") || catName.toLowerCase().contains("gia đình")) {
-                                icon = "briefcase";
-                                dataCategory = "family";
-                            } else if (catName.toLowerCase().contains("cao cấp") || catName.toLowerCase().contains("luxury")) {
-                                icon = "gem";
-                                dataCategory = "luxury";
-                            } else {
-                                icon = "compass";
-                                dataCategory = "all";
-                            }
+                            String icon = Utils.CategoryHelper.getIcon(catName);
+                            String dataCategory = Utils.CategoryHelper.toSlug(catName);
                 %>
                 <div class="category-card" data-category="<%= dataCategory %>" id="cat-<%= cat.getCategoryId() %>">
                     <div class="category-icon-wrapper"><i data-lucide="<%= icon %>"></i></div>
@@ -145,22 +122,7 @@
                             if (categories != null) {
                                 for (TourCategory cat : categories) {
                                     if (cat.getCategoryId() == tour.getCategoryId()) {
-                                        String cName = cat.getCategoryName().toLowerCase();
-                                        if (cName.contains("biển")) {
-                                            catClass = "beach";
-                                        } else if (cName.contains("núi") || cName.contains("trekking") || cName.contains("hiking")) {
-                                            catClass = "hiking";
-                                        } else if (cName.contains("văn hóa") || cName.contains("di sản") || cName.contains("cultural")) {
-                                            catClass = "cultural";
-                                        } else if (cName.contains("city") || cName.contains("mạo hiểm")) {
-                                            catClass = "adventure";
-                                        } else if (cName.contains("mice") || cName.contains("gia đình")) {
-                                            catClass = "family";
-                                        } else if (cName.contains("cao cấp") || cName.contains("luxury")) {
-                                            catClass = "luxury";
-                                        } else {
-                                            catClass = "all";
-                                        }
+                                        catClass = Utils.CategoryHelper.toSlug(cat.getCategoryName());
                                         break;
                                     }
                                 }
@@ -319,15 +281,15 @@
 
                         <div class="promo-timer" id="flash-sale-timer">
                             <div class="timer-box">
-                                <span class="timer-num" id="timer-hours">08</span>
+                                <span class="timer-num" id="timer-hours">--</span>
                                 <span class="timer-label">Giờ</span>
                             </div>
                             <div class="timer-box">
-                                <span class="timer-num" id="timer-mins">45</span>
+                                <span class="timer-num" id="timer-mins">--</span>
                                 <span class="timer-label">Phút</span>
                             </div>
                             <div class="timer-box">
-                                <span class="timer-num" id="timer-secs">29</span>
+                                <span class="timer-num" id="timer-secs">--</span>
                                 <span class="timer-label">Giây</span>
                             </div>
                         </div>
