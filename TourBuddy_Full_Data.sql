@@ -1,4 +1,4 @@
-﻿-- ============================================================
+-- ============================================================
 -- TourBuddy - Online Tour Booking System
 -- Database Script for Microsoft SQL Server 2022
 -- SWP391 - FPT University - Group 1
@@ -82,6 +82,23 @@ CREATE TABLE UserProfile (
     Address        NVARCHAR(255) NULL,
     TravelInterests NVARCHAR(500) NULL,   -- JSON or comma-separated tags
     UpdatedAt      DATETIME2     NOT NULL DEFAULT SYSDATETIME()
+);
+GO
+
+CREATE TABLE GuideProfile (
+    GuideProfileID    INT IDENTITY(1,1) PRIMARY KEY,
+    UserID            INT NOT NULL UNIQUE REFERENCES [User](UserID),
+    YearsOfExperience INT NULL DEFAULT 0,
+    TotalToursLed     INT NULL DEFAULT 0,
+    Rating            DECIMAL(3, 2) NULL DEFAULT 5.0,
+    Bio               NVARCHAR(1000) NULL,
+    Specialization    NVARCHAR(255) NULL,
+    Languages         NVARCHAR(255) NULL,
+    Certifications    NVARCHAR(500) NULL,
+    EmergencyPhone    NVARCHAR(20) NULL,
+    IsActive          BIT NOT NULL DEFAULT 1,
+    CreatedAt         DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    UpdatedAt         DATETIME2 NOT NULL DEFAULT SYSDATETIME()
 );
 GO
 
