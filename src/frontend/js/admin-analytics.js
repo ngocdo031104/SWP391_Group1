@@ -1,4 +1,4 @@
-/**
+﻿/**
  * ── Admin Analytics JS Controller ──
  * Uses Chart.js for premium glassmorphic dashboard visualization.
  */
