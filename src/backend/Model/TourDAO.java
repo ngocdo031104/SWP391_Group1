@@ -1122,7 +1122,7 @@ public class TourDAO extends DBContext {
         
         String sql = "SELECT MONTH(CreatedAt) as MonthVal, YEAR(CreatedAt) as YearVal, SUM(TotalAmount) as Total "
                    + "FROM Booking "
-                   + "WHERE Status IN ('Confirmed', 'Completed') AND CreatedAt >= DATEADD(month, -5, GETDATE()) "
+                   + "WHERE Status = 'Success' AND CreatedAt >= DATEADD(month, -5, GETDATE()) "
                    + "GROUP BY YEAR(CreatedAt), MONTH(CreatedAt)";
                    
         try (PreparedStatement ps = connection.prepareStatement(sql);
