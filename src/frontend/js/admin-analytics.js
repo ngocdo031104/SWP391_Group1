@@ -1,4 +1,4 @@
-﻿/**
+/**
  * ── Admin Analytics JS Controller ──
  * Uses Chart.js for premium glassmorphic dashboard visualization.
  */
@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const topCatName = categoriesList.length > 0 ? categoriesList[0].category : "N/A";
         document.getElementById("kpi-top-category").innerText = topCatName;
 
-        // 1. Tính toán Xu hướng Doanh thu gần đây (So sánh tháng cuối cùng vs tháng kề cuối)
+        // 1. Tinh toan Xu huong Doanh thu gan day (So sanh thang cuoi cung vs thang ke cuoi)
         const revTrendEl = document.getElementById("kpi-revenue-trend");
         const revTrendText = document.getElementById("kpi-revenue-trend-text");
         if (monthlyList.length >= 2) {
@@ -120,21 +120,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 const formattedPercent = percentage.toFixed(1);
                 if (percentage >= 0) {
                     revTrendEl.className = "kpi-trend up";
-                    revTrendEl.innerHTML = `<i data-lucide="arrow-up-right"></i> +${formattedPercent}% so với tháng trước`;
+                    revTrendEl.innerHTML = `<i data-lucide="arrow-up-right"></i> +${formattedPercent}% so v\u1edbi th\u00e1ng tr\u01b0\u1edbc`;
                 } else {
                     revTrendEl.className = "kpi-trend down";
-                    revTrendEl.innerHTML = `<i data-lucide="arrow-down-right"></i> ${formattedPercent}% so với tháng trước`;
+                    revTrendEl.innerHTML = `<i data-lucide="arrow-down-right"></i> ${formattedPercent}% so v\u1edbi th\u00e1ng tr\u01b0\u1edbc`;
                 }
             } else {
                 revTrendEl.className = "kpi-trend up";
-                revTrendText.innerText = "Tăng trưởng mới";
+                revTrendText.innerText = "T\u0103ng tr\u01b0\u1edfng m\u1edbi";
             }
         } else {
             revTrendEl.className = "kpi-trend up";
-            revTrendText.innerText = "Thiếu dữ liệu so sánh";
+            revTrendText.innerText = "Thi\u1ebfu d\u1eef li\u1ec7u so s\u00e1nh";
         }
 
-        // 2. Tính toán Xu hướng Doanh thu trung bình tháng (So sánh tháng cuối vs Doanh thu TB)
+        // 2. Tinh toan Xu huong Doanh thu trung binh thang (So sanh thang cuoi vs Doanh thu TB)
         const avgTrendEl = document.getElementById("kpi-avg-trend");
         const avgTrendText = document.getElementById("kpi-avg-trend-text");
         if (monthlyList.length > 0 && avgRev > 0) {
@@ -142,30 +142,30 @@ document.addEventListener("DOMContentLoaded", () => {
             const dev = ((lastMonthRev - avgRev) / avgRev) * 100;
             if (Math.abs(dev) < 10) {
                 avgTrendEl.className = "kpi-trend up";
-                avgTrendEl.innerHTML = `<i data-lucide="arrow-up-right"></i> Ổn định (độ lệch ${dev.toFixed(1)}%)`;
+                avgTrendEl.innerHTML = `<i data-lucide="arrow-up-right"></i> \u1ed4n \u0111\u1ecbnh (\u0111\u1ed9 l\u1ec7ch ${dev.toFixed(1)}%)`;
             } else if (dev >= 10) {
                 avgTrendEl.className = "kpi-trend up";
-                avgTrendEl.innerHTML = `<i data-lucide="arrow-up-right"></i> Tăng trưởng (+${dev.toFixed(1)}%)`;
+                avgTrendEl.innerHTML = `<i data-lucide="arrow-up-right"></i> T\u0103ng tr\u01b0\u1edfng (+${dev.toFixed(1)}%)`;
             } else {
                 avgTrendEl.className = "kpi-trend down";
-                avgTrendEl.innerHTML = `<i data-lucide="arrow-down-right"></i> Suy giảm (${dev.toFixed(1)}%)`;
+                avgTrendEl.innerHTML = `<i data-lucide="arrow-down-right"></i> Suy gi\u1ea3m (${dev.toFixed(1)}%)`;
             }
         } else {
             avgTrendEl.className = "kpi-trend up";
-            avgTrendText.innerText = "Ổn định";
+            avgTrendText.innerText = "\u1ed4n \u0111\u1ecbnh";
         }
 
-        // 3. Tính toán Hiệu suất của danh mục dẫn đầu (Tỷ trọng trên tổng doanh thu)
+        // 3. Tinh toan Hieu suat cua danh muc dan dau (Ty trong tren tong doanh thu)
         const catTrendEl = document.getElementById("kpi-category-trend");
         const catTrendText = document.getElementById("kpi-category-trend-text");
         if (categoriesList.length > 0 && totalRev > 0) {
             const topCatRev = categoriesList[0].revenue;
             const ratio = (topCatRev / totalRev) * 100;
             catTrendEl.className = "kpi-trend up";
-            catTrendEl.innerHTML = `Chiếm ${ratio.toFixed(1)}% cơ cấu doanh thu`;
+            catTrendEl.innerHTML = `Chi\u1ebfm ${ratio.toFixed(1)}% c\u01a1 c\u1ea5u doanh thu`;
         } else {
             catTrendEl.className = "kpi-trend up";
-            catTrendText.innerText = "Hiệu suất cao nhất";
+            catTrendText.innerText = "Hi\u1ec7u su\u1ea5t cao nh\u1ea5t";
         }
 
         if (typeof lucide !== "undefined") {
