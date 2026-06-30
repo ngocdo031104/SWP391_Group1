@@ -85,6 +85,23 @@ CREATE TABLE UserProfile (
 );
 GO
 
+CREATE TABLE GuideProfile (
+    GuideProfileID    INT IDENTITY(1,1) PRIMARY KEY,
+    UserID            INT NOT NULL UNIQUE REFERENCES [User](UserID),
+    YearsOfExperience INT NULL DEFAULT 0,
+    TotalToursLed     INT NULL DEFAULT 0,
+    Rating            DECIMAL(3, 2) NULL DEFAULT 5.0,
+    Bio               NVARCHAR(1000) NULL,
+    Specialization    NVARCHAR(255) NULL,
+    Languages         NVARCHAR(255) NULL,
+    Certifications    NVARCHAR(500) NULL,
+    EmergencyPhone    NVARCHAR(20) NULL,
+    IsActive          BIT NOT NULL DEFAULT 1,
+    CreatedAt         DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    UpdatedAt         DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+GO
+
 CREATE TABLE PasswordRecovery (
     RecoveryID    INT IDENTITY(1,1) PRIMARY KEY,
     UserID        INT           NOT NULL REFERENCES [User](UserID),
@@ -591,6 +608,64 @@ CREATE TABLE PredictionResult (
 );
 GO
 
+-- SQL Migration: Add Tables for Wishlist, Newsletter, and Contact Message
+-- Target DB: TourBuddyDB
+-- Run this script to add these new tables without losing any existing data.
+
+-- 1. Create table for Contact Message (Form Contact / Liên Hệ)
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ContactMessage')
+BEGIN
+    CREATE TABLE ContactMessage (
+        MessageID INT IDENTITY(1,1) PRIMARY KEY,
+        FullName NVARCHAR(100) NOT NULL,
+        Email NVARCHAR(100) NOT NULL,
+        Subject NVARCHAR(150) NULL,
+        MessageText NVARCHAR(MAX) NOT NULL,
+        IsRead BIT DEFAULT 0,
+        CreatedAt DATETIME2 DEFAULT SYSDATETIME()
+    );
+    PRINT 'Created table: ContactMessage';
+END
+ELSE
+BEGIN
+    PRINT 'Table ContactMessage already exists.';
+END
+
+-- 2. Create table for Newsletter Subscriptions (Đăng ký nhận khuyến mãi ở Footer)
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'NewsletterSubscription')
+BEGIN
+    CREATE TABLE NewsletterSubscription (
+        SubscriptionID INT IDENTITY(1,1) PRIMARY KEY,
+        Email NVARCHAR(150) UNIQUE NOT NULL,
+        IsActive BIT DEFAULT 1,
+        SubscribedAt DATETIME2 DEFAULT SYSDATETIME()
+    );
+    PRINT 'Created table: NewsletterSubscription';
+END
+ELSE
+BEGIN
+    PRINT 'Table NewsletterSubscription already exists.';
+END
+
+-- 3. Create table for Wishlist (Tour Yêu Thích)
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'Wishlist')
+BEGIN
+    CREATE TABLE Wishlist (
+        WishlistID INT IDENTITY(1,1) PRIMARY KEY,
+        UserID INT NOT NULL,
+        TourID INT NOT NULL,
+        CreatedAt DATETIME2 DEFAULT SYSDATETIME(),
+        CONSTRAINT FK_Wishlist_User FOREIGN KEY (UserID) REFERENCES [User](UserID) ON DELETE CASCADE,
+        CONSTRAINT FK_Wishlist_Tour FOREIGN KEY (TourID) REFERENCES Tour(TourID) ON DELETE CASCADE,
+        CONSTRAINT UC_User_Tour UNIQUE(UserID, TourID)
+    );
+    PRINT 'Created table: Wishlist';
+END
+ELSE
+BEGIN
+    PRINT 'Table Wishlist already exists.';
+END
+
 -- ============================================================
 -- INDEXES FOR PERFORMANCE
 -- ============================================================
@@ -991,44 +1066,25 @@ GO
 
 -- Insert Seed Data for Permissions
 INSERT INTO Permission (ModuleName, Action, Description, IsCritical) VALUES
-('Tour Management', 'Read', N'View Tour', 0),
-('Tour Management', 'Create', N'Create Tour', 0),
-('Tour Management', 'Update', N'Update Tour', 0),
-('Tour Management', 'Delete', N'Delete Tour', 1),
-('Booking Management', 'Read', N'View Booking', 0),
-('Booking Management', 'Create', N'Create Booking', 0),
-('Booking Management', 'Update', N'Update Booking', 0),
-('Booking Management', 'Delete', N'Delete Booking', 1),
-('User Management', 'Read', N'View Users', 0),
-('User Management', 'Create', N'Create Users', 0),
-('User Management', 'Update', N'Update Users', 0),
-('User Management', 'Delete', N'Delete Users', 1),
-('Role Management', 'Read', N'View Roles', 1),
-('Role Management', 'Create', N'Create Roles', 1),
-('Role Management', 'Update', N'Update Roles', 1),
-('Role Management', 'Delete', N'Delete Roles', 1),
-('Matching Management', 'Read', N'View Matching', 0),
-('Matching Management', 'Create', N'Create Matching', 0),
-('Matching Management', 'Update', N'Update Matching', 0),
-('Matching Management', 'Delete', N'Delete Matching', 0),
-('Request Management', 'Read', N'View Requests', 0),
-('Request Management', 'Create', N'Create Requests', 0),
-('Request Management', 'Update', N'Update Requests', 0),
-('Request Management', 'Delete', N'Delete Requests', 0),
-('Review Management', 'Read', N'View Reviews', 0),
-('Review Management', 'Create', N'Create Reviews', 0),
-('Review Management', 'Update', N'Update Reviews', 0),
-('Review Management', 'Delete', N'Delete Reviews', 0),
-('Payment Management', 'Read', N'View Payments', 0),
-('Payment Management', 'Create', N'Create Payments', 0),
-('Payment Management', 'Update', N'Update Payments', 0),
-('Payment Management', 'Delete', N'Delete Payments', 1),
-('System Settings', 'Read', N'View Reports', 1),
-('System Settings', 'Export', N'Export Reports', 1),
-('Content Management', 'Read', N'View Content', 0),
-('Content Management', 'Create', N'Create Content', 0),
-('Content Management', 'Update', N'Update Content', 0),
-('Content Management', 'Delete', N'Delete Content', 1);
+('User Management', 'Read', N'Xem danh sách người dùng', 0),
+('User Management', 'Create', N'Tạo người dùng mới', 0),
+('User Management', 'Update', N'Cập nhật người dùng', 0),
+('User Management', 'Delete', N'Xóa người dùng', 1),
+('Tour Management', 'Read', N'Xem danh sách tour', 0),
+('Tour Management', 'Create', N'Tạo tour mới', 0),
+('Tour Management', 'Update', N'Cập nhật tour', 0),
+('Tour Management', 'Delete', N'Xóa tour', 0),
+('Booking Management', 'Read', N'Xem danh sách booking', 0),
+('Booking Management', 'Create', N'Tạo booking mới', 0),
+('Booking Management', 'Update', N'Sửa trạng thái booking', 0),
+('Booking Management', 'Delete', N'Hủy booking', 0),
+('Booking Management', 'Approve', N'Duyệt booking', 0),
+('System Settings', 'Read', N'Xem cấu hình', 1),
+('System Settings', 'Update', N'Cập nhật cấu hình', 1),
+('Role Management', 'Read', N'Xem danh sách vai trò', 1),
+('Role Management', 'Create', N'Tạo vai trò', 1),
+('Role Management', 'Update', N'Sửa vai trò', 1),
+('Role Management', 'Delete', N'Xóa vai trò', 1);
 GO
 
 -- Assign all permissions to Super Admin (RoleID = 1)

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Người làm: Dương
  * Thời gian tạo: 04/06/2026
  * Chức năng: JavaScript cho màn Customer thanh toán booking.
