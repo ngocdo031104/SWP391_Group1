@@ -130,6 +130,12 @@
                                                 <input type="checkbox" class="custom-checkbox col-select" data-col="delete" onchange="toggleColumn('delete', this.checked)">
                                             </div>
                                         </th>
+                                        <th style="padding: 15px; text-align: center; font-weight: 600; color: #334155;">
+                                            <div style="display: flex; flex-direction: column; align-items: center; gap: 5px;">
+                                                Khác
+                                                <input type="checkbox" class="custom-checkbox col-select" data-col="other" onchange="toggleColumn('other', this.checked)">
+                                            </div>
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody id="matrixBody">
@@ -334,16 +340,17 @@
             const perms = allPermissions.filter(p => p.module === mod);
             if(perms.length === 0) return;
 
-            let readCb = '', createCb = '', updateCb = '', deleteCb = '';
+            let readCb = '', createCb = '', updateCb = '', deleteCb = '', otherCb = '';
             
             perms.forEach(p => {
                 const isChecked = rolePerms.includes(p.id) ? 'checked' : '';
-                const cb = `<input type="checkbox" name="permissions[]" value="\${p.id}" class="custom-checkbox row-mod-\${mod.replace(/\s+/g, '')} col-act-\${p.action.toLowerCase()}" \${isChecked} onchange="checkUnsaved()">`;
+                const cb = `<input type="checkbox" name="permissions[]" value="\${p.id}" class="custom-checkbox row-mod-\${mod.replace(/\s+/g, '')} col-act-\${p.action.toLowerCase() === 'export' ? 'other' : p.action.toLowerCase()}" \${isChecked} onchange="checkUnsaved()">`;
                 
                 if(p.action.toUpperCase() === 'READ') readCb = cb;
                 else if(p.action.toUpperCase() === 'CREATE') createCb = cb;
                 else if(p.action.toUpperCase() === 'UPDATE') updateCb = cb;
                 else if(p.action.toUpperCase() === 'DELETE') deleteCb = cb;
+                else otherCb += `<div style="display:inline-flex;align-items:center;gap:4px;">\${cb}<span style="font-size:12px;color:#64748b;">\${p.action}</span></div>`;
             });
 
             const row = `
@@ -358,6 +365,7 @@
                     <td style="padding: 15px; text-align: center;">\${createCb}</td>
                     <td style="padding: 15px; text-align: center;">\${updateCb}</td>
                     <td style="padding: 15px; text-align: center;">\${deleteCb}</td>
+                    <td style="padding: 15px; text-align: center;">\${otherCb}</td>
                 </tr>
             `;
             tbody.innerHTML += row;
