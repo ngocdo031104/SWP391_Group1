@@ -1,4 +1,4 @@
--- ============================================================
+﻿-- ============================================================
 -- TourBuddy - Online Tour Booking System
 -- Database Script for Microsoft SQL Server 2022
 -- SWP391 - FPT University - Group 1
