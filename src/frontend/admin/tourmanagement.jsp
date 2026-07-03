@@ -359,6 +359,6 @@
 }
 </style>
 
-<script src="${pageContext.request.contextPath}/js/admin-tour.js?v=1.3"></script>
+<script src="${pageContext.request.contextPath}/js/admin-tour.js?v=1.4"></script>
 </body>
 </html>

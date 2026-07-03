@@ -439,16 +439,16 @@ document.addEventListener('DOMContentLoaded', () => {
         
         document.getElementById('tour-group-min').value = tour.groupSizeMin;
         document.getElementById('tour-group-max').value = tour.groupSizeMax;
-        document.getElementById('tour-departure').value = tour.departureCity;
-        document.getElementById('tour-destination').value = tour.destination;
+        document.getElementById('tour-departure').value = tour.departureCity || '';
+        document.getElementById('tour-destination').value = tour.destination || '';
         
-        document.getElementById('tour-languages').value = tour.languages;
+        document.getElementById('tour-languages').value = tour.languages || '';
         // Parse floats safely
         document.getElementById('tour-latitude').value = tour.latitude || '';
         document.getElementById('tour-longitude').value = tour.longitude || '';
         document.getElementById('tour-video').value = tour.videoUrl || '';
         
-        document.getElementById('tour-description').value = tour.description;
+        document.getElementById('tour-description').value = tour.description || '';
         
         // Nếu tour.itinerary có sẵn text thì điền vào, ngược lại load từ bảng TourItinerary trong DB
         const itineraryTextarea = document.getElementById('tour-itinerary');
