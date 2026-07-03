@@ -502,7 +502,12 @@ document.addEventListener('DOMContentLoaded', () => {
     tourForm.addEventListener('submit', (e) => {
         e.preventDefault();
 
-        // ── CLIENT-SIDE VALIDATION RULES ──
+        // Kích hoạt cơ chế kiểm tra hợp lệ mặc định của HTML5 (trống, min, max, type...)
+        if (!tourForm.reportValidity()) {
+            return;
+        }
+
+        // ── CLIENT-SIDE VALIDATION RULES (LOGIC RÀNG BUỘC) ──
         const basePrice = parseFloat(document.getElementById('tour-price').value) || 0;
         const durationDays = parseInt(document.getElementById('tour-duration').value) || 0;
         const maxParticipants = parseInt(document.getElementById('tour-max-parts').value) || 0;
@@ -511,30 +516,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (basePrice < 0) {
             showToast('Giá cơ bản không được âm!', 'error');
+            document.getElementById('tour-price').focus();
             return;
         }
         if (durationDays < 1) {
             showToast('Thời lượng tour phải tối thiểu là 1 ngày!', 'error');
+            document.getElementById('tour-duration').focus();
             return;
         }
         if (maxParticipants < 1) {
             showToast('Số khách tối đa phải lớn hơn hoặc bằng 1!', 'error');
+            document.getElementById('tour-max-parts').focus();
             return;
         }
         if (groupSizeMin < 1) {
             showToast('Số người tối thiểu mỗi đoàn phải lớn hơn hoặc bằng 1!', 'error');
+            document.getElementById('tour-group-min').focus();
             return;
         }
         if (groupSizeMax < 1) {
             showToast('Số người tối đa mỗi đoàn phải lớn hơn hoặc bằng 1!', 'error');
+            document.getElementById('tour-group-max').focus();
             return;
         }
         if (groupSizeMin > groupSizeMax) {
             showToast('Số người tối thiểu mỗi đoàn không được vượt quá số người tối đa!', 'error');
+            document.getElementById('tour-group-min').focus();
             return;
         }
         if (groupSizeMax > maxParticipants) {
             showToast(`Số người tối đa mỗi đoàn (${groupSizeMax}) không được vượt quá số khách tối đa của tour (${maxParticipants})!`, 'error');
+            document.getElementById('tour-group-max').focus();
             return;
         }
 
