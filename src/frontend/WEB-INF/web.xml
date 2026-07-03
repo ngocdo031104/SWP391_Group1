@@ -11,6 +11,11 @@
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
+
+    <!-- Ép kiểu UTF-8 toàn hệ thống từ cấp độ Container (chuẩn Servlet 4.0+) -->
+    <request-character-encoding>UTF-8</request-character-encoding>
+    <response-character-encoding>UTF-8</response-character-encoding>
+
     <!-- Đảm bảo static files được phục vụ với charset UTF-8 để tránh lỗi font tiếng Việt -->
     <mime-mapping>
         <extension>js</extension>
