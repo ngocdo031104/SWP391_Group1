@@ -234,11 +234,7 @@ END
 GO
 
 -- Alter Coupon table to support MaxDiscountAmount
-IF NOT EXISTS(SELECT 1 FROM sys.columns WHERE Name = N'MaxDiscountAmount' AND Object_ID = Object_ID(N'Coupon'))
-BEGIN
-    ALTER TABLE Coupon ADD MaxDiscountAmount DECIMAL(18, 2) NULL;
-END
-GO
+
 
 
 -- ============================================================
@@ -762,6 +758,7 @@ CREATE TABLE Coupon (
     DiscountType    NVARCHAR(20)  NOT NULL CHECK (DiscountType IN ('Percentage','FixedAmount')),
     DiscountValue   DECIMAL(18,2) NOT NULL CHECK (DiscountValue > 0),
     MinOrderAmount  DECIMAL(18,2) NOT NULL DEFAULT 0,
+    MaxDiscountAmount DECIMAL(18,2) NULL,
     MaxUses         INT           NULL,
     UsedCount       INT           NOT NULL DEFAULT 0,
     StartDate       DATE          NOT NULL,
