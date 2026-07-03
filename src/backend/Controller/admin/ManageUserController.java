@@ -130,12 +130,8 @@ public class ManageUserController extends HttpServlet {
             if (user != null) {
                 result.addProperty("status", "success");
                 result.add("data", gson.toJsonTree(user));
-                // Mock stats for UI demonstration since these fields don't exist in DB
-                JsonObject stats = new JsonObject();
-                stats.addProperty("trips", (int)(Math.random() * 20));
-                stats.addProperty("bookings", (int)(Math.random() * 50));
-                stats.addProperty("reviews", (int)(Math.random() * 15));
-                stats.addProperty("companions", (int)(Math.random() * 10));
+                
+                JsonObject stats = userDAO.getUserStats(userId, user.getRole().getRoleName());
                 result.add("stats", stats);
             } else {
                 result.addProperty("status", "error");
