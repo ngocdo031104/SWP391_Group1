@@ -219,9 +219,18 @@ public class AdminSchedulePricingController extends HttpServlet {
                             long diffInMillies = Math.abs(returnDate.getTime() - departureDate.getTime());
                             long diffDays = java.util.concurrent.TimeUnit.DAYS.convert(diffInMillies, java.util.concurrent.TimeUnit.MILLISECONDS) + 1;
                             
+                            int availableSeats = "editSchedule".equalsIgnoreCase(action)
+                                    ? parseInt(request.getParameter("availableSeats"), totalSeats)
+                                    : totalSeats;
+                            
                             if (diffDays > tour.getDurationDays()) {
                                 result.addProperty("status", "error");
                                 result.addProperty("message", "Lịch trình kéo dài quá lâu (" + diffDays + " ngày). Thời lượng tối đa được cấu hình cho tour này là " + tour.getDurationDays() + " ngày.");
+                            }
+                            // 3.5. Kiểm tra số ghế còn trống không được lớn hơn tổng số chỗ
+                            else if ("editSchedule".equalsIgnoreCase(action) && availableSeats > totalSeats) {
+                                result.addProperty("status", "error");
+                                result.addProperty("message", "Số ghế còn trống (" + availableSeats + ") không được vượt quá tổng số chỗ (" + totalSeats + ")!");
                             }
                             // 4. Khóa/chặn giá trẻ sơ sinh đối với các tour mạo hiểm (Biển/Núi)
                             else if ((tour.getCategoryId() == 1 || tour.getCategoryId() == 2) && priceInfant > 0) {
@@ -254,22 +263,17 @@ public class AdminSchedulePricingController extends HttpServlet {
                                 } else {
                                     int scheduleId = parseInt(request.getParameter("scheduleId"), 0);
                                     sched.setScheduleId(scheduleId);
-                            // Lấy availableSeats gửi từ form hoặc tự tính toán
-                            int availableSeats = parseInt(request.getParameter("availableSeats"), totalSeats);
-                            if (availableSeats > totalSeats) {
-                                availableSeats = totalSeats;
-                            }
-                            sched.setAvailableSeats(availableSeats);
-                            success = scheduleDAO.updateSchedule(sched);
-                        }
+                                    sched.setAvailableSeats(availableSeats);
+                                    success = scheduleDAO.updateSchedule(sched);
+                                }
 
-                        if (success) {
-                            result.addProperty("status", "success");
-                            result.addProperty("message", "Lưu thông tin lịch trình thành công!");
-                        } else {
-                            result.addProperty("status", "error");
-                            result.addProperty("message", "Lưu thông tin lịch trình thất bại.");
-                        }
+                                if (success) {
+                                    result.addProperty("status", "success");
+                                    result.addProperty("message", "Lưu thông tin lịch trình thành công!");
+                                } else {
+                                    result.addProperty("status", "error");
+                                    result.addProperty("message", "Lưu thông tin lịch trình thất bại.");
+                                }
                             }
                         }
                     }

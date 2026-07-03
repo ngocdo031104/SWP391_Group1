@@ -630,8 +630,17 @@
         const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1; // Số ngày thực tế đi
         
         if (diffDays > duration) {
-            alert(`Lịch trình kéo dài quá lâu (${diffDays} ngày). Thời lượng của tour này được cấu hình tối đa là ${duration} ngày!`);
+            alert("Lịch trình kéo dài quá lâu (" + diffDays + " ngày). Thời lượng của tour này được cấu hình tối đa là " + duration + " ngày!");
             return;
+        }
+
+        // 3.5. Kiểm tra số ghế còn trống không được lớn hơn tổng số chỗ (chỉ khi sửa lịch trình)
+        if (action === "editSchedule") {
+            const avaiSeats = parseInt(document.getElementById("form-schedule-avai").value) || 0;
+            if (avaiSeats > totalSeats) {
+                alert("Số ghế còn trống (" + avaiSeats + ") không được lớn hơn tổng số chỗ (" + totalSeats + ")!");
+                return;
+            }
         }
 
         // 4. Khóa/chặn giá trẻ sơ sinh đối với các tour mạo hiểm (Biển/Núi)
