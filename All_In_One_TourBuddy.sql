@@ -277,6 +277,7 @@ CREATE TABLE Coupon (
     DiscountType    NVARCHAR(20)  NOT NULL CHECK (DiscountType IN ('Percentage','FixedAmount')),
     DiscountValue   DECIMAL(18,2) NOT NULL CHECK (DiscountValue > 0),
     MinOrderAmount  DECIMAL(18,2) NOT NULL DEFAULT 0,
+    MaxDiscountAmount DECIMAL(18,2) NULL,
     MaxUses         INT           NULL,
     UsedCount       INT           NOT NULL DEFAULT 0,
     StartDate       DATE          NOT NULL,
