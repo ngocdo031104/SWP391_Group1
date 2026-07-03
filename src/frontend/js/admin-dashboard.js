@@ -1,4 +1,4 @@
-\ufeff/* \u2500\u2500 Admin Dashboard Logic & Charts \u2500\u2500 */
+/* ---- Admin Dashboard Logic & Charts ---- */
 
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize Lucide Icons
