@@ -154,6 +154,6 @@
     </main>
 </div>
 
-<script src="${pageContext.request.contextPath}/js/admin-dashboard.js?v=1.1"></script>
+<script src="${pageContext.request.contextPath}/js/admin-dashboard.js?v=1.2" charset="UTF-8"></script>
 </body>
 </html>

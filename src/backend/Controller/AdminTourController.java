@@ -212,21 +212,66 @@ public class AdminTourController extends HttpServlet {
                 }
                 
                 // Thu thập tất cả các tham số từ form gửi lên
-                tour.setCategoryId(parseInt(request.getParameter("categoryId"), 1));
-                tour.setTourName(request.getParameter("tourName"));
-                tour.setDescription(request.getParameter("description"));
-                tour.setDestination(request.getParameter("destination"));
-                tour.setDurationDays(parseInt(request.getParameter("durationDays"), 1));
-                tour.setItinerary(request.getParameter("itinerary"));
-                tour.setDifficultyLevel(request.getParameter("difficultyLevel"));
-                tour.setBasePrice(parseDouble(request.getParameter("basePrice"), 0.0));
-                tour.setMaxParticipants(parseInt(request.getParameter("maxParticipants"), 20));
-                tour.setStatus(request.getParameter("status")); // Trạng thái: Active, Draft, Disabled
-                tour.setIsFeatured("true".equalsIgnoreCase(request.getParameter("isFeatured")));
-                tour.setLanguages(request.getParameter("languages"));
-                tour.setGroupSizeMin(parseInt(request.getParameter("groupSizeMin"), 1));
-                tour.setGroupSizeMax(parseInt(request.getParameter("groupSizeMax"), 20));
-                tour.setDepartureCity(request.getParameter("departureCity"));
+                int categoryId = parseInt(request.getParameter("categoryId"), 1);
+                String tourName = request.getParameter("tourName");
+                String description = request.getParameter("description");
+                String destination = request.getParameter("destination");
+                int durationDays = parseInt(request.getParameter("durationDays"), 1);
+                String itinerary = request.getParameter("itinerary");
+                String difficultyLevel = request.getParameter("difficultyLevel");
+                double basePrice = parseDouble(request.getParameter("basePrice"), 0.0);
+                int maxParticipants = parseInt(request.getParameter("maxParticipants"), 20);
+                String status = request.getParameter("status"); // Trạng thái: Active, Draft, Disabled
+                boolean isFeatured = "true".equalsIgnoreCase(request.getParameter("isFeatured"));
+                String languages = request.getParameter("languages");
+                int groupSizeMin = parseInt(request.getParameter("groupSizeMin"), 1);
+                int groupSizeMax = parseInt(request.getParameter("groupSizeMax"), 20);
+                String departureCity = request.getParameter("departureCity");
+                
+                // ── SERVER-SIDE VALIDATION RULES ──
+                String errMsg = null;
+                if (basePrice < 0) {
+                    errMsg = "Giá cơ bản không được âm!";
+                } else if (durationDays < 1) {
+                    errMsg = "Thời lượng tour phải tối thiểu là 1 ngày!";
+                } else if (maxParticipants < 1) {
+                    errMsg = "Số khách tối đa phải lớn hơn hoặc bằng 1!";
+                } else if (groupSizeMin < 1) {
+                    errMsg = "Số người tối thiểu mỗi đoàn phải lớn hơn hoặc bằng 1!";
+                } else if (groupSizeMax < 1) {
+                    errMsg = "Số người tối đa mỗi đoàn phải lớn hơn hoặc bằng 1!";
+                } else if (groupSizeMin > groupSizeMax) {
+                    errMsg = "Số người tối thiểu mỗi đoàn không được vượt quá số người tối đa!";
+                } else if (groupSizeMax > maxParticipants) {
+                    errMsg = "Số người tối đa mỗi đoàn không được vượt quá số khách tối đa của tour!";
+                }
+
+                if (errMsg != null) {
+                    Gson gson = new Gson();
+                    try (PrintWriter out = response.getWriter()) {
+                        JsonObject resp = new JsonObject();
+                        resp.addProperty("status", "error");
+                        resp.addProperty("message", errMsg);
+                        out.print(gson.toJson(resp));
+                    }
+                    return;
+                }
+
+                tour.setCategoryId(categoryId);
+                tour.setTourName(tourName);
+                tour.setDescription(description);
+                tour.setDestination(destination);
+                tour.setDurationDays(durationDays);
+                tour.setItinerary(itinerary);
+                tour.setDifficultyLevel(difficultyLevel);
+                tour.setBasePrice(basePrice);
+                tour.setMaxParticipants(maxParticipants);
+                tour.setStatus(status);
+                tour.setIsFeatured(isFeatured);
+                tour.setLanguages(languages);
+                tour.setGroupSizeMin(groupSizeMin);
+                tour.setGroupSizeMax(groupSizeMax);
+                tour.setDepartureCity(departureCity);
                 
                 // Kinh độ và vĩ độ phục vụ hiển thị định vị bản đồ (Mapbox/SVG)
                 String latStr = request.getParameter("latitude");
