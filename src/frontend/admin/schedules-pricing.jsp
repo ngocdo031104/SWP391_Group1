@@ -66,7 +66,7 @@
                     <select class="custom-select" id="tour-selector" onchange="loadSchedules(this.value)">
                         <option value="">-- Chọn Tour cần quản lý --</option>
                         <c:forEach var="t" items="${tours}">
-                            <option value="${t.tourId}">${t.tourName}</option>
+                            <option value="${t.tourId}" data-category-id="${t.categoryId}" data-duration="${t.durationDays}">${t.tourName}</option>
                         </c:forEach>
                     </select>
                 </div>
@@ -273,16 +273,19 @@
                         <span style="font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 600; color: var(--text-light);">Cấu hình Bảng Giá:</span>
                     </div>
                     <div class="form-group">
-                        <label>Giá Người Lớn * (đ)</label>
+                        <label>Giá Người Lớn * (đ) <small style="color: var(--text-gray); font-size: 0.8rem; font-weight: normal;">(Từ 12 tuổi trở lên)</small></label>
                         <input type="number" name="priceAdult" id="form-schedule-price-adult" class="form-control" min="0" required>
                     </div>
                     <div class="form-group">
-                        <label>Giá Trẻ Em (đ)</label>
+                        <label>Giá Trẻ Em (đ) <small style="color: var(--text-gray); font-size: 0.8rem; font-weight: normal;">(Từ 2 đến 11 tuổi)</small></label>
                         <input type="number" name="priceChild" id="form-schedule-price-child" class="form-control" min="0" value="0">
                     </div>
                     <div class="form-group">
-                        <label>Giá Trẻ Sơ Sinh (đ)</label>
+                        <label>Giá Trẻ Sơ Sinh (đ) <small style="color: var(--text-gray); font-size: 0.8rem; font-weight: normal;">(Dưới 2 tuổi)</small></label>
                         <input type="number" name="priceInfant" id="form-schedule-price-infant" class="form-control" min="0" value="0">
+                        <span id="infant-warning" style="display: none; color: var(--error-red); font-size: 0.8rem; margin-top: 0.25rem; font-weight: 500;">
+                            <i class="fa-solid fa-triangle-exclamation"></i> Tour mạo hiểm - Không cho phép Trẻ sơ sinh tham gia.
+                        </span>
                     </div>
                 </div>
             </div>
@@ -505,6 +508,32 @@
             });
     }
 
+    function checkInfantRestriction() {
+        const selector = document.getElementById("tour-selector");
+        if (!selector) return;
+        const selectedOpt = selector.options[selector.selectedIndex];
+        if (!selectedOpt) return;
+        const catId = parseInt(selectedOpt.getAttribute("data-category-id")) || 0;
+        
+        const infantInput = document.getElementById("form-schedule-price-infant");
+        const infantWarning = document.getElementById("infant-warning");
+        
+        if (catId === 1 || catId === 2) {
+            // Tour mạo hiểm: Reset về 0, khóa chỉnh sửa bằng readonly, làm mờ
+            infantInput.value = 0;
+            infantInput.readOnly = true;
+            infantInput.style.opacity = "0.5";
+            infantInput.style.pointerEvents = "none";
+            if (infantWarning) infantWarning.style.display = "block";
+        } else {
+            // Tour bình thường: Mở khóa
+            infantInput.readOnly = false;
+            infantInput.style.opacity = "1";
+            infantInput.style.pointerEvents = "auto";
+            if (infantWarning) infantWarning.style.display = "none";
+        }
+    }
+
     function openAddScheduleModal() {
         const tourId = document.getElementById("tour-selector").value;
         if (!tourId) {
@@ -518,6 +547,10 @@
         document.getElementById("form-schedule-id").value = "";
         document.getElementById("form-schedule-tour-id").value = tourId;
         document.getElementById("available-seats-group").style.display = "none";
+        
+        // Kiểm tra ràng buộc trẻ sơ sinh đối với tour mạo hiểm
+        checkInfantRestriction();
+        
         openModal("schedule-modal");
     }
 
@@ -545,12 +578,87 @@
         document.getElementById("form-schedule-price-child").value = s.priceChild;
         document.getElementById("form-schedule-price-infant").value = s.priceInfant;
         
+        // Kiểm tra ràng buộc trẻ sơ sinh đối với tour mạo hiểm
+        checkInfantRestriction();
+        
         openModal("schedule-modal");
     }
 
     function saveSchedule(e) {
         e.preventDefault();
         const form = document.getElementById("schedule-form");
+        
+        // ── CLIENT-SIDE VALIDATIONS ──
+        const action = document.getElementById("schedule-action").value;
+        const depVal = document.getElementById("form-schedule-dep").value;
+        const retVal = document.getElementById("form-schedule-ret").value;
+        const totalSeats = parseInt(document.getElementById("form-schedule-seats").value) || 0;
+        const priceAdult = parseFloat(document.getElementById("form-schedule-price-adult").value) || 0;
+        const priceChild = parseFloat(document.getElementById("form-schedule-price-child").value) || 0;
+        const priceInfant = parseFloat(document.getElementById("form-schedule-price-infant").value) || 0;
+
+        if (!depVal || !retVal) {
+            alert("Vui lòng chọn đầy đủ ngày khởi hành và ngày về!");
+            return;
+        }
+
+        const depDate = new Date(depVal);
+        const retDate = new Date(retVal);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        depDate.setHours(0, 0, 0, 0);
+        retDate.setHours(0, 0, 0, 0);
+
+        // 1. Không cho phép ngày khởi hành ở quá khứ khi thêm mới
+        if (action === "addSchedule" && depDate < today) {
+            alert("Ngày khởi hành không được ở quá khứ!");
+            return;
+        }
+
+        // 2. Ngày về không được trước ngày khởi hành
+        if (retDate < depDate) {
+            alert("Ngày về không được trước ngày khởi hành!");
+            return;
+        }
+
+        // 3. Tour không được kéo dài quá lâu (chênh lệch ngày không vượt quá thời lượng tour)
+        const selector = document.getElementById("tour-selector");
+        const selectedOpt = selector.options[selector.selectedIndex];
+        const duration = parseInt(selectedOpt.getAttribute("data-duration")) || 1;
+        
+        const timeDiff = Math.abs(retDate.getTime() - depDate.getTime());
+        const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1; // Số ngày thực tế đi
+        
+        if (diffDays > duration) {
+            alert("Lịch trình kéo dài quá lâu (" + diffDays + " ngày). Thời lượng của tour này được cấu hình tối đa là " + duration + " ngày!");
+            return;
+        }
+
+        // 3.5. Kiểm tra số ghế còn trống không được lớn hơn tổng số chỗ (chỉ khi sửa lịch trình)
+        if (action === "editSchedule") {
+            const avaiSeats = parseInt(document.getElementById("form-schedule-avai").value) || 0;
+            if (avaiSeats > totalSeats) {
+                alert("Số ghế còn trống (" + avaiSeats + ") không được lớn hơn tổng số chỗ (" + totalSeats + ")!");
+                return;
+            }
+        }
+
+        // 4. Khóa/chặn giá trẻ sơ sinh đối với các tour mạo hiểm (Biển/Núi)
+        const catId = parseInt(selectedOpt.getAttribute("data-category-id")) || 0;
+        if ((catId === 1 || catId === 2) && priceInfant > 0) {
+            alert("Tour thuộc danh mục mạo hiểm (Biển & Đảo / Núi & Rừng), không cho phép trẻ sơ sinh tham gia!");
+            return;
+        }
+
+        if (totalSeats <= 0) {
+            alert("Tổng số chỗ phải lớn hơn 0!");
+            return;
+        }
+        if (priceAdult < 0 || priceChild < 0 || priceInfant < 0) {
+            alert("Giá vé cấu hình không được âm!");
+            return;
+        }
+
         const formData = new FormData(form);
         const params = new URLSearchParams(formData);
 
