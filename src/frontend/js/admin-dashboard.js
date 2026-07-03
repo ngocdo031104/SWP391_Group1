@@ -1,4 +1,4 @@
-/* ── Admin Dashboard Logic & Charts ── */
+﻿/* ── Admin Dashboard Logic & Charts ── */
 
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize Lucide Icons

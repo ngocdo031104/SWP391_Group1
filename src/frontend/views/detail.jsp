@@ -386,7 +386,7 @@
                     <div class="add-review-card">
                         <h4>Chia Sẻ Trải Nghiệm Của Bạn</h4>
                         <% 
-                            boolean isLoggedIn = (session.getAttribute("sessionUser") != null);
+                            isLoggedIn = (session.getAttribute("sessionUser") != null);
                             User currentUser = isLoggedIn ? (User) session.getAttribute("sessionUser") : null;
                             if (isLoggedIn && currentUser != null) {
                         %>

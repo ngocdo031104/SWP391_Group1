@@ -11,4 +11,17 @@
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
+    <!-- Đảm bảo static files được phục vụ với charset UTF-8 để tránh lỗi font tiếng Việt -->
+    <mime-mapping>
+        <extension>js</extension>
+        <mime-type>application/javascript;charset=UTF-8</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>css</extension>
+        <mime-type>text/css;charset=UTF-8</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>jsp</extension>
+        <mime-type>text/html;charset=UTF-8</mime-type>
+    </mime-mapping>
 </web-app>

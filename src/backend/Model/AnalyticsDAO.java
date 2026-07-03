@@ -25,7 +25,7 @@ public class AnalyticsDAO extends DBContext {
         // Query to aggregate monthly revenue, starting from N months ago
         String sql = "SELECT YEAR(CreatedAt) as YearVal, MONTH(CreatedAt) as MonthVal, SUM(TotalAmount) as Total "
                    + "FROM Booking "
-                   + "WHERE Status IN ('Confirmed', 'Completed') AND CreatedAt >= DATEADD(month, -?, GETDATE()) "
+                   + "WHERE Status = 'Success' AND CreatedAt >= DATEADD(month, -?, GETDATE()) "
                    + "GROUP BY YEAR(CreatedAt), MONTH(CreatedAt) "
                    + "ORDER BY YearVal ASC, MonthVal ASC";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -55,7 +55,7 @@ public class AnalyticsDAO extends DBContext {
                    + "JOIN TourSchedule ts ON b.ScheduleID = ts.ScheduleID "
                    + "JOIN Tour t ON ts.TourID = t.TourID "
                    + "JOIN TourCategory tc ON t.CategoryID = tc.CategoryID "
-                   + "WHERE b.Status IN ('Confirmed', 'Completed') "
+                   + "WHERE b.Status = 'Success' "
                    + "GROUP BY tc.CategoryName "
                    + "ORDER BY Total DESC";
         try (PreparedStatement ps = connection.prepareStatement(sql);
@@ -81,7 +81,7 @@ public class AnalyticsDAO extends DBContext {
                    + "FROM Booking b "
                    + "JOIN TourSchedule ts ON b.ScheduleID = ts.ScheduleID "
                    + "JOIN Tour t ON ts.TourID = t.TourID "
-                   + "WHERE b.Status IN ('Confirmed', 'Completed') "
+                   + "WHERE b.Status = 'Success' "
                    + "GROUP BY t.TourID, t.TourName "
                    + "ORDER BY Total DESC";
         try (PreparedStatement ps = connection.prepareStatement(sql);
