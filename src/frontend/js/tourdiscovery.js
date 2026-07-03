@@ -48,26 +48,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const navMenu = document.getElementById('nav-menu');
 
     /* ==========================================================================
-       DỮ LIỆU TOUR VIỆT NAM (100% BẢN ĐỊA HÓA - SỬ DỤNG ẢNH NỘI BỘ ĐÃ GENERATE)
+       D\u1eee LI\u1ec6U TOUR VI\u1ec6T NAM (100% B\u1ea2N \u0110\u1ecaA H\u00d3A - S\u1eec D\u1ee4NG \u1ea2NH N\u1ed8I B\u1ed8 \u0110\u00c3 GENERATE)
        ========================================================================== */
     const VIETNAM_IMAGES = {
-        "Đà Nẵng": "assets/images/tour_danang.png",
-        "Phú Quốc": "assets/images/tour_phuquoc.png",
-        "Hạ Long": "assets/images/tour_halong.png",
-        "Hội An": "assets/images/tour_hoian.png",
-        "Đà Lạt": "assets/images/tour_dalat.png",
+        "\u0110\u00e0 N\u1eb5ng": "assets/images/tour_danang.png",
+        "Ph\u00fa Qu\u1ed1c": "assets/images/tour_phuquoc.png",
+        "H\u1ea1 Long": "assets/images/tour_halong.png",
+        "H\u1ed9i An": "assets/images/tour_hoian.png",
+        "\u0110\u00e0 L\u1ea1t": "assets/images/tour_dalat.png",
         "Sa Pa": "assets/images/tour_sapa.png",
         "Nha Trang": "assets/images/tour_nhatrang.png",
-        "Hà Giang": "assets/images/tour_hagiang.png"
+        "H\u00e0 Giang": "assets/images/tour_hagiang.png"
     };
 
     const toursData = window.toursData || [
         {
             id: 1,
-            title: "Tour Thượng Lưu Bà Nà Hills, Cầu Vàng & Ngũ Hành Sơn 3 Ngày",
-            description: "Trải nghiệm cáp treo đạt nhiều kỷ lục thế giới, check-in Cầu Vàng huyền thoại giữa mây ngàn, khám phá làng Pháp cổ kính và lưu trú tại resort 5 sao bên bờ biển Mỹ Khê tuyệt mỹ.",
+            title: "Tour Th\u01b0\u1ee3ng L\u01b0u B\u00e0 N\u00e0 Hills, C\u1ea7u V\u00e0ng & Ng\u0169 H\u00e0nh S\u01a1n 3 Ng\u00e0y",
+            description: "Tr\u1ea3i nghi\u1ec7m c\u00e1p treo \u0111\u1ea1t nhi\u1ec1u k\u1ef7 l\u1ee5c th\u1ebf gi\u1edbi, check-in C\u1ea7u V\u00e0ng huy\u1ec1n tho\u1ea1i gi\u1eefa m\u00e2y ng\u00e0n, kh\u00e1m ph\u00e1 l\u00e0ng Ph\u00e1p c\u1ed5 k\u00ednh v\u00e0 l\u01b0u tr\u00fa t\u1ea1i resort 5 sao b\u00ean b\u1edd bi\u1ec3n M\u1ef9 Kh\u00ea tuy\u1ec7t m\u1ef9.",
             image: "assets/images/tour_danang.png",
-            departure: "Đà Nẵng",
+            departure: "\u0110\u00e0 N\u1eb5ng",
             tourType: "group",
             rating: 4.9,
             reviews: 142,
@@ -77,17 +77,17 @@ document.addEventListener('DOMContentLoaded', () => {
             category: "luxury",
             seatsLeft: 8,
             seatsTotal: 20,
-            guide: { name: "Nguyễn Văn Hùng", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=80&q=80" },
+            guide: { name: "Nguy\u1ec5n V\u0103n H\u00f9ng", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=80&q=80" },
             lat: "48%",
             lng: "50%",
-            location: "Đà Nẵng"
+            location: "\u0110\u00e0 N\u1eb5ng"
         },
         {
             id: 2,
-            title: "Thiên Đường Đảo Ngọc Phú Quốc - Lặn San Hô & Ngắm Hoàng Hôn 4 Ngày",
-            description: "Khám phá các đảo hoang sơ phía Nam, lên du thuyền câu cá lặn ngắm san hô tại hòn Móng Tay, thưởng thức tiệc hải sản tươi sống và ngắm hoàng hôn Sunset Sanato rực rỡ.",
+            title: "Thi\u00ean \u0110\u01b0\u1eddng \u0110\u1ea3o Ng\u1ecdc Ph\u00fa Qu\u1ed1c - L\u1eb7n San H\u00f4 & Ng\u1eafm Ho\u00e0ng H\u00f4n 4 Ng\u00e0y",
+            description: "Kh\u00e1m ph\u00e1 c\u00e1c \u0111\u1ea3o hoang s\u01a1 ph\u00eda Nam, l\u00ean du thuy\u1ec1n c\u00e2u c\u00e1 l\u1eb7n ng\u1eafm san h\u00f4 t\u1ea1i h\u00f2n M\u00f3ng Tay, th\u01b0\u1edfng th\u1ee9c ti\u1ec7c h\u1ea3i s\u1ea3n t\u01b0\u01a1i s\u1ed1ng v\u00e0 ng\u1eafm ho\u00e0ng h\u00f4n Sunset Sanato r\u1ef1c r\u1ee1.",
             image: "assets/images/tour_phuquoc.png",
-            departure: "TP. Hồ Chí Minh",
+            departure: "TP. H\u1ed3 Ch\u00ed Minh",
             tourType: "group",
             rating: 5.0,
             reviews: 98,
@@ -97,17 +97,17 @@ document.addEventListener('DOMContentLoaded', () => {
             category: "beach",
             seatsLeft: 12,
             seatsTotal: 20,
-            guide: { name: "Trần Minh Tâm", avatar: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=80&q=80" },
+            guide: { name: "Tr\u1ea7n Minh T\u00e2m", avatar: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=80&q=80" },
             lat: "88%",
             lng: "25%",
-            location: "Phú Quốc"
+            location: "Ph\u00fa Qu\u1ed1c"
         },
         {
             id: 3,
-            title: "Nghỉ Dưỡng Du Thuyền 5 Sao Vịnh Hạ Long & Chèo Thuyền Kayak 2 Ngày",
-            description: "Thư giãn trên du thuyền sang trọng giữa kỳ quan thiên nhiên thế giới. Trải nghiệm chèo kayak qua Hang Luồn kỳ thú, chinh phục đỉnh đảo Ti Tốp và thưởng thức ẩm thực Á-Âu thượng hạng.",
+            title: "Ngh\u1ec9 D\u01b0\u1ee1ng Du Thuy\u1ec1n 5 Sao V\u1ecbnh H\u1ea1 Long & Ch\u00e8o Thuy\u1ec1n Kayak 2 Ng\u00e0y",
+            description: "Th\u01b0 gi\u00e3n tr\u00ean du thuy\u1ec1n sang tr\u1ecdng gi\u1eefa k\u1ef3 quan thi\u00ean nhi\u00ean th\u1ebf gi\u1edbi. Tr\u1ea3i nghi\u1ec7m ch\u00e8o kayak qua Hang Lu\u1ed3n k\u1ef3 th\u00fa, chinh ph\u1ee5c \u0111\u1ec9nh \u0111\u1ea3o Ti T\u1ed1p v\u00e0 th\u01b0\u1edfng th\u1ee9c \u1ea9m th\u1ef1c \u00c1-\u00c2u th\u01b0\u1ee3ng h\u1ea1ng.",
             image: "assets/images/tour_halong.png",
-            departure: "Hà Nội",
+            departure: "H\u00e0 N\u1ed9i",
             tourType: "group",
             rating: 4.8,
             reviews: 215,
@@ -117,17 +117,17 @@ document.addEventListener('DOMContentLoaded', () => {
             category: "luxury",
             seatsLeft: 4,
             seatsTotal: 10,
-            guide: { name: "Lê Hoàng Nam", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=80&q=80" },
+            guide: { name: "L\u00ea Ho\u00e0ng Nam", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=80&q=80" },
             lat: "15%",
             lng: "48%",
-            location: "Hạ Long"
+            location: "H\u1ea1 Long"
         },
         {
             id: 4,
-            title: "Hành Trình Phố Cổ Hội An Hoài Cổ & Thả Đèn Hoa Đăng Sông Hoài 2 Ngày",
-            description: "Tản bộ qua những bức tường vàng phủ rêu phong hàng trăm năm tuổi, tham gia làm đèn lồng truyền thống nghệ thuật, thưởng thức Cao Lầu đặc sản và đi thuyền gỗ thả đèn hoa đăng lung linh.",
+            title: "H\u00e0nh Tr\u00ecnh Ph\u1ed1 C\u1ed5 H\u1ed9i An Ho\u00e0i C\u1ed5 & Th\u1ea3 \u0110\u00e8n Hoa \u0110\u0103ng S\u00f4ng Ho\u00e0i 2 Ng\u00e0y",
+            description: "T\u1ea3n b\u1ed9 qua nh\u1eefng b\u1ee9c t\u01b0\u1eddng v\u00e0ng ph\u1ee7 r\u00eau phong h\u00e0ng tr\u0103m n\u0103m tu\u1ed5i, tham gia l\u00e0m \u0111\u00e8n l\u1ed3ng truy\u1ec1n th\u1ed1ng ngh\u1ec7 thu\u1eadt, th\u01b0\u1edfng th\u1ee9c Cao L\u1ea7u \u0111\u1eb7c s\u1ea3n v\u00e0 \u0111i thuy\u1ec1n g\u1ed7 th\u1ea3 \u0111\u00e8n hoa \u0111\u0103ng lung linh.",
             image: "assets/images/tour_hoian.png",
-            departure: "Đà Nẵng",
+            departure: "\u0110\u00e0 N\u1eb5ng",
             tourType: "private",
             rating: 4.7,
             reviews: 86,
@@ -137,17 +137,17 @@ document.addEventListener('DOMContentLoaded', () => {
             category: "cultural",
             seatsLeft: 15,
             seatsTotal: 30,
-            guide: { name: "Phạm Thùy Linh", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=80&q=80" },
+            guide: { name: "Ph\u1ea1m Th\u00f9y Linh", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=80&q=80" },
             lat: "52%",
             lng: "54%",
-            location: "Hội An"
+            location: "H\u1ed9i An"
         },
         {
             id: 5,
-            title: "Săn Mây Đà Lạt, Chinh Phục Langbiang & Cắm Trại Rừng Thông 3 Ngày",
-            description: "Săn mây bình minh tuyệt diệu tại Đồi Chè Cầu Đất, trekking chinh phục đỉnh núi Langbiang huyền thoại, cắm trại rừng thông thơ mộng và thưởng thức tiệc BBQ ấm cúng trong sương mờ.",
+            title: "S\u0103n M\u00e2y \u0110\u00e0 L\u1ea1t, Chinh Ph\u1ee5c Langbiang & C\u1eafm Tr\u1ea1i R\u1eebng Th\u00f4ng 3 Ng\u00e0y",
+            description: "S\u0103n m\u00e2y b\u00ecnh minh tuy\u1ec7t di\u1ec7u t\u1ea1i \u0110\u1ed3i Ch\u00e8 C\u1ea7u \u0110\u1ea5t, trekking chinh ph\u1ee5c \u0111\u1ec9nh n\u00fai Langbiang huy\u1ec1n tho\u1ea1i, c\u1eafm tr\u1ea1i r\u1eebng th\u00f4ng th\u01a1 m\u1ed9ng v\u00e0 th\u01b0\u1edfng th\u1ee9c ti\u1ec7c BBQ \u1ea5m c\u00fang trong s\u01b0\u01a1ng m\u1edd.",
             image: "assets/images/tour_dalat.png",
-            departure: "TP. Hồ Chí Minh",
+            departure: "TP. H\u1ed3 Ch\u00ed Minh",
             tourType: "group",
             rating: 4.9,
             reviews: 110,
@@ -157,17 +157,17 @@ document.addEventListener('DOMContentLoaded', () => {
             category: "hiking",
             seatsLeft: 6,
             seatsTotal: 8,
-            guide: { name: "Lâm Quốc Bảo", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=80&q=80" },
+            guide: { name: "L\u00e2m Qu\u1ed1c B\u1ea3o", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=80&q=80" },
             lat: "72%",
             lng: "46%",
-            location: "Đà Lạt"
+            location: "\u0110\u00e0 L\u1ea1t"
         },
         {
             id: 6,
-            title: "Trekking Ruộng Bậc Thang Sa Pa & Chinh Phục Fansipan Kỳ Vĩ 3 Ngày",
-            description: "Hành trình trekking ngắm ruộng bậc thang thung lũng Mường Hoa kỳ vĩ, chinh phục đỉnh Fansipan - Nóc nhà Đông Dương bằng cáp treo hiện đại và trải nghiệm văn hóa bản địa độc đáo.",
+            title: "Trekking Ru\u1ed9ng B\u1eadc Thang Sa Pa & Chinh Ph\u1ee5c Fansipan K\u1ef3 V\u0129 3 Ng\u00e0y",
+            description: "H\u00e0nh tr\u00ecnh trekking ng\u1eafm ru\u1ed9ng b\u1eadc thang thung l\u0169ng M\u01b0\u1eddng Hoa k\u1ef3 v\u0129, chinh ph\u1ee5c \u0111\u1ec9nh Fansipan - N\u00f3c nh\u00e0 \u0110\u00f4ng D\u01b0\u01a1ng b\u1eb1ng c\u00e1p treo hi\u1ec7n \u0111\u1ea1i v\u00e0 tr\u1ea3i nghi\u1ec7m v\u0103n h\u00f3a b\u1ea3n \u0111\u1ecba \u0111\u1ed9c \u0111\u00e1o.",
             image: "assets/images/tour_sapa.png",
-            departure: "Hà Nội",
+            departure: "H\u00e0 N\u1ed9i",
             tourType: "group",
             rating: 4.9,
             reviews: 154,
@@ -177,17 +177,17 @@ document.addEventListener('DOMContentLoaded', () => {
             category: "hiking",
             seatsLeft: 3,
             seatsTotal: 8,
-            guide: { name: "Vàng A Tủa", avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=120&q=80" },
+            guide: { name: "V\u00e0ng A T\u1ee7a", avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=120&q=80" },
             lat: "10%",
             lng: "22%",
             location: "Sa Pa"
         },
         {
             id: 7,
-            title: "Khám Phá Vịnh Nha Trang - Đi Bộ Dưới Đại Dương & VinWonders 4 Ngày",
-            description: "Trải nghiệm đi bộ dưới đáy biển ngằn rạn san hô rực rỡ tại Hòn Mun, đi ca-nô cao tốc ngắm vịnh và thỏa sức vui chơi giải trí tại thiên đường VinWonders đẳng cấp thế giới.",
+            title: "Kh\u00e1m Ph\u00e1 V\u1ecbnh Nha Trang - \u0110i B\u1ed9 D\u01b0\u1edbi \u0110\u1ea1i D\u01b0\u01a1ng & VinWonders 4 Ng\u00e0y",
+            description: "Tr\u1ea3i nghi\u1ec7m \u0111i b\u1ed9 d\u01b0\u1edbi \u0111\u00e1y bi\u1ec3n ng\u1eb1n r\u1ea1n san h\u00f4 r\u1ef1c r\u1ee1 t\u1ea1i H\u00f2n Mun, \u0111i ca-n\u00f4 cao t\u1ed1c ng\u1eafm v\u1ecbnh v\u00e0 th\u1ecfa s\u1ee9c vui ch\u01a1i gi\u1ea3i tr\u00ed t\u1ea1i thi\u00ean \u0111\u01b0\u1eddng VinWonders \u0111\u1eb3ng c\u1ea5p th\u1ebf gi\u1edbi.",
             image: "assets/images/tour_nhatrang.png",
-            departure: "TP. Hồ Chí Minh",
+            departure: "TP. H\u1ed3 Ch\u00ed Minh",
             tourType: "group",
             rating: 4.6,
             reviews: 73,
@@ -197,17 +197,17 @@ document.addEventListener('DOMContentLoaded', () => {
             category: "beach",
             seatsLeft: 18,
             seatsTotal: 25,
-            guide: { name: "Nguyễn Minh Triết", avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=120&q=80" },
+            guide: { name: "Nguy\u1ec5n Minh Tri\u1ebft", avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=120&q=80" },
             lat: "64%",
             lng: "50%",
             location: "Nha Trang"
         },
         {
             id: 8,
-            title: "Hành Trình Kỳ Vĩ Hà Giang - Mã Pí Lèng & Đi Thuyền Sông Nho Quế 4 Ngày",
-            description: "Chinh phục đèo Mã Pí Lèng - một trong tứ đại đỉnh đèo Việt Nam, ngắm thung lũng hoa tam giác mạch rừng đá Đồng Văn và đi thuyền trên dòng sông Nho Quế xanh như ngọc bích.",
+            title: "H\u00e0nh Tr\u00ecnh K\u1ef3 V\u0129 H\u00e0 Giang - M\u00e3 P\u00ed L\u00e8ng & \u0110i Thuy\u1ec1n S\u00f4ng Nho Qu\u1ebf 4 Ng\u00e0y",
+            description: "Chinh ph\u1ee5c \u0111\u00e8o M\u00e3 P\u00ed L\u00e8ng - m\u1ed9t trong t\u1ee9 \u0111\u1ea1i \u0111\u1ec9nh \u0111\u00e8o Vi\u1ec7t Nam, ng\u1eafm thung l\u0169ng hoa tam gi\u00e1c m\u1ea1ch r\u1eebng \u0111\u00e1 \u0110\u1ed3ng V\u0103n v\u00e0 \u0111i thuy\u1ec1n tr\u00ean d\u00f2ng s\u00f4ng Nho Qu\u1ebf xanh nh\u01b0 ng\u1ecdc b\u00edch.",
             image: "assets/images/tour_hagiang.png",
-            departure: "Hà Nội",
+            departure: "H\u00e0 N\u1ed9i",
             tourType: "private",
             rating: 5.0,
             reviews: 120,
@@ -217,10 +217,10 @@ document.addEventListener('DOMContentLoaded', () => {
             category: "adventure",
             seatsLeft: 5,
             seatsTotal: 10,
-            guide: { name: "Sùng Mí Phìn", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80" },
+            guide: { name: "S\u00f9ng M\u00ed Ph\u00ecn", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80" },
             lat: "5%",
             lng: "34%",
-            location: "Hà Giang"
+            location: "H\u00e0 Giang"
         }
     ];
 
@@ -241,7 +241,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function formatPrice(vndAmount) {
         const currency = getActiveCurrency();
         if (currency === 'vnd') {
-            return `${vndAmount.toLocaleString('vi-VN')} ₫`;
+            return `${vndAmount.toLocaleString('vi-VN')} \u20ab`;
         } else {
             const usdAmount = Math.round(vndAmount / EXCHANGE_RATE);
             return `$${usdAmount.toLocaleString('en-US')}`;
@@ -261,7 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 priceSlider.value = Math.round((priceSlider.min + prevPercent * (priceSlider.max - priceSlider.min)) / 500000) * 500000;
             }
-            priceLimitVal.textContent = `Tối đa: ${formatPrice(parseInt(priceSlider.value))}`;
+            priceLimitVal.textContent = `T\u1ed1i \u0111a: ${formatPrice(parseInt(priceSlider.value))}`;
         } else {
             priceSlider.min = 40;
             priceSlider.max = 400;
@@ -271,7 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 priceSlider.value = Math.round((priceSlider.min + prevPercent * (priceSlider.max - priceSlider.min)) / 10) * 10;
             }
-            priceLimitVal.textContent = `Tối đa: ${formatPrice(parseInt(priceSlider.value) * EXCHANGE_RATE)}`;
+            priceLimitVal.textContent = `T\u1ed1i \u0111a: ${formatPrice(parseInt(priceSlider.value) * EXCHANGE_RATE)}`;
         }
     }
 
@@ -385,8 +385,8 @@ document.addEventListener('DOMContentLoaded', () => {
             exploreGrid.innerHTML = `
                 <div style="grid-column: span 12; text-align: center; padding: 4rem 0; color: var(--slate-400);">
                     <i data-lucide="compass" style="width: 3.5rem; height: 3.5rem; margin-bottom: 1rem; color: var(--primary); opacity: 0.8;"></i>
-                    <p style="font-size: 1.1rem; font-weight: 600; color: var(--slate-700);">Không tìm thấy tour phù hợp với bộ lọc hiện tại.</p>
-                    <button class="btn btn-secondary btn-sm" id="reset-no-results-btn" style="margin-top: 1.25rem; font-size: 0.875rem;">Đặt lại bộ lọc</button>
+                    <p style="font-size: 1.1rem; font-weight: 600; color: var(--slate-700);">Kh\u00f4ng t\u00ecm th\u1ea5y tour ph\u00f9 h\u1ee3p v\u1edbi b\u1ed9 l\u1ecdc hi\u1ec7n t\u1ea1i.</p>
+                    <button class="btn btn-secondary btn-sm" id="reset-no-results-btn" style="margin-top: 1.25rem; font-size: 0.875rem;">\u0110\u1eb7t l\u1ea1i b\u1ed9 l\u1ecdc</button>
                 </div>
             `;
             // Attach reset handler to dynamic button
@@ -409,20 +409,20 @@ document.addEventListener('DOMContentLoaded', () => {
             const progressPercent = ((tour.seatsTotal - tour.seatsLeft) / tour.seatsTotal) * 100;
 
             // Map standard difficulty string to Vietnamese
-            let difficultyText = "Dễ dàng";
+            let difficultyText = "D\u1ec5 d\u00e0ng";
             let difficultyClass = "easy";
             if (tour.difficulty === "medium") {
-                difficultyText = "Trung bình";
+                difficultyText = "Trung b\u00ecnh";
                 difficultyClass = "medium";
             } else if (tour.difficulty === "hard") {
-                difficultyText = "Thử thách";
+                difficultyText = "Th\u1eed th\u00e1ch";
                 difficultyClass = "hard";
             }
 
             let priceText = formatPrice(tour.priceVND);
-            let priceSpan = `<span>₫</span>`;
-            if (priceText.endsWith(' ₫')) {
-                priceText = priceText.replace(' ₫', '');
+            let priceSpan = `<span>\u20ab</span>`;
+            if (priceText.endsWith(' \u20ab')) {
+                priceText = priceText.replace(' \u20ab', '');
             } else if (priceText.startsWith('$')) {
                 priceText = priceText.replace('$', '');
                 priceSpan = `<span>$</span>`;
@@ -434,7 +434,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="tour-badge">
                         <span class="badge badge-featured">${difficultyText}</span>
                     </div>
-                    <button class="btn-wishlist" aria-label="Thêm vào yêu thích">
+                    <button class="btn-wishlist" aria-label="Th\u00eam v\u00e0o y\u00eau th\u00edch">
                         <i data-lucide="heart"></i>
                     </button>
                 </div>
@@ -442,19 +442,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="tour-meta">
                         <div class="tour-rating">
                             <i data-lucide="star"></i>
-                            <span>${tour.rating} (${tour.reviews} đánh giá)</span>
+                            <span>${tour.rating} (${tour.reviews} \u0111\u00e1nh gi\u00e1)</span>
                         </div>
                         <div class="tour-duration">
                             <i data-lucide="clock"></i>
-                            <span>${tour.duration} Ngày</span>
+                            <span>${tour.duration} Ng\u00e0y</span>
                         </div>
                     </div>
                     <h3>${tour.title}</h3>
                     <div class="tour-seats-progress">
                         <div class="seats-info">
-                            <span>Chỗ trống</span>
+                            <span>Ch\u1ed7 tr\u1ed1ng</span>
                             <span class="seats-left ${isSeatsCritical ? 'danger' : ''}">
-                                ${tour.seatsLeft > 0 ? "Còn " + tour.seatsLeft + " chỗ!" : "Hết chỗ!"}
+                                ${tour.seatsLeft > 0 ? "C\u00f2n " + tour.seatsLeft + " ch\u1ed7!" : "H\u1ebft ch\u1ed7!"}
                             </span>
                         </div>
                         <div class="progress-bar-bg">
@@ -463,10 +463,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="tour-footer">
                         <div class="tour-price">
-                            <span class="price-label">Giá mỗi khách</span>
+                            <span class="price-label">Gi\u00e1 m\u1ed7i kh\u00e1ch</span>
                             <span class="price-val">${priceText} ${priceSpan}</span>
                         </div>
-                        <button class="btn btn-primary btn-sm btn-cta-detail" onclick="window.location.href='detail?id=${tour.id}'">Xem Chi Tiết</button>
+                        <button class="btn btn-primary btn-sm btn-cta-detail" onclick="window.location.href='detail?id=${tour.id}'">Xem Chi Ti\u1ebft</button>
                     </div>
                 </div>
             `;
@@ -537,7 +537,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="map-popup-details">
                 <div class="map-popup-title">${tour.title}</div>
                 <div class="map-popup-meta">
-                    <span>★ ${tour.rating}</span>
+                    <span>\u2605 ${tour.rating}</span>
                     <span class="map-popup-price">${formatPrice(tour.priceVND)}</span>
                 </div>
             </div>
@@ -657,7 +657,7 @@ document.addEventListener('DOMContentLoaded', () => {
         priceSlider.addEventListener('input', (e) => {
             const value = parseInt(e.target.value);
             const displayVal = getActiveCurrency() === 'vnd' ? value : value * EXCHANGE_RATE;
-            priceLimitVal.textContent = `Tối đa: ${formatPrice(displayVal)}`;
+            priceLimitVal.textContent = `T\u1ed1i \u0111a: ${formatPrice(displayVal)}`;
             filterAndSortTours();
         });
     }
@@ -713,7 +713,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function clearAllFilters() {
         if (priceSlider) {
             priceSlider.value = getActiveCurrency() === 'vnd' ? 10000000 : 400;
-            priceLimitVal.textContent = `Tối đa: ${formatPrice(getActiveCurrency() === 'vnd' ? 10000000 : 400 * EXCHANGE_RATE)}`;
+            priceLimitVal.textContent = `T\u1ed1i \u0111a: ${formatPrice(getActiveCurrency() === 'vnd' ? 10000000 : 400 * EXCHANGE_RATE)}`;
         }
         const searchDestinationEl = document.getElementById('search-destination');
         if (searchDestinationEl) searchDestinationEl.value = '';
@@ -769,8 +769,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateMapToggleLabel(isOpen) {
         if (!mapToggleBtn) return;
         mapToggleBtn.innerHTML = isOpen
-            ? `<i data-lucide="x"></i><span>Đóng bản đồ</span>`
-            : `<i data-lucide="map"></i><span>Xem bản đồ</span>`;
+            ? `<i data-lucide="x"></i><span>\u0110\u00f3ng b\u1ea3n \u0111\u1ed3</span>`
+            : `<i data-lucide="map"></i><span>Xem b\u1ea3n \u0111\u1ed3</span>`;
         lucide.createIcons();
     }
 
@@ -806,7 +806,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Profile Dropdown and Mobile Menu Toggle are handled globally by navigation.js
 
     /* ==========================================================================
-       RECOMMENDATION SECTION POPULATING (Tour dành cho bạn)
+       RECOMMENDATION SECTION POPULATING (Tour d\u00e0nh cho b\u1ea1n)
        ========================================================================== */
     function renderRecommendations() {
         if (!recToursGrid) return;
@@ -832,7 +832,7 @@ document.addEventListener('DOMContentLoaded', () => {
             card.innerHTML = `
                 <div class="rec-tour-img-wrapper">
                     <img src="${tour.image}" alt="${tour.title}" class="rec-tour-img">
-                    <div class="rec-tour-badge"><span class="badge badge-featured">Gợi ý</span></div>
+                    <div class="rec-tour-badge"><span class="badge badge-featured">G\u1ee3i \u00fd</span></div>
                 </div>
                 <div class="rec-tour-details">
                     <div class="rec-tour-location">
@@ -842,7 +842,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h3>${tour.title}</h3>
                     <div class="rec-tour-footer">
                         <div class="rec-tour-price">
-                            <span class="price-label">Chỉ từ</span>
+                            <span class="price-label">Ch\u1ec9 t\u1eeb</span>
                             <span class="price-val">${formatPrice(tour.priceVND)}</span>
                         </div>
                         <button class="btn btn-primary btn-sm" onclick="window.location.href='detail?id=${tour.id}'">Xem Ngay</button>
