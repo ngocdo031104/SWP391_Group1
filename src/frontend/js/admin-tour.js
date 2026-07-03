@@ -1,4 +1,4 @@
-﻿document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
     // Initialize Lucide Icons
     lucide.createIcons();
 
@@ -501,6 +501,42 @@
     /* ── Form Submit (Add/Edit) ── */
     tourForm.addEventListener('submit', (e) => {
         e.preventDefault();
+
+        // ── CLIENT-SIDE VALIDATION RULES ──
+        const basePrice = parseFloat(document.getElementById('tour-price').value) || 0;
+        const durationDays = parseInt(document.getElementById('tour-duration').value) || 0;
+        const maxParticipants = parseInt(document.getElementById('tour-max-parts').value) || 0;
+        const groupSizeMin = parseInt(document.getElementById('tour-group-min').value) || 0;
+        const groupSizeMax = parseInt(document.getElementById('tour-group-max').value) || 0;
+
+        if (basePrice < 0) {
+            showToast('Giá cơ bản không được âm!', 'error');
+            return;
+        }
+        if (durationDays < 1) {
+            showToast('Thời lượng tour phải tối thiểu là 1 ngày!', 'error');
+            return;
+        }
+        if (maxParticipants < 1) {
+            showToast('Số khách tối đa phải lớn hơn hoặc bằng 1!', 'error');
+            return;
+        }
+        if (groupSizeMin < 1) {
+            showToast('Số người tối thiểu mỗi đoàn phải lớn hơn hoặc bằng 1!', 'error');
+            return;
+        }
+        if (groupSizeMax < 1) {
+            showToast('Số người tối đa mỗi đoàn phải lớn hơn hoặc bằng 1!', 'error');
+            return;
+        }
+        if (groupSizeMin > groupSizeMax) {
+            showToast('Số người tối thiểu mỗi đoàn không được vượt quá số người tối đa!', 'error');
+            return;
+        }
+        if (groupSizeMax > maxParticipants) {
+            showToast(`Số người tối đa mỗi đoàn (${groupSizeMax}) không được vượt quá số khách tối đa của tour (${maxParticipants})!`, 'error');
+            return;
+        }
 
         const formData = new FormData(tourForm);
         const params = new URLSearchParams();
