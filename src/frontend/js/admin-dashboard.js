@@ -70,17 +70,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
             return {
                 id: t.tourId,
-                title: t.tourName,
-                location: t.departureCity + " \u2192 " + t.destination,
+                title: t.tourName || 'Tour ch\u01b0a \u0111\u1eb7t t\u00ean',
+                location: (t.departureCity || 'Ch\u01b0a r\u00f5') + " \u2192 " + (t.destination || 'Ch\u01b0a r\u00f5'),
                 category: t.categoryId,
-                categoryName: t.categoryName,
+                categoryName: t.categoryName || 'Kh\u00e1c',
                 difficulty: t.difficultyLevel ? t.difficultyLevel.toLowerCase() : 'easy',
                 rating: rating,
                 reviews: reviews,
                 seatsLeft: seatsLeft,
                 seatsTotal: seatsTotal,
-                priceVND: t.basePrice,
-                status: t.status.toLowerCase(), // active, draft, disabled
+                priceVND: t.basePrice || 0.0,
+                status: t.status ? t.status.toLowerCase() : 'draft', // active, draft, disabled
                 image: image,
                 nextDeparture: t.nextDeparture || ''
             };
