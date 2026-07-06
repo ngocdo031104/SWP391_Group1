@@ -15,10 +15,10 @@ public class ChatDAO extends DBContext {
 
     // Get or Create Direct Conversation between two users
     public int getOrCreateDirectConversation(int user1, int user2) {
-        String checkSql = "SELECT c.ConversationID FROM Conversation c " +
+        String checkSql = "SELECT c.ConversationID FROM ChatConversation c " +
                           "JOIN ConversationParticipant cp1 ON c.ConversationID = cp1.ConversationID " +
                           "JOIN ConversationParticipant cp2 ON c.ConversationID = cp2.ConversationID " +
-                          "WHERE c.Type = 'Direct' AND cp1.UserID = ? AND cp2.UserID = ?";
+                          "WHERE c.ConversationType = 'Direct' AND cp1.UserID = ? AND cp2.UserID = ?";
         
         try (PreparedStatement ps = connection.prepareStatement(checkSql)) {
             ps.setInt(1, user1);
@@ -34,8 +34,9 @@ public class ChatDAO extends DBContext {
 
         // Create new
         int newConversationId = -1;
-        String insertConv = "INSERT INTO Conversation (Type) OUTPUT INSERTED.ConversationID VALUES ('Direct')";
+        String insertConv = "INSERT INTO ChatConversation (ConversationType, CreatedBy) OUTPUT INSERTED.ConversationID VALUES ('Direct', ?)";
         try (PreparedStatement ps = connection.prepareStatement(insertConv)) {
+            ps.setInt(1, user1);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     newConversationId = rs.getInt(1);
@@ -72,25 +73,16 @@ public class ChatDAO extends DBContext {
 
     // Insert a new message
     public Message saveMessage(Message msg) {
-        String sql = "INSERT INTO Message (ConversationID, SenderID, Content, MessageType) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        String sql = "INSERT INTO ChatMessage (ConversationID, SenderID, Content, IsVisible) OUTPUT INSERTED.MessageID VALUES (?, ?, ?, 1)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, msg.getConversationId());
             ps.setInt(2, msg.getSenderId());
             ps.setString(3, msg.getContent());
-            ps.setString(4, msg.getMessageType() != null ? msg.getMessageType() : "Text");
             
-            ps.executeUpdate();
-            try (ResultSet rs = ps.getGeneratedKeys()) {
+            try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     msg.setMessageId(rs.getInt(1));
                 }
-            }
-            
-            // Update conversation updated_at
-            String updateConv = "UPDATE Conversation SET UpdatedAt = SYSDATETIME() WHERE ConversationID = ?";
-            try (PreparedStatement pUpdate = connection.prepareStatement(updateConv)) {
-                pUpdate.setInt(1, msg.getConversationId());
-                pUpdate.executeUpdate();
             }
             
             return msg;
@@ -105,10 +97,10 @@ public class ChatDAO extends DBContext {
         List<Message> list = new ArrayList<>();
         // Note: MS SQL Server uses OFFSET FETCH for pagination
         String sql = "SELECT m.*, u.FullName as SenderName, u.ProfilePicture as SenderAvatar " +
-                     "FROM Message m " +
+                     "FROM ChatMessage m " +
                      "JOIN [User] u ON m.SenderID = u.UserID " +
-                     "WHERE m.ConversationID = ? AND m.IsDeleted = 0 " +
-                     "ORDER BY m.CreatedAt DESC " +
+                     "WHERE m.ConversationID = ? AND m.IsVisible = 1 " +
+                     "ORDER BY m.SentAt DESC " +
                      "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, conversationId);
@@ -121,9 +113,9 @@ public class ChatDAO extends DBContext {
                     m.setConversationId(rs.getInt("ConversationID"));
                     m.setSenderId(rs.getInt("SenderID"));
                     m.setContent(rs.getString("Content"));
-                    m.setMessageType(rs.getString("MessageType"));
-                    m.setCreatedAt(rs.getTimestamp("CreatedAt"));
-                    m.setIsDeleted(rs.getBoolean("IsDeleted"));
+                    m.setMessageType("Text"); // fallback since it doesn't exist
+                    m.setCreatedAt(rs.getTimestamp("SentAt"));
+                    m.setIsDeleted(!rs.getBoolean("IsVisible"));
                     m.setSenderName(rs.getString("SenderName"));
                     m.setSenderAvatar(rs.getString("SenderAvatar"));
                     // Reverse the order later in UI or here so newest is at bottom
@@ -139,13 +131,14 @@ public class ChatDAO extends DBContext {
     // Get active conversations for a user
     public List<Conversation> getUserConversations(int userId) {
         List<Conversation> list = new ArrayList<>();
+        // Removed c.UpdatedAt since ChatConversation doesn't have it
         String sql = "SELECT c.*, u.FullName AS OtherName, u.ProfilePicture AS OtherAvatar, u.UserID AS OtherID " +
-                     "FROM Conversation c " +
+                     "FROM ChatConversation c " +
                      "JOIN ConversationParticipant cp1 ON c.ConversationID = cp1.ConversationID " +
                      "LEFT JOIN ConversationParticipant cp2 ON c.ConversationID = cp2.ConversationID AND cp2.UserID != ? " +
                      "LEFT JOIN [User] u ON cp2.UserID = u.UserID " +
                      "WHERE cp1.UserID = ? " +
-                     "ORDER BY c.UpdatedAt DESC";
+                     "ORDER BY c.CreatedAt DESC";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setInt(2, userId);
@@ -153,18 +146,17 @@ public class ChatDAO extends DBContext {
                 while (rs.next()) {
                     Conversation c = new Conversation();
                     c.setConversationId(rs.getInt("ConversationID"));
-                    c.setType(rs.getString("Type"));
+                    c.setType(rs.getString("ConversationType"));
                     
-                    if ("Direct".equals(rs.getString("Type"))) {
+                    if ("Direct".equals(rs.getString("ConversationType"))) {
                         c.setTitle(rs.getString("OtherName"));
                         c.setAvatarUrl(rs.getString("OtherAvatar"));
                         c.setOtherUserId(rs.getInt("OtherID"));
                     } else {
-                        c.setTitle(rs.getString("Title"));
+                        c.setTitle(rs.getString("GroupName"));
                     }
                     
                     c.setCreatedAt(rs.getTimestamp("CreatedAt"));
-                    c.setUpdatedAt(rs.getTimestamp("UpdatedAt"));
                     list.add(c);
                 }
             }
