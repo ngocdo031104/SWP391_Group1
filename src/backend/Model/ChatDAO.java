@@ -48,7 +48,7 @@ public class ChatDAO extends DBContext {
         }
 
         if (newConversationId != -1) {
-            String insertPart = "INSERT INTO ConversationParticipant (ConversationID, UserID, Role) VALUES (?, ?, 'Member')";
+            String insertPart = "INSERT INTO ConversationParticipant (ConversationID, UserID) VALUES (?, ?)";
             try (PreparedStatement ps = connection.prepareStatement(insertPart)) {
                 // Add user 1
                 ps.setInt(1, newConversationId);
