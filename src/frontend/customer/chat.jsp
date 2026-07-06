@@ -326,26 +326,21 @@
         </div>
         <div class="conversation-list" id="conversationList">
             <c:forEach var="conv" items="${conversations}">
-                <c:set var="rawTitle" value="${conv.title != null ? conv.title : 'User'}" />
-                <c:set var="safeTitle" value="${fn:replace(rawTitle, '\\\'', '\\\\\\'')}" />
+                <c:set var="rawTitle" value="User" />
+                <c:if test="${not empty conv.title}">
+                    <c:set var="rawTitle" value="${conv.title}" />
+                </c:if>
                 <c:choose>
                     <c:when test="${not empty conv.avatarUrl}">
                         <c:set var="convAvatarUrl" value="${conv.avatarUrl}" />
                     </c:when>
                     <c:otherwise>
-                        <c:set var="convAvatarUrl" value="https://ui-avatars.com/api/?name=${safeTitle}&background=random" />
+                        <c:set var="convAvatarUrl" value="https://ui-avatars.com/api/?name=${fn:escapeXml(rawTitle)}&background=random" />
                     </c:otherwise>
                 </c:choose>
                 <div class="conversation-item" data-id="${conv.conversationId}" data-name="${fn:escapeXml(rawTitle)}" data-avatar="${fn:escapeXml(convAvatarUrl)}">
                     <div class="conversation-avatar">
-                        <c:choose>
-                            <c:when test="${not empty conv.avatarUrl}">
-                                <img src="${conv.avatarUrl}" alt="Avatar">
-                            </c:when>
-                            <c:otherwise>
-                                <img src="https://ui-avatars.com/api/?name=${conv.title != null ? conv.title : 'User'}&background=random" alt="Avatar">
-                            </c:otherwise>
-                        </c:choose>
+                        <img src="${convAvatarUrl}" alt="Avatar">
                     </div>
                     <div class="conversation-details">
                         <div class="conversation-title">${conv.title != null ? conv.title : "Người dùng ẩn danh"}</div>

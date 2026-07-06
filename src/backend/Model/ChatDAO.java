@@ -34,29 +34,35 @@ public class ChatDAO extends DBContext {
 
         // Create new
         int newConversationId = -1;
-        String insertConv = "INSERT INTO Conversation (Type) VALUES ('Direct')";
-        try (PreparedStatement ps = connection.prepareStatement(insertConv, Statement.RETURN_GENERATED_KEYS)) {
-            ps.executeUpdate();
-            try (ResultSet rs = ps.getGeneratedKeys()) {
+        String insertConv = "INSERT INTO Conversation (Type) OUTPUT INSERTED.ConversationID VALUES ('Direct')";
+        try (PreparedStatement ps = connection.prepareStatement(insertConv)) {
+            try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     newConversationId = rs.getInt(1);
+                    System.out.println("Created ConversationID: " + newConversationId);
                 }
             }
         } catch (SQLException ex) {
+            System.err.println("Error inserting Conversation: " + ex.getMessage());
             Logger.getLogger(ChatDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         if (newConversationId != -1) {
             String insertPart = "INSERT INTO ConversationParticipant (ConversationID, UserID, Role) VALUES (?, ?, 'Member')";
             try (PreparedStatement ps = connection.prepareStatement(insertPart)) {
+                // Add user 1
                 ps.setInt(1, newConversationId);
                 ps.setInt(2, user1);
-                ps.addBatch();
+                ps.executeUpdate();
+                System.out.println("Added user1 to conversation");
+
+                // Add user 2
                 ps.setInt(1, newConversationId);
                 ps.setInt(2, user2);
-                ps.addBatch();
-                ps.executeBatch();
+                ps.executeUpdate();
+                System.out.println("Added user2 to conversation");
             } catch (SQLException ex) {
+                System.err.println("Error inserting ConversationParticipant: " + ex.getMessage());
                 Logger.getLogger(ChatDAO.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
