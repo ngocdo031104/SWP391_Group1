@@ -325,10 +325,17 @@
         </div>
         <div class="conversation-list" id="conversationList">
             <c:forEach var="conv" items="${conversations}">
-                <div class="conversation-item" data-id="${conv.conversationId}" onclick="loadConversation(${conv.conversationId}, 'Tên Người Dùng')">
+                <c:set var="convAvatarUrl" value="${not empty conv.avatarUrl ? conv.avatarUrl : 'https://ui-avatars.com/api/?name=' += (conv.title != null ? conv.title.replace('\'', '\\\'') : 'User') += '&background=random'}"/>
+                <div class="conversation-item" data-id="${conv.conversationId}" onclick="loadConversation(${conv.conversationId}, '${conv.title != null ? conv.title.replace('\'', '\\\'') : 'Người dùng ẩn danh'}', '${convAvatarUrl}')">
                     <div class="conversation-avatar">
-                        <!-- Placeholder avatar -->
-                        <img src="https://ui-avatars.com/api/?name=${conv.title != null ? conv.title : 'User'}&background=random" alt="Avatar">
+                        <c:choose>
+                            <c:when test="${not empty conv.avatarUrl}">
+                                <img src="${conv.avatarUrl}" alt="Avatar">
+                            </c:when>
+                            <c:otherwise>
+                                <img src="https://ui-avatars.com/api/?name=${conv.title != null ? conv.title : 'User'}&background=random" alt="Avatar">
+                            </c:otherwise>
+                        </c:choose>
                     </div>
                     <div class="conversation-details">
                         <div class="conversation-title">${conv.title != null ? conv.title : "Người dùng ẩn danh"}</div>

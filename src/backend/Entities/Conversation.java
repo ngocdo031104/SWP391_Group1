@@ -8,6 +8,10 @@ public class Conversation {
     private String title; // Nullable for Direct
     private Timestamp createdAt;
     private Timestamp updatedAt;
+    
+    // For UI display (Direct chat)
+    private String avatarUrl;
+    private int otherUserId;
 
     public Conversation() {}
 
@@ -29,4 +33,9 @@ public class Conversation {
     public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
     public Timestamp getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(Timestamp updatedAt) { this.updatedAt = updatedAt; }
+
+    public String getAvatarUrl() { return avatarUrl; }
+    public void setAvatarUrl(String avatarUrl) { this.avatarUrl = avatarUrl; }
+    public int getOtherUserId() { return otherUserId; }
+    public void setOtherUserId(int otherUserId) { this.otherUserId = otherUserId; }
 }

@@ -133,18 +133,30 @@ public class ChatDAO extends DBContext {
     // Get active conversations for a user
     public List<Conversation> getUserConversations(int userId) {
         List<Conversation> list = new ArrayList<>();
-        String sql = "SELECT c.* FROM Conversation c " +
-                     "JOIN ConversationParticipant cp ON c.ConversationID = cp.ConversationID " +
-                     "WHERE cp.UserID = ? " +
+        String sql = "SELECT c.*, u.FullName AS OtherName, u.ProfilePicture AS OtherAvatar, u.UserID AS OtherID " +
+                     "FROM Conversation c " +
+                     "JOIN ConversationParticipant cp1 ON c.ConversationID = cp1.ConversationID " +
+                     "LEFT JOIN ConversationParticipant cp2 ON c.ConversationID = cp2.ConversationID AND cp2.UserID != ? " +
+                     "LEFT JOIN [User] u ON cp2.UserID = u.UserID " +
+                     "WHERE cp1.UserID = ? " +
                      "ORDER BY c.UpdatedAt DESC";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, userId);
+            ps.setInt(2, userId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Conversation c = new Conversation();
                     c.setConversationId(rs.getInt("ConversationID"));
                     c.setType(rs.getString("Type"));
-                    c.setTitle(rs.getString("Title"));
+                    
+                    if ("Direct".equals(rs.getString("Type"))) {
+                        c.setTitle(rs.getString("OtherName"));
+                        c.setAvatarUrl(rs.getString("OtherAvatar"));
+                        c.setOtherUserId(rs.getInt("OtherID"));
+                    } else {
+                        c.setTitle(rs.getString("Title"));
+                    }
+                    
                     c.setCreatedAt(rs.getTimestamp("CreatedAt"));
                     c.setUpdatedAt(rs.getTimestamp("UpdatedAt"));
                     list.add(c);

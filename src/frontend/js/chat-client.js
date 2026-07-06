@@ -40,13 +40,17 @@ function connectWebSocket() {
 }
 
 // Load conversation history
-function loadConversation(conversationId, name) {
+function loadConversation(conversationId, name, avatarUrl) {
     currentConversationId = conversationId;
     
     // Update UI elements
     document.getElementById('emptyChat').style.display = 'none';
     document.getElementById('activeChat').style.display = 'flex';
     document.getElementById('chatHeaderName').innerText = name;
+    
+    if (avatarUrl) {
+        document.getElementById('chatHeaderAvatar').src = avatarUrl;
+    }
     
     // Highlight active conversation in sidebar
     document.querySelectorAll('.conversation-item').forEach(item => {
