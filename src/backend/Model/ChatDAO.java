@@ -96,9 +96,10 @@ public class ChatDAO extends DBContext {
     public List<Message> getMessages(int conversationId, int limit, int offset) {
         List<Message> list = new ArrayList<>();
         // Note: MS SQL Server uses OFFSET FETCH for pagination
-        String sql = "SELECT m.*, u.FullName as SenderName, u.ProfilePicture as SenderAvatar " +
+        String sql = "SELECT m.*, u.FullName as SenderName, up.AvatarURL as SenderAvatar " +
                      "FROM ChatMessage m " +
                      "JOIN [User] u ON m.SenderID = u.UserID " +
+                     "LEFT JOIN UserProfile up ON u.UserID = up.UserID " +
                      "WHERE m.ConversationID = ? AND m.IsVisible = 1 " +
                      "ORDER BY m.SentAt DESC " +
                      "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
@@ -132,11 +133,12 @@ public class ChatDAO extends DBContext {
     public List<Conversation> getUserConversations(int userId) {
         List<Conversation> list = new ArrayList<>();
         // Removed c.UpdatedAt since ChatConversation doesn't have it
-        String sql = "SELECT c.*, u.FullName AS OtherName, u.ProfilePicture AS OtherAvatar, u.UserID AS OtherID " +
+        String sql = "SELECT c.*, u.FullName AS OtherName, up.AvatarURL AS OtherAvatar, u.UserID AS OtherID " +
                      "FROM ChatConversation c " +
                      "JOIN ConversationParticipant cp1 ON c.ConversationID = cp1.ConversationID " +
                      "LEFT JOIN ConversationParticipant cp2 ON c.ConversationID = cp2.ConversationID AND cp2.UserID != ? " +
                      "LEFT JOIN [User] u ON cp2.UserID = u.UserID " +
+                     "LEFT JOIN UserProfile up ON u.UserID = up.UserID " +
                      "WHERE cp1.UserID = ? " +
                      "ORDER BY c.CreatedAt DESC";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
