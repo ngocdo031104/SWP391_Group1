@@ -58,6 +58,10 @@
                         <button class="btn btn-primary" id="register-button" onclick="window.location.href='${pageContext.request.contextPath}/register'">Đăng Ký</button>
                     </c:when>
                     <c:otherwise>
+                        <a href="${pageContext.request.contextPath}/customer/chat" class="notification-bell" id="chat-btn" aria-label="Tin nhắn" style="text-decoration: none; margin-right: 15px;">
+                            <i data-lucide="message-square"></i>
+                            <span class="badge-count" id="chat-count">1</span>
+                        </a>
                         <a href="${pageContext.request.contextPath}/customer/notifications" class="notification-bell" id="notification-btn" aria-label="Thông báo" style="text-decoration: none;">
                             <i data-lucide="bell"></i>
                             <span class="badge-count" id="notification-count">3</span>
