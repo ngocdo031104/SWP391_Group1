@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
+<%@ taglib uri="jakarta.tags.functions" prefix="fn" %>
 <jsp:include page="/common/header.jsp"/>
 
 <style>
@@ -325,8 +326,17 @@
         </div>
         <div class="conversation-list" id="conversationList">
             <c:forEach var="conv" items="${conversations}">
-                <c:set var="convAvatarUrl" value="${not empty conv.avatarUrl ? conv.avatarUrl : 'https://ui-avatars.com/api/?name=' += (conv.title != null ? conv.title.replace('\'', '\\\'') : 'User') += '&background=random'}"/>
-                <div class="conversation-item" data-id="${conv.conversationId}" onclick="loadConversation(${conv.conversationId}, '${conv.title != null ? conv.title.replace('\'', '\\\'') : 'Người dùng ẩn danh'}', '${convAvatarUrl}')">
+                <c:set var="rawTitle" value="${conv.title != null ? conv.title : 'User'}" />
+                <c:set var="safeTitle" value="${fn:replace(rawTitle, '\\\'', '\\\\\\'')}" />
+                <c:choose>
+                    <c:when test="${not empty conv.avatarUrl}">
+                        <c:set var="convAvatarUrl" value="${conv.avatarUrl}" />
+                    </c:when>
+                    <c:otherwise>
+                        <c:set var="convAvatarUrl" value="https://ui-avatars.com/api/?name=${safeTitle}&background=random" />
+                    </c:otherwise>
+                </c:choose>
+                <div class="conversation-item" data-id="${conv.conversationId}" data-name="${fn:escapeXml(rawTitle)}" data-avatar="${fn:escapeXml(convAvatarUrl)}">
                     <div class="conversation-avatar">
                         <c:choose>
                             <c:when test="${not empty conv.avatarUrl}">

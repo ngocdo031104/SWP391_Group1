@@ -122,6 +122,17 @@ function sendMessage() {
 // Initialize on page load
 window.onload = function() {
     connectWebSocket();
+    
+    // Bind click events for conversation items
+    document.querySelectorAll('.conversation-item').forEach(item => {
+        item.addEventListener('click', function() {
+            const convId = parseInt(this.dataset.id);
+            const name = this.dataset.name;
+            const avatar = this.dataset.avatar;
+            loadConversation(convId, name, avatar);
+        });
+    });
+
     if (typeof autoLoadConvId !== 'undefined' && autoLoadConvId !== null) {
         // find the item in sidebar
         const item = document.querySelector(`.conversation-item[data-id="${autoLoadConvId}"]`);
