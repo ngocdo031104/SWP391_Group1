@@ -380,6 +380,7 @@
 <script>
     // Embedded initial configuration for chat-client.js
     const currentUserId = ${sessionScope.sessionUser.userId};
+    const autoLoadConvId = ${not empty param.convId ? param.convId : 'null'};
 </script>
 <script src="${pageContext.request.contextPath}/js/chat-client.js"></script>
 

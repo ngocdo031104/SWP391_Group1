@@ -78,8 +78,7 @@ public class ChatController extends HttpServlet {
                 int targetUserId = Integer.parseInt(request.getParameter("targetUserId"));
                 int conversationId = chatDAO.getOrCreateDirectConversation(user.getUserId(), targetUserId);
                 
-                response.setContentType("application/json");
-                response.getWriter().write("{\"conversationId\": " + conversationId + "}");
+                response.sendRedirect(request.getContextPath() + "/customer/chat?convId=" + conversationId);
             } catch (Exception e) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             }

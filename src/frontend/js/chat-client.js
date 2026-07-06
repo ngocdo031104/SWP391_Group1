@@ -118,4 +118,11 @@ function sendMessage() {
 // Initialize on page load
 window.onload = function() {
     connectWebSocket();
+    if (typeof autoLoadConvId !== 'undefined' && autoLoadConvId !== null) {
+        // find the item in sidebar
+        const item = document.querySelector(`.conversation-item[data-id="${autoLoadConvId}"]`);
+        if (item) {
+            item.click();
+        }
+    }
 };
