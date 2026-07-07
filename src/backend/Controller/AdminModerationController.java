@@ -145,15 +145,30 @@ public class AdminModerationController extends HttpServlet {
         ModerationDAO dao = new ModerationDAO();
 
         try {
-            boolean success = dao.moderateContent(entityType, entityId, action, reason, sessionUser.getUserId());
-            if (success) {
-                try (PrintWriter out = response.getWriter()) {
-                    out.print("{\"status\":\"success\",\"message\":\"Cập nhật kiểm duyệt nội dung thành công!\"}");
+            boolean success;
+            if ("DismissFlag".equalsIgnoreCase(action)) {
+                success = dao.dismissFlag(entityType, entityId);
+                if (success) {
+                    try (PrintWriter out = response.getWriter()) {
+                        out.print("{\"status\":\"success\",\"message\":\"Đã bỏ qua cảnh báo báo cáo vi phạm thành công!\"}");
+                    }
+                } else {
+                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    try (PrintWriter out = response.getWriter()) {
+                        out.print("{\"status\":\"error\",\"message\":\"Không thể bỏ qua cảnh báo báo cáo vi phạm trong CSDL.\"}");
+                    }
                 }
             } else {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                try (PrintWriter out = response.getWriter()) {
-                    out.print("{\"status\":\"error\",\"message\":\"Lưu kết quả kiểm duyệt vào CSDL thất bại.\"}");
+                success = dao.moderateContent(entityType, entityId, action, reason, sessionUser.getUserId());
+                if (success) {
+                    try (PrintWriter out = response.getWriter()) {
+                        out.print("{\"status\":\"success\",\"message\":\"Cập nhật kiểm duyệt nội dung thành công!\"}");
+                    }
+                } else {
+                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    try (PrintWriter out = response.getWriter()) {
+                        out.print("{\"status\":\"error\",\"message\":\"Lưu kết quả kiểm duyệt vào CSDL thất bại.\"}");
+                    }
                 }
             }
         } catch (Exception e) {

@@ -73,6 +73,11 @@
             background: #fee2e2;
             color: #991b1b;
         }
+        .status-flagged {
+            background: #ffedd5;
+            color: #ea580c;
+            border: 1px solid #fed7aa;
+        }
         
         .content-cell {
             max-width: 320px;
@@ -222,7 +227,13 @@
                 <i data-lucide="history"></i> Lịch Sử Kiểm Duyệt
             </button>
         </div>
-
+        <!-- Filter Flagged Content -->
+        <div style="margin-bottom: 16px; background: #fff; padding: 12px 18px; border-radius: 8px; border: 1px solid #e2e8f0; display: inline-flex; align-items: center; gap: 10px;">
+            <input type="checkbox" id="filter-flagged-only" style="width: 18px; height: 18px; cursor: pointer;">
+            <label for="filter-flagged-only" style="font-weight: 600; color: #475569; cursor: pointer; font-size: 0.95rem; user-select: none;">
+                <span style="color: #ea580c; display: inline-flex; align-items: center; gap: 6px;"><i class="fa-solid fa-flag"></i> Chỉ hiển thị nội dung bị người dùng báo cáo vi phạm (Flagged)</span>
+            </label>
+        </div>
         <!-- ── TAB 1: REVIEWS ── -->
         <div class="tab-panel active" id="tab-reviews">
             <div class="card" style="padding: 24px;">

@@ -22,7 +22,7 @@ public class ModerationDAO extends DBContext {
      */
     public List<Map<String, Object>> getPendingReviews() {
         List<Map<String, Object>> list = new ArrayList<>();
-        String sql = "SELECT r.ReviewID, r.TourID, r.BookingID, r.CustomerID, r.Rating, r.Content, r.IsVisible, r.CreatedAt, "
+        String sql = "SELECT r.ReviewID, r.TourID, r.BookingID, r.CustomerID, r.Rating, r.Content, r.IsVisible, r.IsFlagged, r.CreatedAt, "
                    + "       u.FullName as AuthorName, t.TourName "
                    + "FROM Review r "
                    + "JOIN [User] u ON r.CustomerID = u.UserID "
@@ -40,6 +40,7 @@ public class ModerationDAO extends DBContext {
                 map.put("rating", rs.getInt("Rating"));
                 map.put("content", rs.getString("Content"));
                 map.put("isVisible", rs.getBoolean("IsVisible"));
+                map.put("isFlagged", rs.getBoolean("IsFlagged"));
                 map.put("createdAt", rs.getTimestamp("CreatedAt"));
                 map.put("authorName", rs.getString("AuthorName"));
                 map.put("tourName", rs.getString("TourName"));
@@ -56,7 +57,7 @@ public class ModerationDAO extends DBContext {
      */
     public List<Map<String, Object>> getPendingPosts() {
         List<Map<String, Object>> list = new ArrayList<>();
-        String sql = "SELECT p.PostID, p.AuthorID, p.Title, p.Content, p.IsVisible, p.CreatedAt, u.FullName as AuthorName "
+        String sql = "SELECT p.PostID, p.AuthorID, p.Title, p.Content, p.IsVisible, p.IsFlagged, p.CreatedAt, u.FullName as AuthorName "
                    + "FROM CommunityPost p "
                    + "JOIN [User] u ON p.AuthorID = u.UserID "
                    + "WHERE p.IsVisible = 1 "
@@ -70,6 +71,7 @@ public class ModerationDAO extends DBContext {
                 map.put("title", rs.getString("Title"));
                 map.put("content", rs.getString("Content"));
                 map.put("isVisible", rs.getBoolean("IsVisible"));
+                map.put("isFlagged", rs.getBoolean("IsFlagged"));
                 map.put("createdAt", rs.getTimestamp("CreatedAt"));
                 map.put("authorName", rs.getString("AuthorName"));
                 list.add(map);
@@ -85,7 +87,7 @@ public class ModerationDAO extends DBContext {
      */
     public List<Map<String, Object>> getPendingComments() {
         List<Map<String, Object>> list = new ArrayList<>();
-        String sql = "SELECT c.CommentID, c.PostID, c.AuthorID, c.Content, c.IsVisible, c.CreatedAt, "
+        String sql = "SELECT c.CommentID, c.PostID, c.AuthorID, c.Content, c.IsVisible, c.IsFlagged, c.CreatedAt, "
                    + "       u.FullName as AuthorName, p.Title as PostTitle "
                    + "FROM Comment c "
                    + "JOIN [User] u ON c.AuthorID = u.UserID "
@@ -101,6 +103,7 @@ public class ModerationDAO extends DBContext {
                 map.put("authorId", rs.getInt("AuthorID"));
                 map.put("content", rs.getString("Content"));
                 map.put("isVisible", rs.getBoolean("IsVisible"));
+                map.put("isFlagged", rs.getBoolean("IsFlagged"));
                 map.put("createdAt", rs.getTimestamp("CreatedAt"));
                 map.put("authorName", rs.getString("AuthorName"));
                 map.put("postTitle", rs.getString("PostTitle"));
@@ -118,11 +121,11 @@ public class ModerationDAO extends DBContext {
     public boolean moderateContent(String entityType, int entityId, String action, String reason, int moderatorId) {
         String updateSql = "";
         if ("Review".equalsIgnoreCase(entityType)) {
-            updateSql = "UPDATE Review SET IsVisible = ? WHERE ReviewID = ?";
+            updateSql = "UPDATE Review SET IsVisible = ?, IsFlagged = 0 WHERE ReviewID = ?";
         } else if ("CommunityPost".equalsIgnoreCase(entityType)) {
-            updateSql = "UPDATE CommunityPost SET IsVisible = ? WHERE PostID = ?";
+            updateSql = "UPDATE CommunityPost SET IsVisible = ?, IsFlagged = 0 WHERE PostID = ?";
         } else if ("Comment".equalsIgnoreCase(entityType)) {
-            updateSql = "UPDATE Comment SET IsVisible = ? WHERE CommentID = ?";
+            updateSql = "UPDATE Comment SET IsVisible = ?, IsFlagged = 0 WHERE CommentID = ?";
         } else {
             return false;
         }
@@ -214,5 +217,51 @@ public class ModerationDAO extends DBContext {
             LOGGER.log(Level.SEVERE, "getModerationHistory failed", ex);
         }
         return list;
+    }
+
+    /**
+     * flagContent(String entityType, int entityId)
+     */
+    public boolean flagContent(String entityType, int entityId) {
+        String sql = "";
+        if ("Review".equalsIgnoreCase(entityType)) {
+            sql = "UPDATE Review SET IsFlagged = 1 WHERE ReviewID = ?";
+        } else if ("CommunityPost".equalsIgnoreCase(entityType)) {
+            sql = "UPDATE CommunityPost SET IsFlagged = 1 WHERE PostID = ?";
+        } else if ("Comment".equalsIgnoreCase(entityType)) {
+            sql = "UPDATE Comment SET IsFlagged = 1 WHERE CommentID = ?";
+        } else {
+            return false;
+        }
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, entityId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "flagContent failed", ex);
+        }
+        return false;
+    }
+
+    /**
+     * dismissFlag(String entityType, int entityId)
+     */
+    public boolean dismissFlag(String entityType, int entityId) {
+        String sql = "";
+        if ("Review".equalsIgnoreCase(entityType)) {
+            sql = "UPDATE Review SET IsFlagged = 0 WHERE ReviewID = ?";
+        } else if ("CommunityPost".equalsIgnoreCase(entityType)) {
+            sql = "UPDATE CommunityPost SET IsFlagged = 0 WHERE PostID = ?";
+        } else if ("Comment".equalsIgnoreCase(entityType)) {
+            sql = "UPDATE Comment SET IsFlagged = 0 WHERE CommentID = ?";
+        } else {
+            return false;
+        }
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, entityId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "dismissFlag failed", ex);
+        }
+        return false;
     }
 }

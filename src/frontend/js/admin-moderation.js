@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnConfirmHide = document.getElementById("btn-confirm-hide");
     const selectReason = document.getElementById("moderation-reason");
     const inputCustomReason = document.getElementById("moderation-reason-custom");
+    const filterCheckbox = document.getElementById("filter-flagged-only");
 
     let currentModeration = {
         entityType: "",
@@ -63,6 +64,30 @@ document.addEventListener("DOMContentLoaded", () => {
                String(date.getMinutes()).padStart(2, '0');
     }
 
+    // Filter flagged content only client-side
+    function applyFlaggedFilter() {
+        const checked = filterCheckbox.checked;
+        const tabPanels = document.querySelectorAll(".tab-panel");
+        tabPanels.forEach(panel => {
+            const rows = panel.querySelectorAll("tbody tr");
+            rows.forEach(row => {
+                if (row.cells.length === 1) return; // Skip spinner or empty row
+                const isFlaggedRow = row.querySelector(".status-flagged") !== null;
+                if (checked) {
+                    if (isFlaggedRow) {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+                } else {
+                    row.style.display = "";
+                }
+            });
+        });
+    }
+
+    filterCheckbox.addEventListener("change", applyFlaggedFilter);
+
     // API calls to load content
     function loadData(tabId) {
         const contextPath = window.contextPath || '';
@@ -94,7 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .then(data => {
                 tbody.innerHTML = "";
                 if (data.length === 0) {
-                    let colSpan = tabId === "tab-history" ? 7 : 8;
+                    let colSpan = tabId === "tab-history" ? 8 : 8;
                     tbody.innerHTML = `<tr><td colspan="${colSpan}" style="text-align:center; padding: 20px; color:#94a3b8;">Kh\u00f4ng t\u00ecm th\u1ea5y d\u1eef li\u1ec7u n\u00e0o.</td></tr>`;
                     return;
                 }
@@ -108,6 +133,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else if (type === "history") {
                     renderHistory(data, tbody);
                 }
+
+                applyFlaggedFilter();
             })
             .catch(err => {
                 console.error(err);
@@ -124,9 +151,15 @@ document.addEventListener("DOMContentLoaded", () => {
             const badgeClass = r.isVisible ? "status-active" : "status-hidden";
             const badgeText = r.isVisible ? "\u0110ang hi\u1ec3n th\u1ecb" : "\u0110\u00e3 \u1ea9n";
             
-            const actionBtn = r.isVisible 
+            const flaggedBadge = r.isFlagged ? `<span class="status-badge status-flagged" style="margin-left: 6px;"><i class="fa-solid fa-flag"></i> B\u1ecb b\u00e1o c\u00e1o</span>` : "";
+            
+            let actionBtn = r.isVisible 
                 ? `<button class="btn-hide" data-id="${r.reviewId}" data-type="Review" style="background:#ef4444; border:none; color:white; padding: 6px 12px; border-radius:6px; cursor:pointer; font-weight:600;">\u1ea8n</button>`
                 : `<button class="btn-restore" data-id="${r.reviewId}" data-type="Review" style="background:#10b981; border:none; color:white; padding: 6px 12px; border-radius:6px; cursor:pointer; font-weight:600;">Kh\u00f4i ph\u1ee5c</button>`;
+
+            if (r.isVisible && r.isFlagged) {
+                actionBtn += ` <button class="btn-dismiss-flag" data-id="${r.reviewId}" data-type="Review" style="background:#64748b; border:none; color:white; padding: 6px 12px; border-radius:6px; cursor:pointer; font-weight:600; margin-left:4px;">B\u1ecf qua</button>`;
+            }
 
             tr.innerHTML = `
                 <td style="padding:12px; font-weight:600;">#${r.reviewId}</td>
@@ -135,7 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <td style="padding:12px; color:#f59e0b; font-weight:bold;"><i class="fa fa-star"></i> ${r.rating}</td>
                 <td class="content-cell" style="padding:12px;" title="${r.content || ''}">${r.content || '<i>Kh\u00f4ng c\u00f3 n\u1ed9i dung</i>'}</td>
                 <td style="padding:12px; color:#64748b;">${formatDate(r.createdAt)}</td>
-                <td style="padding:12px;"><span class="status-badge ${badgeClass}">${badgeText}</span></td>
+                <td style="padding:12px;"><span class="status-badge ${badgeClass}">${badgeText}</span>${flaggedBadge}</td>
                 <td style="padding:12px; text-align:center;">${actionBtn}</td>
             `;
             tbody.appendChild(tr);
@@ -151,9 +184,15 @@ document.addEventListener("DOMContentLoaded", () => {
             const badgeClass = p.isVisible ? "status-active" : "status-hidden";
             const badgeText = p.isVisible ? "\u0110ang hi\u1ec3n th\u1ecb" : "\u0110\u00e3 \u1ea9n";
             
-            const actionBtn = p.isVisible 
+            const flaggedBadge = p.isFlagged ? `<span class="status-badge status-flagged" style="margin-left: 6px;"><i class="fa-solid fa-flag"></i> B\u1ecb b\u00e1o c\u00e1o</span>` : "";
+            
+            let actionBtn = p.isVisible 
                 ? `<button class="btn-hide" data-id="${p.postId}" data-type="CommunityPost" style="background:#ef4444; border:none; color:white; padding: 6px 12px; border-radius:6px; cursor:pointer; font-weight:600;">\u1ea8n</button>`
                 : `<button class="btn-restore" data-id="${p.postId}" data-type="CommunityPost" style="background:#10b981; border:none; color:white; padding: 6px 12px; border-radius:6px; cursor:pointer; font-weight:600;">Kh\u00f4i ph\u1ee5c</button>`;
+
+            if (p.isVisible && p.isFlagged) {
+                actionBtn += ` <button class="btn-dismiss-flag" data-id="${p.postId}" data-type="CommunityPost" style="background:#64748b; border:none; color:white; padding: 6px 12px; border-radius:6px; cursor:pointer; font-weight:600; margin-left:4px;">B\u1ecf qua</button>`;
+            }
 
             tr.innerHTML = `
                 <td style="padding:12px; font-weight:600;">#${p.postId}</td>
@@ -161,7 +200,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <td style="padding:12px;">${p.authorName}</td>
                 <td class="content-cell" style="padding:12px;" title="${p.content}">${p.content}</td>
                 <td style="padding:12px; color:#64748b;">${formatDate(p.createdAt)}</td>
-                <td style="padding:12px;"><span class="status-badge ${badgeClass}">${badgeText}</span></td>
+                <td style="padding:12px;"><span class="status-badge ${badgeClass}">${badgeText}</span>${flaggedBadge}</td>
                 <td style="padding:12px; text-align:center;">${actionBtn}</td>
             `;
             tbody.appendChild(tr);
@@ -177,9 +216,15 @@ document.addEventListener("DOMContentLoaded", () => {
             const badgeClass = c.isVisible ? "status-active" : "status-hidden";
             const badgeText = c.isVisible ? "\u0110ang hi\u1ec3n th\u1ecb" : "\u0110\u00e3 \u1ea9n";
             
-            const actionBtn = c.isVisible 
+            const flaggedBadge = c.isFlagged ? `<span class="status-badge status-flagged" style="margin-left: 6px;"><i class="fa-solid fa-flag"></i> B\u1ecb b\u00e1o c\u00e1o</span>` : "";
+            
+            let actionBtn = c.isVisible 
                 ? `<button class="btn-hide" data-id="${c.commentId}" data-type="Comment" style="background:#ef4444; border:none; color:white; padding: 6px 12px; border-radius:6px; cursor:pointer; font-weight:600;">\u1ea8n</button>`
                 : `<button class="btn-restore" data-id="${c.commentId}" data-type="Comment" style="background:#10b981; border:none; color:white; padding: 6px 12px; border-radius:6px; cursor:pointer; font-weight:600;">Kh\u00f4i ph\u1ee5c</button>`;
+
+            if (c.isVisible && c.isFlagged) {
+                actionBtn += ` <button class="btn-dismiss-flag" data-id="${c.commentId}" data-type="Comment" style="background:#64748b; border:none; color:white; padding: 6px 12px; border-radius:6px; cursor:pointer; font-weight:600; margin-left:4px;">B\u1ecf qua</button>`;
+            }
 
             tr.innerHTML = `
                 <td style="padding:12px; font-weight:600;">#${c.commentId}</td>
@@ -187,7 +232,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <td style="padding:12px;">${c.authorName}</td>
                 <td class="content-cell" style="padding:12px;" title="${c.content}">${c.content}</td>
                 <td style="padding:12px; color:#64748b;">${formatDate(c.createdAt)}</td>
-                <td style="padding:12px;"><span class="status-badge ${badgeClass}">${badgeText}</span></td>
+                <td style="padding:12px;"><span class="status-badge ${badgeClass}">${badgeText}</span>${flaggedBadge}</td>
                 <td style="padding:12px; text-align:center;">${actionBtn}</td>
             `;
             tbody.appendChild(tr);
@@ -258,6 +303,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 executeModeration(entityType, entityId, "Restore", "Kh\u00f4i ph\u1ee5c hi\u1ec3n th\u1ecb");
             });
         });
+
+        // Dismiss Flag triggers immediate AJAX POST
+        const dismissBtns = document.querySelectorAll(".btn-dismiss-flag");
+        dismissBtns.forEach(btn => {
+            btn.addEventListener("click", () => {
+                const entityType = btn.getAttribute("data-type");
+                const entityId = btn.getAttribute("data-id");
+                
+                executeDismissFlag(entityType, entityId);
+            });
+        });
     }
 
     // Close Modal helpers
@@ -323,6 +379,43 @@ document.addEventListener("DOMContentLoaded", () => {
         .catch(err => {
             console.error(err);
             showToast("L\u1ed7i h\u1ec7 th\u1ed1ng khi g\u1eedi y\u00eau c\u1ea7u ki\u1ec3m duy\u1ec7t!", "error");
+        });
+    }
+
+    // AJAX POST for dismissing flag
+    function executeDismissFlag(entityType, entityId) {
+        const contextPath = window.contextPath || '';
+        
+        const params = new URLSearchParams();
+        params.append("entityType", entityType);
+        params.append("entityId", entityId);
+        params.append("action", "DismissFlag");
+
+        fetch(`${contextPath}/admin/moderation`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: params
+        })
+        .then(res => {
+            if (!res.ok) throw new Error("B\u1ecf qua c\u1ea3nh b\u00e1o th\u1ea5t b\u1ea1i");
+            return res.json();
+        })
+        .then(data => {
+            if (data.status === "success") {
+                showToast(data.message, "success");
+                const activeTab = document.querySelector(".mod-tab.active");
+                if (activeTab) {
+                    loadData(activeTab.getAttribute("data-target"));
+                }
+            } else {
+                showToast(data.message, "error");
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            showToast("L\u1ed7i h\u1ec7 th\u1ed1ng khi g\u1eedi y\u00eau c\u1ea7u g\u1ee1 c\u1edd b\u00e1o c\u00e1o!", "error");
         });
     }
 

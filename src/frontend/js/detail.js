@@ -623,5 +623,66 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Flag/Report review click listener
+    const reportReviewBtns = document.querySelectorAll('.btn-report-review');
+    reportReviewBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const reviewId = btn.getAttribute('data-id');
+            const contextPath = window.contextPath || '';
+            
+            const params = new URLSearchParams();
+            params.append("entityType", "Review");
+            params.append("entityId", reviewId);
+
+            fetch(`${contextPath}/customer/report`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: params
+            })
+            .then(res => {
+                if (res.status === 401) {
+                    if (window.showToast) {
+                        window.showToast('Vui l\u00f2ng \u0111\u0103ng nh\u1eadp \u0111\u1ec3 b\u00e1o c\u00e1o vi ph\u1ea1m.', 'warning');
+                    } else {
+                        alert('Vui l\u00f2ng \u0111\u0103ng nh\u1eadp \u0111\u1ec3 b\u00e1o c\u00e1o vi ph\u1ea1m.');
+                    }
+                    return null;
+                }
+                if (!res.ok) throw new Error('Thao t\u00e1c th\u1ea5t b\u1ea1i');
+                return res.json();
+            })
+            .then(data => {
+                if (!data) return;
+                if (data.status === 'success') {
+                    if (window.showToast) {
+                        window.showToast(data.message, 'success');
+                    } else {
+                        alert(data.message);
+                    }
+                    // Disable button after successful reporting
+                    btn.disabled = true;
+                    btn.style.color = '#94a3b8';
+                    btn.innerHTML = `<i class="fa-solid fa-flag"></i> \u0110\u00e3 b\u00e1o c\u00e1o`;
+                } else {
+                    if (window.showToast) {
+                        window.showToast(data.message, 'error');
+                    } else {
+                        alert(data.message);
+                    }
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                if (window.showToast) {
+                    window.showToast('\u0110\u00e3 x\u1ea3y ra l\u1ed7i k\u1ebft n\u1ed1i!', 'error');
+                } else {
+                    alert('\u0110\u00e3 x\u1ea3y ra l\u1ed7i k\u1ebft n\u1ed1i!');
+                }
+            });
+        });
+    });
+
 });
 
