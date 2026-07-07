@@ -521,8 +521,8 @@ public class AnalyticsDAO extends DBContext {
                         Map<String, Object> m = new HashMap<>();
                         m.put("tourId", rs.getInt("TourID"));
                         m.put("tourName", rs.getString("TourName"));
-                        m.put("bookings", 10 + (int)(Math.random() * 20));
-                        m.put("occupancyRate", 70.0 + (Math.random() * 20.0));
+                        m.put("bookings", 0);
+                        m.put("occupancyRate", 0.0);
                         topTours.add(m);
                     }
                 } catch (SQLException ex) {
