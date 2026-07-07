@@ -83,8 +83,16 @@
                     <button class="btn btn-secondary btn-icon-text" id="share-btn">
                         <i data-lucide="share-2"></i> Chia sẻ
                     </button>
-                    <button class="btn btn-secondary btn-icon-text btn-wishlist-detail" id="wishlist-detail-btn">
-                        <i data-lucide="heart"></i> Lưu vào Yêu thích
+                    <%
+                        List<Integer> wishlistTourIds = (List<Integer>) request.getAttribute("wishlistTourIds");
+                        boolean isWishlisted = wishlistTourIds != null && wishlistTourIds.contains(tour.getTourId());
+                    %>
+                    <button class="btn btn-secondary btn-icon-text btn-wishlist-detail <%= isWishlisted ? "active" : "" %>" id="wishlist-detail-btn" data-tour-id="<%= tour.getTourId() %>">
+                        <% if (isWishlisted) { %>
+                            <i data-lucide="heart" fill="currentColor"></i> Đã lưu Yêu thích
+                        <% } else { %>
+                            <i data-lucide="heart"></i> Lưu vào Yêu thích
+                        <% } %>
                     </button>
                 </div>
             </div>

@@ -71,6 +71,15 @@ public class DetailController extends HttpServlet {
                 // Nạp danh sách các mã giảm giá hoạt động để sử dụng trong booking sidebar
                 List<Coupon> activeCoupons = tourDAO.getActiveCoupons(10);
                 request.setAttribute("activeCoupons", activeCoupons);
+                
+                // Nạp wishlist nếu người dùng đã đăng nhập
+                Entities.User sessionUser = (Entities.User) request.getSession().getAttribute("sessionUser");
+                if (sessionUser != null) {
+                    Model.WishlistDAO wishlistDAO = new Model.WishlistDAO();
+                    List<Integer> wishlistTourIds = wishlistDAO.getWishlistTourIds(sessionUser.getUserId());
+                    request.setAttribute("wishlistTourIds", wishlistTourIds);
+                    wishlistDAO.close();
+                }
             } else {
                 // Nếu không tìm thấy Tour với ID tương ứng trong DB, chuyển hướng người dùng về Trang chủ.
                 response.sendRedirect(request.getContextPath() + "/home");

@@ -586,16 +586,40 @@ document.addEventListener('DOMContentLoaded', () => {
     const wishlistDetailBtn = document.getElementById('wishlist-detail-btn');
     if (wishlistDetailBtn) {
         wishlistDetailBtn.addEventListener('click', () => {
-            wishlistDetailBtn.classList.toggle('active');
-            const heartIcon = wishlistDetailBtn.querySelector('svg');
-            if (wishlistDetailBtn.classList.contains('active')) {
-                heartIcon.setAttribute('fill', 'currentColor');
-                wishlistDetailBtn.innerHTML = `<i data-lucide="heart" fill="currentColor"></i> \u0110\u00e3 l\u01b0u Y\u00eau th\u00edch`;
-            } else {
-                heartIcon.setAttribute('fill', 'none');
-                wishlistDetailBtn.innerHTML = `<i data-lucide="heart"></i> L\u01b0u v\u00e0o Y\u00eau th\u00edch`;
-            }
-            lucide.createIcons();
+            const tourId = wishlistDetailBtn.getAttribute('data-tour-id');
+            const contextPath = window.contextPath || '';
+            
+            fetch(`${contextPath}/customer/wishlist/toggle?tourId=${tourId}`, {
+                method: 'POST'
+            })
+            .then(res => {
+                if (res.status === 401) {
+                    window.showToast('Vui l\u00f2ng \u0111\u0103ng nh\u1eadp \u0111\u1ec3 l\u01b0u tour y\u00eau th\u00edch.', 'warning');
+                    return null;
+                }
+                if (!res.ok) throw new Error('L\u1ed7i h\u1ec7 th\u1ed1ng');
+                return res.json();
+            })
+            .then(data => {
+                if (!data) return;
+                
+                if (data.status === 'success') {
+                    wishlistDetailBtn.classList.toggle('active', data.isSaved);
+                    if (data.isSaved) {
+                        wishlistDetailBtn.innerHTML = `<i data-lucide="heart" fill="currentColor"></i> \u0110\u00e3 l\u01b0u Y\u00eau th\u00edch`;
+                    } else {
+                        wishlistDetailBtn.innerHTML = `<i data-lucide="heart"></i> L\u01b0u v\u00e0o Y\u00eau th\u00edch`;
+                    }
+                    if (window.lucide) window.lucide.createIcons();
+                    window.showToast(data.message, 'success');
+                } else {
+                    window.showToast(data.message, 'error');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                window.showToast('\u0110\u00e3 x\u1ea3y ra l\u1ed7i k\u1ebft n\u1ed1i!', 'error');
+            });
         });
     }
 

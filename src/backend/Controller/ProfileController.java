@@ -68,6 +68,12 @@ public class ProfileController extends HttpServlet {
         }
         request.setAttribute("myPref", myPref);
         
+        // Fetch wishlist count
+        Model.WishlistDAO wishlistDAO = new Model.WishlistDAO();
+        int totalFavorites = wishlistDAO.countWishlistTours(user.getUserId());
+        request.setAttribute("totalFavorites", totalFavorites);
+        wishlistDAO.close();
+        
         request.getRequestDispatcher("/views/profile.jsp").forward(request, response);
     }
 
