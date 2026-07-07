@@ -31,7 +31,7 @@ public class AdminAnalyticsController extends HttpServlet {
         
         // 1. Check permissions (Admin = 1, Accountant = 5)
         User sessionUser = (User) request.getSession().getAttribute("sessionUser");
-        if (sessionUser == null || (sessionUser.getRoleId() != 1 && sessionUser.getRoleId() != 5)) {
+        if (sessionUser == null || sessionUser.getRoleId() != 1) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
@@ -93,7 +93,7 @@ public class AdminAnalyticsController extends HttpServlet {
         
         // 1. Check permissions (Admin = 1, Accountant = 5)
         User sessionUser = (User) request.getSession().getAttribute("sessionUser");
-        if (sessionUser == null || (sessionUser.getRoleId() != 1 && sessionUser.getRoleId() != 5)) {
+        if (sessionUser == null || sessionUser.getRoleId() != 1) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
             return;
         }
