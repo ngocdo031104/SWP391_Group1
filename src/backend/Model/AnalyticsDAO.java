@@ -543,9 +543,18 @@ public class AnalyticsDAO extends DBContext {
                 projected.add(pm);
             }
             
+            double sumOccupancy = 0;
+            for (Map<String, Object> t : topTours) {
+                sumOccupancy += ((Number) t.get("occupancyRate")).doubleValue();
+            }
+            double confidence = topTours.isEmpty() ? 85.0 : sumOccupancy / topTours.size();
+            if (confidence <= 0 || confidence > 100) {
+                confidence = 85.0;
+            }
+
             result.put("historical_top_tours", topTours);
             result.put("projected_demand", projected);
-            result.put("confidence", 88.5);
+            result.put("confidence", confidence);
         }
         
         return result;
