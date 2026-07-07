@@ -377,7 +377,7 @@ public class UserDAO extends DBContext {
                      "  FROM Payment p JOIN Booking b ON p.BookingID = b.BookingID " +
                      "  WHERE b.CustomerID = ? " +
                      "  UNION ALL " +
-                     "  SELECT 'WISHLIST' AS Type, N'Đã yêu thích tour ' + t.TourName AS Action, w.SavedAt AS CreatedAt " +
+                     "  SELECT 'WISHLIST' AS Type, N'Đã yêu thích tour ' + t.TourName AS Action, w.CreatedAt AS CreatedAt " +
                      "  FROM Wishlist w JOIN Tour t ON w.TourID = t.TourID " +
                      "  WHERE w.UserID = ? " +
                      ") AS ActivityLogs " +
