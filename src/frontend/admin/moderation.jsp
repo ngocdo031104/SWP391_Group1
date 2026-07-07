@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt"  prefix="fmt" %>
-<c:if test="${empty sessionUser || (sessionUser.roleId ne 1 && userRole ne 'Admin')}">
+<c:if test="${empty sessionUser}">
     <c:redirect url="/login" />
 </c:if>
 <!DOCTYPE html>
