@@ -14,6 +14,7 @@ public class ModerationRecord implements Serializable {
     
     // Joined field
     private String moderatedByName;
+    private boolean isEntityVisible;
 
     public ModerationRecord() {
     }
@@ -80,5 +81,13 @@ public class ModerationRecord implements Serializable {
 
     public void setModeratedByName(String moderatedByName) {
         this.moderatedByName = moderatedByName;
+    }
+
+    public boolean isIsEntityVisible() {
+        return isEntityVisible;
+    }
+
+    public void setIsEntityVisible(boolean isEntityVisible) {
+        this.isEntityVisible = isEntityVisible;
     }
 }

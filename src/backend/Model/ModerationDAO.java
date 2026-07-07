@@ -27,6 +27,7 @@ public class ModerationDAO extends DBContext {
                    + "FROM Review r "
                    + "JOIN [User] u ON r.CustomerID = u.UserID "
                    + "JOIN Tour t ON r.TourID = t.TourID "
+                   + "WHERE r.IsVisible = 1 "
                    + "ORDER BY r.CreatedAt DESC";
         try (PreparedStatement ps = connection.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -58,6 +59,7 @@ public class ModerationDAO extends DBContext {
         String sql = "SELECT p.PostID, p.AuthorID, p.Title, p.Content, p.IsVisible, p.CreatedAt, u.FullName as AuthorName "
                    + "FROM CommunityPost p "
                    + "JOIN [User] u ON p.AuthorID = u.UserID "
+                   + "WHERE p.IsVisible = 1 "
                    + "ORDER BY p.CreatedAt DESC";
         try (PreparedStatement ps = connection.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -88,6 +90,7 @@ public class ModerationDAO extends DBContext {
                    + "FROM Comment c "
                    + "JOIN [User] u ON c.AuthorID = u.UserID "
                    + "JOIN CommunityPost p ON c.PostID = p.PostID "
+                   + "WHERE c.IsVisible = 1 "
                    + "ORDER BY c.CreatedAt DESC";
         try (PreparedStatement ps = connection.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -182,7 +185,13 @@ public class ModerationDAO extends DBContext {
     public List<ModerationRecord> getModerationHistory() {
         List<ModerationRecord> list = new ArrayList<>();
         String sql = "SELECT m.ModerationID, m.EntityType, m.EntityID, m.Action, m.Reason, m.ModeratedBy, m.ModeratedAt, "
-                   + "       u.FullName as ModeratedByName "
+                   + "       u.FullName as ModeratedByName, "
+                   + "       CASE "
+                   + "           WHEN m.EntityType = 'Review' THEN (SELECT IsVisible FROM Review WHERE ReviewID = m.EntityID) "
+                   + "           WHEN m.EntityType = 'CommunityPost' THEN (SELECT IsVisible FROM CommunityPost WHERE PostID = m.EntityID) "
+                   + "           WHEN m.EntityType = 'Comment' THEN (SELECT IsVisible FROM Comment WHERE CommentID = m.EntityID) "
+                   + "           ELSE 0 "
+                   + "       END as IsEntityVisible "
                    + "FROM ModerationRecord m "
                    + "JOIN [User] u ON m.ModeratedBy = u.UserID "
                    + "ORDER BY m.ModeratedAt DESC";
@@ -198,6 +207,7 @@ public class ModerationDAO extends DBContext {
                 mr.setModeratedBy(rs.getInt("ModeratedBy"));
                 mr.setModeratedAt(rs.getTimestamp("ModeratedAt"));
                 mr.setModeratedByName(rs.getString("ModeratedByName"));
+                mr.setIsEntityVisible(rs.getBoolean("IsEntityVisible"));
                 list.add(mr);
             }
         } catch (SQLException ex) {

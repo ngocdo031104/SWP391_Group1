@@ -204,6 +204,13 @@ document.addEventListener("DOMContentLoaded", () => {
             const actionBadgeColor = isHide ? "background:#fee2e2; color:#991b1b;" : "background:#d1fae5; color:#065f46;";
             const actionText = isHide ? "\u1ea8n n\u1ed9i dung" : "Kh\u00f4i ph\u1ee5c";
 
+            let actionBtnHtml = "-";
+            if (isHide && !h.isEntityVisible) {
+                actionBtnHtml = `<button class="btn-restore" data-id="${h.entityId}" data-type="${h.entityType}" style="background:#10b981; border:none; color:white; padding: 6px 12px; border-radius:6px; cursor:pointer; font-weight:600;">Kh\u00f4i ph\u1ee5c</button>`;
+            } else if (isHide && h.isEntityVisible) {
+                actionBtnHtml = `<span style="color:#64748b; font-size:0.85rem; font-style:italic;">\u0110\u00e3 kh\u00f4i ph\u1ee5c</span>`;
+            }
+
             tr.innerHTML = `
                 <td style="padding:12px; font-weight:600;">#${h.moderationId}</td>
                 <td style="padding:12px;">
@@ -216,9 +223,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 <td style="padding:12px; color:#334155; font-style:italic;">"${h.reason || 'Kh\u00f4ng ghi l\u00fd do'}"</td>
                 <td style="padding:12px; font-weight:500;">${h.moderatedByName}</td>
                 <td style="padding:12px; color:#64748b;">${formatDate(h.moderatedAt)}</td>
+                <td style="padding:12px; text-align:center;">${actionBtnHtml}</td>
             `;
             tbody.appendChild(tr);
         });
+        bindActionEvents();
     }
 
     // Modal and submission triggers

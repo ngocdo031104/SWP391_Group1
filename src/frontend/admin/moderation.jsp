@@ -310,6 +310,7 @@
                                 <th style="padding: 12px;">Lý do kiểm duyệt</th>
                                 <th style="padding: 12px;">Người thực hiện</th>
                                 <th style="padding: 12px;">Thời gian</th>
+                                <th style="padding: 12px; text-align: center;">Hành động</th>
                             </tr>
                         </thead>
                         <tbody id="history-tbody">
