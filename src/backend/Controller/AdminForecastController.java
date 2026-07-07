@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -16,6 +18,8 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @WebServlet(name = "AdminForecastController", urlPatterns = {"/admin/forecast"})
 public class AdminForecastController extends HttpServlet {
+
+    private static final Logger LOGGER = Logger.getLogger(AdminForecastController.class.getName());
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -63,7 +67,7 @@ public class AdminForecastController extends HttpServlet {
                 request.getRequestDispatcher("/admin/forecast.jsp").forward(request, response);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Forecast data load failure", e);
             if ("true".equalsIgnoreCase(ajax)) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 response.setContentType("application/json;charset=UTF-8");
@@ -146,7 +150,7 @@ public class AdminForecastController extends HttpServlet {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Generate forecast execution failure", e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             try (PrintWriter out = response.getWriter()) {
                 out.print("{\"status\":\"error\",\"message\":\"Đã xảy ra lỗi trong quá trình dự báo: " + e.getMessage() + "\"}");
