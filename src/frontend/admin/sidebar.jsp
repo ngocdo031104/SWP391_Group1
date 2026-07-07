@@ -68,7 +68,7 @@
             </a>
         </li>
         <li class="${activePage eq 'forecast' ? 'active' : ''}">
-            <a href="#">
+            <a href="${pageContext.request.contextPath}/admin/forecast">
                 <i data-lucide="trending-up"></i>
                 <span>Dự Báo & Xu Hướng</span>
             </a>
