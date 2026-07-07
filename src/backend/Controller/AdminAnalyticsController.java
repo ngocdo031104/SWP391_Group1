@@ -77,6 +77,8 @@ public class AdminAnalyticsController extends HttpServlet {
                 JsonObject err = new JsonObject();
                 err.addProperty("error", ex.getMessage());
                 out.print(gson.toJson(err));
+            } finally {
+                dao.close();
             }
             return;
         }
@@ -102,8 +104,8 @@ public class AdminAnalyticsController extends HttpServlet {
         Gson gson = new Gson();
         AnalyticsDAO dao = new AnalyticsDAO();
 
-        if ("saveSnapshot".equalsIgnoreCase(action)) {
-            try {
+        try {
+            if ("saveSnapshot".equalsIgnoreCase(action)) {
                 String reportType = request.getParameter("reportType"); // Revenue, Booking, TourPerformance, GuideActivity
                 if (reportType == null || reportType.trim().isEmpty()) {
                     reportType = "Revenue";
@@ -172,18 +174,20 @@ public class AdminAnalyticsController extends HttpServlet {
                     res.addProperty("message", "Không thể lưu báo cáo vào cơ sở dữ liệu.");
                 }
                 out.print(gson.toJson(res));
-            } catch (Exception ex) {
-                LOGGER.log(Level.SEVERE, "Save snapshot failure", ex);
+            } else {
                 JsonObject res = new JsonObject();
                 res.addProperty("success", false);
-                res.addProperty("message", "Lỗi: " + ex.getMessage());
+                res.addProperty("message", "Hành động không hợp lệ.");
                 out.print(gson.toJson(res));
             }
-        } else {
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, "Save snapshot failure", ex);
             JsonObject res = new JsonObject();
             res.addProperty("success", false);
-            res.addProperty("message", "Hành động không hợp lệ.");
+            res.addProperty("message", "Lỗi: " + ex.getMessage());
             out.print(gson.toJson(res));
+        } finally {
+            dao.close();
         }
     }
 
