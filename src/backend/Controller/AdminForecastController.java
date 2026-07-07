@@ -21,17 +21,31 @@ public class AdminForecastController extends HttpServlet {
 
     private static final Logger LOGGER = Logger.getLogger(AdminForecastController.class.getName());
 
+    private boolean hasForecastPermission(User user) {
+        if (user == null) return false;
+        if (user.getRoleId() == 1) return true; // Super Admin bypass
+        if (user.getRole() != null && user.getRole().getPermissions() != null) {
+            for (Entities.Permission p : user.getRole().getPermissions()) {
+                if (p.getPermissionId() == 39 
+                    || "Perform Predictive Analytics".equalsIgnoreCase(p.getModuleName()) 
+                    || "Perform Predictive Analytics".equalsIgnoreCase(p.getAction())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
         User sessionUser = (User) request.getSession().getAttribute("sessionUser");
-        String userRole = (String) request.getSession().getAttribute("userRole");
         if (sessionUser == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
-        if (sessionUser.getRoleId() != 1 && !"Admin".equals(userRole)) {
+        if (!hasForecastPermission(sessionUser)) {
             response.sendRedirect(request.getContextPath() + "/home");
             return;
         }
@@ -87,12 +101,11 @@ public class AdminForecastController extends HttpServlet {
             throws ServletException, IOException {
         
         User sessionUser = (User) request.getSession().getAttribute("sessionUser");
-        String userRole = (String) request.getSession().getAttribute("userRole");
         if (sessionUser == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
-        if (sessionUser.getRoleId() != 1 && !"Admin".equals(userRole)) {
+        if (!hasForecastPermission(sessionUser)) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return;
         }

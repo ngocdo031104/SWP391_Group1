@@ -25,13 +25,31 @@ public class AdminAnalyticsController extends HttpServlet {
 
     private static final Logger LOGGER = Logger.getLogger(AdminAnalyticsController.class.getName());
 
+    private boolean hasAnalyticsPermission(User user) {
+        if (user == null) return false;
+        if (user.getRoleId() == 1) return true; // Super Admin bypass
+        if (user.getRole() != null && user.getRole().getPermissions() != null) {
+            for (Entities.Permission p : user.getRole().getPermissions()) {
+                if ("System Settings".equalsIgnoreCase(p.getModuleName()) 
+                    && ("Read".equalsIgnoreCase(p.getAction()) || "Export".equalsIgnoreCase(p.getAction()))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        // 1. Check permissions (Admin = 1, Accountant = 5)
+        // 1. Check permissions
         User sessionUser = (User) request.getSession().getAttribute("sessionUser");
-        if (sessionUser == null || sessionUser.getRoleId() != 1) {
+        if (sessionUser == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+        if (!hasAnalyticsPermission(sessionUser)) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
@@ -91,9 +109,13 @@ public class AdminAnalyticsController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        // 1. Check permissions (Admin = 1, Accountant = 5)
+        // 1. Check permissions
         User sessionUser = (User) request.getSession().getAttribute("sessionUser");
-        if (sessionUser == null || sessionUser.getRoleId() != 1) {
+        if (sessionUser == null) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+            return;
+        }
+        if (!hasAnalyticsPermission(sessionUser)) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
             return;
         }
