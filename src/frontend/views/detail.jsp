@@ -85,9 +85,9 @@
                     </button>
                     <%
                         List<Integer> wishlistTourIds = (List<Integer>) request.getAttribute("wishlistTourIds");
-                        boolean isWishlisted = wishlistTourIds != null && wishlistTourIds.contains(tour.getTourId());
+                        boolean isWishlisted = activeTour != null && wishlistTourIds != null && wishlistTourIds.contains(activeTour.getTourId());
                     %>
-                    <button class="btn btn-secondary btn-icon-text btn-wishlist-detail <%= isWishlisted ? "active" : "" %>" id="wishlist-detail-btn" data-tour-id="<%= tour.getTourId() %>">
+                    <button class="btn btn-secondary btn-icon-text btn-wishlist-detail <%= isWishlisted ? "active" : "" %>" id="wishlist-detail-btn" data-tour-id="<%= activeTour != null ? activeTour.getTourId() : "" %>">
                         <% if (isWishlisted) { %>
                             <i data-lucide="heart" fill="currentColor"></i> Đã lưu Yêu thích
                         <% } else { %>

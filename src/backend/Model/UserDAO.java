@@ -376,11 +376,16 @@ public class UserDAO extends DBContext {
                      "  SELECT 'PAYMENT' AS Type, N'Thanh toán ' + FORMAT(p.Amount, 'N0') + N'đ qua ' + p.PaymentMethod AS Action, p.CreatedAt " +
                      "  FROM Payment p JOIN Booking b ON p.BookingID = b.BookingID " +
                      "  WHERE b.CustomerID = ? " +
+                     "  UNION ALL " +
+                     "  SELECT 'WISHLIST' AS Type, N'Đã yêu thích tour ' + t.TourName AS Action, w.SavedAt AS CreatedAt " +
+                     "  FROM Wishlist w JOIN Tour t ON w.TourID = t.TourID " +
+                     "  WHERE w.UserID = ? " +
                      ") AS ActivityLogs " +
                      "ORDER BY CreatedAt DESC";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setInt(2, userId);
+            ps.setInt(3, userId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     ActivityLog log = new ActivityLog();
