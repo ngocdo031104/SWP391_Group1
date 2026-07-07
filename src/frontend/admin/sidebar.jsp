@@ -73,6 +73,12 @@
                 <span>Dự Báo & Xu Hướng</span>
             </a>
         </li>
+        <li class="${activePage eq 'moderation' ? 'active' : ''}">
+            <a href="${pageContext.request.contextPath}/admin/moderation">
+                <i data-lucide="shield-alert"></i>
+                <span>Kiểm Duyệt Nội Dung</span>
+            </a>
+        </li>
         
         <c:if test="${!isAccountant}">
             <li class="${activePage eq 'roles' ? 'active' : ''}">
