@@ -86,7 +86,7 @@ public class AdminModerationController extends HttpServlet {
                 request.getRequestDispatcher("/admin/moderation.jsp").forward(request, response);
             }
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Analytics data load failure", e);
+            LOGGER.log(Level.SEVERE, "Moderation data load failure", e);
             if ("true".equalsIgnoreCase(ajax)) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 response.setContentType("application/json;charset=UTF-8");
