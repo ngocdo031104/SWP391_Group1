@@ -19,7 +19,8 @@ import java.io.IOException;
     "/admin/moderation", 
     "/admin/analytics", 
     "/admin/forecast",
-    "/admin/assignments"
+    "/admin/assignments",
+    "/admin/operation-logs"
 })
 public class AuthorizationFilter implements Filter {
 
