@@ -34,8 +34,8 @@
         .status-resolved { background: #d1fae5; color: #059669; }
         .status-closed { background: #f1f5f9; color: #64748b; }
 
-        /* Modal Styles */
-        .modal {
+        /* Incident Modal Styles */
+        .incident-modal {
             display: none;
             position: fixed;
             top: 0; left: 0;
@@ -46,11 +46,11 @@
             justify-content: center;
         }
 
-        .modal.active {
+        .incident-modal.active {
             display: flex;
         }
 
-        .modal-content {
+        .incident-modal-content {
             background: #ffffff;
             padding: 24px;
             border-radius: 12px;
@@ -65,7 +65,7 @@
             to { transform: translateY(0); opacity: 1; }
         }
 
-        .modal-header {
+        .incident-modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -74,7 +74,7 @@
             padding-bottom: 12px;
         }
 
-        .modal-header h4 {
+        .incident-modal-header h4 {
             margin: 0;
             font-size: 1.2rem;
             color: #1e293b;
@@ -82,7 +82,7 @@
             font-weight: 700;
         }
 
-        .modal-close {
+        .incident-modal-close {
             background: none;
             border: none;
             font-size: 1.5rem;
@@ -90,7 +90,7 @@
             cursor: pointer;
         }
 
-        .modal-close:hover {
+        .incident-modal-close:hover {
             color: #475569;
         }
 
@@ -270,13 +270,13 @@
 </div>
 
 <!-- Modal báo cáo sự cố mới -->
-<div class="modal" id="incident-modal">
-    <div class="modal-content">
-        <div class="modal-header">
+<div class="incident-modal" id="incident-modal">
+    <div class="incident-modal-content">
+        <div class="incident-modal-header">
             <h4>Báo cáo sự cố mới</h4>
-            <button class="modal-close" onclick="closeIncidentModal()">&times;</button>
+            <button class="incident-modal-close" onclick="closeIncidentModal()">&times;</button>
         </div>
-        <div class="modal-body">
+        <div class="incident-modal-body">
             <div class="form-group">
                 <label for="incident-title">Tiêu đề sự cố *</label>
                 <input type="text" id="incident-title" class="form-input" placeholder="Ví dụ: Hỏng xe di chuyển, Khách đi lạc...">
