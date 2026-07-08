@@ -75,6 +75,67 @@ public class TourOperationLogDAO extends DBContext {
     }
 
     /**
+     * Lấy danh sách log hoạt động của một lịch trình cụ thể phân trang (dành cho Guide).
+     */
+    public List<TourOperationLog> getLogsByScheduleIdPaged(int scheduleId, int page, int size) {
+        List<TourOperationLog> list = new ArrayList<>();
+        String sql = "SELECT tol.LogID, tol.ScheduleID, tol.Activity, tol.OperatedBy, tol.CreatedAt, "
+                   + "       u.FullName AS OperatorName, r.RoleName AS OperatorRole "
+                   + "FROM TourOperationLog tol "
+                   + "LEFT JOIN [User] u ON tol.OperatedBy = u.UserID "
+                   + "LEFT JOIN [Role] r ON u.RoleID = r.RoleID "
+                   + "WHERE tol.ScheduleID = ? "
+                   + "ORDER BY tol.CreatedAt DESC "
+                   + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+
+        int offset = (page - 1) * size;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, scheduleId);
+            ps.setInt(2, offset);
+            ps.setInt(3, size);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    TourOperationLog log = new TourOperationLog();
+                    log.setLogId(rs.getInt("LogID"));
+                    log.setScheduleId(rs.getInt("ScheduleID"));
+                    log.setActivity(rs.getString("Activity"));
+                    
+                    int operatedBy = rs.getInt("OperatedBy");
+                    if (!rs.wasNull()) {
+                        log.setOperatedBy(operatedBy);
+                    }
+                    log.setCreatedAt(rs.getTimestamp("CreatedAt"));
+                    log.setOperatorName(rs.getString("OperatorName"));
+                    log.setOperatorRole(rs.getString("OperatorRole"));
+                    list.add(log);
+                }
+            }
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Lỗi khi lấy nhật ký vận hành phân trang cho ScheduleID: " + scheduleId, ex);
+        }
+        return list;
+    }
+
+    /**
+     * Đếm tổng số log vận hành của một lịch trình để phân trang.
+     */
+    public int getLogsCountByScheduleId(int scheduleId) {
+        String sql = "SELECT COUNT(*) FROM TourOperationLog WHERE ScheduleID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, scheduleId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Lỗi khi đếm nhật ký vận hành cho ScheduleID: " + scheduleId, ex);
+        }
+        return 0;
+    }
+
+    /**
      * Lấy toàn bộ nhật ký vận hành có phân trang và tìm kiếm (dành cho Admin).
      */
     public List<TourOperationLog> getAllLogsPaged(int page, int size, String search) {

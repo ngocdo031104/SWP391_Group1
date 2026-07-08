@@ -180,8 +180,25 @@ public class GuideDashboardController extends HttpServlet {
                         return;
                     }
 
-                    List<TourOperationLog> logs = logDAO.getLogsByScheduleId(scheduleId);
+                    String pageStr = request.getParameter("page");
+                    int page = 1;
+                    int size = 10;
+                    if (pageStr != null && !pageStr.isEmpty()) {
+                        try {
+                            page = Integer.parseInt(pageStr);
+                            if (page < 1) page = 1;
+                        } catch (NumberFormatException e) {
+                            page = 1;
+                        }
+                    }
+
+                    List<TourOperationLog> logs = logDAO.getLogsByScheduleIdPaged(scheduleId, page, size);
+                    int totalLogs = logDAO.getLogsCountByScheduleId(scheduleId);
+                    int totalPages = (int) Math.ceil((double) totalLogs / size);
+
                     request.setAttribute("logs", logs);
+                    request.setAttribute("currentPage", page);
+                    request.setAttribute("totalPages", totalPages);
                     request.setAttribute("assignment", selectedAssignment);
                     request.getRequestDispatcher("/views/guide/operation-logs.jsp").forward(request, response);
 

@@ -131,6 +131,20 @@
                             </div>
                         </c:forEach>
                     </div>
+                    <!-- Phân trang -->
+                    <c:if test="${totalPages > 1}">
+                        <div class="pagination" style="display: flex; gap: 8px; justify-content: center; margin-top: 24px; font-family: 'Inter', sans-serif;">
+                            <c:if test="${currentPage > 1}">
+                                <a href="?action=operationLogs&scheduleId=${assignment.schedule.scheduleId}&page=${currentPage - 1}" class="page-link" style="padding: 8px 14px; border: 1px solid #cbd5e1; border-radius: 6px; text-decoration: none; color: #475569; font-size: 0.9rem;">&laquo; Trước</a>
+                            </c:if>
+                            <c:forEach var="i" begin="1" end="${totalPages}">
+                                <a href="?action=operationLogs&scheduleId=${assignment.schedule.scheduleId}&page=${i}" class="page-link ${i == currentPage ? 'active' : ''}" style="padding: 8px 14px; border: 1px solid #cbd5e1; border-radius: 6px; text-decoration: none; color: #475569; font-size: 0.9rem; ${i == currentPage ? 'background-color: #2563eb; color: #fff; font-weight: bold; border-color: #2563eb;' : ''}">${i}</a>
+                            </c:forEach>
+                            <c:if test="${currentPage < totalPages}">
+                                <a href="?action=operationLogs&scheduleId=${assignment.schedule.scheduleId}&page=${currentPage + 1}" class="page-link" style="padding: 8px 14px; border: 1px solid #cbd5e1; border-radius: 6px; text-decoration: none; color: #475569; font-size: 0.9rem;">Sau &raquo;</a>
+                            </c:if>
+                        </div>
+                    </c:if>
                 </c:otherwise>
             </c:choose>
 
