@@ -67,7 +67,7 @@
                         <span class="info-value"><fmt:formatDate value="${assignment.schedule.departureDate}" pattern="dd/MM/yyyy" /></span>
                     </div>
                     <div class="info-item">
-                        <span class="info-label">Trạng Thế Tour</span>
+                        <span class="info-label">Trạng Thái Tour</span>
                         <span class="info-value" style="font-weight:bold; color:var(--clr-primary)"><c:out value="${assignment.schedule.tourStatus}" /></span>
                     </div>
                 </div>
