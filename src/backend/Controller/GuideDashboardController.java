@@ -178,6 +178,28 @@ public class GuideDashboardController extends HttpServlet {
             return;
         }
 
+        // Kiểm tra bảo mật: Hướng dẫn viên chỉ có quyền điểm danh lịch khởi hành của chính họ
+        GuideDAO guideDAO = new GuideDAO();
+        try {
+            List<TourAssignment> assignments = guideDAO.getAssignmentsByGuideId(user.getUserId());
+            boolean isAssigned = false;
+            for (TourAssignment assignment : assignments) {
+                if (assignment.getScheduleId() == scheduleId) {
+                    isAssigned = true;
+                    break;
+                }
+            }
+            if (!isAssigned) {
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                result.addProperty("status", "error");
+                result.addProperty("message", "Bạn không có quyền điểm danh cho lịch khởi hành này!");
+                out.print(result.toString());
+                return;
+            }
+        } finally {
+            guideDAO.close();
+        }
+
         AttendanceDAO attendanceDAO = new AttendanceDAO();
         try {
             boolean success = attendanceDAO.saveAttendance(scheduleId, participantId, checkedIn, user.getUserId(), notes);
