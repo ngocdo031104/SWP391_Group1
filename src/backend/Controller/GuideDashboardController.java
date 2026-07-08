@@ -42,52 +42,57 @@ public class GuideDashboardController extends HttpServlet {
         GuideDAO guideDAO = new GuideDAO();
         BookingDAO bookingDAO = new BookingDAO();
 
-        int guideId = user.getUserId();
+        try {
+            int guideId = user.getUserId();
 
-        if ("list".equals(action)) {
-            // View assigned departures and tours
-            List<TourAssignment> assignments = guideDAO.getAssignmentsByGuideId(guideId);
-            request.setAttribute("assignments", assignments);
-            request.getRequestDispatcher("/views/guide/dashboard.jsp").forward(request, response);
-            
-        } else if ("participants".equals(action)) {
-            // View participant list for a specific departure
-            String scheduleIdStr = request.getParameter("scheduleId");
-            if (scheduleIdStr == null || scheduleIdStr.isEmpty()) {
-                response.sendRedirect(request.getContextPath() + "/guide/dashboard");
-                return;
-            }
-
-            try {
-                int scheduleId = Integer.parseInt(scheduleIdStr);
-                
-                // Security check: Verify the schedule is assigned to this guide
+            if ("list".equals(action)) {
+                // View assigned departures and tours
                 List<TourAssignment> assignments = guideDAO.getAssignmentsByGuideId(guideId);
-                boolean isAssigned = false;
-                TourAssignment selectedAssignment = null;
-                for (TourAssignment assignment : assignments) {
-                    if (assignment.getScheduleId() == scheduleId) {
-                        isAssigned = true;
-                        selectedAssignment = assignment;
-                        break;
-                    }
-                }
-
-                if (!isAssigned) {
-                    // Guide cannot access departures not assigned to them
-                    request.setAttribute("errorMessage", "You do not have permission to view participants for this departure.");
-                    request.getRequestDispatcher("/views/guide/dashboard.jsp").forward(request, response);
+                request.setAttribute("assignments", assignments);
+                request.getRequestDispatcher("/views/guide/dashboard.jsp").forward(request, response);
+                
+            } else if ("participants".equals(action)) {
+                // View participant list for a specific departure
+                String scheduleIdStr = request.getParameter("scheduleId");
+                if (scheduleIdStr == null || scheduleIdStr.isEmpty()) {
+                    response.sendRedirect(request.getContextPath() + "/guide/dashboard");
                     return;
                 }
 
-                List<BookingParticipant> participants = bookingDAO.getParticipantsByScheduleId(scheduleId);
-                request.setAttribute("participants", participants);
-                request.setAttribute("assignment", selectedAssignment);
-                request.getRequestDispatcher("/views/guide/participants.jsp").forward(request, response);
-                
-            } catch (NumberFormatException e) {
-                response.sendRedirect(request.getContextPath() + "/guide/dashboard");
+                try {
+                    int scheduleId = Integer.parseInt(scheduleIdStr);
+                    
+                    // Security check: Verify the schedule is assigned to this guide
+                    List<TourAssignment> assignments = guideDAO.getAssignmentsByGuideId(guideId);
+                    boolean isAssigned = false;
+                    TourAssignment selectedAssignment = null;
+                    for (TourAssignment assignment : assignments) {
+                        if (assignment.getScheduleId() == scheduleId) {
+                            isAssigned = true;
+                            selectedAssignment = assignment;
+                            break;
+                        }
+                    }
+
+                    if (!isAssigned) {
+                        // Guide cannot access departures not assigned to them
+                        request.setAttribute("errorMessage", "You do not have permission to view participants for this departure.");
+                        request.getRequestDispatcher("/views/guide/dashboard.jsp").forward(request, response);
+                        return;
+                    }
+
+                    List<BookingParticipant> participants = bookingDAO.getParticipantsByScheduleId(scheduleId);
+                    request.setAttribute("participants", participants);
+                    request.setAttribute("assignment", selectedAssignment);
+                    request.getRequestDispatcher("/views/guide/participants.jsp").forward(request, response);
+                    
+                } catch (NumberFormatException e) {
+                    response.sendRedirect(request.getContextPath() + "/guide/dashboard");
+                }
             }
+        } finally {
+            guideDAO.close();
+            bookingDAO.close();
         }
     }
 }
