@@ -227,16 +227,13 @@
     }
 
     function saveNotes(participantId) {
-        const btn = document.getElementById(`btn-checkin-${participantId}`);
-        const isChecked = btn.getAttribute("data-checked") === "true";
         const notes = document.getElementById(`notes-${participantId}`).value;
         const scheduleId = ${assignment.scheduleId};
         
         const params = new URLSearchParams();
-        params.append("action", "checkin");
+        params.append("action", "updateNotes");
         params.append("scheduleId", scheduleId);
         params.append("participantId", participantId);
-        params.append("checkedIn", isChecked);
         params.append("notes", notes);
         
         fetch(`${pageContext.request.contextPath}/guide/dashboard`, {

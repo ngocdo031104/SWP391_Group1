@@ -96,4 +96,31 @@ public class AttendanceDAO extends DBContext {
         }
         return false;
     }
+
+    /**
+     * Chỉ cập nhật ghi chú của hành khách (giữ nguyên trạng thái điểm danh hiện tại).
+     */
+    public boolean updateAttendanceNotes(int scheduleId, int participantId, String notes) {
+        String sql = "MERGE INTO Attendance AS target "
+                   + "USING (SELECT ? AS ScheduleID, ? AS ParticipantID) AS source "
+                   + "ON (target.ScheduleID = source.ScheduleID AND target.ParticipantID = source.ParticipantID) "
+                   + "WHEN MATCHED THEN "
+                   + "    UPDATE SET Notes = ? "
+                   + "WHEN NOT MATCHED THEN "
+                   + "    INSERT (ScheduleID, ParticipantID, CheckedIn, CheckInTime, CheckedBy, Notes) "
+                   + "    VALUES (source.ScheduleID, source.ParticipantID, 0, NULL, NULL, ?);";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, scheduleId);
+            ps.setInt(2, participantId);
+            ps.setString(3, notes);
+            ps.setString(4, notes);
+            
+            int rows = ps.executeUpdate();
+            return rows > 0;
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Lỗi khi thực hiện cập nhật ghi chú điểm danh", ex);
+        }
+        return false;
+    }
 }

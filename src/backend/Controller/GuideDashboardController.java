@@ -142,7 +142,7 @@ public class GuideDashboardController extends HttpServlet {
         }
 
         String action = request.getParameter("action");
-        if (!"checkin".equalsIgnoreCase(action)) {
+        if (!"checkin".equalsIgnoreCase(action) && !"updateNotes".equalsIgnoreCase(action)) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             result.addProperty("status", "error");
             result.addProperty("message", "Hành động yêu cầu không hợp lệ!");
@@ -155,7 +155,7 @@ public class GuideDashboardController extends HttpServlet {
         String checkedInStr = request.getParameter("checkedIn");
         String notes = request.getParameter("notes");
 
-        if (scheduleIdStr == null || participantIdStr == null || checkedInStr == null) {
+        if (scheduleIdStr == null || participantIdStr == null || ("checkin".equalsIgnoreCase(action) && checkedInStr == null)) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             result.addProperty("status", "error");
             result.addProperty("message", "Thiếu các tham số bắt buộc!");
@@ -165,11 +165,13 @@ public class GuideDashboardController extends HttpServlet {
 
         int scheduleId;
         int participantId;
-        boolean checkedIn;
+        boolean checkedIn = false;
         try {
             scheduleId = Integer.parseInt(scheduleIdStr);
             participantId = Integer.parseInt(participantIdStr);
-            checkedIn = Boolean.parseBoolean(checkedInStr);
+            if ("checkin".equalsIgnoreCase(action)) {
+                checkedIn = Boolean.parseBoolean(checkedInStr);
+            }
         } catch (NumberFormatException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             result.addProperty("status", "error");
@@ -192,7 +194,7 @@ public class GuideDashboardController extends HttpServlet {
             if (!isAssigned) {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 result.addProperty("status", "error");
-                result.addProperty("message", "Bạn không có quyền điểm danh cho lịch khởi hành này!");
+                result.addProperty("message", "Bạn không có quyền thao tác trên lịch khởi hành này!");
                 out.print(result.toString());
                 return;
             }
@@ -202,21 +204,30 @@ public class GuideDashboardController extends HttpServlet {
 
         AttendanceDAO attendanceDAO = new AttendanceDAO();
         try {
-            boolean success = attendanceDAO.saveAttendance(scheduleId, participantId, checkedIn, user.getUserId(), notes);
-            if (success) {
-                result.addProperty("status", "success");
-                
-                String timeStr = "";
-                if (checkedIn) {
-                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm dd/MM/yyyy");
-                    timeStr = sdf.format(new Timestamp(System.currentTimeMillis()));
+            boolean success;
+            if ("updateNotes".equalsIgnoreCase(action)) {
+                success = attendanceDAO.updateAttendanceNotes(scheduleId, participantId, notes);
+                if (success) {
+                    result.addProperty("status", "success");
+                    result.addProperty("message", "Đã cập nhật ghi chú thành công!");
                 }
-                result.addProperty("checkInTime", timeStr);
-                result.addProperty("message", checkedIn ? "Đã điểm danh thành công!" : "Đã hủy điểm danh thành công!");
             } else {
+                success = attendanceDAO.saveAttendance(scheduleId, participantId, checkedIn, user.getUserId(), notes);
+                if (success) {
+                    result.addProperty("status", "success");
+                    String timeStr = "";
+                    if (checkedIn) {
+                        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm dd/MM/yyyy");
+                        timeStr = sdf.format(new Timestamp(System.currentTimeMillis()));
+                    }
+                    result.addProperty("checkInTime", timeStr);
+                    result.addProperty("message", checkedIn ? "Đã điểm danh thành công!" : "Đã hủy điểm danh thành công!");
+                }
+            }
+            if (!success) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 result.addProperty("status", "error");
-                result.addProperty("message", "Lưu trạng thái điểm danh vào cơ sở dữ liệu thất bại.");
+                result.addProperty("message", "Lưu trạng thái điểm danh/ghi chú vào cơ sở dữ liệu thất bại.");
             }
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Lỗi xảy ra trong AJAX checkin POST", e);
