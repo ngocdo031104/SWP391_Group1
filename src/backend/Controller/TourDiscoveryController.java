@@ -59,6 +59,15 @@ public class TourDiscoveryController extends HttpServlet {
             request.setAttribute("categories", categories);
             request.setAttribute("tours", tours);
             
+            // Nạp wishlist nếu người dùng đã đăng nhập
+            Entities.User sessionUser = (Entities.User) request.getSession().getAttribute("sessionUser");
+            if (sessionUser != null) {
+                Model.WishlistDAO wishlistDAO = new Model.WishlistDAO();
+                List<Integer> wishlistTourIds = wishlistDAO.getWishlistTourIds(sessionUser.getUserId());
+                request.setAttribute("wishlistTourIds", wishlistTourIds);
+                wishlistDAO.close();
+            }
+            
             // Trả lại các từ khóa tìm kiếm cũ lên form để người dùng thấy họ đã tìm gì
             request.setAttribute("searchDest", dest != null ? dest : "");
             request.setAttribute("searchDate", departureDate != null ? departureDate : "");

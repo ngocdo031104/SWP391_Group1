@@ -19,6 +19,7 @@ public class TourAssignment implements Serializable {
     // Các đối tượng liên kết
     private TourSchedule schedule; // Lịch khởi hành của tour tương ứng
     private User guide; // Đối tượng HDV phụ trách chuyến đi
+    private String assignedByName;
 
     public TourAssignment() {
     }
@@ -85,5 +86,13 @@ public class TourAssignment implements Serializable {
 
     public void setGuide(User guide) {
         this.guide = guide;
+    }
+
+    public String getAssignedByName() {
+        return assignedByName;
+    }
+
+    public void setAssignedByName(String assignedByName) {
+        this.assignedByName = assignedByName;
     }
 }

@@ -68,9 +68,27 @@
             </a>
         </li>
         <li class="${activePage eq 'forecast' ? 'active' : ''}">
-            <a href="#">
+            <a href="${pageContext.request.contextPath}/admin/forecast">
                 <i data-lucide="trending-up"></i>
                 <span>Dự Báo & Xu Hướng</span>
+            </a>
+        </li>
+        <li class="${activePage eq 'moderation' ? 'active' : ''}">
+            <a href="${pageContext.request.contextPath}/admin/moderation">
+                <i data-lucide="shield-alert"></i>
+                <span>Kiểm Duyệt Nội Dung</span>
+            </a>
+        </li>
+        <li class="${activePage eq 'assignments' ? 'active' : ''}">
+            <a href="${pageContext.request.contextPath}/admin/assignments">
+                <i data-lucide="clipboard-list"></i>
+                <span>Nhật Ký Phân Công</span>
+            </a>
+        </li>
+        <li class="${activePage eq 'oplogs' ? 'active' : ''}">
+            <a href="${pageContext.request.contextPath}/admin/operation-logs">
+                <i data-lucide="history"></i>
+                <span>Nhật Ký Vận Hành</span>
             </a>
         </li>
         
