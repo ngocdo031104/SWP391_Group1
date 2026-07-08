@@ -218,43 +218,109 @@ public class GuideDAO extends DBContext {
      * @return true nếu phân công thành công hoàn tất, ngược lại rollback và trả về false.
      */
     public boolean assignGuideToSchedule(int scheduleId, int guideId, int assignedBy, String notes) {
+        String updateScheduleSql = "UPDATE TourSchedule SET GuideID = ? WHERE ScheduleID = ?";
         String insertStatusSql = "INSERT INTO TourStatus (ScheduleID, Status, Notes, UpdatedBy, UpdatedAt) VALUES (?, 'Scheduled', N'Phân công Hướng dẫn viên', ?, SYSDATETIME())";
-        String insertAssignmentSql = "INSERT INTO TourAssignment (ScheduleID, GuideID, AssignedBy, AssignedAt, Notes) VALUES (?, ?, ?, SYSDATETIME(), ?)";
+        String mergeAssignmentSql = "MERGE INTO TourAssignment AS target "
+                                  + "USING (SELECT ? AS ScheduleID, ? AS GuideID) AS source "
+                                  + "ON (target.ScheduleID = source.ScheduleID AND target.GuideID = source.GuideID) "
+                                  + "WHEN MATCHED THEN "
+                                  + "    UPDATE SET AssignedBy = ?, AssignedAt = SYSDATETIME(), Notes = ? "
+                                  + "WHEN NOT MATCHED THEN "
+                                  + "    INSERT (ScheduleID, GuideID, AssignedBy, AssignedAt, Notes) "
+                                  + "    VALUES (source.ScheduleID, source.GuideID, ?, SYSDATETIME(), ?);";
 
         try {
-            // Thiết lập chế độ chạy Transaction thủ công
             connection.setAutoCommit(false);
 
-            try (PreparedStatement psStatus = connection.prepareStatement(insertStatusSql);
-                 PreparedStatement psInsert = connection.prepareStatement(insertAssignmentSql)) {
+            try (PreparedStatement psUpdate = connection.prepareStatement(updateScheduleSql);
+                 PreparedStatement psStatus = connection.prepareStatement(insertStatusSql);
+                 PreparedStatement psMerge = connection.prepareStatement(mergeAssignmentSql)) {
                 
-                // Bước 1: Thêm lịch sử trạng thái
+                // Bước 1: Cập nhật GuideID trong TourSchedule
+                psUpdate.setInt(1, guideId);
+                psUpdate.setInt(2, scheduleId);
+                psUpdate.executeUpdate();
+
+                // Bước 2: Thêm lịch sử trạng thái
                 psStatus.setInt(1, scheduleId);
                 psStatus.setInt(2, assignedBy);
                 psStatus.executeUpdate();
 
-                // Bước 2: Chèn bản ghi lịch sử phân công TourAssignment
-                psInsert.setInt(1, scheduleId);
-                psInsert.setInt(2, guideId);
-                psInsert.setInt(3, assignedBy);
-                psInsert.setString(4, notes);
-                psInsert.executeUpdate();
+                // Bước 3: Chèn hoặc cập nhật bản ghi lịch sử phân công TourAssignment
+                psMerge.setInt(1, scheduleId);
+                psMerge.setInt(2, guideId);
+                psMerge.setInt(3, assignedBy);
+                psMerge.setString(4, notes);
+                psMerge.setInt(5, assignedBy);
+                psMerge.setString(6, notes);
+                psMerge.executeUpdate();
 
-                // Commit giao dịch
                 connection.commit();
                 return true;
             } catch (SQLException ex) {
-                // Có lỗi xảy ra, thực hiện rollback để tránh bất đồng bộ dữ liệu
                 connection.rollback();
                 LOGGER.log(Level.SEVERE, "Lỗi xảy ra trong transaction phân công HDV, đã thực hiện rollback", ex);
             } finally {
-                // Khôi phục lại chế độ AutoCommit mặc định
                 connection.setAutoCommit(true);
             }
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Lỗi kết nối cơ sở dữ liệu khi phân công HDV", ex);
         }
         return false;
+    }
+
+    /**
+     * Lấy toàn bộ danh sách phân công lịch dẫn đoàn trên hệ thống (Nhật ký phân công).
+     */
+    public List<TourAssignment> getAllAssignments() {
+        List<TourAssignment> list = new ArrayList<>();
+        String sql = "SELECT ta.AssignmentID, ta.ScheduleID, ta.GuideID, ta.AssignedBy, ta.AssignedAt, ta.Notes, "
+                   + "       g.FullName as GuideName, "
+                   + "       c.FullName as CoordinatorName, "
+                   + "       ts.DepartureDate, ts.ReturnDate, "
+                   + "       t.TourName "
+                   + "FROM TourAssignment ta "
+                   + "JOIN [User] g ON ta.GuideID = g.UserID "
+                   + "LEFT JOIN [User] c ON ta.AssignedBy = c.UserID "
+                   + "JOIN TourSchedule ts ON ta.ScheduleID = ts.ScheduleID "
+                   + "JOIN Tour t ON ts.TourID = t.TourID "
+                   + "ORDER BY ta.AssignedAt DESC";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                TourAssignment ta = new TourAssignment();
+                ta.setAssignmentId(rs.getInt("AssignmentID"));
+                ta.setScheduleId(rs.getInt("ScheduleID"));
+                ta.setGuideId(rs.getInt("GuideID"));
+                ta.setAssignedBy(rs.getObject("AssignedBy") != null ? rs.getInt("AssignedBy") : null);
+                ta.setAssignedAt(rs.getTimestamp("AssignedAt"));
+                ta.setNotes(rs.getString("Notes"));
+                ta.setAssignedByName(rs.getString("CoordinatorName"));
+
+                // Gán Guide User
+                User guide = new User();
+                guide.setUserId(rs.getInt("GuideID"));
+                guide.setFullName(rs.getString("GuideName"));
+                ta.setGuide(guide);
+
+                // Gán TourSchedule & Tour
+                TourSchedule sched = new TourSchedule();
+                sched.setScheduleId(rs.getInt("ScheduleID"));
+                sched.setDepartureDate(rs.getDate("DepartureDate"));
+                sched.setReturnDate(rs.getDate("ReturnDate"));
+
+                Tour tour = new Tour();
+                tour.setTourName(rs.getString("TourName"));
+                sched.setTour(tour);
+
+                ta.setSchedule(sched);
+                list.add(ta);
+            }
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Lỗi khi lấy danh sách lịch sử phân công", ex);
+        }
+        return list;
     }
 
     /**

@@ -79,6 +79,12 @@
                 <span>Kiểm Duyệt Nội Dung</span>
             </a>
         </li>
+        <li class="${activePage eq 'assignments' ? 'active' : ''}">
+            <a href="${pageContext.request.contextPath}/admin/assignments">
+                <i data-lucide="clipboard-list"></i>
+                <span>Nhật Ký Phân Công</span>
+            </a>
+        </li>
         
         <c:if test="${!isAccountant}">
             <li class="${activePage eq 'roles' ? 'active' : ''}">

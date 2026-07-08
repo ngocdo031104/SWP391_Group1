@@ -18,7 +18,8 @@ import java.io.IOException;
     "/admin/permissions/*", 
     "/admin/moderation", 
     "/admin/analytics", 
-    "/admin/forecast"
+    "/admin/forecast",
+    "/admin/assignments"
 })
 public class AuthorizationFilter implements Filter {
 
@@ -47,6 +48,10 @@ public class AuthorizationFilter implements Filter {
             requiredModule = "Role Management";
         } else if (uri.contains("/admin/moderation")) {
             requiredModule = "Content Management";
+        } else if (uri.contains("/admin/assignments")) {
+            if (user.getRoleId() == 1 || user.getRoleId() == 2) {
+                hasPermission = true;
+            }
         } else if (uri.contains("/admin/analytics")) {
             requiredModule = "System Settings";
         } else if (uri.contains("/admin/forecast")) {
