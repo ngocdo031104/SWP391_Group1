@@ -76,4 +76,54 @@ public class IncidentReportDAO extends DBContext {
         }
         return list;
     }
+
+    /**
+     * Lấy thông tin một sự cố cụ thể bằng ID.
+     */
+    public IncidentReport getIncidentById(int incidentId) {
+        String sql = "SELECT * FROM IncidentReport WHERE IncidentID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, incidentId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    IncidentReport ir = new IncidentReport();
+                    ir.setIncidentId(rs.getInt("IncidentID"));
+                    ir.setScheduleId(rs.getInt("ScheduleID"));
+                    ir.setReportedBy(rs.getInt("ReportedBy"));
+                    ir.setTitle(rs.getString("Title"));
+                    ir.setDescription(rs.getString("Description"));
+                    ir.setSeverity(rs.getString("Severity"));
+                    ir.setStatus(rs.getString("Status"));
+                    return ir;
+                }
+            }
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Lỗi khi lấy thông tin sự cố ID: " + incidentId, ex);
+        }
+        return null;
+    }
+
+    /**
+     * Cập nhật trạng thái xử lý sự cố.
+     */
+    public boolean updateIncidentStatus(int incidentId, String status, int resolvedBy) {
+        String sql = "UPDATE IncidentReport SET Status = ?, ResolvedBy = ?, ResolvedAt = ? WHERE IncidentID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, status);
+            if ("Resolved".equals(status) || "Closed".equals(status)) {
+                ps.setInt(2, resolvedBy);
+                ps.setTimestamp(3, new java.sql.Timestamp(System.currentTimeMillis()));
+            } else {
+                ps.setNull(2, java.sql.Types.INTEGER);
+                ps.setNull(3, java.sql.Types.TIMESTAMP);
+            }
+            ps.setInt(4, incidentId);
+            
+            int rows = ps.executeUpdate();
+            return rows > 0;
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Lỗi khi cập nhật trạng thái sự cố ID: " + incidentId, ex);
+        }
+        return false;
+    }
 }

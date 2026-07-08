@@ -184,7 +184,8 @@ public class GuideDashboardController extends HttpServlet {
 
         String action = request.getParameter("action");
         if (!"checkin".equalsIgnoreCase(action) && !"updateNotes".equalsIgnoreCase(action) && 
-            !"updateStatus".equalsIgnoreCase(action) && !"reportIncident".equalsIgnoreCase(action)) {
+            !"updateStatus".equalsIgnoreCase(action) && !"reportIncident".equalsIgnoreCase(action) &&
+            !"updateIncidentStatus".equalsIgnoreCase(action)) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             result.addProperty("status", "error");
             result.addProperty("message", "Hành động yêu cầu không hợp lệ!");
@@ -192,25 +193,62 @@ public class GuideDashboardController extends HttpServlet {
             return;
         }
 
-        String scheduleIdStr = request.getParameter("scheduleId");
-        
-        if (scheduleIdStr == null || scheduleIdStr.isEmpty()) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            result.addProperty("status", "error");
-            result.addProperty("message", "Thiếu tham số mã lịch khởi hành!");
-            out.print(result.toString());
-            return;
-        }
+        int scheduleId = 0;
+        int incidentId = 0;
+        String statusParam = null;
 
-        int scheduleId;
-        try {
-            scheduleId = Integer.parseInt(scheduleIdStr);
-        } catch (NumberFormatException e) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            result.addProperty("status", "error");
-            result.addProperty("message", "Mã lịch khởi hành không đúng định dạng!");
-            out.print(result.toString());
-            return;
+        if ("updateIncidentStatus".equalsIgnoreCase(action)) {
+            String incidentIdStr = request.getParameter("incidentId");
+            statusParam = request.getParameter("status");
+            if (incidentIdStr == null || incidentIdStr.isEmpty() || statusParam == null || statusParam.isEmpty()) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                result.addProperty("status", "error");
+                result.addProperty("message", "Thiếu các tham số bắt buộc của sự cố!");
+                out.print(result.toString());
+                return;
+            }
+            try {
+                incidentId = Integer.parseInt(incidentIdStr);
+            } catch (NumberFormatException e) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                result.addProperty("status", "error");
+                result.addProperty("message", "Mã sự cố không hợp lệ!");
+                out.print(result.toString());
+                return;
+            }
+
+            IncidentReportDAO incidentDAO = new IncidentReportDAO();
+            try {
+                IncidentReport ir = incidentDAO.getIncidentById(incidentId);
+                if (ir == null) {
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    result.addProperty("status", "error");
+                    result.addProperty("message", "Không tìm thấy sự cố này!");
+                    out.print(result.toString());
+                    return;
+                }
+                scheduleId = ir.getScheduleId();
+            } finally {
+                incidentDAO.close();
+            }
+        } else {
+            String scheduleIdStr = request.getParameter("scheduleId");
+            if (scheduleIdStr == null || scheduleIdStr.isEmpty()) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                result.addProperty("status", "error");
+                result.addProperty("message", "Thiếu tham số mã lịch khởi hành!");
+                out.print(result.toString());
+                return;
+            }
+            try {
+                scheduleId = Integer.parseInt(scheduleIdStr);
+            } catch (NumberFormatException e) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                result.addProperty("status", "error");
+                result.addProperty("message", "Mã lịch khởi hành không đúng định dạng!");
+                out.print(result.toString());
+                return;
+            }
         }
 
         // Kiểm tra bảo mật: Hướng dẫn viên chỉ có quyền thao tác trên lịch khởi hành của chính họ
@@ -232,7 +270,35 @@ public class GuideDashboardController extends HttpServlet {
                 return;
             }
 
-            // 1. Nhánh Xử lý cập nhật trạng thái hoạt động của Tour (updateStatus)
+            // Xử lý action updateIncidentStatus ngay tại đây
+            if ("updateIncidentStatus".equalsIgnoreCase(action)) {
+                if (!"Open".equals(statusParam) && !"InProgress".equals(statusParam) && 
+                    !"Resolved".equals(statusParam) && !"Closed".equals(statusParam)) {
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    result.addProperty("status", "error");
+                    result.addProperty("message", "Trạng thái mới không hợp lệ!");
+                    out.print(result.toString());
+                    return;
+                }
+
+                IncidentReportDAO incidentDAO = new IncidentReportDAO();
+                try {
+                    boolean success = incidentDAO.updateIncidentStatus(incidentId, statusParam, user.getUserId());
+                    if (success) {
+                        result.addProperty("status", "success");
+                        result.addProperty("message", "Trạng thái sự cố đã được cập nhật thành công!");
+                    } else {
+                        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                        result.addProperty("status", "error");
+                        result.addProperty("message", "Cập nhật trạng thái sự cố thất bại.");
+                    }
+                } finally {
+                    incidentDAO.close();
+                }
+                out.print(result.toString());
+                return;
+            }
+
             if ("updateStatus".equalsIgnoreCase(action)) {
                 String newStatus = request.getParameter("newStatus");
                 String notes = request.getParameter("notes");

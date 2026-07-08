@@ -203,6 +203,7 @@
                                     <th style="width: 140px;">Mức Độ</th>
                                     <th style="width: 140px;">Trạng Thái</th>
                                     <th>Mô Tả Chi Tiết</th>
+                                    <th style="width: 140px; text-align: center;">Hành Động</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -244,6 +245,18 @@
                                             </c:choose>
                                         </td>
                                         <td style="color: #475569; font-size: 0.9rem;"><c:out value="${inc.description}" /></td>
+                                        <td style="text-align: center;">
+                                            <c:choose>
+                                                <c:when test="${inc.status == 'Open' || inc.status == 'InProgress'}">
+                                                    <button class="btn btn-outline btn-sm" onclick="resolveIncident(${inc.incidentId})" style="padding: 6px 12px; font-size: 0.8rem; border-color: #10b981; color: #10b981; font-weight: bold; background: transparent; cursor: pointer;">
+                                                        <i class="fa fa-check"></i> Giải quyết
+                                                    </button>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <span style="color: #94a3b8; font-size: 0.85rem;"><i class="fa fa-circle-check"></i> Hoàn tất</span>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
                                     </tr>
                                 </c:forEach>
                             </tbody>
@@ -342,6 +355,38 @@
         .catch(err => {
             console.error(err);
             alert('Lỗi hệ thống khi báo cáo sự cố!');
+        });
+    }
+
+    function resolveIncident(incidentId) {
+        if (!confirm('Bạn có chắc chắn muốn đánh dấu sự cố này đã được giải quyết?')) {
+            return;
+        }
+
+        const params = new URLSearchParams();
+        params.append("action", "updateIncidentStatus");
+        params.append("incidentId", incidentId);
+        params.append("status", "Resolved");
+
+        fetch('${pageContext.request.contextPath}/guide/dashboard', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: params
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                alert(data.message);
+                window.location.reload();
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert('Lỗi hệ thống khi cập nhật trạng thái sự cố!');
         });
     }
 </script>
