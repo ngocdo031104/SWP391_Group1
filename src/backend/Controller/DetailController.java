@@ -140,7 +140,7 @@ public class DetailController extends HttpServlet {
                 if (success) {
                     session.setAttribute("reviewSuccess", "Cảm ơn bạn đã gửi đánh giá! Đang chờ ban quản trị kiểm duyệt.");
                 } else {
-                    session.setAttribute("reviewError", "Gửi đánh giá thất bại. Bạn chỉ được gửi đánh giá sau khi đã tham gia và hoàn thành chuyến đi này!");
+                    session.setAttribute("reviewError", "Gửi đánh giá thất bại. Bạn chỉ được phép đánh giá một lần duy nhất cho mỗi tour sau khi đã hoàn thành chuyến đi!");
                 }
             }
         } catch (Exception e) {

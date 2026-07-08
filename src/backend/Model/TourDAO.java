@@ -702,6 +702,20 @@ public class TourDAO extends DBContext {
         if (userId == -1) {
             return false;
         }
+
+        // Bước 1.5: Kiểm tra xem tài khoản này đã từng đánh giá tour này chưa (chống trùng lặp)
+        String checkReviewSql = "SELECT COUNT(*) FROM Review WHERE CustomerID = ? AND TourID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(checkReviewSql)) {
+            ps.setInt(1, userId);
+            ps.setInt(2, tourId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next() && rs.getInt(1) > 0) {
+                    return false;
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
         // Bước 2: Tìm booking thỏa mãn điều kiện đã hoàn thành (Status = 'Completed') của tour này
         int bookingId = -1;
