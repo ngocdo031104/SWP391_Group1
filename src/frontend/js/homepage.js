@@ -201,16 +201,45 @@ document.addEventListener('DOMContentLoaded', () => {
     wishlistBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation(); // Avoid card container events
-            btn.classList.toggle('active');
             
-            const heartIcon = btn.querySelector('svg') || btn.querySelector('i');
-            if (heartIcon) {
-                if (btn.classList.contains('active')) {
-                    heartIcon.setAttribute('fill', 'currentColor');
-                } else {
-                    heartIcon.setAttribute('fill', 'none');
+            const tourId = btn.id.replace('wishlist-', '');
+            const contextPath = window.contextPath || '';
+            
+            fetch(`${contextPath}/customer/wishlist/toggle?tourId=${tourId}`, {
+                method: 'POST'
+            })
+            .then(res => {
+                if (res.status === 401) {
+                    window.showToast('Vui l\u00f2ng \u0111\u0103ng nh\u1eadp \u0111\u1ec3 l\u01b0u tour y\u00eau th\u00edch.', 'warning');
+                    return null;
                 }
-            }
+                if (!res.ok) {
+                    throw new Error('L\u1ed7i h\u1ec7 th\u1ed1ng');
+                }
+                return res.json();
+            })
+            .then(data => {
+                if (!data) return;
+                
+                if (data.status === 'success') {
+                    btn.classList.toggle('active', data.isSaved);
+                    const heartIcon = btn.querySelector('svg') || btn.querySelector('i');
+                    if (heartIcon) {
+                        if (data.isSaved) {
+                            heartIcon.setAttribute('fill', 'currentColor');
+                        } else {
+                            heartIcon.setAttribute('fill', 'none');
+                        }
+                    }
+                    window.showToast(data.message, 'success');
+                } else {
+                    window.showToast(data.message, 'error');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                window.showToast('\u0110\u00e3 x\u1ea3y ra l\u1ed7i k\u1ebft n\u1ed1i!', 'error');
+            });
         });
     });
 

@@ -404,6 +404,7 @@
             category: "<%= catStr %>",
             seatsLeft: <%= seatsLeft %>,
             seatsTotal: <%= seatsTotal %>,
+            isWishlisted: <%= (wishlistTourIds != null && wishlistTourIds.contains(t.getTourId())) ? "true" : "false" %>,
             photos: [
                 <%
                 if (t.getMediaList() != null && !t.getMediaList().isEmpty()) {

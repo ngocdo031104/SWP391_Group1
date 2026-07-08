@@ -9,6 +9,7 @@
     <meta name="description" content="Khám phá tour du lịch cao cấp, resort sang trọng và ưu đãi hấp dẫn khắp Việt Nam. Đặt hành trình đáng nhớ cùng TourBuddy ngay hôm nay.">
     <!-- Using Lucide CDN for icons reliability -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script>window.contextPath = '${pageContext.request.contextPath}';</script>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/header.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/footer.css">
@@ -58,6 +59,10 @@
                         <button class="btn btn-primary" id="register-button" onclick="window.location.href='${pageContext.request.contextPath}/register'">Đăng Ký</button>
                     </c:when>
                     <c:otherwise>
+                        <a href="${pageContext.request.contextPath}/customer/chat" class="notification-bell" id="chat-btn" aria-label="Tin nhắn" style="text-decoration: none; margin-right: 15px;">
+                            <i data-lucide="message-square"></i>
+                            <span class="badge-count" id="chat-count">1</span>
+                        </a>
                         <a href="${pageContext.request.contextPath}/customer/notifications" class="notification-bell" id="notification-btn" aria-label="Thông báo" style="text-decoration: none;">
                             <i data-lucide="bell"></i>
                             <span class="badge-count" id="notification-count">3</span>
@@ -82,7 +87,7 @@
                                 <a href="${pageContext.request.contextPath}/profile" id="dropdown-profile-link"><i data-lucide="user"></i> Hồ Sơ Của Tôi</a>
                                 <a href="${pageContext.request.contextPath}/bookings" id="dropdown-bookings-link"><i data-lucide="compass"></i> Đơn Đặt Chỗ</a>
                                 <a href="${pageContext.request.contextPath}/customer/buddies" id="dropdown-buddies-link"><i data-lucide="users"></i> Mạng Lưới Buddy</a>
-                                <a href="#" id="dropdown-wishlist-link"><i data-lucide="heart"></i> Yêu Thích</a>
+                                <a href="${pageContext.request.contextPath}/customer/wishlist" id="dropdown-wishlist-link"><i data-lucide="heart"></i> Yêu Thích</a>
                                 <c:if test="${sessionUser.role.roleName eq 'Admin'}">
                                     <a href="${pageContext.request.contextPath}/admin/dashboard" id="dropdown-admin-link"><i data-lucide="shield-alert"></i> Quản Trị (Admin)</a>
                                 </c:if>

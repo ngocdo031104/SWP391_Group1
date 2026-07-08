@@ -434,8 +434,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="tour-badge">
                         <span class="badge badge-featured">${difficultyText}</span>
                     </div>
-                    <button class="btn-wishlist" aria-label="Th\u00eam v\u00e0o y\u00eau th\u00edch">
-                        <i data-lucide="heart"></i>
+                    <button class="btn-wishlist ${tour.isWishlisted ? 'active' : ''}" id="wishlist-${tour.id}" aria-label="Th\u00eam v\u00e0o y\u00eau th\u00edch">
+                        <i data-lucide="heart" ${tour.isWishlisted ? 'fill="currentColor"' : ''}></i>
                     </button>
                 </div>
                 <div class="tour-details">
@@ -479,13 +479,41 @@ document.addEventListener('DOMContentLoaded', () => {
             const wishlistBtn = card.querySelector('.btn-wishlist');
             wishlistBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                wishlistBtn.classList.toggle('active');
-                const heartIcon = wishlistBtn.querySelector('svg');
-                if (wishlistBtn.classList.contains('active')) {
-                    heartIcon.setAttribute('fill', 'currentColor');
-                } else {
-                    heartIcon.setAttribute('fill', 'none');
-                }
+                
+                const contextPath = window.contextPath || '';
+                fetch(`${contextPath}/customer/wishlist/toggle?tourId=${tour.id}`, {
+                    method: 'POST'
+                })
+                .then(res => {
+                    if (res.status === 401) {
+                        window.showToast('Vui l\u00f2ng \u0111\u0103ng nh\u1eadp \u0111\u1ec3 l\u01b0u tour y\u00eau th\u00edch.', 'warning');
+                        return null;
+                    }
+                    if (!res.ok) throw new Error('L\u1ed7i h\u1ec7 th\u1ed1ng');
+                    return res.json();
+                })
+                .then(data => {
+                    if (!data) return;
+                    
+                    if (data.status === 'success') {
+                        wishlistBtn.classList.toggle('active', data.isSaved);
+                        const heartIcon = wishlistBtn.querySelector('svg') || wishlistBtn.querySelector('i');
+                        if (heartIcon) {
+                            if (data.isSaved) {
+                                heartIcon.setAttribute('fill', 'currentColor');
+                            } else {
+                                heartIcon.setAttribute('fill', 'none');
+                            }
+                        }
+                        window.showToast(data.message, 'success');
+                    } else {
+                        window.showToast(data.message, 'error');
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    window.showToast('\u0110\u00e3 x\u1ea3y ra l\u1ed7i k\u1ebft n\u1ed1i!', 'error');
+                });
             });
 
             exploreGrid.appendChild(card);
