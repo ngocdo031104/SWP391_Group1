@@ -85,6 +85,12 @@
                 <span>Nhật Ký Phân Công</span>
             </a>
         </li>
+        <li class="${activePage eq 'oplogs' ? 'active' : ''}">
+            <a href="${pageContext.request.contextPath}/admin/operation-logs">
+                <i data-lucide="history"></i>
+                <span>Nhật Ký Vận Hành</span>
+            </a>
+        </li>
         
         <c:if test="${!isAccountant}">
             <li class="${activePage eq 'roles' ? 'active' : ''}">

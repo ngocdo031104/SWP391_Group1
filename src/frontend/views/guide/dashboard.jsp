@@ -243,6 +243,9 @@
                                             <a href="${pageContext.request.contextPath}/guide/dashboard?action=incidents&scheduleId=${assignment.schedule.scheduleId}" class="btn btn-outline btn-sm" style="padding: 6px 12px; font-size: 0.85rem; font-weight: 600; border-color: #ef4444; color: #ef4444; background-color: transparent;">
                                                 <i class="fa fa-triangle-exclamation"></i> Sự cố
                                             </a>
+                                            <a href="${pageContext.request.contextPath}/guide/dashboard?action=operationLogs&scheduleId=${assignment.schedule.scheduleId}" class="btn btn-outline btn-sm" style="padding: 6px 12px; font-size: 0.85rem; font-weight: 600; border-color: #64748b; color: #64748b; background-color: transparent;">
+                                                <i class="fa fa-clock-rotate-left"></i> Nhật ký
+                                            </a>
                                             <button class="btn-update-status" onclick="openStatusModal(${assignment.schedule.scheduleId}, '${tourStatus}')">
                                                 <i class="fa fa-edit"></i> Trạng thái
                                             </button>
