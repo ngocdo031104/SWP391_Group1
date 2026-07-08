@@ -142,7 +142,7 @@ public class GuideDashboardController extends HttpServlet {
         }
 
         String action = request.getParameter("action");
-        if (!"checkin".equalsIgnoreCase(action) && !"updateNotes".equalsIgnoreCase(action)) {
+        if (!"checkin".equalsIgnoreCase(action) && !"updateNotes".equalsIgnoreCase(action) && !"updateStatus".equalsIgnoreCase(action)) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             result.addProperty("status", "error");
             result.addProperty("message", "Hành động yêu cầu không hợp lệ!");
@@ -151,36 +151,27 @@ public class GuideDashboardController extends HttpServlet {
         }
 
         String scheduleIdStr = request.getParameter("scheduleId");
-        String participantIdStr = request.getParameter("participantId");
-        String checkedInStr = request.getParameter("checkedIn");
-        String notes = request.getParameter("notes");
-
-        if (scheduleIdStr == null || participantIdStr == null || ("checkin".equalsIgnoreCase(action) && checkedInStr == null)) {
+        
+        if (scheduleIdStr == null || scheduleIdStr.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             result.addProperty("status", "error");
-            result.addProperty("message", "Thiếu các tham số bắt buộc!");
+            result.addProperty("message", "Thiếu tham số mã lịch khởi hành!");
             out.print(result.toString());
             return;
         }
 
         int scheduleId;
-        int participantId;
-        boolean checkedIn = false;
         try {
             scheduleId = Integer.parseInt(scheduleIdStr);
-            participantId = Integer.parseInt(participantIdStr);
-            if ("checkin".equalsIgnoreCase(action)) {
-                checkedIn = Boolean.parseBoolean(checkedInStr);
-            }
         } catch (NumberFormatException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             result.addProperty("status", "error");
-            result.addProperty("message", "Định dạng tham số ID không hợp lệ!");
+            result.addProperty("message", "Mã lịch khởi hành không đúng định dạng!");
             out.print(result.toString());
             return;
         }
 
-        // Kiểm tra bảo mật: Hướng dẫn viên chỉ có quyền điểm danh lịch khởi hành của chính họ
+        // Kiểm tra bảo mật: Hướng dẫn viên chỉ có quyền thao tác trên lịch khởi hành của chính họ
         GuideDAO guideDAO = new GuideDAO();
         try {
             List<TourAssignment> assignments = guideDAO.getAssignmentsByGuideId(user.getUserId());
@@ -198,8 +189,74 @@ public class GuideDashboardController extends HttpServlet {
                 out.print(result.toString());
                 return;
             }
+
+            // 1. Nhánh Xử lý cập nhật trạng thái hoạt động của Tour (updateStatus)
+            if ("updateStatus".equalsIgnoreCase(action)) {
+                String newStatus = request.getParameter("newStatus");
+                String notes = request.getParameter("notes");
+
+                if (newStatus == null || newStatus.trim().isEmpty()) {
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    result.addProperty("status", "error");
+                    result.addProperty("message", "Trạng thái mới không được để trống!");
+                    out.print(result.toString());
+                    return;
+                }
+
+                // Kiểm tra các trạng thái hợp lệ
+                if (!"Preparing".equals(newStatus) && !"Scheduled".equals(newStatus) && 
+                    !"InProgress".equals(newStatus) && !"Completed".equals(newStatus) && 
+                    !"Cancelled".equals(newStatus)) {
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    result.addProperty("status", "error");
+                    result.addProperty("message", "Trạng thái mới gửi lên không hợp lệ!");
+                    out.print(result.toString());
+                    return;
+                }
+
+                boolean success = guideDAO.updateTourStatus(scheduleId, newStatus, notes, user.getUserId());
+                if (success) {
+                    result.addProperty("status", "success");
+                    result.addProperty("message", "Trạng thái đoàn đã được cập nhật thành công!");
+                } else {
+                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    result.addProperty("status", "error");
+                    result.addProperty("message", "Cập nhật trạng thái trong cơ sở dữ liệu thất bại.");
+                }
+                out.print(result.toString());
+                return;
+            }
+
         } finally {
             guideDAO.close();
+        }
+
+        // 2. Nhánh Xử lý điểm danh hành khách (checkin / updateNotes)
+        String participantIdStr = request.getParameter("participantId");
+        String checkedInStr = request.getParameter("checkedIn");
+        String notes = request.getParameter("notes");
+
+        if (participantIdStr == null || ("checkin".equalsIgnoreCase(action) && checkedInStr == null)) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            result.addProperty("status", "error");
+            result.addProperty("message", "Thiếu các tham số bắt buộc để thực hiện điểm danh!");
+            out.print(result.toString());
+            return;
+        }
+
+        int participantId;
+        boolean checkedIn = false;
+        try {
+            participantId = Integer.parseInt(participantIdStr);
+            if ("checkin".equalsIgnoreCase(action)) {
+                checkedIn = Boolean.parseBoolean(checkedInStr);
+            }
+        } catch (NumberFormatException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            result.addProperty("status", "error");
+            result.addProperty("message", "Mã hành khách không hợp lệ!");
+            out.print(result.toString());
+            return;
         }
 
         AttendanceDAO attendanceDAO = new AttendanceDAO();

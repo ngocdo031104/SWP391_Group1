@@ -16,11 +16,136 @@
         .table-custom th { background-color: rgba(0,0,0,0.02); font-weight: 600; color: var(--clr-text); }
         .table-custom tr:hover { background-color: rgba(0,0,0,0.01); }
         .status-badge { padding: 6px 12px; border-radius: 99px; font-size: 0.85rem; font-weight: 600; display: inline-block; text-align: center; }
-        /* Cập nhật class css theo trạng thái chuẩn trong DB */
+        
+        /* CSS status styles */
         .status-preparing { background-color: rgba(243, 156, 18, 0.15); color: #d68910; }
+        .status-scheduled { background-color: rgba(52, 152, 219, 0.15); color: #2980b9; }
+        .status-inprogress { background-color: rgba(155, 89, 182, 0.15); color: #8e44ad; }
         .status-completed { background-color: rgba(39, 174, 96, 0.15); color: #229954; }
-        .status-ongoing { background-color: rgba(41, 128, 185, 0.15); color: #2471a3; }
+        .status-cancelled { background-color: rgba(231, 76, 60, 0.15); color: #c0392b; }
         .status-default { background-color: rgba(127, 140, 141, 0.15); color: #7f8c8d; }
+
+        /* Operation Update Buttons */
+        .btn-update-status {
+            background-color: #f1f5f9;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.85rem;
+        }
+
+        .btn-update-status:hover {
+            background-color: #2563eb;
+            color: #ffffff;
+            border-color: #2563eb;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #ffffff;
+            padding: 24px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            animation: slideDown 0.3s ease;
+            position: relative;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 12px;
+        }
+
+        .modal-header h4 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: #1e293b;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: #475569;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #475569;
+            font-size: 0.9rem;
+        }
+
+        .form-select, .form-textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            outline: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-select:focus, .form-textarea:focus {
+            border-color: #2563eb;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 24px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 16px;
+        }
     </style>
 </head>
 <body>
@@ -78,7 +203,7 @@
                                     <th>Ngày Khởi Hành</th>
                                     <th>Ngày Về</th>
                                     <th>Trạng Thái Vận Hành</th>
-                                    <th style="text-align: right; padding-right: 24px;">Hành Động</th>
+                                    <th style="text-align: center; width: 320px;">Hành Động</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -89,28 +214,35 @@
                                         <td><fmt:formatDate value="${assignment.schedule.departureDate}" pattern="dd/MM/yyyy" /></td>
                                         <td><fmt:formatDate value="${assignment.schedule.returnDate}" pattern="dd/MM/yyyy" /></td>
                                         <td>
-                                            <%-- Đổi biến check trạng thái khớp với dữ liệu 'Preparing' / 'OnGoing' / 'Completed' từ DB --%>
                                             <c:set var="tourStatus" value="${assignment.schedule.status}" />
                                             <c:choose>
                                                 <c:when test="${tourStatus == 'Preparing'}">
-                                                    <span class="status-badge status-preparing">Sắp khởi hành</span>
+                                                    <span class="status-badge status-preparing">Chuẩn bị</span>
                                                 </c:when>
-                                                <c:when test="${tourStatus == 'OnGoing'}">
-                                                    <span class="status-badge status-ongoing">Đang diễn ra</span>
+                                                <c:when test="${tourStatus == 'Scheduled'}">
+                                                    <span class="status-badge status-scheduled">Đã lên lịch</span>
+                                                </c:when>
+                                                <c:when test="${tourStatus == 'InProgress'}">
+                                                    <span class="status-badge status-inprogress">Đang đi</span>
                                                 </c:when>
                                                 <c:when test="${tourStatus == 'Completed'}">
-                                                    <span class="status-badge status-completed">Đã hoàn thành</span>
+                                                    <span class="status-badge status-completed">Hoàn thành</span>
+                                                </c:when>
+                                                <c:when test="${tourStatus == 'Cancelled'}">
+                                                    <span class="status-badge status-cancelled">Đã hủy</span>
                                                 </c:when>
                                                 <c:otherwise>
-                                                    <span class="status-badge status-default"><c:out value="${empty tourStatus ? 'Chưa bắt đầu' : tourStatus}" /></span>
+                                                    <span class="status-badge status-default"><c:out value="${empty tourStatus ? 'Chuẩn bị' : tourStatus}" /></span>
                                                 </c:otherwise>
                                             </c:choose>
                                         </td>
-                                        <td style="text-align: right; padding-right: 24px;">
-                                            <%-- Sửa lại cách lấy ID lịch trình: assignment.schedule.scheduleId --%>
-                                            <a href="${pageContext.request.contextPath}/guide/dashboard?action=participants&scheduleId=${assignment.schedule.scheduleId}" class="btn btn-outline btn-sm">
+                                        <td style="text-align: center; display: flex; gap: 8px; justify-content: center; align-items: center; height: 100%; padding-top: 12px; padding-bottom: 12px;">
+                                            <a href="${pageContext.request.contextPath}/guide/dashboard?action=participants&scheduleId=${assignment.schedule.scheduleId}" class="btn btn-outline btn-sm" style="padding: 6px 12px; font-size: 0.85rem; font-weight: 600;">
                                                 <i class="fa fa-users"></i> Danh sách đoàn
                                             </a>
+                                            <button class="btn-update-status" onclick="openStatusModal(${assignment.schedule.scheduleId}, '${tourStatus}')">
+                                                <i class="fa fa-edit"></i> Trạng thái
+                                            </button>
                                         </td>
                                     </tr>
                                 </c:forEach>
@@ -122,6 +254,87 @@
         </div>
     </div>
 </div>
+
+<!-- Modal cập nhật trạng thái -->
+<div class="modal" id="status-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4>Cập nhật tiến độ Tour</h4>
+            <button class="modal-close" onclick="closeStatusModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="modal-schedule-id">
+            
+            <div class="form-group">
+                <label for="modal-status-select">Trạng thái vận hành *</label>
+                <select id="modal-status-select" class="form-select">
+                    <option value="Preparing">Preparing (Chuẩn bị)</option>
+                    <option value="Scheduled">Scheduled (Đã lên lịch)</option>
+                    <option value="InProgress">InProgress (Đang đi)</option>
+                    <option value="Completed">Completed (Hoàn thành)</option>
+                    <option value="Cancelled">Cancelled (Đã hủy)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="modal-notes-textarea">Ghi chú vận hành / Lý do</label>
+                <textarea id="modal-notes-textarea" class="form-textarea" rows="4" placeholder="Nhập diễn biến sự cố, lý do hủy đoàn hoặc ghi chú hoạt động..."></textarea>
+            </div>
+            
+            <div class="form-actions">
+                <button class="btn btn-outline btn-sm" onclick="closeStatusModal()" style="font-weight: 600;">Hủy bỏ</button>
+                <button class="btn btn-primary btn-sm" onclick="submitStatusUpdate()" style="font-weight: 600;">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openStatusModal(scheduleId, currentStatus) {
+        document.getElementById('modal-schedule-id').value = scheduleId;
+        document.getElementById('modal-status-select').value = currentStatus || 'Preparing';
+        document.getElementById('modal-notes-textarea').value = '';
+        document.getElementById('status-modal').classList.add('active');
+    }
+
+    function closeStatusModal() {
+        document.getElementById('status-modal').classList.remove('active');
+    }
+
+    function submitStatusUpdate() {
+        const scheduleId = document.getElementById('modal-schedule-id').value;
+        const newStatus = document.getElementById('modal-status-select').value;
+        const notes = document.getElementById('modal-notes-textarea').value;
+
+        const params = new URLSearchParams();
+        params.append("action", "updateStatus");
+        params.append("scheduleId", scheduleId);
+        params.append("newStatus", newStatus);
+        params.append("notes", notes);
+
+        fetch('${pageContext.request.contextPath}/guide/dashboard', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: params
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                alert(data.message);
+                closeStatusModal();
+                window.location.reload();
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert('Lỗi hệ thống khi cập nhật trạng thái!');
+        });
+    }
+</script>
 
 </body>
 </html>

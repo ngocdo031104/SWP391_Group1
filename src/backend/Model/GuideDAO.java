@@ -16,6 +16,7 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -531,5 +532,80 @@ public class GuideDAO extends DBContext {
             LOGGER.log(Level.SEVERE, "Lỗi khi đếm tổng số phân công", ex);
         }
         return 0;
+    }
+
+    /**
+     * Cập nhật trạng thái vận hành của Tour (Transaction-based).
+     */
+    public boolean updateTourStatus(int scheduleId, String newStatus, String notes, int guideId) {
+        String updateScheduleSql = "UPDATE TourSchedule SET Status = ? WHERE ScheduleID = ?";
+        String insertStatusSql = "INSERT INTO TourStatus (ScheduleID, Status, Notes, UpdatedBy, UpdatedAt) VALUES (?, ?, ?, ?, SYSDATETIME())";
+        String insertLogSql = "INSERT INTO TourOperationLog (ScheduleID, Activity, OperatedBy, CreatedAt) VALUES (?, ?, ?, SYSDATETIME())";
+
+        try {
+            connection.setAutoCommit(false);
+            try (PreparedStatement psUpdate = connection.prepareStatement(updateScheduleSql);
+                 PreparedStatement psStatus = connection.prepareStatement(insertStatusSql);
+                 PreparedStatement psLog = connection.prepareStatement(insertLogSql)) {
+                
+                // 1. Cập nhật bảng TourSchedule
+                psUpdate.setString(1, newStatus);
+                psUpdate.setInt(2, scheduleId);
+                psUpdate.executeUpdate();
+
+                // 2. Chèn lịch sử TourStatus
+                psStatus.setInt(1, scheduleId);
+                psStatus.setString(2, newStatus);
+                psStatus.setString(3, notes);
+                psStatus.setInt(4, guideId);
+                psStatus.executeUpdate();
+
+                // 3. Ghi log hoạt động TourOperationLog
+                psLog.setInt(1, scheduleId);
+                psLog.setString(2, "HDV Cập nhật trạng thái thành: " + newStatus);
+                psLog.setInt(3, guideId);
+                psLog.executeUpdate();
+
+                connection.commit();
+                return true;
+            } catch (SQLException ex) {
+                connection.rollback();
+                LOGGER.log(Level.SEVERE, "Lỗi khi cập nhật trạng thái tour, thực hiện rollback", ex);
+            } finally {
+                connection.setAutoCommit(true);
+            }
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Lỗi kết nối cơ sở dữ liệu khi cập nhật trạng thái tour", ex);
+        }
+        return false;
+    }
+
+    /**
+     * Lấy lịch sử chuyển đổi trạng thái của lịch trình.
+     */
+    public List<Map<String, Object>> getTourStatusHistory(int scheduleId) {
+        List<Map<String, Object>> history = new ArrayList<>();
+        String sql = "SELECT ts.Status, ts.Notes, ts.UpdatedAt, u.FullName "
+                   + "FROM TourStatus ts "
+                   + "LEFT JOIN [User] u ON ts.UpdatedBy = u.UserID "
+                   + "WHERE ts.ScheduleID = ? "
+                   + "ORDER BY ts.UpdatedAt DESC";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, scheduleId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Map<String, Object> log = new java.util.HashMap<>();
+                    log.put("status", rs.getString("Status"));
+                    log.put("notes", rs.getString("Notes"));
+                    log.put("updatedAt", rs.getTimestamp("UpdatedAt"));
+                    log.put("fullName", rs.getString("FullName"));
+                    history.add(log);
+                }
+            }
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Lỗi khi lấy lịch sử trạng thái của scheduleId: " + scheduleId, ex);
+        }
+        return history;
     }
 }
