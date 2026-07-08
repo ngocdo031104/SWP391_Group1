@@ -240,6 +240,9 @@
                                             <a href="${pageContext.request.contextPath}/guide/dashboard?action=participants&scheduleId=${assignment.schedule.scheduleId}" class="btn btn-outline btn-sm" style="padding: 6px 12px; font-size: 0.85rem; font-weight: 600;">
                                                 <i class="fa fa-users"></i> Danh sách đoàn
                                             </a>
+                                            <a href="${pageContext.request.contextPath}/guide/dashboard?action=incidents&scheduleId=${assignment.schedule.scheduleId}" class="btn btn-outline btn-sm" style="padding: 6px 12px; font-size: 0.85rem; font-weight: 600; border-color: #ef4444; color: #ef4444; background-color: transparent;">
+                                                <i class="fa fa-triangle-exclamation"></i> Sự cố
+                                            </a>
                                             <button class="btn-update-status" onclick="openStatusModal(${assignment.schedule.scheduleId}, '${tourStatus}')">
                                                 <i class="fa fa-edit"></i> Trạng thái
                                             </button>
