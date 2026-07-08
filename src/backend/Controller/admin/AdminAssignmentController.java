@@ -29,8 +29,19 @@ public class AdminAssignmentController extends HttpServlet {
             return;
         }
 
-        // Quyền truy cập: Admin (1) hoặc Staff (2)
-        if (sessionUser.getRoleId() != 1 && sessionUser.getRoleId() != 2 && !"Admin".equals(userRole) && !"Staff".equals(userRole)) {
+        boolean hasPermission = false;
+        if (sessionUser.getRoleId() == 1) {
+            hasPermission = true;
+        } else if (sessionUser.getRole() != null && sessionUser.getRole().getPermissions() != null) {
+            for (Entities.Permission p : sessionUser.getRole().getPermissions()) {
+                if (p.getPermissionId() == 32) {
+                    hasPermission = true;
+                    break;
+                }
+            }
+        }
+
+        if (!hasPermission) {
             response.sendRedirect(request.getContextPath() + "/403-forbidden.jsp");
             return;
         }

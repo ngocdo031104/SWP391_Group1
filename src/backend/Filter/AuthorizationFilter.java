@@ -49,8 +49,13 @@ public class AuthorizationFilter implements Filter {
         } else if (uri.contains("/admin/moderation")) {
             requiredModule = "Content Management";
         } else if (uri.contains("/admin/assignments")) {
-            if (user.getRoleId() == 1 || user.getRoleId() == 2) {
-                hasPermission = true;
+            if (user.getRole() != null && user.getRole().getPermissions() != null) {
+                for (Entities.Permission p : user.getRole().getPermissions()) {
+                    if (p.getPermissionId() == 32) {
+                        hasPermission = true;
+                        break;
+                    }
+                }
             }
         } else if (uri.contains("/admin/analytics")) {
             requiredModule = "System Settings";
