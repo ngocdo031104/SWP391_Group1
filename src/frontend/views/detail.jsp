@@ -421,7 +421,7 @@
                         %>
                             <p>Ý kiến của bạn giúp cộng đồng du lịch có thêm những quyết định đúng đắn.</p>
                             
-                            <form class="add-review-form" id="new-review-form" action="${pageContext.request.contextPath}/detail" method="POST">
+                            <form class="add-review-form" id="new-review-form" action="${pageContext.request.contextPath}/detail" method="POST" enctype="multipart/form-data">
                                 <!-- Lưu ID của Tour để Controller biết cần gán review này cho tour nào -->
                                 <input type="hidden" name="tourId" value="<%= activeTour != null ? activeTour.getTourId() : 1 %>">
                                 <!-- Lưu số sao đánh giá (sẽ được cập nhật bằng JS khi người dùng click vào các ngôi sao bên dưới) -->
@@ -458,8 +458,9 @@
                                     <label>Tải lên hình ảnh chuyến đi</label>
                                     <div class="upload-simulator-btn" id="upload-sim-btn">
                                         <i data-lucide="camera"></i>
-                                        <span>Tải ảnh lên (Mô phỏng)</span>
+                                        <span>Chọn hình ảnh từ thiết bị của bạn</span>
                                     </div>
+                                    <input type="file" id="review-image-input" name="reviewImage" accept="image/*" style="display: none;">
                                     <div class="uploaded-images-preview" id="uploaded-images-preview-row"></div>
                                 </div>
 

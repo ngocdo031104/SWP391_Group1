@@ -466,25 +466,33 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Simulator Upload image
+    // Real Upload image handling
     const uploadSimBtn = document.getElementById('upload-sim-btn');
+    const reviewImageInput = document.getElementById('review-image-input');
     const uploadPreviewRow = document.getElementById('uploaded-images-preview-row');
-    let simulatedUploadedImgUrl = '';
 
-    if (uploadSimBtn) {
+    if (uploadSimBtn && reviewImageInput) {
         uploadSimBtn.addEventListener('click', () => {
-            // Simulated upload of a beautiful landscape image
-            simulatedUploadedImgUrl = "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=400&q=80";
-            if (uploadPreviewRow) {
-                uploadPreviewRow.innerHTML = `
-                    <div class="preview-img-wrapper">
-                        <img src="${simulatedUploadedImgUrl}" alt="\u1ea2nh xem tr\u01b0\u1edbc">
-                        <span class="remove-preview-btn" id="remove-preview-img-btn">&times;</span>
-                    </div>
-                `;
-                document.getElementById('remove-preview-img-btn').addEventListener('click', () => {
-                    uploadPreviewRow.innerHTML = '';
-                    simulatedUploadedImgUrl = '';
-                });
+            reviewImageInput.click();
+        });
+
+        reviewImageInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file && uploadPreviewRow) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    uploadPreviewRow.innerHTML = `
+                        <div class="preview-img-wrapper" style="position: relative; display: inline-block;">
+                            <img src="${event.target.result}" alt="\u1ea2nh xem tr\u01b0\u1edbc" style="max-width: 150px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                            <span class="remove-preview-btn" id="remove-preview-img-btn" style="position: absolute; top: -6px; right: -6px; background: #ef4444; color: #ffffff; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px; font-weight: bold; border: 1px solid #ffffff;">&times;</span>
+                        </div>
+                    `;
+                    document.getElementById('remove-preview-img-btn').addEventListener('click', () => {
+                        uploadPreviewRow.innerHTML = '';
+                        reviewImageInput.value = ''; // Clear file input
+                    });
+                };
+                reader.readAsDataURL(file);
             }
         });
     }

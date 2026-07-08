@@ -8,9 +8,12 @@ import java.io.IOException;
 import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
+import java.io.File;
 
 /**
  * DetailController là Servlet xử lý các yêu cầu liên quan đến Trang chi tiết Tour.
@@ -19,6 +22,11 @@ import jakarta.servlet.http.HttpServletResponse;
  * - doPost: Tiếp nhận dữ liệu khi người dùng gửi đánh giá mới từ form, lưu trữ vào DB và tải lại trang chi tiết.
  */
 @WebServlet(name = "DetailController", urlPatterns = {"/detail"})
+@MultipartConfig(
+    fileSizeThreshold = 1024 * 1024 * 2, // 2 MB
+    maxFileSize = 1024 * 1024 * 10,      // 10 MB limit for single file
+    maxRequestSize = 1024 * 1024 * 50    // 50 MB limit for total request
+)
 public class DetailController extends HttpServlet {
 
     /**
@@ -114,20 +122,53 @@ public class DetailController extends HttpServlet {
             return;
         }
         
-        String name = sessionUser.getFullName(); // Use secure credentials from session
-        String email = sessionUser.getEmail();   // Use secure credentials from session
+        // Đọc giá trị gửi lên từ form
+        String formName = request.getParameter("name");
+        String formEmail = request.getParameter("email");
         String content = request.getParameter("content"); 
         String ratingStr = request.getParameter("rating"); 
         String tourIdStr = request.getParameter("tourId"); 
+        
+        // Sử dụng sessionUser làm nguồn xác thực, fallback về form nếu sessionUser thiếu
+        String name = (sessionUser.getFullName() != null && !sessionUser.getFullName().trim().isEmpty()) ? sessionUser.getFullName() : formName;
+        String email = (sessionUser.getEmail() != null && !sessionUser.getEmail().trim().isEmpty()) ? sessionUser.getEmail() : formEmail;
         
         int tourId = 1;
         int rating = 5;
         
         try {
             if (tourIdStr != null) tourId = Integer.parseInt(tourIdStr);
-            if (ratingStr != null) rating = Integer.parseInt(ratingStr);
+            if (ratingStr != null) {
+                rating = Integer.parseInt(ratingStr);
+                if (rating < 1 || rating > 5) {
+                    rating = 5;
+                }
+            }
         } catch (NumberFormatException e) {
             // Bỏ qua lỗi định dạng số nếu có
+        }
+        
+        // Xử lý upload ảnh thật từ file input có name="reviewImage"
+        String imageUrl = null;
+        try {
+            Part filePart = request.getPart("reviewImage");
+            if (filePart != null && filePart.getSize() > 0) {
+                String submittedName = filePart.getSubmittedFileName();
+                String ext = ".jpg";
+                if (submittedName != null && submittedName.contains(".")) {
+                    ext = submittedName.substring(submittedName.lastIndexOf("."));
+                }
+                String uniqueName = "review_" + tourId + "_" + System.currentTimeMillis() + ext;
+                String uploadDir = request.getServletContext().getRealPath("") + File.separator + "assets" + File.separator + "images";
+                File dir = new File(uploadDir);
+                if (!dir.exists()) {
+                    dir.mkdirs();
+                }
+                filePart.write(uploadDir + File.separator + uniqueName);
+                imageUrl = request.getContextPath() + "/assets/images/" + uniqueName;
+            }
+        } catch (Exception e) {
+            System.err.println("Error uploading review image: " + e.getMessage());
         }
         
         TourDAO tourDAO = null;
@@ -135,8 +176,8 @@ public class DetailController extends HttpServlet {
             tourDAO = new TourDAO();
             // Kiểm tra tính hợp lệ của dữ liệu trước khi chèn vào DB
             if (name != null && email != null && content != null) {
-                // Gọi hàm insertReview của DAO để thực hiện logic lưu đánh giá mới vào bảng Review trong cơ sở dữ liệu.
-                boolean success = tourDAO.insertReview(name.trim(), email.trim(), tourId, rating, content.trim());
+                // Gọi hàm insertReview của DAO (phương thức 6 tham số có kèm imageUrl)
+                boolean success = tourDAO.insertReview(name.trim(), email.trim(), tourId, rating, content.trim(), imageUrl);
                 if (success) {
                     session.setAttribute("reviewSuccess", "Cảm ơn bạn đã gửi đánh giá! Đang chờ ban quản trị kiểm duyệt.");
                 } else {
