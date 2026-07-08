@@ -386,4 +386,150 @@ public class GuideDAO extends DBContext {
         }
         return list;
     }
+
+    /**
+     * Hủy phân công hướng dẫn viên khỏi lịch trình (Transaction-based).
+     */
+    public boolean unassignGuide(int scheduleId, int guideId, int coordinatorId) {
+        String updateScheduleSql = "UPDATE TourSchedule SET GuideID = NULL WHERE ScheduleID = ? AND GuideID = ?";
+        String insertStatusSql = "INSERT INTO TourStatus (ScheduleID, Status, Notes, UpdatedBy, UpdatedAt) "
+                               + "VALUES (?, 'Scheduled', N'Hủy phân công Hướng dẫn viên', ?, SYSDATETIME())";
+        String deleteAssignmentSql = "DELETE FROM TourAssignment WHERE ScheduleID = ? AND GuideID = ?";
+
+        try {
+            connection.setAutoCommit(false);
+            try (PreparedStatement psUpdate = connection.prepareStatement(updateScheduleSql);
+                 PreparedStatement psStatus = connection.prepareStatement(insertStatusSql);
+                 PreparedStatement psDelete = connection.prepareStatement(deleteAssignmentSql)) {
+                
+                // 1. Update TourSchedule
+                psUpdate.setInt(1, scheduleId);
+                psUpdate.setInt(2, guideId);
+                psUpdate.executeUpdate();
+
+                // 2. Insert TourStatus log
+                psStatus.setInt(1, scheduleId);
+                psStatus.setInt(2, coordinatorId);
+                psStatus.executeUpdate();
+
+                // 3. Delete TourAssignment record
+                psDelete.setInt(1, scheduleId);
+                psDelete.setInt(2, guideId);
+                psDelete.executeUpdate();
+
+                connection.commit();
+                return true;
+            } catch (SQLException ex) {
+                connection.rollback();
+                LOGGER.log(Level.SEVERE, "Lỗi xảy ra khi hủy phân công HDV, đã thực hiện rollback", ex);
+            } finally {
+                connection.setAutoCommit(true);
+            }
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Lỗi kết nối cơ sở dữ liệu khi hủy phân công HDV", ex);
+        }
+        return false;
+    }
+
+    /**
+     * Lấy danh sách phân công lịch dẫn đoàn có phân trang và tìm kiếm.
+     */
+    public List<TourAssignment> getAssignmentsPaged(int page, int size, String search) {
+        List<TourAssignment> list = new ArrayList<>();
+        int offset = (page - 1) * size;
+        
+        String searchClause = "";
+        if (search != null && !search.trim().isEmpty()) {
+            searchClause = "WHERE t.TourName LIKE ? OR g.FullName LIKE ? ";
+        }
+        
+        String sql = "SELECT ta.AssignmentID, ta.ScheduleID, ta.GuideID, ta.AssignedBy, ta.AssignedAt, ta.Notes, "
+                   + "       g.FullName as GuideName, "
+                   + "       c.FullName as CoordinatorName, "
+                   + "       ts.DepartureDate, ts.ReturnDate, "
+                   + "       t.TourName "
+                   + "FROM TourAssignment ta "
+                   + "JOIN [User] g ON ta.GuideID = g.UserID "
+                   + "LEFT JOIN [User] c ON ta.AssignedBy = c.UserID "
+                   + "JOIN TourSchedule ts ON ta.ScheduleID = ts.ScheduleID "
+                   + "JOIN Tour t ON ts.TourID = t.TourID "
+                   + searchClause
+                   + "ORDER BY ta.AssignedAt DESC "
+                   + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            int paramIndex = 1;
+            if (search != null && !search.trim().isEmpty()) {
+                String searchPattern = "%" + search.trim() + "%";
+                ps.setString(paramIndex++, searchPattern);
+                ps.setString(paramIndex++, searchPattern);
+            }
+            ps.setInt(paramIndex++, offset);
+            ps.setInt(paramIndex++, size);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    TourAssignment ta = new TourAssignment();
+                    ta.setAssignmentId(rs.getInt("AssignmentID"));
+                    ta.setScheduleId(rs.getInt("ScheduleID"));
+                    ta.setGuideId(rs.getInt("GuideID"));
+                    ta.setAssignedBy(rs.getObject("AssignedBy") != null ? rs.getInt("AssignedBy") : null);
+                    ta.setAssignedAt(rs.getTimestamp("AssignedAt"));
+                    ta.setNotes(rs.getString("Notes"));
+                    ta.setAssignedByName(rs.getString("CoordinatorName"));
+
+                    User guide = new User();
+                    guide.setUserId(rs.getInt("GuideID"));
+                    guide.setFullName(rs.getString("GuideName"));
+                    ta.setGuide(guide);
+
+                    TourSchedule sched = new TourSchedule();
+                    sched.setScheduleId(rs.getInt("ScheduleID"));
+                    sched.setDepartureDate(rs.getDate("DepartureDate"));
+                    sched.setReturnDate(rs.getDate("ReturnDate"));
+
+                    Tour tour = new Tour();
+                    tour.setTourName(rs.getString("TourName"));
+                    sched.setTour(tour);
+
+                    ta.setSchedule(sched);
+                    list.add(ta);
+                }
+            }
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Lỗi khi lấy danh sách phân công phân trang", ex);
+        }
+        return list;
+    }
+
+    /**
+     * Đếm tổng số bản ghi phân công có tìm kiếm để phục vụ phân trang.
+     */
+    public int getAssignmentsCount(String search) {
+        String searchClause = "";
+        if (search != null && !search.trim().isEmpty()) {
+            searchClause = "WHERE t.TourName LIKE ? OR g.FullName LIKE ? ";
+        }
+        String sql = "SELECT COUNT(*) "
+                   + "FROM TourAssignment ta "
+                   + "JOIN [User] g ON ta.GuideID = g.UserID "
+                   + "JOIN TourSchedule ts ON ta.ScheduleID = ts.ScheduleID "
+                   + "JOIN Tour t ON ts.TourID = t.TourID "
+                   + searchClause;
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            if (search != null && !search.trim().isEmpty()) {
+                String searchPattern = "%" + search.trim() + "%";
+                ps.setString(1, searchPattern);
+                ps.setString(2, searchPattern);
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Lỗi khi đếm tổng số phân công", ex);
+        }
+        return 0;
+    }
 }

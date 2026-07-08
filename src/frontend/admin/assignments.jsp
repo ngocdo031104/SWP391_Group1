@@ -79,7 +79,85 @@
             font-style: italic;
             color: #475569;
         }
+
+        .btn-unassign-guide {
+            background: #fee2e2;
+            color: #ef4444;
+            border: 1px solid #fecaca;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.8rem;
+        }
+
+        .btn-unassign-guide:hover {
+            background: #ef4444;
+            color: #ffffff;
+            border-color: #ef4444;
+        }
+
+        /* Pagination Styles */
+        .pagination-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid #e2e8f0;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .pagination-info {
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+
+        .pagination-buttons {
+            display: flex;
+            gap: 6px;
+        }
+
+        .page-link {
+            padding: 8px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            color: #475569;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-decoration: none;
+            background: #ffffff;
+            transition: all 0.2s;
+        }
+
+        .page-link:hover {
+            border-color: #2563eb;
+            color: #2563eb;
+            background: #f8fafc;
+        }
+
+        .page-link.active {
+            background: #2563eb;
+            color: #ffffff;
+            border-color: #2563eb;
+        }
+
+        .page-link.disabled {
+            pointer-events: none;
+            color: #94a3b8;
+            background: #f1f5f9;
+            border-color: #e2e8f0;
+        }
     </style>
+    <script>
+        window.contextPath = '${pageContext.request.contextPath}';
+    </script>
 </head>
 <body class="dashboard-body">
 
@@ -103,10 +181,10 @@
         <div class="filter-section">
             <div class="search-container">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="search-input" class="search-input" placeholder="Tìm theo tên tour hoặc hướng dẫn viên...">
+                <input type="text" id="search-input" class="search-input" value="${search}" placeholder="Tìm theo tên tour hoặc hướng dẫn viên...">
             </div>
             <div style="color: #64748b; font-size: 0.85rem; font-weight: 500;">
-                Tổng số bản ghi: <span id="record-count" style="font-weight: 700; color: #1e293b;">0</span>
+                Tổng số bản ghi: <span style="font-weight: 700; color: #1e293b;">${totalCount}</span>
             </div>
         </div>
 
@@ -118,11 +196,12 @@
                         <tr style="border-bottom: 2px solid #e2e8f0; background: #f8fafc; text-align: left;">
                             <th style="padding: 12px; width: 80px;">ID</th>
                             <th style="padding: 12px;">Tên Tour</th>
-                            <th style="padding: 12px; width: 140px;">Ngày Khởi Hành</th>
+                            <th style="padding: 12px; width: 130px;">Ngày Khởi Hành</th>
                             <th style="padding: 12px;">Hướng Dẫn Viên</th>
                             <th style="padding: 12px;">Người Phân Công</th>
                             <th style="padding: 12px;">Chỉ dẫn / Ghi chú</th>
-                            <th style="padding: 12px; width: 160px;">Thời Gian Phân Công</th>
+                            <th style="padding: 12px; width: 150px;">Thời Gian Phân Công</th>
+                            <th style="padding: 12px; width: 140px; text-align: center;">Hành động</th>
                         </tr>
                     </thead>
                     <tbody id="assignments-tbody">
@@ -133,7 +212,7 @@
                                         data-tour="${a.schedule.tour.tourName}" 
                                         data-guide="${a.guide.fullName}">
                                         <td style="padding: 12px; font-weight: 600;">#${a.assignmentId}</td>
-                                        <td style="padding: 12px; font-weight: 500; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${a.schedule.tour.tourName}">
+                                        <td style="padding: 12px; font-weight: 500; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${a.schedule.tour.tourName}">
                                             ${a.schedule.tour.tourName}
                                         </td>
                                         <td style="padding: 12px; color: #334155;">
@@ -153,12 +232,21 @@
                                         <td style="padding: 12px; color: #64748b; font-size: 0.85rem;">
                                             <fmt:formatDate value="${a.assignedAt}" pattern="dd/MM/yyyy HH:mm" />
                                         </td>
+                                        <td style="padding: 12px; text-align: center;">
+                                            <button class="btn-unassign-guide" 
+                                                    data-schedule-id="${a.scheduleId}" 
+                                                    data-guide-id="${a.guideId}"
+                                                    data-tour-name="${a.schedule.tour.tourName}"
+                                                    data-guide-name="${a.guide.fullName}">
+                                                <i class="fa-solid fa-user-xmark"></i> Hủy phân công
+                                            </button>
+                                        </td>
                                     </tr>
                                 </c:forEach>
                             </c:when>
                             <c:otherwise>
                                 <tr>
-                                    <td colspan="7" style="text-align: center; padding: 40px; color: #94a3b8;">
+                                    <td colspan="8" style="text-align: center; padding: 40px; color: #94a3b8;">
                                         <i class="fa-solid fa-clipboard-list" style="font-size: 2rem; margin-bottom: 8px; display: block;"></i>
                                         Chưa có lịch sử phân công hướng dẫn viên nào.
                                     </td>
@@ -168,53 +256,41 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- Server-side Pagination Control -->
+            <c:if test="${totalPages > 1}">
+                <div class="pagination-container">
+                    <div class="pagination-info">
+                        Hiển thị trang <span style="font-weight: 600; color: #1e293b;">${currentPage}</span> trên tổng số <span style="font-weight: 600; color: #1e293b;">${totalPages}</span> trang
+                    </div>
+                    <div class="pagination-buttons">
+                        <!-- Nút trang trước -->
+                        <a href="?page=${currentPage - 1}&size=${pageSize}&search=${search}" 
+                           class="page-link ${currentPage == 1 ? 'disabled' : ''}">
+                            <i class="fa-solid fa-angle-left"></i> Trước
+                        </a>
+                        
+                        <!-- Danh sách các trang -->
+                        <c:forEach var="p" begin="1" end="${totalPages}">
+                            <a href="?page=${p}&size=${pageSize}&search=${search}" 
+                               class="page-link ${p == currentPage ? 'active' : ''}">
+                                ${p}
+                            </a>
+                        </c:forEach>
+                        
+                        <!-- Nút trang sau -->
+                        <a href="?page=${currentPage + 1}&size=${pageSize}&search=${search}" 
+                           class="page-link ${currentPage == totalPages ? 'disabled' : ''}">
+                            Sau <i class="fa-solid fa-angle-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </c:if>
         </div>
     </main>
 </div>
 
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        // Initialize Lucide Icons
-        if (window.lucide) {
-            window.lucide.createIcons();
-        }
-        
-        const searchInput = document.getElementById("search-input");
-        const recordCount = document.getElementById("record-count");
-        const rows = document.querySelectorAll("#assignments-tbody tr");
-        
-        function updateCount() {
-            let visibleCount = 0;
-            rows.forEach(row => {
-                // Skip placeholder row if no assignments
-                if (row.cells.length === 1) return;
-                if (row.style.display !== "none") {
-                    visibleCount++;
-                }
-            });
-            recordCount.innerText = visibleCount;
-        }
-
-        if (searchInput) {
-            searchInput.addEventListener("input", function() {
-                const query = this.value.toLowerCase().trim();
-                rows.forEach(row => {
-                    if (row.cells.length === 1) return; // Skip no data row
-                    const tourName = row.getAttribute("data-tour") ? row.getAttribute("data-tour").toLowerCase() : "";
-                    const guideName = row.getAttribute("data-guide") ? row.getAttribute("data-guide").toLowerCase() : "";
-                    
-                    if (tourName.includes(query) || guideName.includes(query)) {
-                        row.style.display = "";
-                    } else {
-                        row.style.display = "none";
-                    }
-                });
-                updateCount();
-            });
-        }
-        
-        updateCount();
-    });
-</script>
+<!-- Nhúng Javascript chuyên biệt xử lý AJAX & Tìm kiếm ở server -->
+<script src="${pageContext.request.contextPath}/js/admin-assignment.js?v=1.3"></script>
 </body>
 </html>
