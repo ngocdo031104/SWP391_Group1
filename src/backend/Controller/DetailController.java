@@ -136,7 +136,12 @@ public class DetailController extends HttpServlet {
             // Kiểm tra tính hợp lệ của dữ liệu trước khi chèn vào DB
             if (name != null && email != null && content != null) {
                 // Gọi hàm insertReview của DAO để thực hiện logic lưu đánh giá mới vào bảng Review trong cơ sở dữ liệu.
-                tourDAO.insertReview(name.trim(), email.trim(), tourId, rating, content.trim());
+                boolean success = tourDAO.insertReview(name.trim(), email.trim(), tourId, rating, content.trim());
+                if (success) {
+                    session.setAttribute("reviewSuccess", "Cảm ơn bạn đã gửi đánh giá! Đang chờ ban quản trị kiểm duyệt.");
+                } else {
+                    session.setAttribute("reviewError", "Gửi đánh giá thất bại. Bạn chỉ được gửi đánh giá sau khi đã tham gia và hoàn thành chuyến đi này!");
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

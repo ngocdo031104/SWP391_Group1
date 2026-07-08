@@ -395,6 +395,26 @@
                     <div class="add-review-card">
                         <h4>Chia Sẻ Trải Nghiệm Của Bạn</h4>
                         <% 
+                            String reviewError = (String) session.getAttribute("reviewError");
+                            String reviewSuccess = (String) session.getAttribute("reviewSuccess");
+                            if (reviewError != null) {
+                                session.removeAttribute("reviewError");
+                        %>
+                            <div style="background: #fee2e2; border: 1px solid #fecaca; color: #ef4444; padding: 12px; border-radius: 8px; margin-bottom: 16px; font-weight: 500; font-family: 'Inter', sans-serif;">
+                                <i class="fa-solid fa-triangle-exclamation"></i> <%= reviewError %>
+                            </div>
+                        <% 
+                            }
+                            if (reviewSuccess != null) {
+                                session.removeAttribute("reviewSuccess");
+                        %>
+                            <div style="background: #d1fae5; border: 1px solid #a7f3d0; color: #065f46; padding: 12px; border-radius: 8px; margin-bottom: 16px; font-weight: 500; font-family: 'Inter', sans-serif;">
+                                <i class="fa-solid fa-circle-check"></i> <%= reviewSuccess %>
+                            </div>
+                        <% 
+                            }
+                        %>
+                        <% 
                             isLoggedIn = (session.getAttribute("sessionUser") != null);
                             User currentUser = isLoggedIn ? (User) session.getAttribute("sessionUser") : null;
                             if (isLoggedIn && currentUser != null) {
