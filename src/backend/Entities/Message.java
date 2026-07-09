@@ -10,6 +10,7 @@ public class Message {
     private String messageType; // "Text", "Image", "File", "System"
     private Timestamp createdAt;
     private boolean isDeleted;
+    private boolean isRead;
 
     // Additional fields for displaying in UI
     private String senderName;
@@ -41,6 +42,8 @@ public class Message {
     public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
     public boolean isIsDeleted() { return isDeleted; }
     public void setIsDeleted(boolean isDeleted) { this.isDeleted = isDeleted; }
+    public boolean isIsRead() { return isRead; }
+    public void setIsRead(boolean isRead) { this.isRead = isRead; }
 
     public String getSenderName() { return senderName; }
     public void setSenderName(String senderName) { this.senderName = senderName; }

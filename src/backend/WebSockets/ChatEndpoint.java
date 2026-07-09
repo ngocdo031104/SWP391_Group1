@@ -47,6 +47,7 @@ public class ChatEndpoint {
             int conversationId = jsonMsg.has("conversationId") ? jsonMsg.get("conversationId").getAsInt() : -1;
             String content = jsonMsg.get("content").getAsString();
             int recipientId = jsonMsg.has("recipientId") ? jsonMsg.get("recipientId").getAsInt() : -1;
+            String messageType = jsonMsg.has("messageType") ? jsonMsg.get("messageType").getAsString() : "Text";
 
             if (content == null || content.trim().isEmpty()) {
                 return;
@@ -73,7 +74,7 @@ public class ChatEndpoint {
                 msg.setConversationId(conversationId);
                 msg.setSenderId(senderId);
                 msg.setContent(content);
-                msg.setMessageType("Text");
+                msg.setMessageType(messageType);
                 
                 Message savedMsg = chatDAO.saveMessage(msg);
 

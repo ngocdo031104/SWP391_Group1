@@ -1,4 +1,5 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
+
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 
 <c:set var="isAccountant" value="${sessionScope.sessionUser.roleId eq 5 || sessionScope.userRole eq 'Accountant'}" />

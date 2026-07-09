@@ -14,6 +14,9 @@ import java.io.IOException;
 public class PermissionController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
         HttpSession session = request.getSession(false);
         User sessionUser = (session != null) ? (User) session.getAttribute("sessionUser") : null;
         int adminId = (sessionUser != null) ? sessionUser.getUserId() : 1;

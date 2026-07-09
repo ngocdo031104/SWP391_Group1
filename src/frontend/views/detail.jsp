@@ -1,4 +1,5 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
+
 <%@ page import="java.util.List" %>
 <%@ page import="Entities.Tour" %>
 <%@ page import="Entities.TourCategory" %>
@@ -10,7 +11,7 @@
 <%@ page import="Entities.Review" %>
 <%@ page import="Entities.User" %>
 <%
-    // LÝ DO VÀ CHỨC NĂNG CỦA ĐOẠN CODE NÀY:
+    // LÝ DO VÀ CHỨC NàNG CỦA ĐOẠN CODE NÀY:
     // - extraCss: Thuộc tính này được header.jsp đọc để nhúng file CSS detail.css tương ứng (tạo giao diện riêng cho trang chi tiết).
     // - activeTour: Đối tượng Tour chính được Servlet DetailController.java nạp từ DB (bằng tourDAO.getTourById(id))
     //   và đẩy vào request attribute để JSP này hiển thị thông tin động.
@@ -216,7 +217,7 @@
                 </div>
 
                 <!-- Included / Excluded Services Card -->
-                <!-- LÝ DO VÀ CHỨC NĂNG CỦA ĐOẠN NÀY:
+                <!-- LÝ DO VÀ CHỨC NàNG CỦA ĐOẠN NÀY:
                      - Giúp người dùng biết tour bao gồm những tiện ích gì (INCLUDED) và những gì họ phải tự trả chi phí (EXCLUDED).
                      - Tải động từ bảng TourInclusion thông qua tour.getInclusions().
                      - Phân tách làm hai cột trái và phải. Nếu DB chưa có dữ liệu, sẽ hiển thị danh sách tĩnh mặc định để giữ UI đẹp. -->
@@ -376,7 +377,7 @@
                         %>
                     </div>
 
-                    <!-- BIỂU MẪU ĐĂNG KÝ BÌNH LUẬN / ĐÁNH GIÁ (ADD REVIEW FORM)
+                    <!-- BIỂU MẪU ĐàNG KÝ BÌNH LUẬN / ĐÁNH GIÁ (ADD REVIEW FORM)
                          Lý do tại sao lại phải làm như vậy:
                          - Cho phép khách hàng chia sẻ cảm nhận, bình chọn số sao thực tế từ 1-5.
                          - Form post dữ liệu trực tiếp lên DetailController (/detail) thông qua phương thức POST.
@@ -736,7 +737,7 @@
 <script>
     window.itinerariesData = {};
 
-    // LÝ DO VÀ CHỨC NĂNG CỦA ĐOẠN DƯỚI ĐÂY:
+    // LÝ DO VÀ CHỨC NàNG CỦA ĐOẠN DƯỚI ĐÂY:
     // - Dữ liệu lịch trình (TourItinerary) cần được chuyển sang môi trường Client (JavaScript)
     //   để detail.js vẽ trục thời gian (Timeline) động.
     // - Đoạn code Java ở dưới sẽ kiểm tra xem Tour này đã có Lịch trình chi tiết trong DB chưa:
@@ -829,7 +830,7 @@
 </script>
 
 <%
-    // CHỨC NĂNG CỦA ĐOẠN NÀY:
+    // CHỨC NàNG CỦA ĐOẠN NÀY:
     // - extraScript: header/footer dùng chung sẽ đọc thuộc tính này để tự động nhúng file JavaScript detail.js
     //   ở phía cuối trang, đảm bảo trang HTML được load xong hết mới chạy script xử lý giao diện.
 %>

@@ -489,7 +489,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // LÝ DO VÀ CHỨC NĂNG CỦA ĐOẠN SUBMIT FORM ĐÁNH GIÁ (SUBMIT REVIEW FORM):
+    // LÝ DO VÀ CHỨC NàNG CỦA ĐOẠN SUBMIT FORM ĐÁNH GIÁ (SUBMIT REVIEW FORM):
     // - Khi người dùng bấm nút gửi đánh giá, trình duyệt sẽ kích hoạt sự kiện submit này.
     // - Ta cần đọc biến `selectedRatingVal` (chứa số sao người dùng vừa chọn bằng cách click vào các ngôi sao trên giao diện).
     // - Gán giá trị sao này vào thẻ input ẩn `#review-rating-input` để nó được gửi đi cùng dữ liệu form POST.

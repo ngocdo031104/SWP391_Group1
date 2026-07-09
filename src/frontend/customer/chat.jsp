@@ -1,4 +1,5 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
+
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
 <%@ taglib uri="jakarta.tags.functions" prefix="fn" %>
@@ -10,13 +11,14 @@
     }
     .chat-container {
         display: flex;
-        height: calc(100vh - 80px); /* Adjust based on header height */
+        height: calc(100vh - 120px); /* Adjust based on header height */
         max-width: 1200px;
-        margin: 20px auto;
+        margin: 100px auto 20px auto; /* 100px top margin to clear the fixed header */
         background: #ffffff;
         border-radius: 16px;
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
         overflow: hidden;
+        position: relative; /* For modal positioning */
     }
 
     /* Sidebar (Conversation List) */
@@ -309,6 +311,42 @@
     ::-webkit-scrollbar-thumb:hover {
         background: #9ca3af;
     }
+
+    /* Modal Styles */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-content {
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        width: 100%;
+        max-width: 450px;
+        box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+    }
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .modal-header h3 { margin: 0; font-size: 1.25rem; color: #111827; }
+    .modal-close {
+        background: none; border: none; cursor: pointer; color: #6b7280;
+    }
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; margin-bottom: 5px; color: #374151; font-weight: 500; font-size: 0.9rem;}
+    .form-group input { width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; }
+    .btn-primary { background: #3b82f6; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; width: 100%; }
+    .btn-primary:hover { background: #2563eb; }
+    .header-actions { display: flex; gap: 10px; margin-left: auto; }
 </style>
 
 <div class="chat-container">
@@ -316,8 +354,8 @@
     <div class="chat-sidebar">
         <div class="chat-sidebar-header">
             <h2>Tin nhắn</h2>
-            <button class="btn-icon" title="Tin nhắn mới">
-                <i data-lucide="edit"></i>
+            <button class="btn-icon" title="Tạo nhóm mới" onclick="openCreateGroupModal()">
+                <i data-lucide="users"></i>
             </button>
         </div>
         <div class="search-box" style="position: relative;">
@@ -371,6 +409,14 @@
                     <h3 id="chatHeaderName">Tên Người Nhận</h3>
                     <p>Đang hoạt động</p>
                 </div>
+                <div class="header-actions">
+                    <button class="btn-icon" title="Upcoming Calls" onclick="showUpcomingCalls()">
+                        <i data-lucide="calendar"></i>
+                    </button>
+                    <button class="btn-icon" title="Schedule Video Call" onclick="openScheduleModal()">
+                        <i data-lucide="video"></i>
+                    </button>
+                </div>
             </div>
 
             <div class="chat-history" id="chatHistory">
@@ -378,7 +424,8 @@
             </div>
 
             <div class="chat-input-area">
-                <button class="btn-icon"><i data-lucide="paperclip"></i></button>
+                <input type="file" id="chatFileInput" accept="image/*" style="display: none;">
+                <button class="btn-icon" onclick="document.getElementById('chatFileInput').click()"><i data-lucide="paperclip"></i></button>
                 <div class="chat-input-box">
                     <input type="text" id="messageInput" placeholder="Nhập tin nhắn của bạn..." autocomplete="off">
                     <button class="btn-icon"><i data-lucide="smile"></i></button>
@@ -389,12 +436,93 @@
     </div>
 </div>
 
+<!-- Create Group Modal -->
+<div class="modal-overlay" id="createGroupModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Tạo Nhóm Chat</h3>
+            <button class="btn-icon" onclick="closeCreateGroupModal()"><i data-lucide="x"></i></button>
+        </div>
+        <form action="${pageContext.request.contextPath}/customer/chat" method="post" id="createGroupForm">
+            <input type="hidden" name="action" value="createGroup">
+            <div class="modal-body" style="max-height: 400px; overflow-y: auto;">
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 500;">Tên nhóm:</label>
+                    <input type="text" name="groupName" id="groupName" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;" placeholder="Nhập tên nhóm" required>
+                </div>
+                
+                <label style="display: block; margin-bottom: 8px; font-weight: 500;">Chọn bạn bè để thêm:</label>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <c:forEach var="buddy" items="${buddies}">
+                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 10px; border: 1px solid #f3f4f6; border-radius: 8px; background: #fafafa;">
+                            <input type="checkbox" name="participants" value="${buddy.userId}">
+                            <img src="${not empty buddy.profile.avatarUrl ? buddy.profile.avatarUrl : 'https://ui-avatars.com/api/?name=User&background=random'}" 
+                                 style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                            <span style="font-weight: 500; color: #374151;">${buddy.fullName}</span>
+                        </label>
+                    </c:forEach>
+                    <c:if test="${empty buddies}">
+                        <div style="color: #6b7280; font-size: 14px;">Bạn chưa có bạn bè nào để tạo nhóm.</div>
+                    </c:if>
+                </div>
+            </div>
+            <div class="modal-footer" style="padding: 20px; border-top: 1px solid #f3f4f6; display: flex; justify-content: flex-end; gap: 10px;">
+                <button type="button" class="btn-cancel" onclick="closeCreateGroupModal()" style="padding: 10px 20px; border: none; border-radius: 8px; background: #f3f4f6; color: #374151; cursor: pointer;">Hủy</button>
+                <button type="button" class="btn-primary" onclick="submitCreateGroup()" style="padding: 10px 20px; border: none; border-radius: 8px; background: #2563eb; color: white; cursor: pointer; font-weight: 500;">Tạo nhóm</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Schedule Call Modal -->
+<div class="modal-overlay" id="scheduleModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="scheduleModalTitle">Lên lịch gọi Video</h3>
+            <button class="modal-close" onclick="closeScheduleModal()"><i data-lucide="x"></i></button>
+        </div>
+        <form id="scheduleForm" onsubmit="handleScheduleSubmit(event)">
+            <input type="hidden" id="callId" value="">
+            <div class="form-group">
+                <label>Chủ đề cuộc gọi</label>
+                <input type="text" id="callTitle" required placeholder="Ví dụ: Bàn kế hoạch đi Đà Lạt">
+            </div>
+            <div class="form-group">
+                <label>Thời gian</label>
+                <input type="datetime-local" id="callTime" required>
+            </div>
+            <div class="form-group">
+                <label>Thời lượng (phút)</label>
+                <input type="number" id="callDuration" value="30" min="5" required>
+            </div>
+            <div class="form-group">
+                <label>Link cuộc họp (Google Meet/Zoom)</label>
+                <input type="url" id="callUrl" required placeholder="https://meet.google.com/xxx-yyy-zzz">
+            </div>
+            <button type="submit" class="btn-primary" id="scheduleSubmitBtn">Tạo lịch gọi</button>
+        </form>
+    </div>
+</div>
+
+<!-- Upcoming Calls Modal -->
+<div class="modal-overlay" id="upcomingCallsModal">
+    <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-header">
+            <h3>Lịch gọi Video sắp tới</h3>
+            <button class="modal-close" onclick="closeUpcomingCallsModal()"><i data-lucide="x"></i></button>
+        </div>
+        <div id="upcomingCallsList" style="max-height: 400px; overflow-y: auto;">
+            <!-- Rendered by JS -->
+        </div>
+    </div>
+</div>
+
 <script>
     // Embedded initial configuration for chat-client.js
     const currentUserId = ${sessionScope.sessionUser.userId};
     const autoLoadConvId = ${not empty param.convId ? param.convId : 'null'};
 </script>
-<script src="${pageContext.request.contextPath}/js/chat-client.js"></script>
+<script src="${pageContext.request.contextPath}/js/chat-client.js?v=<%= System.currentTimeMillis() %>" charset="UTF-8"></script>
 
 <script>
     lucide.createIcons();
