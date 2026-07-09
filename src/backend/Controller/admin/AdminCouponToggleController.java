@@ -22,6 +22,9 @@ public class AdminCouponToggleController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
         HttpSession session = request.getSession();
         User sessionUser = (User) session.getAttribute("sessionUser");
         String userRole = (String) session.getAttribute("userRole");
