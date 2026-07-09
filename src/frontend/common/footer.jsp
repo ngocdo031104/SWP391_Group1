@@ -104,7 +104,7 @@
         String extraScript = (String) request.getAttribute("extraScript");
         if (extraScript != null && !extraScript.trim().isEmpty()) {
     %>
-    <script src="${pageContext.request.contextPath}/<%= extraScript %>?v=2.1"></script>
+    <script src="${pageContext.request.contextPath}/<%= extraScript %>?v=2.2" charset="UTF-8"></script>
     <% 
         }
     %>
