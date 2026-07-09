@@ -114,11 +114,10 @@ public class TourDAO extends DBContext {
         // Khởi tạo câu SQL gốc. Lấy các tour có status là Active.
         // Đồng thời dùng truy vấn con (Subquery) để tính AvgRating (số sao trung bình) và ReviewCount của từng tour.
         StringBuilder sql = new StringBuilder(
-            "SELECT DISTINCT t.TourID, t.CategoryID, t.TourName, t.Description, t.Destination, t.DurationDays, t.Itinerary, t.DifficultyLevel, t.BasePrice, t.MaxParticipants, t.Status, t.IsFeatured, t.IsDeleted, t.Languages, t.GroupSizeMin, t.GroupSizeMax, t.DepartureCity, t.Latitude, t.Longitude, t.VideoURL, t.CreatedBy, t.CreatedAt, t.UpdatedAt, " +
+            "SELECT t.TourID, t.CategoryID, t.TourName, t.Description, t.Destination, t.DurationDays, t.Itinerary, t.DifficultyLevel, t.BasePrice, t.MaxParticipants, t.Status, t.IsFeatured, t.IsDeleted, t.Languages, t.GroupSizeMin, t.GroupSizeMax, t.DepartureCity, t.Latitude, t.Longitude, t.VideoURL, t.CreatedBy, t.CreatedAt, t.UpdatedAt, " +
             "ISNULL((SELECT AVG(CAST(Rating AS FLOAT)) FROM Review r WHERE r.TourID = t.TourID), 0.0) as AvgRating, " +
             "(SELECT COUNT(*) FROM Review r WHERE r.TourID = t.TourID) as ReviewCount " +
             "FROM Tour t " +
-            "LEFT JOIN TourSchedule s ON t.TourID = s.TourID " +
             "WHERE t.Status = 'Active' AND t.IsDeleted = 0"
         );
         
@@ -145,7 +144,7 @@ public class TourDAO extends DBContext {
         
         // Nếu lọc theo ngày khởi hành, kiểm tra ngày đi của lịch trình (DepartureDate) phải lớn hơn hoặc bằng ngày tìm kiếm
         if (departureDate != null && !departureDate.trim().isEmpty()) {
-            sql.append(" AND s.DepartureDate >= ? AND s.Status = 'Open'");
+            sql.append(" AND EXISTS (SELECT 1 FROM TourSchedule s WHERE s.TourID = t.TourID AND s.DepartureDate >= ? AND s.Status = 'Open')");
             params.add(java.sql.Date.valueOf(departureDate));
         }
 
@@ -1123,7 +1122,7 @@ public class TourDAO extends DBContext {
         
         String sql = "SELECT MONTH(CreatedAt) as MonthVal, YEAR(CreatedAt) as YearVal, SUM(TotalAmount) as Total "
                    + "FROM Booking "
-                   + "WHERE Status IN ('Confirmed', 'Completed') AND CreatedAt >= DATEADD(month, -5, GETDATE()) "
+                   + "WHERE Status = 'Success' AND CreatedAt >= DATEADD(month, -5, GETDATE()) "
                    + "GROUP BY YEAR(CreatedAt), MONTH(CreatedAt)";
                    
         try (PreparedStatement ps = connection.prepareStatement(sql);

@@ -54,26 +54,26 @@ document.addEventListener('DOMContentLoaded', () => {
         row.innerHTML = `
             <div class="select-wrapper">
                 <select name="incType" required>
-                    <option value="INCLUDED" ${type === 'INCLUDED' ? 'selected' : ''}>Bao gồm</option>
-                    <option value="EXCLUDED" ${type === 'EXCLUDED' ? 'selected' : ''}>Không bao gồm</option>
+                    <option value="INCLUDED" ${type === 'INCLUDED' ? 'selected' : ''}>Bao g\u1ed3m</option>
+                    <option value="EXCLUDED" ${type === 'EXCLUDED' ? 'selected' : ''}>Kh\u00f4ng bao g\u1ed3m</option>
                 </select>
             </div>
             <div class="select-wrapper">
                 <select name="incIcon" required>
-                    <option value="sparkles" ${icon === 'sparkles' ? 'selected' : ''}>Lấp lánh</option>
-                    <option value="car" ${icon === 'car' ? 'selected' : ''}>Xe cộ (car)</option>
-                    <option value="hotel" ${icon === 'hotel' ? 'selected' : ''}>Khách sạn (hotel)</option>
-                    <option value="utensils" ${icon === 'utensils' ? 'selected' : ''}>Ăn uống (utensils)</option>
-                    <option value="ticket" ${icon === 'ticket' ? 'selected' : ''}>Vé tham quan (ticket)</option>
-                    <option value="shield" ${icon === 'shield' ? 'selected' : ''}>Bảo hiểm (shield)</option>
-                    <option value="plane" ${icon === 'plane' ? 'selected' : ''}>Máy bay (plane)</option>
-                    <option value="glass-water" ${icon === 'glass-water' ? 'selected' : ''}>Nước uống (glass-water)</option>
-                    <option value="badge-dollar-sign" ${icon === 'badge-dollar-sign' ? 'selected' : ''}>Tiền tip</option>
-                    <option value="landmark" ${icon === 'landmark' ? 'selected' : ''}>Thuế VAT</option>
+                    <option value="sparkles" ${icon === 'sparkles' ? 'selected' : ''}>L\u1ea5p l\u00e1nh</option>
+                    <option value="car" ${icon === 'car' ? 'selected' : ''}>Xe c\u1ed9 (car)</option>
+                    <option value="hotel" ${icon === 'hotel' ? 'selected' : ''}>Kh\u00e1ch s\u1ea1n (hotel)</option>
+                    <option value="utensils" ${icon === 'utensils' ? 'selected' : ''}>\u0102n u\u1ed1ng (utensils)</option>
+                    <option value="ticket" ${icon === 'ticket' ? 'selected' : ''}>V\u00e9 tham quan (ticket)</option>
+                    <option value="shield" ${icon === 'shield' ? 'selected' : ''}>B\u1ea3o hi\u1ec3m (shield)</option>
+                    <option value="plane" ${icon === 'plane' ? 'selected' : ''}>M\u00e1y bay (plane)</option>
+                    <option value="glass-water" ${icon === 'glass-water' ? 'selected' : ''}>N\u01b0\u1edbc u\u1ed1ng (glass-water)</option>
+                    <option value="badge-dollar-sign" ${icon === 'badge-dollar-sign' ? 'selected' : ''}>Ti\u1ec1n tip</option>
+                    <option value="landmark" ${icon === 'landmark' ? 'selected' : ''}>Thu\u1ebf VAT</option>
                 </select>
             </div>
-            <input type="text" name="incService" required placeholder="Tên dịch vụ..." value="${escapeHtml(name)}" style="width: 100%; padding: 0.7rem 0.9rem; border: 1px solid rgba(95, 59, 246, 0.25); border-radius: var(--radius-md); background: rgba(0, 0, 0, 0.2); color: var(--text-light);">
-            <button type="button" class="btn btn-danger btn-icon-only btn-sm btn-remove-inc-row" style="background: none; border: none; color: var(--error-red); cursor: pointer;" title="Xóa dòng">
+            <input type="text" name="incService" required placeholder="T\u00ean d\u1ecbch v\u1ee5..." value="${escapeHtml(name)}" style="width: 100%; padding: 0.7rem 0.9rem; border: 1px solid rgba(95, 59, 246, 0.25); border-radius: var(--radius-md); background: rgba(0, 0, 0, 0.2); color: var(--text-light);">
+            <button type="button" class="btn btn-danger btn-icon-only btn-sm btn-remove-inc-row" style="background: none; border: none; color: var(--error-red); cursor: pointer;" title="X\u00f3a d\u00f2ng">
                 <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
             </button>
         `;
@@ -97,12 +97,12 @@ document.addEventListener('DOMContentLoaded', () => {
                   .replace(/'/g, "&#039;");
     }
 
-    /* ── Fetch Tours from DB ── */
+    /* \u2500\u2500 Fetch Tours from DB \u2500\u2500 */
     function fetchTours() {
         // Relative to admin/tours or admin/dashboard
         fetch('tours?ajax=true')
             .then(res => {
-                if (!res.ok) throw new Error('Không thể kết nối đến máy chủ');
+                if (!res.ok) throw new Error('Kh\u00f4ng th\u1ec3 k\u1ebft n\u1ed1i \u0111\u1ebfn m\u00e1y ch\u1ee7');
                 return res.json();
             })
             .then(data => {
@@ -112,11 +112,11 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .catch(err => {
                 console.error(err);
-                showToast(err.message || 'Lỗi tải danh sách tour du lịch', 'error');
+                showToast(err.message || 'L\u1ed7i t\u1ea3i danh s\u00e1ch tour du l\u1ecbch', 'error');
             });
     }
 
-    /* ── Update KPI Stats ── */
+    /* \u2500\u2500 Update KPI Stats \u2500\u2500 */
     function updateStats() {
         const total = allTours.length;
         const active = allTours.filter(t => t.status === 'Active').length;
@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (totalFooter) {
             totalFooter.innerHTML = `
                 <span class="stat-trend up"><i data-lucide="trending-up"></i> +${newToursInMonth} tour</span>
-                <span>mới thêm trong tháng</span>
+                <span>m\u1edbi th\u00eam trong th\u00e1ng</span>
             `;
         }
 
@@ -144,23 +144,23 @@ document.addEventListener('DOMContentLoaded', () => {
         if (activeFooter) {
             activeFooter.innerHTML = `
                 <span class="stat-trend up"><i data-lucide="trending-up"></i> ${active} tour</span>
-                <span>đang hoạt động</span>
+                <span>\u0111ang ho\u1ea1t \u0111\u1ed9ng</span>
             `;
         }
 
         const draftFooter = document.getElementById('stat-draft-footer');
         if (draftFooter) {
             draftFooter.innerHTML = `
-                <span class="stat-trend"><i data-lucide="file-edit"></i> ${draft} bản nháp</span>
-                <span>chờ xuất bản</span>
+                <span class="stat-trend"><i data-lucide="file-edit"></i> ${draft} b\u1ea3n nh\u00e1p</span>
+                <span>ch\u1edd xu\u1ea5t b\u1ea3n</span>
             `;
         }
 
         const disabledFooter = document.getElementById('stat-disabled-footer');
         if (disabledFooter) {
             disabledFooter.innerHTML = `
-                <span class="stat-trend"><i data-lucide="eye-off"></i> ${disabled} tạm ngưng</span>
-                <span>đang tạm ẩn</span>
+                <span class="stat-trend"><i data-lucide="eye-off"></i> ${disabled} t\u1ea1m ng\u01b0ng</span>
+                <span>\u0111ang t\u1ea1m \u1ea9n</span>
             `;
         }
 
@@ -194,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 20);
     }
 
-    /* ── Render Tours Table ── */
+    /* \u2500\u2500 Render Tours Table \u2500\u2500 */
     function renderTable() {
         toursTableBody.innerHTML = '';
         
@@ -220,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <tr>
                     <td colspan="7" style="text-align: center; color: var(--slate-400); padding: 4rem 0;">
                         <i data-lucide="compass" style="width: 2.5rem; height: 2.5rem; margin-bottom: 0.5rem; opacity: 0.5;"></i>
-                        <p>Không tìm thấy tour du lịch nào phù hợp.</p>
+                        <p>Kh\u00f4ng t\u00ecm th\u1ea5y tour du l\u1ecbch n\u00e0o ph\u00f9 h\u1ee3p.</p>
                     </td>
                 </tr>
             `;
@@ -232,20 +232,20 @@ document.addEventListener('DOMContentLoaded', () => {
             const tr = document.createElement('tr');
             
             // Format status badge label
-            let statusText = 'Bản nháp';
-            if (tour.status === 'Active') statusText = 'Hoạt động';
-            else if (tour.status === 'Inactive') statusText = 'Tạm ngưng';
+            let statusText = 'B\u1ea3n nh\u00e1p';
+            if (tour.status === 'Active') statusText = 'Ho\u1ea1t \u0111\u1ed9ng';
+            else if (tour.status === 'Inactive') statusText = 'T\u1ea1m ng\u01b0ng';
 
             // Determine image preview
             let previewImg = tour.videoUrl || ''; // Dummy path
-            if (tour.tourName.toLowerCase().includes('đà nẵng')) previewImg = '../assets/images/tour_danang.png';
-            else if (tour.tourName.toLowerCase().includes('phú quốc')) previewImg = '../assets/images/tour_phuquoc.png';
-            else if (tour.tourName.toLowerCase().includes('hạ long')) previewImg = '../assets/images/tour_halong.png';
-            else if (tour.tourName.toLowerCase().includes('hội an')) previewImg = '../assets/images/tour_hoian.png';
-            else if (tour.tourName.toLowerCase().includes('đà lạt')) previewImg = '../assets/images/tour_dalat.png';
+            if (tour.tourName.toLowerCase().includes('\u0111\u00e0 n\u1eb5ng')) previewImg = '../assets/images/tour_danang.png';
+            else if (tour.tourName.toLowerCase().includes('ph\u00fa qu\u1ed1c')) previewImg = '../assets/images/tour_phuquoc.png';
+            else if (tour.tourName.toLowerCase().includes('h\u1ea1 long')) previewImg = '../assets/images/tour_halong.png';
+            else if (tour.tourName.toLowerCase().includes('h\u1ed9i an')) previewImg = '../assets/images/tour_hoian.png';
+            else if (tour.tourName.toLowerCase().includes('\u0111\u00e0 l\u1ea1t')) previewImg = '../assets/images/tour_dalat.png';
             else if (tour.tourName.toLowerCase().includes('sa pa') || tour.tourName.toLowerCase().includes('sapa')) previewImg = '../assets/images/tour_sapa.png';
             else if (tour.tourName.toLowerCase().includes('nha trang')) previewImg = '../assets/images/tour_nhatrang.png';
-            else if (tour.tourName.toLowerCase().includes('hà giang')) previewImg = '../assets/images/tour_hagiang.png';
+            else if (tour.tourName.toLowerCase().includes('h\u00e0 giang')) previewImg = '../assets/images/tour_hagiang.png';
             else previewImg = '../assets/images/tour_halong.png'; // standard fallback
 
             tr.innerHTML = `
@@ -262,8 +262,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </td>
                 <td><span style="font-weight: 500;">${tour.categoryName}</span></td>
-                <td>${tour.durationDays} Ngày</td>
-                <td><span style="font-weight: 600; color: var(--warning-amber);">${tour.basePrice.toLocaleString('vi-VN')} ₫</span></td>
+                <td>${tour.durationDays} Ng\u00e0y</td>
+                <td><span style="font-weight: 600; color: var(--warning-amber);">${tour.basePrice.toLocaleString('vi-VN')} \u20ab</span></td>
                 <td>
                     <span class="badge badge-${tour.status.toLowerCase()}">
                         ${statusText}
@@ -272,13 +272,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td><span style="color: var(--slate-500); font-size: 0.85rem;">${tour.createdAt || '2026-05-20'}</span></td>
                 <td style="text-align: right; padding-right: 2rem;">
                     <div class="actions-cell" style="justify-content: flex-end;">
-                        <button class="btn btn-secondary btn-icon-only btn-sm edit-btn" data-id="${tour.tourId}" title="Chỉnh sửa tour">
+                        <button class="btn btn-secondary btn-icon-only btn-sm edit-btn" data-id="${tour.tourId}" title="Ch\u1ec9nh s\u1eeda tour">
                             <i data-lucide="edit-3" style="width: 14px; height: 14px;"></i>
                         </button>
-                        <button class="btn btn-secondary btn-icon-only btn-sm toggle-status-btn" data-id="${tour.tourId}" data-status="${tour.status}" title="${tour.status === 'Active' ? 'Tạm ngưng tour' : 'Kích hoạt hoạt động'}">
+                        <button class="btn btn-secondary btn-icon-only btn-sm toggle-status-btn" data-id="${tour.tourId}" data-status="${tour.status}" title="${tour.status === 'Active' ? 'T\u1ea1m ng\u01b0ng tour' : 'K\u00edch ho\u1ea1t ho\u1ea1t \u0111\u1ed9ng'}">
                             <i data-lucide="${tour.status === 'Active' ? 'eye-off' : 'eye'}" style="width: 14px; height: 14px; color: ${tour.status === 'Active' ? 'var(--slate-500)' : 'var(--primary)'};"></i>
                         </button>
-                        <button class="btn btn-danger btn-icon-only btn-sm delete-btn" data-id="${tour.tourId}" title="Xóa tour">
+                        <button class="btn btn-danger btn-icon-only btn-sm delete-btn" data-id="${tour.tourId}" title="X\u00f3a tour">
                             <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
                         </button>
                     </div>
@@ -295,7 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
         attachTableActionListeners();
     }
 
-    /* ── Action Listeners inside Table Rows ── */
+    /* \u2500\u2500 Action Listeners inside Table Rows \u2500\u2500 */
     function attachTableActionListeners() {
         // Edit Button Click
         toursTableBody.querySelectorAll('.edit-btn').forEach(btn => {
@@ -327,7 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    /* ── Toggle Status AJAX Call ── */
+    /* \u2500\u2500 Toggle Status AJAX Call \u2500\u2500 */
     function toggleTourStatus(tourId, newStatus) {
         const params = new URLSearchParams();
         params.append('action', 'toggle-status');
@@ -340,24 +340,24 @@ document.addEventListener('DOMContentLoaded', () => {
             body: params.toString()
         })
         .then(res => {
-            if (!res.ok) throw new Error('Phản hồi mạng không hợp lệ');
+            if (!res.ok) throw new Error('Ph\u1ea3n h\u1ed3i m\u1ea1ng kh\u00f4ng h\u1ee3p l\u1ec7');
             return res.json();
         })
         .then(data => {
             if (data.status === 'success') {
-                showToast(data.message || 'Cập nhật trạng thái thành công!');
+                showToast(data.message || 'C\u1eadp nh\u1eadt tr\u1ea1ng th\u00e1i th\u00e0nh c\u00f4ng!');
                 fetchTours();
             } else {
-                showToast(data.message || 'Lỗi cập nhật trạng thái', 'error');
+                showToast(data.message || 'L\u1ed7i c\u1eadp nh\u1eadt tr\u1ea1ng th\u00e1i', 'error');
             }
         })
         .catch(err => {
             console.error(err);
-            showToast('Lỗi kết nối máy chủ', 'error');
+            showToast('L\u1ed7i k\u1ebft n\u1ed1i m\u00e1y ch\u1ee7', 'error');
         });
     }
 
-    /* ── Delete Tour AJAX Call ── */
+    /* \u2500\u2500 Delete Tour AJAX Call \u2500\u2500 */
     function performDeleteTour(tourId) {
         const params = new URLSearchParams();
         params.append('action', 'delete');
@@ -369,27 +369,27 @@ document.addEventListener('DOMContentLoaded', () => {
             body: params.toString()
         })
         .then(res => {
-            if (!res.ok) throw new Error('Phản hồi mạng không hợp lệ');
+            if (!res.ok) throw new Error('Ph\u1ea3n h\u1ed3i m\u1ea1ng kh\u00f4ng h\u1ee3p l\u1ec7');
             return res.json();
         })
         .then(data => {
             if (data.status === 'success') {
-                showToast(data.message || 'Xóa tour thành công!');
+                showToast(data.message || 'X\u00f3a tour th\u00e0nh c\u00f4ng!');
                 closeConfirmModal();
                 fetchTours();
             } else {
-                showToast(data.message || 'Lỗi khi xóa tour', 'error');
+                showToast(data.message || 'L\u1ed7i khi x\u00f3a tour', 'error');
                 closeConfirmModal();
             }
         })
         .catch(err => {
             console.error(err);
-            showToast('Lỗi kết nối máy chủ khi xóa tour', 'error');
+            showToast('L\u1ed7i k\u1ebft n\u1ed1i m\u00e1y ch\u1ee7 khi x\u00f3a tour', 'error');
             closeConfirmModal();
         });
     }
 
-    /* ── Add / Edit Modal Actions ── */
+    /* \u2500\u2500 Add / Edit Modal Actions \u2500\u2500 */
     addTourBtn.addEventListener('click', () => {
         openAddModal();
     });
@@ -403,7 +403,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function openAddModal() {
-        modalTitle.textContent = 'Thêm Tour Mới';
+        modalTitle.textContent = 'Th\u00eam Tour M\u1edbi';
         tourForm.reset();
         tourIdInput.value = '';
         document.getElementById('tour-status').value = 'Draft';
@@ -423,7 +423,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function openEditModal(tour) {
-        modalTitle.textContent = 'Chỉnh Sửa Tour';
+        modalTitle.textContent = 'Ch\u1ec9nh S\u1eeda Tour';
         tourForm.reset();
         
         // Populate inputs
@@ -439,24 +439,24 @@ document.addEventListener('DOMContentLoaded', () => {
         
         document.getElementById('tour-group-min').value = tour.groupSizeMin;
         document.getElementById('tour-group-max').value = tour.groupSizeMax;
-        document.getElementById('tour-departure').value = tour.departureCity;
-        document.getElementById('tour-destination').value = tour.destination;
+        document.getElementById('tour-departure').value = tour.departureCity || '';
+        document.getElementById('tour-destination').value = tour.destination || '';
         
-        document.getElementById('tour-languages').value = tour.languages;
+        document.getElementById('tour-languages').value = tour.languages || '';
         // Parse floats safely
         document.getElementById('tour-latitude').value = tour.latitude || '';
         document.getElementById('tour-longitude').value = tour.longitude || '';
         document.getElementById('tour-video').value = tour.videoUrl || '';
         
-        document.getElementById('tour-description').value = tour.description;
+        document.getElementById('tour-description').value = tour.description || '';
         
-        // Nếu tour.itinerary có sẵn text thì điền vào, ngược lại load từ bảng TourItinerary trong DB
+        // N\u1ebfu tour.itinerary c\u00f3 s\u1eb5n text th\u00ec \u0111i\u1ec1n v\u00e0o, ng\u01b0\u1ee3c l\u1ea1i load t\u1eeb b\u1ea3ng TourItinerary trong DB
         const itineraryTextarea = document.getElementById('tour-itinerary');
         if (tour.itinerary && tour.itinerary.trim() !== '') {
             itineraryTextarea.value = tour.itinerary;
         } else {
-            // Load từ bảng TourItinerary → dựng lại text để admin chỉnh sửa
-            itineraryTextarea.value = 'Đang tải lịch trình...';
+            // Load t\u1eeb b\u1ea3ng TourItinerary \u2192 d\u1ef1ng l\u1ea1i text \u0111\u1ec3 admin ch\u1ec9nh s\u1eeda
+            itineraryTextarea.value = '\u0110ang t\u1ea3i l\u1ecbch tr\u00ecnh...';
             fetch(`tours?ajax=true&action=getItinerary&tourId=${tour.tourId}`)
                 .then(res => res.json())
                 .then(data => {
@@ -485,7 +485,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 })
                 .catch(err => {
-                    console.error('Lỗi khi tải dịch vụ đi kèm:', err);
+                    console.error('L\u1ed7i khi t\u1ea3i d\u1ecbch v\u1ee5 \u0111i k\u00e8m:', err);
                     addInclusionRow('INCLUDED', 'sparkles', '');
                     addInclusionRow('EXCLUDED', 'plane', '');
                 });
@@ -498,9 +498,57 @@ document.addEventListener('DOMContentLoaded', () => {
         tourModal.classList.remove('open');
     }
 
-    /* ── Form Submit (Add/Edit) ── */
+    /* \u2500\u2500 Form Submit (Add/Edit) \u2500\u2500 */
     tourForm.addEventListener('submit', (e) => {
         e.preventDefault();
+
+        // K\u00edch ho\u1ea1t c\u01a1 ch\u1ebf ki\u1ec3m tra h\u1ee3p l\u1ec7 m\u1eb7c \u0111\u1ecbnh c\u1ee7a HTML5 (tr\u1ed1ng, min, max, type...)
+        if (!tourForm.reportValidity()) {
+            return;
+        }
+
+        // \u2500\u2500 CLIENT-SIDE VALIDATION RULES (LOGIC R\u00c0NG BU\u1ed8C) \u2500\u2500
+        const basePrice = parseFloat(document.getElementById('tour-price').value) || 0;
+        const durationDays = parseInt(document.getElementById('tour-duration').value) || 0;
+        const maxParticipants = parseInt(document.getElementById('tour-max-parts').value) || 0;
+        const groupSizeMin = parseInt(document.getElementById('tour-group-min').value) || 0;
+        const groupSizeMax = parseInt(document.getElementById('tour-group-max').value) || 0;
+
+        if (basePrice < 0) {
+            showToast('Gi\u00e1 c\u01a1 b\u1ea3n kh\u00f4ng \u0111\u01b0\u1ee3c \u00e2m!', 'error');
+            document.getElementById('tour-price').focus();
+            return;
+        }
+        if (durationDays < 1) {
+            showToast('Th\u1eddi l\u01b0\u1ee3ng tour ph\u1ea3i t\u1ed1i thi\u1ec3u l\u00e0 1 ng\u00e0y!', 'error');
+            document.getElementById('tour-duration').focus();
+            return;
+        }
+        if (maxParticipants < 1) {
+            showToast('S\u1ed1 kh\u00e1ch t\u1ed1i \u0111a ph\u1ea3i l\u1edbn h\u01a1n ho\u1eb7c b\u1eb1ng 1!', 'error');
+            document.getElementById('tour-max-parts').focus();
+            return;
+        }
+        if (groupSizeMin < 1) {
+            showToast('S\u1ed1 ng\u01b0\u1eddi t\u1ed1i thi\u1ec3u m\u1ed7i \u0111o\u00e0n ph\u1ea3i l\u1edbn h\u01a1n ho\u1eb7c b\u1eb1ng 1!', 'error');
+            document.getElementById('tour-group-min').focus();
+            return;
+        }
+        if (groupSizeMax < 1) {
+            showToast('S\u1ed1 ng\u01b0\u1eddi t\u1ed1i \u0111a m\u1ed7i \u0111o\u00e0n ph\u1ea3i l\u1edbn h\u01a1n ho\u1eb7c b\u1eb1ng 1!', 'error');
+            document.getElementById('tour-group-max').focus();
+            return;
+        }
+        if (groupSizeMin > groupSizeMax) {
+            showToast('S\u1ed1 ng\u01b0\u1eddi t\u1ed1i thi\u1ec3u m\u1ed7i \u0111o\u00e0n kh\u00f4ng \u0111\u01b0\u1ee3c v\u01b0\u1ee3t qu\u00e1 s\u1ed1 ng\u01b0\u1eddi t\u1ed1i \u0111a!', 'error');
+            document.getElementById('tour-group-min').focus();
+            return;
+        }
+        if (groupSizeMax > maxParticipants) {
+            showToast(`S\u1ed1 ng\u01b0\u1eddi t\u1ed1i \u0111a m\u1ed7i \u0111o\u00e0n (${groupSizeMax}) kh\u00f4ng \u0111\u01b0\u1ee3c v\u01b0\u1ee3t qu\u00e1 s\u1ed1 kh\u00e1ch t\u1ed1i \u0111a c\u1ee7a tour (${maxParticipants})!`, 'error');
+            document.getElementById('tour-group-max').focus();
+            return;
+        }
 
         const formData = new FormData(tourForm);
         const params = new URLSearchParams();
@@ -530,25 +578,25 @@ document.addEventListener('DOMContentLoaded', () => {
             body: params.toString()
         })
         .then(res => {
-            if (!res.ok) throw new Error('Không thể lưu thông tin tour');
+            if (!res.ok) throw new Error('Kh\u00f4ng th\u1ec3 l\u01b0u th\u00f4ng tin tour');
             return res.json();
         })
         .then(data => {
             if (data.status === 'success') {
-                showToast(data.message || 'Lưu thành công!');
+                showToast(data.message || 'L\u01b0u th\u00e0nh c\u00f4ng!');
                 closeModal();
                 fetchTours();
             } else {
-                showToast(data.message || 'Lỗi khi lưu thông tin', 'error');
+                showToast(data.message || 'L\u1ed7i khi l\u01b0u th\u00f4ng tin', 'error');
             }
         })
         .catch(err => {
             console.error(err);
-            showToast(err.message || 'Lỗi kết nối máy chủ', 'error');
+            showToast(err.message || 'L\u1ed7i k\u1ebft n\u1ed1i m\u00e1y ch\u1ee7', 'error');
         });
     });
 
-    /* ── Delete Confirmation Modal Actions ── */
+    /* \u2500\u2500 Delete Confirmation Modal Actions \u2500\u2500 */
     confirmCancelBtn.addEventListener('click', () => closeConfirmModal());
     confirmModal.addEventListener('click', (e) => {
         if (e.target === confirmModal) closeConfirmModal();
@@ -569,7 +617,7 @@ document.addEventListener('DOMContentLoaded', () => {
         tourIdToDelete = null;
     }
 
-    /* ── Filter & Search Listeners ── */
+    /* \u2500\u2500 Filter & Search Listeners \u2500\u2500 */
     let searchTimeout;
     searchFilterInput.addEventListener('input', () => {
         clearTimeout(searchTimeout);
@@ -582,7 +630,7 @@ document.addEventListener('DOMContentLoaded', () => {
     categoryFilterSelect.addEventListener('change', () => renderTable());
     statusFilterSelect.addEventListener('change', () => renderTable());
 
-    /* ── Custom Toast Notification Helper ── */
+    /* \u2500\u2500 Custom Toast Notification Helper \u2500\u2500 */
     function showToast(message, type = 'success') {
         const container = document.getElementById('toast-container');
         if (!container) return;

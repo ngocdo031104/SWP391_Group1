@@ -26,76 +26,8 @@
 
 <div class="dashboard-wrapper">
     <!-- ── Left Sidebar ── -->
-    <aside class="sidebar">
-        <div class="sidebar-brand">
-            <div class="logo-icon">T</div>
-            <span>TourBuddy</span>
-        </div>
-        
-        <ul class="sidebar-menu">
-            <c:if test="${!isAccountant}">
-            <li>
-                <a href="${pageContext.request.contextPath}/admin/dashboard">
-                    <i data-lucide="layout-dashboard"></i>
-                    <span>Tổng Quan</span>
-                </a>
-            </li>
-            <li>
-                <a href="${pageContext.request.contextPath}/admin/tours">
-                    <i data-lucide="compass"></i>
-                    <span>Quản Lý Tour</span>
-                </a>
-            </li>
-            <li>
-                <a href="${pageContext.request.contextPath}/admin/schedules">
-                    <i data-lucide="calendar"></i>
-                    <span>Lịch Trình & Giá</span>
-                </a>
-            </li>
-            <li>
-                <a href="${pageContext.request.contextPath}/admin/media">
-                    <i data-lucide="image"></i>
-                    <span>Thư Viện Media</span>
-                </a>
-            </li>
-            </c:if>
-            <li class="active">
-                <a href="${pageContext.request.contextPath}/admin/analytics">
-                    <i data-lucide="bar-chart-3"></i>
-                    <span>Thống Kê Chi Tiết</span>
-                </a>
-            </li>
-            <li>
-                <a href="#">
-                    <i data-lucide="file-text"></i>
-                    <span>Báo Cáo Doanh Thu</span>
-                </a>
-            </li>
-            <li>
-                <a href="#">
-                    <i data-lucide="trending-up"></i>
-                    <span>Dự Báo & Xu Hướng</span>
-                </a>
-            </li>
-            <li>
-                <a href="#">
-                    <i data-lucide="settings"></i>
-                    <span>Cấu Hình</span>
-                </a>
-            </li>
-        </ul>
-        
-        <div class="sidebar-footer">
-            <a href="${pageContext.request.contextPath}/home" style="color: var(--text-gray);">
-                <i data-lucide="home"></i>
-                <span>Về Trang Chủ</span>
-            </a>
-            <a href="${pageContext.request.contextPath}/logout" style="color: var(--error-red); margin-top: 5px;">
-                <i data-lucide="log-out"></i>
-                <span>Đăng Xuất</span>
-            </a>
-        </div>
-    </aside>
+    <c:set var="activePage" value="analytics" scope="request" />
+    <jsp:include page="sidebar.jsp" />
 
     <!-- ── Main Content Area ── -->
     <main class="main-content">
@@ -159,19 +91,19 @@
                     <div class="kpi-icon"><i data-lucide="trending-up"></i></div>
                     <div class="kpi-label">Tổng doanh thu gần đây</div>
                     <div class="kpi-value" id="kpi-total-revenue">0 đ</div>
-                    <div class="kpi-trend up"><i data-lucide="arrow-up-right"></i> +12.5% so với tháng trước</div>
+                    <div class="kpi-trend" id="kpi-revenue-trend"><i data-lucide="arrow-up-right"></i> <span id="kpi-revenue-trend-text">--</span></div>
                 </div>
                 <div class="kpi-card">
                     <div class="kpi-icon"><i data-lucide="pie-chart"></i></div>
                     <div class="kpi-label">Doanh thu trung bình tháng</div>
                     <div class="kpi-value" id="kpi-avg-revenue">0 đ</div>
-                    <div class="kpi-trend up"><i data-lucide="arrow-up-right"></i> Ổn định</div>
+                    <div class="kpi-trend" id="kpi-avg-trend"><span id="kpi-avg-trend-text">--</span></div>
                 </div>
                 <div class="kpi-card">
                     <div class="kpi-icon"><i data-lucide="star"></i></div>
                     <div class="kpi-label">Danh mục dẫn đầu</div>
                     <div class="kpi-value" id="kpi-top-category" style="font-size: 1.4rem;">N/A</div>
-                    <div class="kpi-trend up">Hiệu suất cao nhất</div>
+                    <div class="kpi-trend" id="kpi-category-trend"><span id="kpi-category-trend-text">--</span></div>
                 </div>
             </div>
 
@@ -336,6 +268,60 @@
                 </table>
             </div>
         </div>
+        <!-- ── Kế Toán: Công Cụ Nghiệp Vụ Riêng ── -->
+        <c:if test="${isAccountant}">
+            <div class="accountant-dashboard-section" style="margin-top: 40px; padding-top: 20px; border-top: 2px dashed rgba(255,255,255,0.1);">
+                <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 20px; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
+                    <i data-lucide="briefcase" style="color: var(--primary);"></i> Bảng Điều Khiển Nghiệp Vụ Kế Toán
+                </h2>
+
+                <style>
+                    .acc-quick-actions-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px; }
+                    .acc-quick-card { background: var(--card-bg); border-radius: 12px; padding: 20px; border: 1px solid var(--card-border); text-decoration: none; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; transition: all .2s; }
+                    .acc-quick-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); border-color: var(--primary); background: rgba(30, 41, 59, 0.8); }
+                    .acc-quick-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+                    .acc-quick-card h3 { margin: 0; font-size: 15px; font-weight: 600; color: var(--text-main); }
+                    .acc-quick-card p  { margin: 0; font-size: 13px; color: var(--text-gray); line-height: 1.5; }
+                    .alert-pending { background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 8px; padding: 16px 20px; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; color: #FCD34D; font-weight: 500; }
+                </style>
+
+                <c:if test="${pendingRefunds > 0}">
+                    <div class="alert-pending">
+                        <i data-lucide="alert-triangle" style="width:20px;height:20px;color:#F59E0B;"></i>
+                        Có <strong>${pendingRefunds}</strong> yêu cầu hoàn tiền đang chờ bạn xử lý.
+                        <a href="${pageContext.request.contextPath}/accountant/refunds" style="margin-left:auto;color:#F59E0B;font-weight:600;text-decoration:underline;">
+                            Xử lý ngay →
+                        </a>
+                    </div>
+                </c:if>
+
+                <div class="acc-quick-actions-grid">
+                    <a href="${pageContext.request.contextPath}/accountant/payments?tab=in" class="acc-quick-card">
+                        <div class="acc-quick-icon" style="background: rgba(16, 185, 129, 0.15); color: #10B981;">
+                            <i data-lucide="trending-up"></i>
+                        </div>
+                        <h3>Dòng Tiền Vào</h3>
+                        <p>Theo dõi các khoản tiền khách hàng đã thanh toán thành công (Success).</p>
+                    </a>
+
+                    <a href="${pageContext.request.contextPath}/accountant/payments?tab=out" class="acc-quick-card">
+                        <div class="acc-quick-icon" style="background: rgba(239, 68, 68, 0.15); color: #EF4444;">
+                            <i data-lucide="trending-down"></i>
+                        </div>
+                        <h3>Dòng Tiền Ra</h3>
+                        <p>Danh sách các giao dịch hoàn tiền đã thực hiện cho khách hàng (Refunded).</p>
+                    </a>
+
+                    <a href="${pageContext.request.contextPath}/accountant/refunds" class="acc-quick-card">
+                        <div class="acc-quick-icon" style="background: rgba(245, 158, 11, 0.15); color: #F59E0B;">
+                            <i data-lucide="refresh-cw"></i>
+                        </div>
+                        <h3>Duyệt Hoàn Tiền</h3>
+                        <p>Xử lý, duyệt hoặc từ chối các yêu cầu hủy tour và thực hiện hoàn tiền.</p>
+                    </a>
+                </div>
+            </div>
+        </c:if>
     </main>
 </div>
 

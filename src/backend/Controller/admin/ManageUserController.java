@@ -212,6 +212,10 @@ public class ManageUserController extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/admin/users");
     }
 
+    private boolean isMasterAdmin(User user) {
+        return user != null && "admin.test@tourbuddy.com".equalsIgnoreCase(user.getEmail());
+    }
+
     private void bulkDeleteUsers(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
             String[] userIds = request.getParameterValues("userIds");
@@ -219,9 +223,22 @@ public class ManageUserController extends HttpServlet {
                 int successCount = 0;
                 int bookingErrorCount = 0;
                 int otherErrorCount = 0;
+                int adminSkipCount = 0;
+                
+                User currentAdmin = (User) request.getSession().getAttribute("sessionUser");
+                boolean isMaster = isMasterAdmin(currentAdmin);
                 
                 for (String idStr : userIds) {
                     int userId = Integer.parseInt(idStr);
+                    
+                    User userToDelete = userDAO.getUserById(userId);
+                    if (userToDelete != null && "Admin".equalsIgnoreCase(userToDelete.getRole().getRoleName())) {
+                        if (!isMaster) {
+                            adminSkipCount++;
+                            continue;
+                        }
+                    }
+                    
                     String status = userDAO.deleteUserWithCheck(userId);
                     if ("success".equals(status)) {
                         successCount++;
@@ -240,10 +257,19 @@ public class ManageUserController extends HttpServlet {
                     }
                 }
                 
+                StringBuilder errorMsgBuilder = new StringBuilder();
+                if (adminSkipCount > 0) {
+                    errorMsgBuilder.append("Không thể xóa ").append(adminSkipCount).append(" tài khoản vì là Admin. ");
+                }
                 if (bookingErrorCount > 0) {
-                    request.getSession().setAttribute("errorMsg", "Không thể xóa " + bookingErrorCount + " tài khoản vì đang có Booking!");
-                } else if (otherErrorCount > 0) {
-                    request.getSession().setAttribute("errorMsg", "Không thể xóa " + otherErrorCount + " tài khoản do ràng buộc dữ liệu khác!");
+                    errorMsgBuilder.append("Không thể xóa ").append(bookingErrorCount).append(" tài khoản vì đang có Booking. ");
+                }
+                if (otherErrorCount > 0) {
+                    errorMsgBuilder.append("Không thể xóa ").append(otherErrorCount).append(" tài khoản do ràng buộc dữ liệu khác.");
+                }
+                
+                if (errorMsgBuilder.length() > 0) {
+                    request.getSession().setAttribute("errorMsg", errorMsgBuilder.toString().trim());
                 }
             } else {
                 request.getSession().setAttribute("errorMsg", "Dữ liệu không hợp lệ!");

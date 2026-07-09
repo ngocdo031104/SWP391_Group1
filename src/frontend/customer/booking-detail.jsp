@@ -82,15 +82,7 @@
         background: #fecaca;
         color: #b91c1c;
     }
-        padding: 8px 16px;
-        border-radius: 6px;
-        font-weight: 500;
-        text-decoration: none;
-        transition: all 0.2s;
-        border: 1px solid transparent;
-        cursor: pointer;
-    }
-    
+
     .btn-outline {
         background: transparent;
         border-color: #cbd5e1;
@@ -412,7 +404,14 @@
                             <div style="font-weight:600; margin-bottom:10px; color:#1e293b;">Thông tin giao dịch</div>
                             <ul class="info-list" style="font-size: 0.9rem;">
                                 <li><span class="label" style="width:110px;">Phương thức:</span> <span class="value">${payment.paymentMethod}</span></li>
-                                <li><span class="label" style="width:110px;">Mã GD:</span> <span class="value">${payment.transactionRef}</span></li>
+                                <li><span class="label" style="width:110px;">Mã GD:</span> 
+                                    <span class="value" style="display:flex;align-items:center;gap:6px;">
+                                        ${payment.transactionRef}
+                                        <button onclick="navigator.clipboard.writeText('${payment.transactionRef}').then(()=>alert('Đã copy mã GD!'))" style="background:none;border:none;cursor:pointer;color:var(--primary);padding:0;" title="Copy mã GD">
+                                            <i data-lucide="copy" style="width:14px;height:14px;"></i>
+                                        </button>
+                                    </span>
+                                </li>
                                 <li><span class="label" style="width:110px;">Thời gian:</span> <span class="value"><fmt:formatDate value="${payment.paidAt}" pattern="dd/MM/yyyy HH:mm" /></span></li>
                                 <li><span class="label" style="width:110px;">Trạng thái:</span> <span class="value" style="${payment.status eq 'Success' ? 'color:#059669;' : 'color:#dc2626;'}">${payment.status}</span></li>
                             </ul>
@@ -428,6 +427,52 @@
                     </c:if>
                 </div>
             </div>
+
+            <!-- Yêu cầu hủy & Hoàn tiền (UC41) -->
+            <c:if test="${not empty cancelHistory}">
+                <div class="card" style="margin-top: 24px; border-color: #fca5a5;">
+                    <div class="card-header" style="background: #fef2f2; color: #b91c1c; border-bottom-color: #fecaca;">
+                        <i data-lucide="refresh-cw"></i> Yêu cầu hủy & Hoàn tiền
+                    </div>
+                    <div class="card-body">
+                        <c:forEach var="req" items="${cancelHistory}" varStatus="status">
+                            <div style="margin-bottom: ${status.last ? '0' : '20px'}; padding-bottom: ${status.last ? '0' : '20px'}; border-bottom: ${status.last ? 'none' : '1px dashed #e2e8f0'};">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                    <span style="font-size: 13px; color: #64748b;"><fmt:formatDate value="${req.createdAt}" pattern="dd/MM/yyyy HH:mm" /></span>
+                                    
+                                    <c:choose>
+                                        <c:when test="${req.status eq 'Pending'}">
+                                            <span style="background:#fef3c7; color:#d97706; padding:4px 10px; border-radius:99px; font-size:12px; font-weight:600;"><i data-lucide="clock" style="width:12px;height:12px;vertical-align:middle;margin-right:4px;"></i>Đang chờ xử lý</span>
+                                        </c:when>
+                                        <c:when test="${req.status eq 'Approved'}">
+                                            <span style="background:#d1fae5; color:#059669; padding:4px 10px; border-radius:99px; font-size:12px; font-weight:600;"><i data-lucide="check-circle" style="width:12px;height:12px;vertical-align:middle;margin-right:4px;"></i>Đã hoàn tiền</span>
+                                        </c:when>
+                                        <c:when test="${req.status eq 'Rejected'}">
+                                            <span style="background:#fee2e2; color:#dc2626; padding:4px 10px; border-radius:99px; font-size:12px; font-weight:600;"><i data-lucide="x-circle" style="width:12px;height:12px;vertical-align:middle;margin-right:4px;"></i>Bị từ chối</span>
+                                        </c:when>
+                                    </c:choose>
+                                </div>
+                                <div style="font-size: 14px; color: #334155; margin-bottom: 8px;">
+                                    <strong>Lý do hủy:</strong> ${req.reason}
+                                </div>
+                                
+                                <c:if test="${not empty req.notes}">
+                                    <div style="background: #f8fafc; border-left: 3px solid ${req.status eq 'Approved' ? '#10b981' : '#ef4444'}; padding: 10px 12px; font-size: 13px; color: #475569;">
+                                        <strong>Ghi chú từ kế toán:</strong> ${req.notes}
+                                    </div>
+                                </c:if>
+                                
+                                <c:if test="${req.status eq 'Approved'}">
+                                    <div style="margin-top: 10px; font-size: 13px; color: #059669; font-weight: 500;">
+                                        <i data-lucide="check" style="width:14px;height:14px;vertical-align:middle;margin-right:4px;"></i> Tiền đã được xử lý hoàn vào <fmt:formatDate value="${req.processedAt}" pattern="dd/MM/yyyy HH:mm" />
+                                    </div>
+                                </c:if>
+                            </div>
+                        </c:forEach>
+                    </div>
+                </div>
+            </c:if>
+
         </div>
     </div>
 </main>

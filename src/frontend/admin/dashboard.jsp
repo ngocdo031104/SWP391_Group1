@@ -24,152 +24,15 @@
 
 <div class="dashboard-wrapper">
     <!-- ── Left Sidebar ── -->
-    <aside class="sidebar">
-        <div class="sidebar-brand">
-            <div class="logo-icon">T</div>
-            <span>TourBuddy</span>
-        </div>
-        
-        <ul class="sidebar-menu">
-            <li class="active">
-                <a href="${pageContext.request.contextPath}/admin/dashboard">
-                    <i data-lucide="layout-dashboard"></i>
-                    <span>Tổng Quan</span>
-                </a>
-            </li>
-            <li>
-                <a href="${pageContext.request.contextPath}/admin/users">
-                    <i data-lucide="users"></i>
-                    <span>Quản Lý Người Dùng</span>
-                </a>
-            </li>
-            <li>
-                <a href="${pageContext.request.contextPath}/admin/users?action=history">
-                    <i data-lucide="history"></i>
-                    <span>Lịch Sử Quản Trị</span>
-                </a>
-            </li>
-            <li>
-                <a href="${pageContext.request.contextPath}/admin/tours">
-                    <i data-lucide="compass"></i>
-                    <span>Quản Lý Tour</span>
-                </a>
-            </li>
-            <li>
-                <a href="${pageContext.request.contextPath}/admin/coupons">
-                    <i data-lucide="tag"></i>
-                    <span>Quản Lý Coupon</span>
-                </a>
-            </li>
-            <li>
-                <a href="#">
-                    <i data-lucide="calendar"></i>
-                    <span>Lịch Trình & Giá</span>
-                </a>
-            </li>
-            <li>
-                <a href="${pageContext.request.contextPath}/admin/media">
-                    <i data-lucide="image"></i>
-                    <span>Thư Viện Media</span>
-                </a>
-            </li>
-            <li>
-                <a href="${pageContext.request.contextPath}/admin/analytics">
-                    <i data-lucide="bar-chart-3"></i>
-                    <span>Thống Kê Chi Tiết</span>
-                </a>
-            </li>
-            <li>
-                <a href="#">
-                    <i data-lucide="file-text"></i>
-                    <span>Báo Cáo Doanh Thu</span>
-                </a>
-            </li>
-            <li>
-                <a href="#">
-                    <i data-lucide="trending-up"></i>
-                    <span>Dự Báo & Xu Hướng</span>
-                </a>
-            </li>
-            <li>
-                <a href="${pageContext.request.contextPath}/admin/roles">
-                    <i data-lucide="shield-check"></i>
-                    <span>Phân Quyền</span>
-                </a>
-            </li>
-            <li>
-                <a href="#">
-                    <i data-lucide="settings"></i>
-                    <span>Cấu Hình</span>
-                </a>
-            </li>
-        </ul>
-        
-        <div class="sidebar-footer">
-            <a href="${pageContext.request.contextPath}/home" style="color: var(--text-gray);">
-                <i data-lucide="home"></i>
-                <span>Về Trang Chủ</span>
-            </a>
-            <a href="${pageContext.request.contextPath}/logout" style="color: var(--error-red); margin-top: 5px;">
-                <i data-lucide="log-out"></i>
-                <span>Đăng Xuất</span>
-            </a>
-        </div>
-    </aside>
+    <c:set var="activePage" value="dashboard" scope="request" />
+    <jsp:include page="sidebar.jsp" />
 
     <!-- ── Main Content Area ── -->
     <main class="main-content">
         <!-- Top Header -->
         <header class="top-header">
             <h1>Tổng quan hệ thống</h1>
-            <div class="header-right">
-                <div class="header-search">
-                    <i data-lucide="search"></i>
-                    <input type="text" placeholder="Tìm kiếm nhanh hệ thống...">
-                </div>
-                
-                <div class="notif-bell" aria-label="Thông báo">
-                    <i data-lucide="bell"></i>
-                    <span class="badge">3</span>
-                </div>
-                
-                <div class="profile-user dropdown-trigger" style="cursor: pointer; position: relative;" id="admin-profile-trigger">
-                    <div class="profile-meta" style="text-align: right; margin-right: 5px;">
-                        <span class="name">${not empty sessionUser.fullName ? sessionUser.fullName : 'Sarah Jenkins'}</span>
-                        <span class="role">${(sessionUser.roleId eq 1 || userRole eq 'Admin') ? 'Quản trị viên SWP' : 'Nhân viên'}</span>
-                    </div>
-                    <c:choose>
-                        <c:when test="${not empty sessionUser.profile && not empty sessionUser.profile.avatarUrl}">
-                            <img src="${sessionUser.profile.avatarUrl}" alt="Avatar">
-                        </c:when>
-                        <c:otherwise>
-                            <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80" alt="Avatar">
-                        </c:otherwise>
-                    </c:choose>
-                    
-                    <!-- Premium Avatar Dropdown Menu -->
-                    <div class="avatar-dropdown-menu" id="admin-avatar-menu" style="display: none;">
-                        <div class="dropdown-header">
-                            <span class="d-name">${not empty sessionUser.fullName ? sessionUser.fullName : 'Sarah Jenkins'}</span>
-                            <span class="d-email">${not empty sessionUser.email ? sessionUser.email : 'admin@tourbuddy.com'}</span>
-                        </div>
-                        <div class="dropdown-divider"></div>
-                        <a href="${pageContext.request.contextPath}/profile" class="dropdown-item">
-                            <i data-lucide="user"></i>
-                            <span>Hồ Sơ Của Tôi</span>
-                        </a>
-                        <a href="${pageContext.request.contextPath}/home" class="dropdown-item">
-                            <i data-lucide="home"></i>
-                            <span>Về Trang Chủ</span>
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <a href="${pageContext.request.contextPath}/logout" class="dropdown-item logout-btn">
-                            <i data-lucide="log-out"></i>
-                            <span>Đăng Xuất</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
+            <jsp:include page="admin-header-right.jsp" />
         </header>
 
         <!-- ── VIEW 1: OVERVIEW DASHBOARD (TỔNG QUAN) ── -->
@@ -291,6 +154,6 @@
     </main>
 </div>
 
-<script src="${pageContext.request.contextPath}/js/admin-dashboard.js?v=1.1"></script>
+<script src="${pageContext.request.contextPath}/js/admin-dashboard.js?v=1.2" charset="UTF-8"></script>
 </body>
 </html>

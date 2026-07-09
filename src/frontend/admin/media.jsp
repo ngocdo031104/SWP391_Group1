@@ -22,75 +22,8 @@
 <body class="dashboard-body">
 
 <div class="dashboard-wrapper">
-    <!-- ── Left Sidebar ── -->
-    <aside class="sidebar">
-        <div class="sidebar-brand">
-            <div class="logo-icon">T</div>
-            <span>TourBuddy</span>
-        </div>
-        
-        <ul class="sidebar-menu">
-            <li>
-                <a href="${pageContext.request.contextPath}/admin/dashboard">
-                    <i data-lucide="layout-dashboard"></i>
-                    <span>Tổng Quan</span>
-                </a>
-            </li>
-            <li>
-                <a href="${pageContext.request.contextPath}/admin/tours">
-                    <i data-lucide="compass"></i>
-                    <span>Quản Lý Tour</span>
-                </a>
-            </li>
-            <li>
-                <a href="${pageContext.request.contextPath}/admin/schedules">
-                    <i data-lucide="calendar"></i>
-                    <span>Lịch Trình & Giá</span>
-                </a>
-            </li>
-            <li class="active">
-                <a href="${pageContext.request.contextPath}/admin/media">
-                    <i data-lucide="image"></i>
-                    <span>Thư Viện Media</span>
-                </a>
-            </li>
-            <li>
-                <a href="${pageContext.request.contextPath}/admin/analytics">
-                    <i data-lucide="bar-chart-3"></i>
-                    <span>Thống Kê Chi Tiết</span>
-                </a>
-            </li>
-            <li>
-                <a href="#">
-                    <i data-lucide="file-text"></i>
-                    <span>Báo Cáo Doanh Thu</span>
-                </a>
-            </li>
-            <li>
-                <a href="#">
-                    <i data-lucide="trending-up"></i>
-                    <span>Dự Báo & Xu Hướng</span>
-                </a>
-            </li>
-            <li>
-                <a href="#">
-                    <i data-lucide="settings"></i>
-                    <span>Cấu Hình</span>
-                </a>
-            </li>
-        </ul>
-        
-        <div class="sidebar-footer">
-            <a href="${pageContext.request.contextPath}/home" style="color: var(--text-gray);">
-                <i data-lucide="home"></i>
-                <span>Về Trang Chủ</span>
-            </a>
-            <a href="${pageContext.request.contextPath}/logout" style="color: var(--error-red); margin-top: 5px;">
-                <i data-lucide="log-out"></i>
-                <span>Đăng Xuất</span>
-            </a>
-        </div>
-    </aside>
+    <c:set var="activePage" value="media" scope="request" />
+    <jsp:include page="sidebar.jsp" />
 
     <!-- ── Main Content Area ── -->
     <main class="main-content">
@@ -246,7 +179,15 @@
                 // Chuẩn hóa link YouTube sang link nhúng iframe
                 let embedUrl = mediaUrl;
                 if (mediaUrl.includes('watch?v=')) {
-                    const videoId = mediaUrl.split('v=')[1].split('&')[0];
+                    let videoId = '';
+                    const urlParts = mediaUrl.split('?');
+                    if (urlParts.length > 1) {
+                        const searchParams = new URLSearchParams(urlParts[1]);
+                        videoId = searchParams.get('v') || '';
+                    }
+                    if (!videoId) {
+                        videoId = mediaUrl.split('v=')[1].split('&')[0];
+                    }
                     embedUrl = `https://www.youtube.com/embed/${videoId}`;
                 } else if (mediaUrl.includes('youtu.be/')) {
                     const videoId = mediaUrl.split('youtu.be/')[1].split('?')[0];

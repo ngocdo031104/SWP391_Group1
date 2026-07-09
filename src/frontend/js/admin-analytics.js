@@ -102,8 +102,75 @@ document.addEventListener("DOMContentLoaded", () => {
 
         monthlyList.forEach(item => totalRev += item.revenue);
         document.getElementById("kpi-total-revenue").innerText = formatCurrency(totalRev);
-        document.getElementById("kpi-avg-revenue").innerText = formatCurrency(monthlyList.length > 0 ? totalRev / monthlyList.length : 0);
-        document.getElementById("kpi-top-category").innerText = categoriesList.length > 0 ? categoriesList[0].category : "N/A";
+        
+        const avgRev = monthlyList.length > 0 ? totalRev / monthlyList.length : 0;
+        document.getElementById("kpi-avg-revenue").innerText = formatCurrency(avgRev);
+        
+        const topCatName = categoriesList.length > 0 ? categoriesList[0].category : "N/A";
+        document.getElementById("kpi-top-category").innerText = topCatName;
+
+        // 1. Tinh toan Xu huong Doanh thu gan day (So sanh thang cuoi cung vs thang ke cuoi)
+        const revTrendEl = document.getElementById("kpi-revenue-trend");
+        const revTrendText = document.getElementById("kpi-revenue-trend-text");
+        if (monthlyList.length >= 2) {
+            const lastMonthRev = monthlyList[monthlyList.length - 1].revenue;
+            const prevMonthRev = monthlyList[monthlyList.length - 2].revenue;
+            if (prevMonthRev > 0) {
+                const percentage = ((lastMonthRev - prevMonthRev) / prevMonthRev) * 100;
+                const formattedPercent = percentage.toFixed(1);
+                if (percentage >= 0) {
+                    revTrendEl.className = "kpi-trend up";
+                    revTrendEl.innerHTML = `<i data-lucide="arrow-up-right"></i> +${formattedPercent}% so v\u1edbi th\u00e1ng tr\u01b0\u1edbc`;
+                } else {
+                    revTrendEl.className = "kpi-trend down";
+                    revTrendEl.innerHTML = `<i data-lucide="arrow-down-right"></i> ${formattedPercent}% so v\u1edbi th\u00e1ng tr\u01b0\u1edbc`;
+                }
+            } else {
+                revTrendEl.className = "kpi-trend up";
+                revTrendText.innerText = "T\u0103ng tr\u01b0\u1edfng m\u1edbi";
+            }
+        } else {
+            revTrendEl.className = "kpi-trend up";
+            revTrendText.innerText = "Thi\u1ebfu d\u1eef li\u1ec7u so s\u00e1nh";
+        }
+
+        // 2. Tinh toan Xu huong Doanh thu trung binh thang (So sanh thang cuoi vs Doanh thu TB)
+        const avgTrendEl = document.getElementById("kpi-avg-trend");
+        const avgTrendText = document.getElementById("kpi-avg-trend-text");
+        if (monthlyList.length > 0 && avgRev > 0) {
+            const lastMonthRev = monthlyList[monthlyList.length - 1].revenue;
+            const dev = ((lastMonthRev - avgRev) / avgRev) * 100;
+            if (Math.abs(dev) < 10) {
+                avgTrendEl.className = "kpi-trend up";
+                avgTrendEl.innerHTML = `<i data-lucide="arrow-up-right"></i> \u1ed4n \u0111\u1ecbnh (\u0111\u1ed9 l\u1ec7ch ${dev.toFixed(1)}%)`;
+            } else if (dev >= 10) {
+                avgTrendEl.className = "kpi-trend up";
+                avgTrendEl.innerHTML = `<i data-lucide="arrow-up-right"></i> T\u0103ng tr\u01b0\u1edfng (+${dev.toFixed(1)}%)`;
+            } else {
+                avgTrendEl.className = "kpi-trend down";
+                avgTrendEl.innerHTML = `<i data-lucide="arrow-down-right"></i> Suy gi\u1ea3m (${dev.toFixed(1)}%)`;
+            }
+        } else {
+            avgTrendEl.className = "kpi-trend up";
+            avgTrendText.innerText = "\u1ed4n \u0111\u1ecbnh";
+        }
+
+        // 3. Tinh toan Hieu suat cua danh muc dan dau (Ty trong tren tong doanh thu)
+        const catTrendEl = document.getElementById("kpi-category-trend");
+        const catTrendText = document.getElementById("kpi-category-trend-text");
+        if (categoriesList.length > 0 && totalRev > 0) {
+            const topCatRev = categoriesList[0].revenue;
+            const ratio = (topCatRev / totalRev) * 100;
+            catTrendEl.className = "kpi-trend up";
+            catTrendEl.innerHTML = `Chi\u1ebfm ${ratio.toFixed(1)}% c\u01a1 c\u1ea5u doanh thu`;
+        } else {
+            catTrendEl.className = "kpi-trend up";
+            catTrendText.innerText = "Hi\u1ec7u su\u1ea5t cao nh\u1ea5t";
+        }
+
+        if (typeof lucide !== "undefined") {
+            lucide.createIcons({ attrs: { class: "lucide-icon" } });
+        }
 
         // Chart 1: Monthly Line Chart
         const months = monthlyList.map(item => item.month);
@@ -566,11 +633,36 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Confirmation wrapper for Export
+    // Confirmation wrapper for Export (Handles unloaded tab data)
     window.confirmExport = function(tableId, filename) {
         showConfirmation(
             "Bạn có chắc muốn xuất dữ liệu này không? Dữ liệu sẽ được kết xuất dưới dạng CSV và tải về máy tính của bạn.",
             () => {
+                const table = document.getElementById(tableId);
+                if (table) {
+                    const tbody = table.querySelector("tbody");
+                    // Nếu tbody chưa được load dữ liệu (chưa có dòng nào)
+                    if (!tbody || tbody.children.length === 0) {
+                        let type = "";
+                        if (tableId === "tour-performance-table") type = "performance";
+                        else if (tableId === "guide-activity-table") type = "guides";
+
+                        if (type) {
+                            fetchAnalytics(type, data => {
+                                if (type === "performance") {
+                                    renderPerformanceDashboard(data);
+                                } else if (type === "guides") {
+                                    renderGuidesDashboard(data);
+                                }
+                                // Xuất sau khi dữ liệu đã được render thành công vào DOM
+                                setTimeout(() => {
+                                    window.exportTableToCSV(tableId, filename);
+                                }, 150);
+                            });
+                            return;
+                        }
+                    }
+                }
                 window.exportTableToCSV(tableId, filename);
             }
         );

@@ -1,4 +1,4 @@
-﻿<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
 <%@ page import="Entities.Tour" %>
 <%@ page import="Entities.TourCategory" %>
@@ -17,6 +17,7 @@
     request.setAttribute("extraCss", "css/detail.css");
     request.setAttribute("bodyClass", "detail-page");
     Tour activeTour = (Tour) request.getAttribute("tour");
+    boolean isLoggedIn = (session.getAttribute("sessionUser") != null);
     
     List<Review> tourReviews = activeTour != null ? activeTour.getReviews() : null;
     int totalReviews = (tourReviews != null) ? tourReviews.size() : 0;
@@ -126,25 +127,13 @@
                         galleryImages.add(request.getContextPath() + "/" + mainImgUrl);
                     }
 
-                    // Fallbacks to pad up to 5 images
-                    String[] defaultPool = {
-                        "assets/images/tour_halong.png",
-                        "assets/images/tour_phuquoc.png",
-                        "assets/images/hero_beach.png",
-                        "assets/images/tour_dalat.png",
-                        "assets/images/tour_danang.png",
-                        "assets/images/tour_hoian.png",
-                        "assets/images/tour_sapa.png",
-                        "assets/images/tour_nhatrang.png",
-                        "assets/images/tour_hagiang.png"
-                    };
-                    int poolIdx = 0;
-                    while (galleryImages.size() < 5 && poolIdx < defaultPool.length) {
-                        String fallbackUrl = request.getContextPath() + "/" + defaultPool[poolIdx];
-                        if (!galleryImages.contains(fallbackUrl)) {
-                            galleryImages.add(fallbackUrl);
-                        }
-                        poolIdx++;
+                    // Pad up to 5 images using the main image to avoid displaying unrelated tours
+                    String resolvedMainImg = mainImgUrl;
+                    if (!resolvedMainImg.startsWith("http") && !resolvedMainImg.startsWith("/")) {
+                        resolvedMainImg = request.getContextPath() + "/" + resolvedMainImg;
+                    }
+                    while (galleryImages.size() < 5) {
+                        galleryImages.add(resolvedMainImg);
                     }
                 %>
                 <div class="gallery-item main-photo">
@@ -397,7 +386,7 @@
                     <div class="add-review-card">
                         <h4>Chia Sẻ Trải Nghiệm Của Bạn</h4>
                         <% 
-                            boolean isLoggedIn = (session.getAttribute("sessionUser") != null);
+                            isLoggedIn = (session.getAttribute("sessionUser") != null);
                             User currentUser = isLoggedIn ? (User) session.getAttribute("sessionUser") : null;
                             if (isLoggedIn && currentUser != null) {
                         %>
@@ -545,7 +534,7 @@
                                 <span>Cổng đăng ký trực tuyến chính thức</span>
                             </div>
                             <button type="button" class="btn btn-primary btn-payment-cta" id="go-payment-btn"
-                                    onclick="window.location.href='${pageContext.request.contextPath}/customer/booking/create?tourId=<%= activeTour != null ? activeTour.getTourId() : 1 %>'">
+                                    onclick="if (<%= isLoggedIn %>) { window.location.href='${pageContext.request.contextPath}/customer/booking/create?tourId=<%= activeTour != null ? activeTour.getTourId() : 1 %>' } else { alert('Vui lòng đăng nhập để thực hiện đặt tour!'); window.location.href='${pageContext.request.contextPath}/login'; }">
                                 <span class="btn-payment-text">
                                     <i data-lucide="compass"></i>
                                     Đăng ký tham gia ngay
