@@ -74,6 +74,18 @@
                 <span>Dự Báo & Xu Hướng</span>
             </a>
         </li>
+        <li class="${activePage eq 'financial-audit' ? 'active' : ''}">
+            <a href="${pageContext.request.contextPath}/admin/financial-audit">
+                <i data-lucide="file-check-2"></i>
+                <span>Kiểm Toán Tài Chính</span>
+            </a>
+        </li>
+        <li class="${activePage eq 'fraud-monitor' ? 'active' : ''}">
+            <a href="${pageContext.request.contextPath}/admin/fraud-monitor">
+                <i data-lucide="shield-alert"></i>
+                <span>Giám Sát Gian Lận</span>
+            </a>
+        </li>
         <li class="${activePage eq 'moderation' ? 'active' : ''}">
             <a href="${pageContext.request.contextPath}/admin/moderation">
                 <i data-lucide="shield-alert"></i>

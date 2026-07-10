@@ -306,7 +306,8 @@ CREATE TABLE Payment (
                        CHECK (Status IN ('Pending','Success','Failed','Refunded')),
     PaidAt         DATETIME2     NULL,
     GatewayResponse NVARCHAR(MAX) NULL,
-    CreatedAt      DATETIME2     NOT NULL DEFAULT SYSDATETIME()
+    CreatedAt      DATETIME2     NOT NULL DEFAULT SYSDATETIME(),
+    ReviewStatus   NVARCHAR(50)  NOT NULL DEFAULT 'Normal'
 );
 GO
 
