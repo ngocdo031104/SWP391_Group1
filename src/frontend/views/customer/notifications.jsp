@@ -226,11 +226,7 @@
                     <span class="badge">${unreadCount} mới</span>
                 </c:if>
             </h1>
-            <c:if test="${unreadCount > 0}">
-                <a href="${pageContext.request.contextPath}/customer/notifications/read-all" class="btn-read-all">
-                    <i data-lucide="check-circle" style="width: 16px; height: 16px;"></i> Đánh dấu tất cả đã đọc
-                </a>
-            </c:if>
+
         </div>
         
         <form class="filter-bar" method="get" action="${pageContext.request.contextPath}/customer/notifications">
@@ -265,7 +261,12 @@
             <c:otherwise>
                 <ul class="notification-list">
                     <c:forEach var="notif" items="${notifications}">
-                        <li class="notification-item ${notif.isRead ? '' : 'unread'}">
+                        <li class="notification-item ${notif.isRead ? '' : 'unread'}"
+                            <c:if test="${!notif.isRead}">
+                                style="cursor: pointer;"
+                                onclick="markAsRead(${notif.notificationId}, this)"
+                            </c:if>
+                        >
                             <div class="notification-content">
                                 <h3 class="notification-title">
                                     ${notif.title}
@@ -283,13 +284,6 @@
                                     </c:if>
                                 </div>
                             </div>
-                            <c:if test="${!notif.isRead}">
-                                <div>
-                                    <a href="${pageContext.request.contextPath}/customer/notifications/read?id=${notif.notificationId}" class="btn-read" title="Đánh dấu đã đọc">
-                                        <i data-lucide="check" style="width: 16px; height: 16px;"></i>
-                                    </a>
-                                </div>
-                            </c:if>
                         </li>
                     </c:forEach>
                 </ul>
@@ -305,6 +299,62 @@
 <script>
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();
+    }
+
+    function markAsRead(notifId, element) {
+        // Tránh click nhiều lần
+        if (!element.classList.contains('unread')) return;
+        
+        // Gọi API ẩn để đánh dấu đã đọc (dùng cache-buster để tránh trình duyệt cache GET request)
+        fetch('${pageContext.request.contextPath}/customer/notifications/read?id=' + notifId + '&t=' + new Date().getTime(), { 
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) throw new Error("Network error");
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Xóa highlight chưa đọc
+                    element.classList.remove('unread');
+                    element.style.cursor = 'default';
+                    element.onclick = null;
+                    
+                    // Cập nhật số badge trên header ngay lập tức (nếu có)
+                    const headerBadge = document.getElementById('notification-count');
+                    if (headerBadge) {
+                        let currentCount = parseInt(headerBadge.innerText);
+                        if (!isNaN(currentCount) && currentCount > 0) {
+                            currentCount--;
+                            if (currentCount === 0) {
+                                headerBadge.style.display = 'none';
+                            } else {
+                                headerBadge.innerText = currentCount;
+                            }
+                        }
+                    }
+                    
+                    // Cập nhật số badge trong hero section
+                    const heroBadge = document.querySelector('.hero-section .badge');
+                    if (heroBadge) {
+                        let currentHeroCount = parseInt(heroBadge.innerText);
+                        if (!isNaN(currentHeroCount) && currentHeroCount > 0) {
+                            currentHeroCount--;
+                            if (currentHeroCount === 0) {
+                                heroBadge.style.display = 'none';
+                            } else {
+                                heroBadge.innerText = currentHeroCount + ' mới';
+                            }
+                        }
+                    }
+                } else {
+                    console.error("Lỗi cập nhật CSDL");
+                }
+            })
+            .catch(err => console.error(err));
     }
 </script>
 <jsp:include page="/common/footer.jsp" />

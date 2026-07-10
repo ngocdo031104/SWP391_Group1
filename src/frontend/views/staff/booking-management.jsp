@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
+<%@ taglib uri="jakarta.tags.functions" prefix="fn" %>
 
 <%-- Kiem tra quyen: chi Staff va Admin moi duoc vao trang nay --%>
 <c:if test="${empty sessionScope.sessionUser
@@ -123,21 +124,17 @@
 </head>
 <body class="dashboard-body">
 
-<div class="dashboard-layout">
-    <%@ include file="/admin/sidebar.jsp" %>
+<div class="dashboard-wrapper">
+    <c:set var="activePage" value="staff-bookings" scope="request"/>
+    <%@ include file="/admin/staff-sidebar.jsp" %>
 
     <main class="main-content">
-        <%@ include file="/admin/admin-header-right.jsp" %>
-
         <div class="content-area">
             <div class="page-header" style="margin-bottom:24px;">
                 <div>
                     <h1 style="margin:0;font-size:24px;font-weight:700;color:var(--gray-900);">Quản Lý Booking</h1>
                     <p style="margin:4px 0 0;color:var(--gray-500);font-size:14px;">Xem và quản lý toàn bộ đơn đặt tour của hệ thống</p>
                 </div>
-                <a href="${pageContext.request.contextPath}/staff/send-notification" class="btn-modern btn-outline">
-                    <i data-lucide="bell"></i> Gửi Thông Báo
-                </a>
             </div>
 
             <%-- Toast messages --%>
@@ -198,14 +195,6 @@
                             <option value="PendingPayment" ${statusFilter eq 'PendingPayment' ? 'selected' : ''}>⏳ Chờ thanh toán</option>
                             <option value="Cancelled"      ${statusFilter eq 'Cancelled'      ? 'selected' : ''}>❌ Đã hủy</option>
                         </select>
-                        <button type="submit" class="btn-modern btn-primary">
-                            <i data-lucide="search"></i> Tìm kiếm
-                        </button>
-                        <c:if test="${not empty keyword || statusFilter ne 'All'}">
-                            <a href="${pageContext.request.contextPath}/staff/bookings" class="btn-modern btn-outline">
-                                <i data-lucide="x"></i> Xóa lọc
-                            </a>
-                        </c:if>
                     </div>
                 </div>
             </form>
@@ -230,8 +219,7 @@
                                     <th>Ngày KH</th>
                                     <th>Tổng Tiền</th>
                                     <th>Trạng Thái</th>
-                                    <th>Ghi Chú VH</th>
-                                    <th>Thao Tác</th>
+                                    <th style="text-align:center;">Thao Tác</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -266,29 +254,18 @@
                                                 <c:when test="${b.status eq 'Cancelled'}">
                                                     <span class="badge badge-danger"><i data-lucide="x" style="width:11px;height:11px;"></i> Đã hủy</span>
                                                 </c:when>
+                                                <c:when test="${b.status eq 'Completed'}">
+                                                    <span class="badge badge-secondary" style="background:#EDE9FE;color:#7C3AED;"><i data-lucide="flag" style="width:11px;height:11px;"></i> Đã hoàn thành</span>
+                                                </c:when>
                                                 <c:otherwise>
                                                     <span class="badge badge-secondary">${b.status}</span>
                                                 </c:otherwise>
                                             </c:choose>
                                         </td>
-                                        <td>
-                                            <c:choose>
-                                                <c:when test="${not empty b.notes}">
-                                                    <span class="notes-preview" title="${b.notes}">${b.notes}</span>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <span style="color:var(--gray-200);font-size:12px;">— chưa có —</span>
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </td>
-                                        <td>
-                                            <div class="row-actions">
-                                                <button class="action-btn note"
-                                                    onclick="openNoteModal(${b.bookingId}, '${b.bookingCode}', `${fn:escapeXml(b.notes)}`)"
-                                                    title="Thêm/sửa ghi chú vận hành">
-                                                    <i data-lucide="pencil" style="width:12px;height:12px;"></i> Ghi chú
-                                                </button>
-                                            </div>
+                                        <td style="text-align:center;">
+                                            <button class="action-btn note" onclick="openNotifModal(${b.customer.userId}, '${fn:escapeXml(b.customer.fullName)}')" title="Gửi thông báo cho khách hàng này">
+                                                <i data-lucide="bell" style="width:12px;height:12px;"></i> Gửi TB
+                                            </button>
                                         </td>
                                     </tr>
                                 </c:forEach>
@@ -319,39 +296,62 @@
     </main>
 </div>
 
-<%-- Modal ghi chú vận hành --%>
-<div class="modal-overlay" id="noteModal">
+<%-- Modal Gui Thong Bao --%>
+<div class="modal-overlay" id="notifModal">
     <div class="modal-box">
         <div class="modal-header">
-            <h3><i data-lucide="pencil" style="width:16px;height:16px;vertical-align:middle;"></i> Ghi Chú Vận Hành</h3>
-            <button class="modal-close" onclick="closeNoteModal()">
+            <h3><i data-lucide="bell" style="width:16px;height:16px;vertical-align:middle;"></i> Gửi Thông Báo</h3>
+            <button class="modal-close" onclick="closeNotifModal()">
                 <i data-lucide="x"></i>
             </button>
         </div>
         <form method="post" action="${pageContext.request.contextPath}/staff/bookings">
-            <input type="hidden" name="action" value="addNote">
-            <input type="hidden" name="bookingId" id="modalBookingId">
+            <input type="hidden" name="action" value="sendNotification">
+            <input type="hidden" name="customerId" id="modalCustomerId">
             <input type="hidden" name="statusFilter" value="${statusFilter}">
             <input type="hidden" name="keyword" value="${keyword}">
             <input type="hidden" name="page" value="${currentPage}">
+            
             <div class="modal-body">
                 <div class="form-group">
-                    <label>Mã Booking</label>
-                    <div id="modalBookingCode" style="font-family:monospace;font-weight:700;color:var(--primary);font-size:15px;"></div>
+                    <label>Khách Hàng</label>
+                    <div id="modalCustomerName" style="font-weight:600;color:var(--primary);font-size:15px;padding:8px 12px;background:var(--primary-light);border-radius:8px;"></div>
                 </div>
+                
                 <div class="form-group">
-                    <label for="notesInput">Ghi chú vận hành nội bộ (tối đa 500 ký tự)</label>
-                    <textarea id="notesInput" name="notes" class="form-control" rows="5"
-                        maxlength="500" placeholder="Nhập ghi chú vận hành cho booking này..."></textarea>
-                    <div style="font-size:12px;color:var(--gray-500);margin-top:4px;">
-                        <span id="charCount">0</span>/500 ký tự
+                    <label for="titleInput">Tiêu Đề Thông Báo *</label>
+                    <input type="text" id="titleInput" name="title" required class="form-control" placeholder="Nhập tiêu đề...">
+                </div>
+                
+                <div class="form-group">
+                    <label for="contentInput">Nội Dung *</label>
+                    <textarea id="contentInput" name="content" required class="form-control" rows="4" placeholder="Nhập nội dung..."></textarea>
+                </div>
+                
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                    <div class="form-group">
+                        <label for="categoryInput">Thể Loại</label>
+                        <select id="categoryInput" name="category" required class="form-control">
+                            <option value="Booking">Đặt chỗ</option>
+                            <option value="System Announcement">Thông báo hệ thống</option>
+                            <option value="Payment">Thanh toán</option>
+                            <option value="Tour Update">Cập nhật Tour</option>
+                            <option value="Promotion">Khuyến mãi</option>
+                        </select>
                     </div>
+                    <div class="form-group">
+                        <label for="scheduledInput">Lên Lịch <span style="font-weight:400;color:var(--gray-500);">(tùy chọn)</span></label>
+                        <input type="datetime-local" id="scheduledInput" name="scheduledAt" class="form-control">
+                    </div>
+                </div>
+                <div style="font-size:12px;color:var(--gray-500);font-style:italic;margin-top:5px;">
+                    * Thông báo sẽ chỉ được gửi qua hệ thống (in-app).
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn-modern btn-outline" onclick="closeNoteModal()">Hủy</button>
+                <button type="button" class="btn-modern btn-outline" onclick="closeNotifModal()">Hủy</button>
                 <button type="submit" class="btn-modern btn-primary">
-                    <i data-lucide="save" style="width:14px;height:14px;"></i> Lưu Ghi Chú
+                    <i data-lucide="send" style="width:14px;height:14px;"></i> Gửi Thông Báo
                 </button>
             </div>
         </form>
@@ -370,31 +370,24 @@
         if (e.key === 'Enter') document.getElementById('filterForm').submit();
     });
 
-    // Modal ghi chu
-    function openNoteModal(bookingId, bookingCode, currentNotes) {
-        document.getElementById('modalBookingId').value = bookingId;
-        document.getElementById('modalBookingCode').textContent = bookingCode;
-        const textarea = document.getElementById('notesInput');
-        textarea.value = currentNotes || '';
-        updateCharCount();
-        document.getElementById('noteModal').classList.add('open');
-        textarea.focus();
+    // Modal gui thong bao
+    function openNotifModal(customerId, customerName) {
+        document.getElementById('modalCustomerId').value = customerId;
+        document.getElementById('modalCustomerName').textContent = customerName;
+        document.getElementById('titleInput').value = '';
+        document.getElementById('contentInput').value = '';
+        document.getElementById('scheduledInput').value = '';
+        document.getElementById('notifModal').classList.add('open');
+        document.getElementById('titleInput').focus();
     }
 
-    function closeNoteModal() {
-        document.getElementById('noteModal').classList.remove('open');
+    function closeNotifModal() {
+        document.getElementById('notifModal').classList.remove('open');
     }
-
-    function updateCharCount() {
-        const len = document.getElementById('notesInput').value.length;
-        document.getElementById('charCount').textContent = len;
-    }
-
-    document.getElementById('notesInput')?.addEventListener('input', updateCharCount);
 
     // Close modal khi click ra ngoai
-    document.getElementById('noteModal')?.addEventListener('click', function(e) {
-        if (e.target === this) closeNoteModal();
+    document.getElementById('notifModal')?.addEventListener('click', function(e) {
+        if (e.target === this) closeNotifModal();
     });
 </script>
 </body>

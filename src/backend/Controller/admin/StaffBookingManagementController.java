@@ -6,7 +6,9 @@ package Controller.admin;
 
 import Entities.Booking;
 import Entities.User;
+import Entities.Notification;
 import Model.BookingDAO;
+import Model.NotificationDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -93,6 +95,7 @@ public class StaffBookingManagementController extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
+        User currentUser = (User) session.getAttribute("sessionUser");
 
         String action = request.getParameter("action");
 
@@ -127,6 +130,59 @@ public class StaffBookingManagementController extends HttpServlet {
             }
 
             // Redirect ve trang danh sach, giu nguyen filter + page
+            String redirectUrl = request.getContextPath() + "/staff/bookings?status=" +
+                (statusFilter != null ? statusFilter : "All") +
+                "&keyword=" + (keyword != null ? keyword : "") +
+                "&page=" + (page != null ? page : "1");
+            response.sendRedirect(redirectUrl);
+        } else if ("sendNotification".equals(action)) {
+            String customerIdStr = request.getParameter("customerId");
+            String title = request.getParameter("title");
+            String content = request.getParameter("content");
+            String category = request.getParameter("category");
+            String scheduledAtStr = request.getParameter("scheduledAt");
+
+            String statusFilter = request.getParameter("statusFilter");
+            String keyword      = request.getParameter("keyword");
+            String page         = request.getParameter("page");
+
+            if (customerIdStr != null && title != null && content != null && category != null) {
+                try {
+                    int customerId = Integer.parseInt(customerIdStr);
+                    Notification notification = new Notification();
+                    notification.setUserId(customerId);
+                    notification.setSenderId(currentUser.getUserId());
+                    notification.setTitle(title);
+                    notification.setContent(content);
+                    notification.setChannel("SYSTEM");
+                    notification.setCategory(category);
+
+                    java.sql.Timestamp scheduledAt = null;
+                    if (scheduledAtStr != null && !scheduledAtStr.trim().isEmpty()) {
+                        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+                        java.util.Date date = sdf.parse(scheduledAtStr);
+                        scheduledAt = new java.sql.Timestamp(date.getTime());
+                    }
+                    notification.setScheduledAt(scheduledAt);
+
+                    if (scheduledAt != null) {
+                        notification.setStatus("SCHEDULED");
+                    } else {
+                        notification.setStatus("SENT");
+                    }
+
+                    NotificationDAO notifDAO = new NotificationDAO();
+                    notifDAO.insertNotification(notification);
+
+                    session.setAttribute("staffBookingSuccess", "Gửi thông báo thành công.");
+                } catch (Exception e) {
+                    session.setAttribute("staffBookingError", "Có lỗi xảy ra khi gửi thông báo.");
+                    e.printStackTrace();
+                }
+            } else {
+                session.setAttribute("staffBookingError", "Thiếu thông tin bắt buộc.");
+            }
+
             String redirectUrl = request.getContextPath() + "/staff/bookings?status=" +
                 (statusFilter != null ? statusFilter : "All") +
                 "&keyword=" + (keyword != null ? keyword : "") +

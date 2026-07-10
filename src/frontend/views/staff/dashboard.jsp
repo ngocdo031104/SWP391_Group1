@@ -62,7 +62,7 @@
         .stat-info h4 { margin: 0; font-size: 13px; color: var(--gray-500); font-weight: 500; }
         .stat-info .stat-value { margin: 6px 0 0; font-size: 28px; font-weight: 700; color: var(--gray-900); }
 
-        .quick-actions-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px; }
+        .quick-actions-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 28px; }
         .quick-card { background: #fff; border-radius: 16px; padding: 24px; border: 1px solid var(--gray-100);
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); text-decoration: none; color: var(--gray-900);
             display: flex; flex-direction: column; align-items: flex-start; gap: 12px;
@@ -77,13 +77,11 @@
 </head>
 <body class="dashboard-body">
 
-<div class="dashboard-layout">
+<div class="dashboard-wrapper">
     <c:set var="activePage" value="staff-dashboard" scope="request"/>
-    <%@ include file="/admin/sidebar.jsp" %>
+    <%@ include file="/admin/staff-sidebar.jsp" %>
 
     <main class="main-content">
-        <%@ include file="/admin/admin-header-right.jsp" %>
-
         <div class="content-area">
 
             <%-- Welcome banner --%>
@@ -140,15 +138,6 @@
                     <h3>Quản Lý Booking</h3>
                     <p>Xem toàn bộ danh sách đặt tour, lọc theo trạng thái và thêm ghi chú vận hành.</p>
                     <span class="arrow">Xem tất cả <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></span>
-                </a>
-
-                <a href="${pageContext.request.contextPath}/staff/send-notification" class="quick-card">
-                    <div class="quick-card-icon" style="background:#F0FDF4;color:#16A34A;">
-                        <i data-lucide="bell"></i>
-                    </div>
-                    <h3>Gửi Thông Báo</h3>
-                    <p>Gửi thông báo in-app hoặc email đến khách hàng về booking, lịch trình hoặc thay đổi tour.</p>
-                    <span class="arrow">Gửi ngay <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></span>
                 </a>
 
                 <a href="${pageContext.request.contextPath}/admin/analytics" class="quick-card">

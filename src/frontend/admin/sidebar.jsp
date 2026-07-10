@@ -73,6 +73,17 @@
                 <span>Dự Báo & Xu Hướng</span>
             </a>
         </li>
+        <c:if test="${isAccountant}">
+            <li class="${activePage eq 'refunds' ? 'active' : ''}">
+                <a href="${pageContext.request.contextPath}/accountant/refunds">
+                    <i data-lucide="refresh-cw"></i>
+                    <span>Xử Lý Hoàn Tiền</span>
+                    <c:if test="${pendingRefunds != null && pendingRefunds > 0}">
+                        <span style="background: #EF4444; color: #fff; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; margin-left: auto;">${pendingRefunds}</span>
+                    </c:if>
+                </a>
+            </li>
+        </c:if>
         
         <c:if test="${!isAccountant}">
             <li class="${activePage eq 'roles' ? 'active' : ''}">

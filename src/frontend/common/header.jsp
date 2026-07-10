@@ -58,9 +58,22 @@
                         <button class="btn btn-primary" id="register-button" onclick="window.location.href='${pageContext.request.contextPath}/register'">Đăng Ký</button>
                     </c:when>
                     <c:otherwise>
+                        <%
+                            int _unreadCount = 0;
+                            Entities.User _headerUser = (Entities.User) session.getAttribute("sessionUser");
+                            if (_headerUser != null) {
+                                try {
+                                    Model.NotificationDAO _notifDAO = new Model.NotificationDAO();
+                                    _unreadCount = _notifDAO.getUnreadCount(_headerUser.getUserId());
+                                    _notifDAO.close();
+                                } catch (Exception _e) { /* không làm vỡ header */ }
+                            }
+                        %>
                         <a href="${pageContext.request.contextPath}/customer/notifications" class="notification-bell" id="notification-btn" aria-label="Thông báo" style="text-decoration: none;">
                             <i data-lucide="bell"></i>
-                            <span class="badge-count" id="notification-count">3</span>
+                            <% if (_unreadCount > 0) { %>
+                                <span class="badge-count" id="notification-count"><%= _unreadCount > 99 ? "99+" : _unreadCount %></span>
+                            <% } %>
                         </a>
 
                         <div class="user-avatar-wrapper">
@@ -99,3 +112,4 @@
             </div>
         </div>
     </header>
+

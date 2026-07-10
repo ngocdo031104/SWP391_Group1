@@ -27,9 +27,9 @@
             --gray-500: #64748B; --gray-700: #334155; --gray-900: #0F172A;
         }
         body.dashboard-body { background: var(--gray-50); font-family: 'Inter', sans-serif; }
-
-        /* Tabs */
-        .tabs { display: flex; gap: 8px; margin-bottom: 24px; border-bottom: 1px solid var(--gray-200); padding-bottom: 8px; }
+        /* Filter & Tabs */
+        .filter-container { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; border-bottom: 1px solid var(--gray-200); padding-bottom: 12px; gap: 20px; flex-wrap: wrap; }
+        .tabs { display: flex; gap: 8px; }
         .tab-btn { padding: 10px 20px; font-weight: 600; font-size: 14px; border-radius: 8px; border: none; cursor: pointer; text-decoration: none; display: flex; align-items: center; gap: 8px; color: var(--gray-500); background: transparent; transition: all .2s; }
         .tab-btn:hover { background: var(--gray-100); color: var(--gray-900); }
         .tab-btn.active { background: #FEE2E2; color: #EF4444; }
@@ -63,7 +63,7 @@
         /* Modal */
         .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,.5); backdrop-filter: blur(4px); z-index: 1000; display: none; align-items: center; justify-content: center; }
         .modal-overlay.open { display: flex; }
-        .modal-box { background: #fff; border-radius: 16px; width: 480px; max-width: 95vw; box-shadow: 0 25px 50px rgba(0,0,0,.15); }
+        .modal-box { background: #fff; border-radius: 16px; width: 650px; max-width: 95vw; box-shadow: 0 25px 50px rgba(0,0,0,.15); }
         .modal-header { padding: 20px 24px; border-bottom: 1px solid var(--gray-200); display: flex; justify-content: space-between; align-items: center; }
         .modal-header.success h3 { color: var(--success); }
         .modal-header.danger h3 { color: var(--danger); }
@@ -73,6 +73,7 @@
         .form-group { margin-bottom: 16px; }
         .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 6px; }
         .form-control { width: 100%; box-sizing: border-box; padding: 10px 14px; border: 1px solid var(--gray-200); border-radius: 8px; font-family: inherit; font-size: 14px; outline: none; }
+        textarea.form-control { resize: none; }
         .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
         .readonly-value { font-weight: 600; color: var(--gray-900); font-size: 16px; }
         
@@ -88,14 +89,12 @@
 </head>
 <body class="dashboard-body">
 
-<div class="dashboard-layout">
+<div class="dashboard-wrapper">
     <c:set var="isAccountant" value="true" scope="request"/>
     <%@ include file="/admin/sidebar.jsp" %>
 
     <main class="main-content">
-        <%@ include file="/admin/admin-header-right.jsp" %>
-
-        <div class="content-area">
+        <div class="content-area" style="padding: 28px 36px;">
             <div class="page-header" style="margin-bottom:24px;">
                 <div>
                     <h1 style="margin:0;font-size:24px;font-weight:700;color:var(--gray-900);">Xử Lý Hoàn Tiền</h1>
@@ -110,13 +109,42 @@
                 <div class="toast error" id="toastMsg"><i data-lucide="x-circle"></i> ${errorMessage}</div>
             </c:if>
 
-            <div class="tabs">
-                <a href="${pageContext.request.contextPath}/accountant/refunds?tab=pending" class="tab-btn ${activeTab eq 'pending' ? 'active' : ''}">
-                    <i data-lucide="clock"></i> Chờ Xử Lý
-                </a>
-                <a href="${pageContext.request.contextPath}/accountant/refunds?tab=history" class="tab-btn ${activeTab eq 'history' ? 'active' : ''}">
-                    <i data-lucide="archive"></i> Đã Xử Lý
-                </a>
+            <div class="filter-container">
+                <div class="tabs">
+                    <a href="${pageContext.request.contextPath}/accountant/refunds?tab=pending" class="tab-btn ${activeTab eq 'pending' ? 'active' : ''}">
+                        <i data-lucide="clock"></i> Chờ Xử Lý
+                    </a>
+                    <a href="${pageContext.request.contextPath}/accountant/refunds?tab=history" class="tab-btn ${activeTab eq 'history' ? 'active' : ''}">
+                        <i data-lucide="archive"></i> Đã Xử Lý
+                    </a>
+                </div>
+
+                <form method="get" action="${pageContext.request.contextPath}/accountant/refunds" style="display: flex; gap: 12px; align-items: center;">
+                    <input type="hidden" name="tab" value="${activeTab}">
+                    
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <label style="font-size: 13px; font-weight: 500; color: var(--gray-700);">Tên KH:</label>
+                        <input type="text" name="customerName" value="${param.customerName}" class="form-control" placeholder="Tìm theo tên khách hàng..." style="padding: 8px 12px; width: 200px; font-size: 13px;">
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <label style="font-size: 13px; font-weight: 500; color: var(--gray-700);">Từ ngày:</label>
+                        <input type="date" name="startDate" value="${param.startDate}" class="form-control" style="padding: 8px 12px; width: auto; font-size: 13px;">
+                    </div>
+                    
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <label style="font-size: 13px; font-weight: 500; color: var(--gray-700);">Đến ngày:</label>
+                        <input type="date" name="endDate" value="${param.endDate}" class="form-control" style="padding: 8px 12px; width: auto; font-size: 13px;">
+                    </div>
+                    
+                    <button type="submit" class="btn-modern btn-outline" style="padding: 8px 16px; background: white;"><i data-lucide="filter" style="width: 15px; height: 15px;"></i> Lọc</button>
+                    
+                    <c:if test="${not empty param.startDate or not empty param.endDate}">
+                        <a href="${pageContext.request.contextPath}/accountant/refunds?tab=${activeTab}" class="btn-modern btn-outline" style="padding: 8px 12px; color: var(--danger); border-color: var(--danger-light); background: var(--danger-light);" title="Xóa bộ lọc">
+                            <i data-lucide="x" style="width: 15px; height: 15px;"></i>
+                        </a>
+                    </c:if>
+                </form>
             </div>
 
             <div class="modern-card">
