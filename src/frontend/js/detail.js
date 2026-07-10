@@ -466,25 +466,33 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Simulator Upload image
+    // Real Upload image handling
     const uploadSimBtn = document.getElementById('upload-sim-btn');
+    const reviewImageInput = document.getElementById('review-image-input');
     const uploadPreviewRow = document.getElementById('uploaded-images-preview-row');
-    let simulatedUploadedImgUrl = '';
 
-    if (uploadSimBtn) {
+    if (uploadSimBtn && reviewImageInput) {
         uploadSimBtn.addEventListener('click', () => {
-            // Simulated upload of a beautiful landscape image
-            simulatedUploadedImgUrl = "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=400&q=80";
-            if (uploadPreviewRow) {
-                uploadPreviewRow.innerHTML = `
-                    <div class="preview-img-wrapper">
-                        <img src="${simulatedUploadedImgUrl}" alt="\u1ea2nh xem tr\u01b0\u1edbc">
-                        <span class="remove-preview-btn" id="remove-preview-img-btn">&times;</span>
-                    </div>
-                `;
-                document.getElementById('remove-preview-img-btn').addEventListener('click', () => {
-                    uploadPreviewRow.innerHTML = '';
-                    simulatedUploadedImgUrl = '';
-                });
+            reviewImageInput.click();
+        });
+
+        reviewImageInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file && uploadPreviewRow) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    uploadPreviewRow.innerHTML = `
+                        <div class="preview-img-wrapper" style="position: relative; display: inline-block;">
+                            <img src="${event.target.result}" alt="\u1ea2nh xem tr\u01b0\u1edbc" style="max-width: 150px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                            <span class="remove-preview-btn" id="remove-preview-img-btn" style="position: absolute; top: -6px; right: -6px; background: #ef4444; color: #ffffff; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px; font-weight: bold; border: 1px solid #ffffff;">&times;</span>
+                        </div>
+                    `;
+                    document.getElementById('remove-preview-img-btn').addEventListener('click', () => {
+                        uploadPreviewRow.innerHTML = '';
+                        reviewImageInput.value = ''; // Clear file input
+                    });
+                };
+                reader.readAsDataURL(file);
             }
         });
     }
@@ -586,18 +594,103 @@ document.addEventListener('DOMContentLoaded', () => {
     const wishlistDetailBtn = document.getElementById('wishlist-detail-btn');
     if (wishlistDetailBtn) {
         wishlistDetailBtn.addEventListener('click', () => {
-            wishlistDetailBtn.classList.toggle('active');
-            const heartIcon = wishlistDetailBtn.querySelector('svg');
-            if (wishlistDetailBtn.classList.contains('active')) {
-                heartIcon.setAttribute('fill', 'currentColor');
-                wishlistDetailBtn.innerHTML = `<i data-lucide="heart" fill="currentColor"></i> \u0110\u00e3 l\u01b0u Y\u00eau th\u00edch`;
-            } else {
-                heartIcon.setAttribute('fill', 'none');
-                wishlistDetailBtn.innerHTML = `<i data-lucide="heart"></i> L\u01b0u v\u00e0o Y\u00eau th\u00edch`;
-            }
-            lucide.createIcons();
+            const tourId = wishlistDetailBtn.getAttribute('data-tour-id');
+            const contextPath = window.contextPath || '';
+            
+            fetch(`${contextPath}/customer/wishlist/toggle?tourId=${tourId}`, {
+                method: 'POST'
+            })
+            .then(res => {
+                if (res.status === 401) {
+                    window.showToast('Vui l\u00f2ng \u0111\u0103ng nh\u1eadp \u0111\u1ec3 l\u01b0u tour y\u00eau th\u00edch.', 'warning');
+                    return null;
+                }
+                if (!res.ok) throw new Error('L\u1ed7i h\u1ec7 th\u1ed1ng');
+                return res.json();
+            })
+            .then(data => {
+                if (!data) return;
+                
+                if (data.status === 'success') {
+                    wishlistDetailBtn.classList.toggle('active', data.isSaved);
+                    if (data.isSaved) {
+                        wishlistDetailBtn.innerHTML = `<i data-lucide="heart" fill="currentColor"></i> \u0110\u00e3 l\u01b0u Y\u00eau th\u00edch`;
+                    } else {
+                        wishlistDetailBtn.innerHTML = `<i data-lucide="heart"></i> L\u01b0u v\u00e0o Y\u00eau th\u00edch`;
+                    }
+                    if (window.lucide) window.lucide.createIcons();
+                    window.showToast(data.message, 'success');
+                } else {
+                    window.showToast(data.message, 'error');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                window.showToast('\u0110\u00e3 x\u1ea3y ra l\u1ed7i k\u1ebft n\u1ed1i!', 'error');
+            });
         });
     }
+
+    // Flag/Report review click listener
+    const reportReviewBtns = document.querySelectorAll('.btn-report-review');
+    reportReviewBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const reviewId = btn.getAttribute('data-id');
+            const contextPath = window.contextPath || '';
+            
+            const params = new URLSearchParams();
+            params.append("entityType", "Review");
+            params.append("entityId", reviewId);
+
+            fetch(`${contextPath}/customer/report`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: params
+            })
+            .then(res => {
+                if (res.status === 401) {
+                    if (window.showToast) {
+                        window.showToast('Vui l\u00f2ng \u0111\u0103ng nh\u1eadp \u0111\u1ec3 b\u00e1o c\u00e1o vi ph\u1ea1m.', 'warning');
+                    } else {
+                        alert('Vui l\u00f2ng \u0111\u0103ng nh\u1eadp \u0111\u1ec3 b\u00e1o c\u00e1o vi ph\u1ea1m.');
+                    }
+                    return null;
+                }
+                if (!res.ok) throw new Error('Thao t\u00e1c th\u1ea5t b\u1ea1i');
+                return res.json();
+            })
+            .then(data => {
+                if (!data) return;
+                if (data.status === 'success') {
+                    if (window.showToast) {
+                        window.showToast(data.message, 'success');
+                    } else {
+                        alert(data.message);
+                    }
+                    // Disable button after successful reporting
+                    btn.disabled = true;
+                    btn.style.color = '#94a3b8';
+                    btn.innerHTML = `<i class="fa-solid fa-flag"></i> \u0110\u00e3 b\u00e1o c\u00e1o`;
+                } else {
+                    if (window.showToast) {
+                        window.showToast(data.message, 'error');
+                    } else {
+                        alert(data.message);
+                    }
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                if (window.showToast) {
+                    window.showToast('\u0110\u00e3 x\u1ea3y ra l\u1ed7i k\u1ebft n\u1ed1i!', 'error');
+                } else {
+                    alert('\u0110\u00e3 x\u1ea3y ra l\u1ed7i k\u1ebft n\u1ed1i!');
+                }
+            });
+        });
+    });
 
 });
 

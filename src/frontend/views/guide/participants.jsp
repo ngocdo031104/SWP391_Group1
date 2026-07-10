@@ -73,6 +73,19 @@
                 </div>
             </c:if>
 
+            <!-- Check-in Progress Tracker -->
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 16px 20px; border-radius: 8px; margin-bottom: 24px; font-family: 'Inter', sans-serif;">
+                <div style="display: flex; justify-content: space-between; align-items: center; font-weight: 600; color: #334155; font-size: 0.95rem;">
+                    <span>Tiến độ điểm danh đoàn:</span>
+                    <span>
+                        <span id="checked-in-count" style="color: #10b981; font-weight: 700;">${checkedInCount}</span> / <span id="total-count" style="font-weight: 700;">${totalCount}</span> khách hàng
+                    </span>
+                </div>
+                <div style="background: #e2e8f0; border-radius: 9999px; height: 12px; margin-top: 10px; overflow: hidden; width: 100%;">
+                    <div id="progress-bar" style="background: #10b981; height: 100%; transition: width 0.3s ease; width: ${totalCount > 0 ? (checkedInCount * 100 / totalCount) : 0}%;"></div>
+                </div>
+            </div>
+
             <c:choose>
                 <c:when test="${empty participants}">
                     <div class="empty-state" style="text-align:center; padding: 40px 20px;">
@@ -88,30 +101,65 @@
                                     <th style="width: 50px; text-align: center;">STT</th>
                                     <th>Họ và Tên</th>
                                     <th>Loại Khách</th>
-                                    <th>Số Điện Thoại</th>
-                                    <th>Email</th>
+                                    <th>Thông Tin Liên Hệ</th>
+                                    <th style="width: 200px;">Trạng Thái</th>
+                                    <th>Ghi Chú</th>
+                                    <th style="width: 140px; text-align: center;">Hành Động</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <c:forEach var="participant" items="${participants}" varStatus="status">
-                                    <tr>
+                                <c:forEach var="p" items="${participants}" varStatus="status">
+                                    <tr style="vertical-align: middle;">
                                         <td style="text-align: center; color: var(--clr-muted);">${status.count}</td>
                                         <td style="font-weight: 500;">
-                                            <c:out value="${participant.fullName}" />
-                                            <c:if test="${participant.isLeader}">
+                                            <c:out value="${p.fullName}" />
+                                            <c:if test="${p.isLeader}">
                                                 <span class="badge-leader"><i class="fa fa-star"></i> Nhóm Trưởng</span>
                                             </c:if>
                                         </td>
                                         <td>
                                             <c:choose>
-                                                <c:when test="${participant.ageType == 'Adult'}">Người lớn</c:when>
-                                                <c:when test="${participant.ageType == 'Child'}">Trẻ em</c:when>
-                                                <c:when test="${participant.ageType == 'Infant'}">Trẻ nhỏ</c:when>
-                                                <c:otherwise><c:out value="${participant.ageType}" /></c:otherwise>
+                                                <c:when test="${p.ageType == 'Adult'}">Người lớn</c:when>
+                                                <c:when test="${p.ageType == 'Child'}">Trẻ em</c:when>
+                                                <c:when test="${p.ageType == 'Infant'}">Trẻ nhỏ</c:when>
+                                                <c:otherwise><c:out value="${p.ageType}" /></c:otherwise>
                                             </c:choose>
                                         </td>
-                                        <td><c:out value="${participant.phoneNumber}" /></td>
-                                        <td><c:out value="${participant.email}" /></td>
+                                        <td>
+                                            <div style="font-size: 0.9rem; color: #334155;"><i class="fa fa-phone" style="width:14px;color:#94a3b8;"></i> <c:out value="${p.phoneNumber}" /></div>
+                                            <div style="font-size: 0.8rem; color: #64748b; margin-top: 2px;"><i class="fa fa-envelope" style="width:14px;color:#94a3b8;"></i> <c:out value="${p.email}" /></div>
+                                        </td>
+                                        
+                                        <!-- Cột Trạng Thái -->
+                                        <td id="status-cell-${p.participantId}">
+                                            <c:choose>
+                                                <c:when test="${p.checkedIn}">
+                                                    <span class="badge-status checked-in" style="background: #d1fae5; color: #065f46; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; display: inline-flex; align-items: center; gap: 4px;">
+                                                        <i class="fa fa-circle-check"></i> Đã check-in (<span class="checkin-time"><fmt:formatDate value="${p.checkInTime}" pattern="HH:mm dd/MM" /></span>)
+                                                    </span>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <span class="badge-status pending" style="background: #f1f5f9; color: #64748b; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; display: inline-flex; align-items: center; gap: 4px;">
+                                                        <i class="fa-regular fa-clock"></i> Chưa điểm danh
+                                                    </span>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+
+                                        <!-- Cột Ghi Chú -->
+                                        <td>
+                                            <input type="text" class="input-notes" id="notes-${p.participantId}" value="<c:out value="${p.notes}" />" placeholder="Nhập ghi chú..." style="width: 100%; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none; font-size: 0.85rem;" onchange="saveNotes(${p.participantId})">
+                                        </td>
+
+                                        <!-- Cột Hành Động -->
+                                        <td style="text-align: center;">
+                                            <button class="btn btn-toggle-checkin" id="btn-checkin-${p.participantId}" data-id="${p.participantId}" data-checked="${p.checkedIn}" onclick="toggleCheckIn(${p.participantId})" style="padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 0.85rem; cursor: pointer; border: none; transition: all 0.2s; background: ${p.checkedIn ? '#ef4444' : '#10b981'}; color: #ffffff; width: 110px;">
+                                                <c:choose>
+                                                    <c:when test="${p.checkedIn}">Hủy check-in</c:when>
+                                                    <c:otherwise>Điểm danh</c:otherwise>
+                                                </c:choose>
+                                            </button>
+                                        </td>
                                     </tr>
                                 </c:forEach>
                             </tbody>
@@ -123,6 +171,105 @@
         </div>
     </div>
 </div>
+
+<script>
+    function toggleCheckIn(participantId) {
+        const btn = document.getElementById(`btn-checkin-${participantId}`);
+        const isChecked = btn.getAttribute("data-checked") === "true";
+        const newChecked = !isChecked;
+        const notes = document.getElementById(`notes-${participantId}`).value;
+        const scheduleId = ${assignment.scheduleId};
+        
+        const params = new URLSearchParams();
+        params.append("action", "checkin");
+        params.append("scheduleId", scheduleId);
+        params.append("participantId", participantId);
+        params.append("checkedIn", newChecked);
+        params.append("notes", notes);
+        
+        fetch(`${pageContext.request.contextPath}/guide/dashboard`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: params
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === "success") {
+                btn.setAttribute("data-checked", newChecked ? "true" : "false");
+                btn.innerText = newChecked ? "Hủy check-in" : "Điểm danh";
+                btn.style.background = newChecked ? "#ef4444" : "#10b981";
+                
+                const statusCell = document.getElementById(`status-cell-${participantId}`);
+                if (newChecked) {
+                    statusCell.innerHTML = `
+                        <span class="badge-status checked-in" style="background: #d1fae5; color: #065f46; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; display: inline-flex; align-items: center; gap: 4px;">
+                            <i class="fa fa-circle-check"></i> Đã check-in (` + data.checkInTime + `)
+                        </span>
+                    `;
+                } else {
+                    statusCell.innerHTML = `
+                        <span class="badge-status pending" style="background: #f1f5f9; color: #64748b; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; display: inline-flex; align-items: center; gap: 4px;">
+                            <i class="fa-regular fa-clock"></i> Chưa điểm danh
+                        </span>
+                    `;
+                }
+                updateProgress();
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Lỗi kết nối khi thực hiện điểm danh!");
+        });
+    }
+
+    function saveNotes(participantId) {
+        const notes = document.getElementById(`notes-${participantId}`).value;
+        const scheduleId = ${assignment.scheduleId};
+        
+        const params = new URLSearchParams();
+        params.append("action", "updateNotes");
+        params.append("scheduleId", scheduleId);
+        params.append("participantId", participantId);
+        params.append("notes", notes);
+        
+        fetch(`${pageContext.request.contextPath}/guide/dashboard`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: params
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status !== "success") {
+                alert(data.message);
+            }
+        })
+        .catch(err => {
+            console.error(err);
+        });
+    }
+
+    function updateProgress() {
+        const buttons = document.querySelectorAll(".btn-toggle-checkin");
+        let total = buttons.length;
+        let checked = 0;
+        buttons.forEach(btn => {
+            if (btn.getAttribute("data-checked") === "true") {
+                checked++;
+            }
+        });
+        
+        document.getElementById("checked-in-count").innerText = checked;
+        document.getElementById("total-count").innerText = total;
+        const pct = total > 0 ? (checked * 100 / total) : 0;
+        document.getElementById("progress-bar").style.width = pct + "%";
+    }
+</script>
 
 </body>
 </html>

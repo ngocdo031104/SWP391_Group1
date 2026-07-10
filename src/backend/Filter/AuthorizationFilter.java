@@ -13,7 +13,15 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
-@WebFilter(urlPatterns = {"/admin/roles/*", "/admin/permissions/*"})
+@WebFilter(urlPatterns = {
+    "/admin/roles/*", 
+    "/admin/permissions/*", 
+    "/admin/moderation", 
+    "/admin/analytics", 
+    "/admin/forecast",
+    "/admin/assignments",
+    "/admin/operation-logs"
+})
 public class AuthorizationFilter implements Filter {
 
     @Override
@@ -32,19 +40,54 @@ public class AuthorizationFilter implements Filter {
         }
 
         User user = (User) session.getAttribute("sessionUser");
+        String uri = req.getRequestURI();
         
-        // Check if user has permission to manage roles
-        boolean hasManageRolePerm = false;
-        if (user.getRole() != null && user.getRole().getPermissions() != null) {
+        boolean hasPermission = false;
+        String requiredModule = "";
+        
+        if (uri.contains("/admin/roles") || uri.contains("/admin/permissions")) {
+            requiredModule = "Role Management";
+        } else if (uri.contains("/admin/moderation")) {
+            requiredModule = "Content Management";
+        } else if (uri.contains("/admin/assignments")) {
+            if (user.getRole() != null && user.getRole().getPermissions() != null) {
+                for (Entities.Permission p : user.getRole().getPermissions()) {
+                    if (p.getPermissionId() == 32) {
+                        hasPermission = true;
+                        break;
+                    }
+                }
+            }
+        } else if (uri.contains("/admin/analytics")) {
+            requiredModule = "System Settings";
+        } else if (uri.contains("/admin/forecast")) {
+            requiredModule = "Perform Predictive Analytics";
+        }
+        
+        if (user.getRoleId() == 1) { // Super Admin bypass
+            hasPermission = true;
+        } else if (!requiredModule.isEmpty() && user.getRole() != null && user.getRole().getPermissions() != null) {
             for (Entities.Permission p : user.getRole().getPermissions()) {
-                if ("Role Management".equals(p.getModuleName())) {
-                    hasManageRolePerm = true;
+                if (requiredModule.equalsIgnoreCase(p.getModuleName()) 
+                    || requiredModule.equalsIgnoreCase(p.getAction())
+                    || (requiredModule.equals("Perform Predictive Analytics") && p.getPermissionId() == 39)) {
+                    hasPermission = true;
                     break;
                 }
             }
         }
         
-        if (!hasManageRolePerm && user.getRoleId() != 1) { // Super Admin always allowed as fallback
+        // Thống kê hỗ trợ thêm action Export
+        if (!hasPermission && "System Settings".equals(requiredModule) && user.getRole() != null && user.getRole().getPermissions() != null) {
+            for (Entities.Permission p : user.getRole().getPermissions()) {
+                if ("System Settings".equalsIgnoreCase(p.getModuleName()) && "Export".equalsIgnoreCase(p.getAction())) {
+                    hasPermission = true;
+                    break;
+                }
+            }
+        }
+
+        if (!hasPermission) {
             res.sendRedirect(req.getContextPath() + "/403-forbidden.jsp");
             return;
         }

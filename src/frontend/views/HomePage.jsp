@@ -169,12 +169,16 @@
                             if (tour.getTourId() % 3 == 0) badgeName = "Độc Quyền";
                             else if (tour.getTourId() % 3 == 2) badgeName = "Xu Hướng";
                 %>
+                <%
+                    List<Integer> wishlistTourIds = (List<Integer>) request.getAttribute("wishlistTourIds");
+                    boolean isWishlisted = wishlistTourIds != null && wishlistTourIds.contains(tour.getTourId());
+                %>
                 <div class="tour-card" data-tour-category="<%= catClass %>">
                     <div class="tour-img-wrapper">
                         <img src="<%= imageUrl %>" alt="<%= tour.getTourName() %>" class="tour-img">
                         <div class="tour-badge"><span class="badge badge-featured"><%= badgeName %></span></div>
-                        <button class="btn-wishlist" id="wishlist-<%= tour.getTourId() %>" aria-label="Thêm vào yêu thích">
-                            <i data-lucide="heart"></i>
+                        <button class="btn-wishlist <%= isWishlisted ? "active" : "" %>" id="wishlist-<%= tour.getTourId() %>" aria-label="Thêm vào yêu thích">
+                            <i data-lucide="heart" <%= isWishlisted ? "fill=\"currentColor\"" : "" %>></i>
                         </button>
                     </div>
                     <div class="tour-details">

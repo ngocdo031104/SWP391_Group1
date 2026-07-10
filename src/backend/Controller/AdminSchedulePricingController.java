@@ -68,6 +68,7 @@ public class AdminSchedulePricingController extends HttpServlet {
                         sJson.addProperty("guideName", s.getGuide() != null ? s.getGuide().getFullName() : "Chưa phân công");
                         sJson.addProperty("departureStr", s.getDepartureDate().toString());
                         sJson.addProperty("returnStr", s.getReturnDate().toString());
+                        sJson.addProperty("notes", s.getNotes() != null ? s.getNotes() : "");
                         jsonArray.add(sJson);
                     }
                     
@@ -259,15 +260,41 @@ public class AdminSchedulePricingController extends HttpServlet {
                                 }
 
                                 boolean success = false;
+                                String notes = request.getParameter("notes");
+                                if (notes == null) {
+                                    notes = "";
+                                }
+
                                 if ("addSchedule".equalsIgnoreCase(action)) {
                                     sched.setAvailableSeats(totalSeats); // Mặc định số chỗ còn trống bằng tổng số chỗ khi mới tạo
                                     int newId = scheduleDAO.insertSchedule(sched);
                                     success = newId > 0;
+                                    if (success && guideId > 0) {
+                                        GuideDAO guideDAO = new GuideDAO();
+                                        try {
+                                            guideDAO.assignGuideToSchedule(newId, guideId, sessionUser.getUserId(), notes);
+                                        } finally {
+                                            guideDAO.close();
+                                        }
+                                    }
                                 } else {
                                     int scheduleId = parseInt(request.getParameter("scheduleId"), 0);
                                     sched.setScheduleId(scheduleId);
                                     sched.setAvailableSeats(availableSeats);
+                                    
+                                    // Lấy thông tin HDV cũ để kiểm tra xem có thay đổi hay không
+                                    TourSchedule oldSched = scheduleDAO.getScheduleById(scheduleId);
+                                    Integer oldGuideId = (oldSched != null) ? oldSched.getGuideId() : null;
+
                                     success = scheduleDAO.updateSchedule(sched);
+                                    if (success && guideId > 0 && (oldGuideId == null || oldGuideId != guideId)) {
+                                        GuideDAO guideDAO = new GuideDAO();
+                                        try {
+                                            guideDAO.assignGuideToSchedule(scheduleId, guideId, sessionUser.getUserId(), notes);
+                                        } finally {
+                                            guideDAO.close();
+                                        }
+                                    }
                                 }
 
                                 if (success) {

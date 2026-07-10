@@ -580,6 +580,7 @@
                       <c:when test="${log.type eq 'BOOKING'}"><i class="fa fa-suitcase"></i></c:when>
                       <c:when test="${log.type eq 'PAYMENT'}"><i class="fa fa-credit-card"></i></c:when>
                       <c:when test="${log.type eq 'REVIEW'}"><i class="fa fa-star"></i></c:when>
+                      <c:when test="${log.type eq 'WISHLIST'}"><i class="fa fa-heart" style="color: var(--danger);"></i></c:when>
                       <c:otherwise><i class="fa fa-right-to-bracket"></i></c:otherwise>
                     </c:choose>
                   </div>

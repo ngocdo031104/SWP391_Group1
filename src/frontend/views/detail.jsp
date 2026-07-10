@@ -84,8 +84,16 @@
                     <button class="btn btn-secondary btn-icon-text" id="share-btn">
                         <i data-lucide="share-2"></i> Chia sẻ
                     </button>
-                    <button class="btn btn-secondary btn-icon-text btn-wishlist-detail" id="wishlist-detail-btn">
-                        <i data-lucide="heart"></i> Lưu vào Yêu thích
+                    <%
+                        List<Integer> wishlistTourIds = (List<Integer>) request.getAttribute("wishlistTourIds");
+                        boolean isWishlisted = activeTour != null && wishlistTourIds != null && wishlistTourIds.contains(activeTour.getTourId());
+                    %>
+                    <button class="btn btn-secondary btn-icon-text btn-wishlist-detail <%= isWishlisted ? "active" : "" %>" id="wishlist-detail-btn" data-tour-id="<%= activeTour != null ? activeTour.getTourId() : "" %>">
+                        <% if (isWishlisted) { %>
+                            <i data-lucide="heart" fill="currentColor"></i> Đã lưu Yêu thích
+                        <% } else { %>
+                            <i data-lucide="heart"></i> Lưu vào Yêu thích
+                        <% } %>
                     </button>
                 </div>
             </div>
@@ -344,6 +352,7 @@
                                     <div class="reviewer-meta">
                                         <span class="reviewer-name"><%= rev.getCustomerName() %></span>
                                         <span class="reviewer-date">Đăng ngày: <%= dateStr %></span>
+                                        <button class="btn-report-review" data-id="<%= rev.getReviewID() %>" style="background:none; border:none; color:#ea580c; cursor:pointer; font-size:0.75rem; margin-top:4px; display:inline-flex; align-items:center; gap:4px; padding:0; outline:none;"><i class="fa-solid fa-flag"></i> Báo cáo vi phạm</button>
                                     </div>
                                 </div>
                                 <div class="reviewer-actions">
@@ -387,13 +396,33 @@
                     <div class="add-review-card">
                         <h4>Chia Sẻ Trải Nghiệm Của Bạn</h4>
                         <% 
+                            String reviewError = (String) session.getAttribute("reviewError");
+                            String reviewSuccess = (String) session.getAttribute("reviewSuccess");
+                            if (reviewError != null) {
+                                session.removeAttribute("reviewError");
+                        %>
+                            <div style="background: #fee2e2; border: 1px solid #fecaca; color: #ef4444; padding: 12px; border-radius: 8px; margin-bottom: 16px; font-weight: 500; font-family: 'Inter', sans-serif;">
+                                <i class="fa-solid fa-triangle-exclamation"></i> <%= reviewError %>
+                            </div>
+                        <% 
+                            }
+                            if (reviewSuccess != null) {
+                                session.removeAttribute("reviewSuccess");
+                        %>
+                            <div style="background: #d1fae5; border: 1px solid #a7f3d0; color: #065f46; padding: 12px; border-radius: 8px; margin-bottom: 16px; font-weight: 500; font-family: 'Inter', sans-serif;">
+                                <i class="fa-solid fa-circle-check"></i> <%= reviewSuccess %>
+                            </div>
+                        <% 
+                            }
+                        %>
+                        <% 
                             isLoggedIn = (session.getAttribute("sessionUser") != null);
                             User currentUser = isLoggedIn ? (User) session.getAttribute("sessionUser") : null;
                             if (isLoggedIn && currentUser != null) {
                         %>
                             <p>Ý kiến của bạn giúp cộng đồng du lịch có thêm những quyết định đúng đắn.</p>
                             
-                            <form class="add-review-form" id="new-review-form" action="${pageContext.request.contextPath}/detail" method="POST">
+                            <form class="add-review-form" id="new-review-form" action="${pageContext.request.contextPath}/detail" method="POST" enctype="multipart/form-data">
                                 <!-- Lưu ID của Tour để Controller biết cần gán review này cho tour nào -->
                                 <input type="hidden" name="tourId" value="<%= activeTour != null ? activeTour.getTourId() : 1 %>">
                                 <!-- Lưu số sao đánh giá (sẽ được cập nhật bằng JS khi người dùng click vào các ngôi sao bên dưới) -->
@@ -430,8 +459,9 @@
                                     <label>Tải lên hình ảnh chuyến đi</label>
                                     <div class="upload-simulator-btn" id="upload-sim-btn">
                                         <i data-lucide="camera"></i>
-                                        <span>Tải ảnh lên (Mô phỏng)</span>
+                                        <span>Chọn hình ảnh từ thiết bị của bạn</span>
                                     </div>
+                                    <input type="file" id="review-image-input" name="reviewImage" accept="image/*" style="display: none;">
                                     <div class="uploaded-images-preview" id="uploaded-images-preview-row"></div>
                                 </div>
 
