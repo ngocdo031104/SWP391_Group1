@@ -103,6 +103,14 @@
                                     <label class="form-label">Mã giao dịch</label>
                                     <input type="text" class="form-control" name="transactionRef" placeholder="Mã GD..." value="<c:out value="${transactionRef}"/>">
                                 </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">Đối soát</label>
+                                    <select class="form-select" name="discrepancy">
+                                        <option value="">Tất cả</option>
+                                        <option value="yes" <c:if test="${discrepancy == 'yes'}">selected</c:if>>Lệch sổ (Lỗi)</option>
+                                        <option value="no" <c:if test="${discrepancy == 'no'}">selected</c:if>>Khớp sổ (Bình thường)</option>
+                                    </select>
+                                </div>
                                 <div class="col-md-2 d-flex align-items-end">
                                     <button type="submit" class="btn btn-primary me-2"><i class="fas fa-search"></i> Lọc</button>
                                     <a href="${pageContext.request.contextPath}/admin/financial-audit" class="btn btn-outline-secondary text-secondary border-secondary"><i class="fas fa-undo"></i> Đặt lại</a>
@@ -126,6 +134,7 @@
                                         <th style="white-space: nowrap;">Booking ID</th>
                                         <th style="white-space: nowrap;">Số tiền</th>
                                         <th style="white-space: nowrap;">Trạng thái</th>
+                                        <th style="white-space: nowrap;">Đối soát</th>
                                         <th style="white-space: nowrap;">Mô tả</th>
                                     </tr>
                                 </thead>
@@ -133,7 +142,7 @@
                                     <c:choose>
                                         <c:when test="${not empty logs}">
                                             <c:forEach var="log" items="${logs}">
-                                                <tr>
+                                                <tr <c:if test="${log.isDiscrepancy}">style="background-color: #fff3cd;"</c:if>>
                                                     <td><fmt:formatDate value="${log.createdAt}" pattern="yyyy-MM-dd HH:mm" /></td>
                                                     <td>
                                                         <c:choose>
@@ -184,9 +193,17 @@
                                                             <c:otherwise><span class="badge bg-secondary"><c:out value="${log.paymentStatus}" /></span></c:otherwise>
                                                         </c:choose>
                                                     </td>
-                                                    <td class="text-truncate" style="max-width: 250px; cursor: pointer;" 
-                                                        data-bs-toggle="tooltip" data-bs-placement="left" 
-                                                        title="<c:out value='${log.description}'/>">
+                                                    <td>
+                                                        <c:choose>
+                                                            <c:when test="${log.isDiscrepancy}">
+                                                                <span class="badge badge-danger"><i class="fas fa-exclamation-triangle me-1"></i> <c:out value="${log.discrepancyReason}" /></span>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <span class="badge badge-success"><i class="fas fa-check-circle me-1"></i> Khớp sổ</span>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                    </td>
+                                                    <td style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="<c:out value="${log.description}" />">
                                                         <c:out value="${log.description}" />
                                                     </td>
                                                 </tr>
