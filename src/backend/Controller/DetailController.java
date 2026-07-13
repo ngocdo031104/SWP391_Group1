@@ -88,6 +88,9 @@ public class DetailController extends HttpServlet {
                     request.setAttribute("wishlistTourIds", wishlistTourIds);
                     wishlistDAO.close();
                 }
+                // Chuyển tiếp yêu cầu (forward) sang trang giao diện detail.jsp
+                request.getRequestDispatcher("/views/detail.jsp").forward(request, response);
+                return;
             } else {
                 // Nếu không tìm thấy Tour với ID tương ứng trong DB, chuyển hướng người dùng về Trang chủ.
                 response.sendRedirect(request.getContextPath() + "/home");
@@ -95,15 +98,14 @@ public class DetailController extends HttpServlet {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            response.sendRedirect(request.getContextPath() + "/home");
+            return;
         } finally {
             // Đảm bảo đóng kết nối cơ sở dữ liệu an toàn để tránh rò rỉ kết nối (connection leak).
             if (tourDAO != null) {
                 tourDAO.close();
             }
         }
-        
-        // Chuyển tiếp yêu cầu (forward) sang trang giao diện detail.jsp nằm trong thư mục web/views/
-        request.getRequestDispatcher("/views/detail.jsp").forward(request, response);
     }
 
     /**
