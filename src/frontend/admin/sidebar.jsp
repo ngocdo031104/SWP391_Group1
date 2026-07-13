@@ -1,4 +1,5 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
+
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 
 <c:set var="isAccountant" value="${sessionScope.sessionUser.roleId eq 5 || sessionScope.userRole eq 'Accountant'}" />
@@ -71,6 +72,18 @@
             <a href="${pageContext.request.contextPath}/admin/forecast">
                 <i data-lucide="trending-up"></i>
                 <span>Dự Báo & Xu Hướng</span>
+            </a>
+        </li>
+        <li class="${activePage eq 'financial-audit' ? 'active' : ''}">
+            <a href="${pageContext.request.contextPath}/admin/financial-audit">
+                <i data-lucide="file-check-2"></i>
+                <span>Kiểm Toán Tài Chính</span>
+            </a>
+        </li>
+        <li class="${activePage eq 'fraud-monitor' ? 'active' : ''}">
+            <a href="${pageContext.request.contextPath}/admin/fraud-monitor">
+                <i data-lucide="shield-alert"></i>
+                <span>Giám Sát Gian Lận</span>
             </a>
         </li>
         <li class="${activePage eq 'moderation' ? 'active' : ''}">

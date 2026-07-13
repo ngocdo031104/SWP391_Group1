@@ -497,12 +497,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // L\u00dd DO V\u00c0 CH\u1ee8C N\u0102NG C\u1ee6A \u0110O\u1ea0N SUBMIT FORM \u0110\u00c1NH GI\u00c1 (SUBMIT REVIEW FORM):
-    // - Khi ng\u01b0\u1eddi d\u00f9ng b\u1ea5m n\u00fat g\u1eedi \u0111\u00e1nh gi\u00e1, tr\u00ecnh duy\u1ec7t s\u1ebd k\u00edch ho\u1ea1t s\u1ef1 ki\u1ec7n submit n\u00e0y.
-    // - Ta c\u1ea7n \u0111\u1ecdc bi\u1ebfn `selectedRatingVal` (ch\u1ee9a s\u1ed1 sao ng\u01b0\u1eddi d\u00f9ng v\u1eeba ch\u1ecdn b\u1eb1ng c\u00e1ch click v\u00e0o c\u00e1c ng\u00f4i sao tr\u00ean giao di\u1ec7n).
-    // - G\u00e1n gi\u00e1 tr\u1ecb sao n\u00e0y v\u00e0o th\u1ebb input \u1ea9n `#review-rating-input` \u0111\u1ec3 n\u00f3 \u0111\u01b0\u1ee3c g\u1eedi \u0111i c\u00f9ng d\u1eef li\u1ec7u form POST.
-    // - Ch\u00fang ta KH\u00d4NG g\u1ecdi `e.preventDefault()` \u0111\u1ec3 cho ph\u00e9p bi\u1ec3u m\u1eabu t\u1ef1 \u0111\u1ed9ng submit t\u1ef1 nhi\u00ean l\u00ean servlet
-    //   DetailController (POST) l\u01b0u tr\u1eef v\u00e0o c\u01a1 s\u1edf d\u1eef li\u1ec7u v\u00e0 t\u1ea3i l\u1ea1i trang chi ti\u1ebft.
+    // LÝ DO VÀ CHỨC NàNG CỦA ĐOẠN SUBMIT FORM ĐÁNH GIÁ (SUBMIT REVIEW FORM):
+    // - Khi người dùng bấm nút gửi đánh giá, trình duyệt sẽ kích hoạt sự kiện submit này.
+    // - Ta cần đọc biến `selectedRatingVal` (chứa số sao người dùng vừa chọn bằng cách click vào các ngôi sao trên giao diện).
+    // - Gán giá trị sao này vào thẻ input ẩn `#review-rating-input` để nó được gửi đi cùng dữ liệu form POST.
+    // - Chúng ta KHÔNG gọi `e.preventDefault()` để cho phép biểu mẫu tự động submit tự nhiên lên servlet
+    //   DetailController (POST) lưu trữ vào cơ sở dữ liệu và tải lại trang chi tiết.
     if (newReviewForm) {
         newReviewForm.addEventListener('submit', (e) => {
             const ratingInput = document.getElementById('review-rating-input');

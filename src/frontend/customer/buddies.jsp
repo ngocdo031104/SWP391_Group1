@@ -1,4 +1,5 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
+
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
 <c:if test="${empty sessionUser}">
@@ -799,7 +800,11 @@
                                     </div>
                                 </div>
                                 <div class="request-actions">
-                                    <button class="btn-action btn-action-info"><i data-lucide="message-circle" style="width:16px;"></i> Nhắn tin</button>
+                                    <form action="${pageContext.request.contextPath}/customer/chat" method="POST" style="display:inline;">
+                                        <input type="hidden" name="action" value="create">
+                                        <input type="hidden" name="targetUserId" value="${friend.userId}">
+                                        <button type="submit" class="btn-action btn-action-info"><i data-lucide="message-circle" style="width:16px;"></i> Nhắn tin</button>
+                                    </form>
                                     <c:set var="pref" value="${friendPrefs[friend.userId]}"/>
                                     <a href="javascript:void(0)" 
                                        class="btn-action btn-action-secondary"
