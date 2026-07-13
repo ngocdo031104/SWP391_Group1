@@ -89,6 +89,7 @@ public class GuideDashboardController extends HttpServlet {
 
                     if (!isAssigned) {
                         request.setAttribute("errorMessage", "Bạn không có quyền truy cập danh sách hành khách của lịch khởi hành này.");
+                        request.setAttribute("assignments", assignments);
                         request.getRequestDispatcher("/views/guide/dashboard.jsp").forward(request, response);
                         return;
                     }
@@ -139,6 +140,7 @@ public class GuideDashboardController extends HttpServlet {
 
                     if (!isAssigned) {
                         request.setAttribute("errorMessage", "Bạn không có quyền truy cập nhật ký sự cố của lịch trình này.");
+                        request.setAttribute("assignments", assignments);
                         request.getRequestDispatcher("/views/guide/dashboard.jsp").forward(request, response);
                         return;
                     }
@@ -176,6 +178,7 @@ public class GuideDashboardController extends HttpServlet {
 
                     if (!isAssigned) {
                         request.setAttribute("errorMessage", "Bạn không có quyền truy cập nhật ký vận hành của lịch trình này.");
+                        request.setAttribute("assignments", assignments);
                         request.getRequestDispatcher("/views/guide/dashboard.jsp").forward(request, response);
                         return;
                     }
