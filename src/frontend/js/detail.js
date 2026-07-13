@@ -611,12 +611,12 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(data => {
                 if (!data) return;
                 
-                if (data.status === 'success') {
+                if (data.status === 'success' || data.status === 'added' || data.status === 'removed') {
                     wishlistDetailBtn.classList.toggle('active', data.isSaved);
                     if (data.isSaved) {
-                        wishlistDetailBtn.innerHTML = `<i data-lucide="heart" fill="currentColor"></i> \u0110\u00e3 l\u01b0u Y\u00eau th\u00edch`;
+                        wishlistDetailBtn.innerHTML = `<i data-lucide="heart" fill="currentColor"></i> Đã lưu Yêu thích`;
                     } else {
-                        wishlistDetailBtn.innerHTML = `<i data-lucide="heart"></i> L\u01b0u v\u00e0o Y\u00eau th\u00edch`;
+                        wishlistDetailBtn.innerHTML = `<i data-lucide="heart"></i> Lưu vào Yêu thích`;
                     }
                     if (window.lucide) window.lucide.createIcons();
                     window.showToast(data.message, 'success');

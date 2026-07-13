@@ -28,6 +28,7 @@ public class AdminAnalyticsController extends HttpServlet {
     private boolean hasAnalyticsPermission(User user) {
         if (user == null) return false;
         if (user.getRoleId() == 1) return true; // Super Admin bypass
+        if (user.getRoleId() == 5 || (user.getRole() != null && "Accountant".equalsIgnoreCase(user.getRole().getRoleName()))) return true; // Accountant bypass
         if (user.getRole() != null && user.getRole().getPermissions() != null) {
             for (Entities.Permission p : user.getRole().getPermissions()) {
                 if ("System Settings".equalsIgnoreCase(p.getModuleName()) 

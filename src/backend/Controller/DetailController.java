@@ -43,13 +43,17 @@ public class DetailController extends HttpServlet {
         
         // Đọc tham số "id" của tour từ query string (?id=X)
         String idStr = request.getParameter("id");
-        int id = 1; // Giá trị ID mặc định nếu không truyền hoặc truyền sai định dạng.
+        int id;
         if (idStr != null && !idStr.trim().isEmpty()) {
             try {
                 id = Integer.parseInt(idStr);
             } catch (NumberFormatException e) {
-                // Nếu tham số không phải là số hợp lệ, giữ nguyên id = 1 làm mặc định.
+                response.sendRedirect(request.getContextPath() + "/home");
+                return;
             }
+        } else {
+            response.sendRedirect(request.getContextPath() + "/home");
+            return;
         }
         
         TourDAO tourDAO = null;
@@ -177,7 +181,11 @@ public class DetailController extends HttpServlet {
         try {
             tourDAO = new TourDAO();
             // Kiểm tra tính hợp lệ của dữ liệu trước khi chèn vào DB
-            if (name != null && email != null && content != null) {
+            if (content == null || content.trim().isEmpty()) {
+                session.setAttribute("reviewError", "Vui lòng nhập nội dung đánh giá!");
+            } else if (name == null || name.trim().isEmpty() || email == null || email.trim().isEmpty()) {
+                session.setAttribute("reviewError", "Vui lòng cung cấp đầy đủ họ tên và email!");
+            } else {
                 // Gọi hàm insertReview của DAO (phương thức 6 tham số có kèm imageUrl)
                 boolean success = tourDAO.insertReview(name.trim(), email.trim(), tourId, rating, content.trim(), imageUrl);
                 if (success) {

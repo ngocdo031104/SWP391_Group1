@@ -57,10 +57,11 @@ public class GuideDashboardController extends HttpServlet {
 
         try {
             int guideId = user.getUserId();
+            // Nạp danh sách assignments một lần ở đầu khối try
+            List<TourAssignment> assignments = guideDAO.getAssignmentsByGuideId(guideId);
 
             if ("list".equals(action)) {
                 // Hiển thị lịch phân công dẫn đoàn
-                List<TourAssignment> assignments = guideDAO.getAssignmentsByGuideId(guideId);
                 request.setAttribute("assignments", assignments);
                 request.getRequestDispatcher("/views/guide/dashboard.jsp").forward(request, response);
                 
@@ -76,7 +77,6 @@ public class GuideDashboardController extends HttpServlet {
                     int scheduleId = Integer.parseInt(scheduleIdStr);
                     
                     // Ràng buộc bảo mật: Chỉ cho phép Guide xem danh sách hành khách của tour đã được phân công cho họ
-                    List<TourAssignment> assignments = guideDAO.getAssignmentsByGuideId(guideId);
                     boolean isAssigned = false;
                     TourAssignment selectedAssignment = null;
                     for (TourAssignment assignment : assignments) {
@@ -127,7 +127,6 @@ public class GuideDashboardController extends HttpServlet {
                     int scheduleId = Integer.parseInt(scheduleIdStr);
 
                     // Ràng buộc bảo mật: Kiểm tra xem Guide có thực sự được phân công lịch này không
-                    List<TourAssignment> assignments = guideDAO.getAssignmentsByGuideId(guideId);
                     boolean isAssigned = false;
                     TourAssignment selectedAssignment = null;
                     for (TourAssignment assignment : assignments) {
@@ -165,7 +164,6 @@ public class GuideDashboardController extends HttpServlet {
                     int scheduleId = Integer.parseInt(scheduleIdStr);
 
                     // Ràng buộc bảo mật: Kiểm tra quyền phân công gán tour
-                    List<TourAssignment> assignments = guideDAO.getAssignmentsByGuideId(guideId);
                     boolean isAssigned = false;
                     TourAssignment selectedAssignment = null;
                     for (TourAssignment assignment : assignments) {
@@ -208,6 +206,10 @@ public class GuideDashboardController extends HttpServlet {
                 } catch (NumberFormatException e) {
                     response.sendRedirect(request.getContextPath() + "/guide/dashboard");
                 }
+            } else {
+                // Fallback nếu action không xác định, chuyển hướng tránh màn hình trắng (Lỗi 3)
+                response.sendRedirect(request.getContextPath() + "/guide/dashboard");
+                return;
             }
         } finally {
             guideDAO.close();
