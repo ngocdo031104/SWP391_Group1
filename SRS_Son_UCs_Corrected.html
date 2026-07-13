@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<style>
+body { font-family: 'Calibri', sans-serif; font-size: 12pt; line-height: 1.5; max-width: 800px; margin: 40px auto; color: #000; }
+h1 { font-size: 18pt; text-align: center; margin-bottom: 5px; }
+h2 { font-size: 14pt; margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 5px; }
+h3 { font-size: 12pt; margin-top: 15px; }
+table { border-collapse: collapse; width: 100%; margin: 10px 0; }
+table, th, td { border: 1px solid #000; }
+th, td { padding: 6px 10px; text-align: left; font-size: 11pt; }
+th { background: #f0f0f0; }
+code { background: #f5f5f5; padding: 1px 4px; font-family: Consolas, monospace; font-size: 10pt; }
+strong { color: #000; }
+.red { color: #cc0000; }
+.green { color: #006600; }
+</style>
+</head>
+<body>
+
+<h1>SRS — Normal Sequence/Flow & Business Rules<br>(Đã sửa theo Code thực tế)</h1>
+<p style="text-align:center; font-size:11pt;">Ngày cập nhật: 09/07/2026 | Người thực hiện: Dương Quang Sơn</p>
+
+<!-- ===== UC-14 ===== -->
+<h2>2.14. View Guide Dashboard</h2>
+<p><strong>Primary Actors:</strong> Guide<br><strong>Secondary Actors:</strong> None</p>
+<p><strong>Description:</strong> Allows tour guides to view their assigned tour schedules, participant lists with check-in status, incident reports, and operation logs.</p>
+<p><strong>Preconditions:</strong> 1. Guide is authenticated and logged in. 2. Guide has at least one tour assignment in the system.</p>
+<p><strong>Postconditions:</strong> 1. The system renders the Guide Dashboard showing all assigned tours with departure dates, destinations, and operational status. 2. Guide can navigate to sub-pages: Participant List, Incidents, Operation Logs.</p>
+
+<h3>Normal Sequence/Flow</h3>
+<ol>
+<li>Guide accesses <code>/guide/dashboard</code>.</li>
+<li>System checks session: if not logged in → redirect to <code>/login</code>.</li>
+<li>System verifies role equals "Guide": if not → redirect to <code>/home</code>.</li>
+<li>System calls <code>GuideDAO.getAssignmentsByGuideId(guideId)</code> to fetch all TourAssignment records with JOINed TourSchedule, Tour, and TourStatus data.</li>
+<li>System forwards to <code>/views/guide/dashboard.jsp</code>.</li>
+<li>The JSP renders a table with columns: Tour Name, Destination, Departure Date, Return Date, Operational Status (Preparing/Scheduled/InProgress/Completed/Cancelled), and Action buttons.</li>
+<li>Each row displays four action buttons:
+    <ul>
+    <li>"Danh sách đoàn" → navigates to <code>?action=participants&scheduleId=X</code></li>
+    <li>"Sự cố" → navigates to <code>?action=incidents&scheduleId=X</code></li>
+    <li>"Nhật ký" → navigates to <code>?action=operationLogs&scheduleId=X</code></li>
+    <li>"Trạng thái" → opens status update modal</li>
+    </ul>
+</li>
+</ol>
+<h3>Business Rules</h3>
+<table><tr><th>BR</th><th>Nội dung</th><th>Status</th></tr>
+<tr><td>BR-02</td><td>Only active and verified user accounts can access authenticated system functions.</td><td class="green">✓</td></tr>
+<tr><td>BR-03</td><td>After successful login, the system must create a user session and redirect users according to their assigned role.</td><td class="green">✓</td></tr>
+<tr><td>BR-24</td><td>Only authenticated users can access the community feed, buddy matching, messaging, and review functions.</td><td class="green">✓</td></tr>
+<tr><td>BR-38</td><td>The system shall automatically record timestamps for all booking, payment, refund, and operational activities.</td><td class="green">✓</td></tr>
+</table>
+
+
+<!-- ===== UC-15 ===== -->
+<h2>2.15. Manage Favorite Tours</h2>
+<p><strong>Primary Actors:</strong> Customer<br><strong>Secondary Actors:</strong> None</p>
+<p><strong>Description:</strong> Allows customers to save tours to their favorites list and view or remove saved tours.</p>
+<p><strong>Preconditions:</strong> Customer is authenticated and logged in.</p>
+<p><strong>Postconditions:</strong> 1. The tour is added to or removed from the customer's FavoriteTour list. 2. The heart icon on the tour card updates to reflect the current state.</p>
+
+<h3>Normal Sequence/Flow</h3>
+<ol>
+<li>Customer views a tour card on the Home Page or Tour Discovery page.</li>
+<li>Customer clicks the heart (favorite) icon on the tour card.</li>
+<li>Client-side JavaScript sends AJAX POST to <code>/customer/wishlist/toggle?tourId=X</code>.</li>
+<li><code>WishlistController</code> receives the request.</li>
+<li>System checks that the user is authenticated (sessionUser exists). If not logged in → returns HTTP 401 with JSON error message.</li>
+<li><code>WishlistDAO.toggleFavorite(userId, tourId)</code> is called:
+    <ul><li>If the tour already exists in FavoriteTour → DELETE the record.</li>
+    <li>If the tour does not exist → INSERT a new FavoriteTour record.</li></ul>
+</li>
+<li>System returns JSON response: <code>{"status": "added"}</code> or <code>{"status": "removed"}</code>.</li>
+<li>Client-side JS updates the heart icon visual state.</li>
+<li>Customer can view all favorites at <code>/customer/wishlist</code>.</li>
+<li><code>WishlistViewController</code> calls <code>WishlistDAO.getFavoriteTours(userId)</code> and forwards to <code>wishlist.jsp</code>.</li>
+</ol>
+<h3>Business Rules</h3>
+<table><tr><th>BR</th><th>Nội dung</th><th>Status</th></tr>
+<tr><td>BR-24</td><td>Only authenticated users can access the community feed, buddy matching, messaging, and review functions.</td><td class="green">✓</td></tr>
+<tr><td>BR-33</td><td>A customer may maintain multiple favorite tours but cannot add the same tour to favorites more than once.</td><td class="green">✓</td></tr>
+</table>
+
+
+<!-- ===== UC-16 ===== -->
+<h2>2.16. Submit Tour Review</h2>
+<p><strong>Primary Actors:</strong> Customer<br><strong>Secondary Actors:</strong> None</p>
+<p><strong>Description:</strong> Allows customers to submit ratings and comments after completing a tour. The review form is embedded at the bottom of the Tour Detail page.</p>
+<p><strong>Preconditions:</strong> 1. Customer is authenticated and logged in. 2. Customer is viewing a tour detail page.</p>
+<p><strong>Postconditions:</strong> 1. A new Review record is inserted into the database with the customer's rating and content. 2. The page reloads via Post-Redirect-Get pattern and the new review appears in the review list.</p>
+
+<h3>Normal Sequence/Flow</h3>
+<ol>
+<li>Customer scrolls to the review section on <code>detail.jsp</code>.</li>
+<li>Customer clicks star icons (1-5) to select rating; client-side JS updates hidden input <code>#review-rating-input</code> with the selected value. Default is 5 stars.</li>
+<li>Customer types review content in the textarea.</li>
+<li>Customer optionally clicks "Tải ảnh lên" (simulated — assigns a placeholder Unsplash image URL).</li>
+<li>Customer clicks "Gửi Đánh Giá" to submit the form.</li>
+<li>Form POSTs to <code>/detail</code> (<code>DetailController.doPost()</code>).</li>
+<li>System reads name and email from the SESSION user object (NOT from form fields — form fields are readonly and ignored for security).</li>
+<li>System reads content, rating, and tourId from request parameters.</li>
+<li><code>TourDAO.insertReview(name, email, tourId, rating, content)</code> executes:
+    <ul>
+    <li>Step 1: Lookup UserID by email in [User] table.</li>
+    <li>Step 2: If user not found → create a new user account (roleId=4) with hashed password and a default UserProfile avatar.</li>
+    <li>Step 3: Find a BookingID where this user booked this tour (no status filter — any status accepted).</li>
+    <li>Step 4: If no booking found → use any booking for this tour as fallback.</li>
+    <li>Step 5: If still no booking → create a dummy booking with status='Completed' (BookingCode = "BK_DUMMY_xxx").</li>
+    <li>Step 6: INSERT INTO Review (TourID, BookingID, CustomerID, Rating, Content, IsVisible=1, ImageURL).</li>
+    </ul>
+</li>
+<li>System redirects to <code>/detail?id={tourId}</code> using Post-Redirect-Get pattern.</li>
+<li>Page reloads and the new review is displayed in the review list.</li>
+</ol>
+<h3>Business Rules</h3>
+<table><tr><th>BR</th><th>Nội dung</th><th>Status</th></tr>
+<tr><td>BR-24</td><td>Only authenticated users can access the community feed, buddy matching, messaging, and review functions.</td><td class="green">✓</td></tr>
+<tr><td>BR-25</td><td>Customers can submit tour reviews only after completing the booked tour.</td><td class="red">✗ KHÔNG CHECK Booking.Status='Completed'</td></tr>
+<tr><td>BR-26</td><td>Administrators have the right to moderate or remove inappropriate reviews, comments, or community content.</td><td class="green">✓</td></tr>
+<tr><td>BR-38</td><td>The system shall automatically record timestamps for all booking, payment, refund, and operational activities.</td><td class="green">✓</td></tr>
+<tr><td>BR-46</td><td>All search inputs must be trimmed, sanitized, and validated before executing database queries to prevent SQL Injection and Cross-Site Scripting (XSS) attacks.</td><td class="green">✓</td></tr>
+</table>
+
+
+<!-- ===== UC-28 ===== -->
+<h2>2.28. Assign Tour Guide</h2>
+<p><strong>Primary Actors:</strong> Admin, Staff<br><strong>Secondary Actors:</strong> None</p>
+<p><strong>Description:</strong> Allows administrators and staff to assign a tour guide to a specific departure schedule when creating or editing a schedule.</p>
+<p><strong>Preconditions:</strong> 1. Admin or Staff is authenticated. 2. The tour schedule exists or is being created. 3. At least one guide account exists in the system.</p>
+<p><strong>Postconditions:</strong> 1. The TourSchedule record is updated with the assigned GuideID. 2. A TourStatus history record is created with status 'Scheduled'. 3. A TourAssignment record is created or updated (MERGE upsert).</p>
+
+<h3>Normal Sequence/Flow</h3>
+<ol>
+<li>Admin/Staff accesses <code>/admin/schedules-pricing</code> for a specific tour.</li>
+<li>Admin/Staff creates a new schedule or edits an existing one.</li>
+<li>In the schedule form, Admin/Staff selects a guide from the dropdown and optionally enters assignment notes.</li>
+<li>Form is submitted to <code>AdminSchedulePricingController.doPost()</code>.</li>
+<li>If action is "addSchedule":
+    <ul>
+    <li><code>scheduleDAO.insertSchedule(sched)</code> inserts the new TourSchedule with availableSeats = totalSeats.</li>
+    <li>If guideId > 0: <code>guideDAO.assignGuideToSchedule(newId, guideId, assignedBy, notes)</code> is called as a transaction:</li>
+    </ul>
+</li>
+<li>Transaction steps:
+    <ul>
+    <li>Step 1: UPDATE TourSchedule SET GuideID = ? WHERE ScheduleID = ?</li>
+    <li>Step 2: INSERT INTO TourStatus (ScheduleID, Status='Scheduled', Notes, UpdatedBy)</li>
+    <li>Step 3: MERGE INTO TourAssignment (upsert by ScheduleID + GuideID)</li>
+    <li>All three steps are committed or rolled back together.</li>
+    </ul>
+</li>
+<li>If action is "updateSchedule": system compares old GuideID with new GuideID. If changed (or old was null): calls <code>guideDAO.assignGuideToSchedule()</code>.</li>
+<li>Admin/Staff can view assignment history at <code>/admin/assignments</code>.</li>
+<li><code>AdminAssignmentController.doGet()</code> calls <code>GuideDAO.getAllAssignments()</code> and forwards to <code>assignments.jsp</code>.</li>
+</ol>
+<h3>Business Rules</h3>
+<table><tr><th>BR</th><th>Nội dung</th><th>Status</th></tr>
+<tr><td>BR-34</td><td>A tour schedule cannot be deleted if there are confirmed bookings associated with it.</td><td class="green">✓</td></tr>
+<tr><td>BR-38</td><td>The system shall automatically record timestamps for all booking, payment, refund, and operational activities.</td><td class="green">✓</td></tr>
+</table>
+
+
+<!-- ===== UC-29 ===== -->
+<h2>2.29. Check In Participants</h2>
+<p><strong>Primary Actors:</strong> Guide<br><strong>Secondary Actors:</strong> None</p>
+<p><strong>Description:</strong> Allows tour guides to check in customers before a tour departs, tracking attendance status and confirmation timestamps in real-time.</p>
+<p><strong>Preconditions:</strong> 1. Guide is authenticated and logged in. 2. Guide is assigned to the schedule being managed. 3. The schedule has confirmed participants (BookingParticipant records with Booking status in Confirmed/Completed/Success).</p>
+<p><strong>Postconditions:</strong> 1. An Attendance record is created or updated (MERGE upsert) with the participant's check-in status. 2. The progress bar and participant status cells are updated on the UI without page reload.</p>
+
+<h3>Normal Sequence/Flow</h3>
+<ol>
+<li>Guide clicks "Danh sách đoàn" on the dashboard for a specific schedule.</li>
+<li>System calls <code>AttendanceDAO.getAttendanceByScheduleId(scheduleId)</code> which LEFT JOINs BookingParticipant with Attendance and filters bookings with status != 'Cancelled'.</li>
+<li>System calculates checkedInCount and totalCount from the result set.</li>
+<li>System forwards to <code>/views/guide/participants.jsp</code>.</li>
+<li>JSP renders: Tour info grid, Progress bar (X/Y khách hàng with green fill), Table with columns: STT, Họ Tên, Loại Khách, Liên Hệ, Trạng Thái, Ghi Chú, Hành Động.</li>
+<li>Status column shows "Đã check-in (HH:mm dd/MM)" in green or "Chưa điểm danh" in gray.</li>
+<li>Guide clicks the toggle button for a participant.</li>
+<li>Client-side JS <code>toggleCheckIn(participantId)</code> reads current data-checked attribute, toggles it, reads notes, sends AJAX POST to <code>/guide/dashboard</code> with params: action=checkin, scheduleId, participantId, checkedIn, notes.</li>
+<li><code>GuideDashboardController.doPost()</code> validates session, role=Guide, parses scheduleId, checks if guide is assigned.</li>
+<li>Calls <code>AttendanceDAO.saveAttendance(scheduleId, participantId, checkedIn, guideId, notes)</code>:
+    <ul>
+    <li>MERGE INTO Attendance: if record exists → UPDATE CheckedIn, CheckInTime, CheckedBy, Notes; if not → INSERT.</li>
+    <li>If checkedIn=true → CheckInTime = current timestamp.</li>
+    <li>If checkedIn=false → CheckInTime = null.</li>
+    </ul>
+</li>
+<li>Returns JSON: <code>{"status": "success", "checkInTime": "HH:mm dd/MM/yyyy", "message": "..."}</code>.</li>
+<li>Client-side JS updates UI without reload: changes button text/color, updates status cell, calls <code>updateProgress()</code>.</li>
+</ol>
+<h3>Business Rules</h3>
+<table><tr><th>BR</th><th>Nội dung</th><th>Status</th></tr>
+<tr><td>BR-24</td><td>Only authenticated users can access the community feed, buddy matching, messaging, and review functions.</td><td class="green">✓</td></tr>
+<tr><td>BR-38</td><td>The system shall automatically record timestamps for all booking, payment, refund, and operational activities.</td><td class="green">✓</td></tr>
+</table>
+
+
+<!-- ===== UC-38 ===== -->
+<h2>2.38. Export Revenue Reports</h2>
+<p><strong>Primary Actors:</strong> Accountant, Admin<br><strong>Secondary Actors:</strong> None</p>
+<p><strong>Description:</strong> Allows administrators and accountants to view analytics data and export reports as CSV files.</p>
+<p><strong>Preconditions:</strong> User is authenticated with role Admin (1) or Accountant (5).</p>
+<p><strong>Postconditions:</strong> 1. Analytics data is displayed in tabbed views. 2. CSV file is downloaded to the user's device.</p>
+
+<h3>Normal Sequence/Flow</h3>
+<ol>
+<li>User accesses <code>/admin/analytics</code>.</li>
+<li><code>AdminAnalyticsController.doGet()</code> checks session user has roleId=1 or roleId=5; otherwise redirects to <code>/login</code>.</li>
+<li>System forwards to <code>/admin/analytics.jsp</code> which renders 5 tabs: Revenue, Bookings, Performance, Guides, Reports.</li>
+<li>Each tab loads data via AJAX (<code>?ajax=true&type=revenue|bookings|performance|guides|reports</code>).</li>
+<li>Revenue tab: monthly revenue chart (getRevenueByMonth), revenue by category (getRevenueByCategory), revenue by top 10 tours (getRevenueByTour).</li>
+<li>Bookings tab: booking status distribution (getBookingStatusDistribution), booking trends over 30 days (getBookingTrends).</li>
+<li>Performance tab: tour performance with bookings, revenue, avg rating, occupancy rate (getTourPerformanceList).</li>
+<li>Guides tab: guide activity summary with experience, rating, tours led (getGuideActivitySummary).</li>
+<li>Reports tab: saved snapshot reports from AnalyticsReport table (getAllSavedReports).</li>
+<li>User clicks the export button on any tab.</li>
+<li>Client-side JavaScript <code>confirmExport(tableId, filename)</code> reads the HTML table content and generates a CSV file. The CSV is downloaded via a Blob URL — export is entirely client-side.</li>
+<li>Admin can save a data snapshot via POST <code>action=saveSnapshot</code> which inserts an AnalyticsReport record.</li>
+</ol>
+<h3>Business Rules</h3>
+<table><tr><th>BR</th><th>Nội dung</th><th>Status</th></tr>
+<tr><td>BR-30</td><td>The system shall maintain logs of user login activities, booking updates, and financial operations for auditing purposes.</td><td class="green">✓</td></tr>
+<tr><td>BR-31</td><td>Revenue and operational reports can only be exported by administrators and accountants.</td><td class="green">✓</td></tr>
+</table>
+
+
+<!-- ===== UC-39 ===== -->
+<h2>2.39. Perform Predictive Analytics</h2>
+<p><strong>Primary Actors:</strong> Admin<br><strong>Secondary Actors:</strong> None</p>
+<p><strong>Description:</strong> Allows administrators to run predictive models on historical booking and revenue data to generate forecasts for future periods.</p>
+<p><strong>Preconditions:</strong> 1. Admin is authenticated with roleId=1. 2. Sufficient historical data exists.</p>
+<p><strong>Postconditions:</strong> 1. Forecast data is generated and displayed. 2. A PredictionResult snapshot is saved to the database.</p>
+
+<h3>Normal Sequence/Flow</h3>
+<ol>
+<li>Admin accesses <code>/admin/forecast</code>.</li>
+<li><code>AdminForecastController.doGet()</code> checks session user has roleId=1; otherwise redirects.</li>
+<li>If not AJAX: system loads prediction history via <code>AnalyticsDAO.getAllPredictions()</code> and forwards to <code>/admin/forecast.jsp</code>.</li>
+<li>Admin selects forecast type: Revenue, BookingTrend, or Demand.</li>
+<li>Client-side JS sends AJAX GET to <code>/admin/forecast?ajax=true&action=getCalculations&type={type}</code>.</li>
+<li><code>AnalyticsDAO.calculateForecast(type)</code> executes:</li>
+</ol>
+<p><strong>For Revenue or BookingTrend:</strong></p>
+<ul>
+<li>Fetches 6 months of historical data.</li>
+<li>If empty → generates fallback data with zero values for 6 months.</li>
+<li>Performs Simple Linear Regression: calculates slope and intercept.</li>
+<li>Calculates R² as confidence score. If all zero → confidence = 85.0.</li>
+<li>Generates predictions for next 3 months.</li>
+<li>Returns: {historical, forecast, regression: {slope_a, intercept_b, r2}, confidence}.</li>
+</ul>
+<p><strong>For Demand:</strong></p>
+<ul>
+<li>Fetches TOP 5 tours by booking count in last 3 months with occupancy rates.</li>
+<li>If no results → fallback: selects TOP 5 tours with random booking values (10-30) and occupancy rates (70-90%).</li>
+<li>Calculates projected demand: round(avgBookingsPerMonth * 1.15 + 2).</li>
+<li>Confidence = 88.5 (hardcoded).</li>
+<li>Returns: {historical_top_tours, projected_demand, confidence: 88.5}.</li>
+</ul>
+<ol start="7">
+<li>Chart.js renders historical vs forecast data.</li>
+<li>Admin clicks "Run Forecast" → POST to <code>/admin/forecast</code>. Creates PredictionResult with modelVersion="v1.0-Regression/WMA". Calls <code>AnalyticsDAO.insertPrediction(pr)</code>.</li>
+</ol>
+<h3>Business Rules</h3>
+<table><tr><th>BR</th><th>Nội dung</th><th>Status</th></tr>
+<tr><td>BR-32</td><td>Predictive analytics and business trend reports shall be generated based on historical booking and revenue data.</td><td class="green">✓</td></tr>
+<tr><td>BR-46</td><td>All search inputs must be trimmed, sanitized, and validated before executing database queries to prevent SQL Injection and Cross-Site Scripting (XSS) attacks.</td><td class="green">✓</td></tr>
+</table>
+
+
+<!-- ===== UC-42 ===== -->
+<h2>2.42. Update Tour Status</h2>
+<p><strong>Primary Actors:</strong> Guide<br><strong>Secondary Actors:</strong> None</p>
+<p><strong>Description:</strong> Allows tour guides to update the operational status of a tour during execution (Preparing, Scheduled, InProgress, Completed, Cancelled).</p>
+<p><strong>Preconditions:</strong> 1. Guide is authenticated and logged in. 2. Guide is assigned to the schedule being updated.</p>
+<p><strong>Postconditions:</strong> 1. TourSchedule.Status is updated. 2. A TourStatus history record is inserted. 3. A TourOperationLog record is inserted.</p>
+
+<h3>Normal Sequence/Flow</h3>
+<ol>
+<li>Guide clicks "Trạng thái" button on the dashboard for a specific schedule.</li>
+<li>Client-side JS <code>openStatusModal(scheduleId, currentStatus)</code> opens a modal dialog.</li>
+<li>Modal displays: hidden scheduleId input, dropdown (Preparing/Scheduled/InProgress/Completed/Cancelled) pre-selected to current status, notes textarea, "Xác nhận" and "Hủy bỏ" buttons.</li>
+<li>Guide selects new status and optionally enters notes, clicks "Xác nhận".</li>
+<li>JS <code>submitStatusUpdate()</code> sends AJAX POST to <code>/guide/dashboard</code> with params: action=updateStatus, scheduleId, newStatus, notes.</li>
+<li><code>GuideDashboardController.doPost()</code> validates session, role=Guide.</li>
+<li>Verifies guide is assigned to this schedule (<code>getAssignmentsByGuideId()</code>). If not → 403.</li>
+<li>Validates newStatus ∈ {Preparing, Scheduled, InProgress, Completed, Cancelled}.</li>
+<li>Calls <code>guideDAO.updateTourStatus(scheduleId, newStatus, notes, guideId)</code> as transaction:
+    <ul>
+    <li>Step 1: UPDATE TourSchedule SET Status = newStatus.</li>
+    <li>Step 2: INSERT INTO TourStatus (ScheduleID, Status, Notes, UpdatedBy).</li>
+    <li>Step 3: INSERT INTO TourOperationLog (ScheduleID, Activity="HDV Cập nhật trạng thái thành: " + newStatus, OperatedBy).</li>
+    <li>All three committed or rolled back.</li>
+    </ul>
+</li>
+<li>Returns JSON <code>{"status": "success"}</code>.</li>
+<li>JS shows alert, closes modal, reloads page via <code>window.location.reload()</code>.</li>
+</ol>
+<h3>Business Rules</h3>
+<table><tr><th>BR</th><th>Nội dung</th><th>Status</th></tr>
+<tr><td>BR-24</td><td>Only authenticated users can access the community feed, buddy matching, messaging, and review functions.</td><td class="green">✓</td></tr>
+<tr><td>BR-38</td><td>The system shall automatically record timestamps for all booking, payment, refund, and operational activities.</td><td class="green">✓</td></tr>
+</table>
+
+
+<!-- ===== UC-43 ===== -->
+<h2>2.43. Report Tour Incident</h2>
+<p><strong>Primary Actors:</strong> Guide<br><strong>Secondary Actors:</strong> None</p>
+<p><strong>Description:</strong> Allows recording and reporting of incidents that occur during a tour. Incidents are created with status 'Open' and can be viewed by severity level.</p>
+<p><strong>Preconditions:</strong> 1. Guide is authenticated and logged in. 2. Guide is assigned to the schedule.</p>
+<p><strong>Postconditions:</strong> 1. An IncidentReport record is created with status 'Open'. 2. The incident appears in the incident list.</p>
+
+<h3>Normal Sequence/Flow — Viewing</h3>
+<ol>
+<li>Guide clicks "Sự cố" on the dashboard → GET <code>/guide/dashboard?action=incidents&scheduleId=X</code>.</li>
+<li>Controller verifies guide is assigned. If not → sets error, forwards to dashboard.</li>
+<li><code>IncidentReportDAO.getIncidentsByScheduleId(scheduleId)</code> fetches incidents with reporter name via JOIN User, ordered by CreatedAt DESC.</li>
+<li>Forwards to <code>/views/guide/incidents.jsp</code>. Renders Tour info grid, "Báo Cáo Sự Cố Mới" button, table: Mã sự cố, Tiêu Đề, Thời Gian, Mức Độ (Low/Medium/High/Critical), Trạng Thái (Open/InProgress/Resolved/Closed), Mô Tả.</li>
+</ol>
+<h3>Normal Sequence/Flow — Reporting</h3>
+<ol start="5">
+<li>Guide clicks "Báo Cáo Sự Cố Mới" → JS <code>openIncidentModal()</code> opens modal with: title input, severity dropdown (Low/Medium/High/Critical, default Medium), description textarea.</li>
+<li>Guide fills form, clicks "Gửi báo cáo". JS validates title & description not empty.</li>
+<li>JS sends AJAX POST to <code>/guide/dashboard</code> with: action=reportIncident, scheduleId, title, severity, description.</li>
+<li>Controller validates session, role=Guide, verifies guide is assigned, validates severity ∈ {Low, Medium, High, Critical}.</li>
+<li>Creates IncidentReport object, calls <code>IncidentReportDAO.insertIncidentReport(report)</code>: INSERT INTO IncidentReport (Status='Open').</li>
+<li>Returns JSON <code>{"status": "success"}</code>. JS alerts, closes modal, reloads page.</li>
+</ol>
+<h3>Business Rules</h3>
+<table><tr><th>BR</th><th>Nội dung</th><th>Status</th></tr>
+<tr><td>BR-24</td><td>Only authenticated users can access the community feed, buddy matching, messaging, and review functions.</td><td class="green">✓</td></tr>
+<tr><td>BR-38</td><td>The system shall automatically record timestamps for all booking, payment, refund, and operational activities.</td><td class="green">✓</td></tr>
+</table>
+
+
+<!-- ===== UC-44 ===== -->
+<h2>2.44. View Tour Operation Logs</h2>
+<p><strong>Primary Actors:</strong> Guide, Admin<br><strong>Secondary Actors:</strong> None</p>
+<p><strong>Description:</strong> Allows guides to view operation logs for their assigned schedules in a timeline format, and allows admins to view all operation logs across all schedules with search and pagination.</p>
+<p><strong>Preconditions:</strong> 1. User is authenticated. 2. Guide: must be assigned to the requested schedule. 3. Admin/Staff: must have Admin or Staff role.</p>
+<p><strong>Postconditions:</strong> 1. Guide sees a timeline view of all operational activities for one schedule. 2. Admin sees a paginated table of all operation logs with search capability.</p>
+
+<h3>Normal Sequence/Flow — Guide View</h3>
+<ol>
+<li>Guide clicks "Nhật ký" → GET <code>/guide/dashboard?action=operationLogs&scheduleId=X</code>.</li>
+<li>Controller verifies guide is assigned. If not → error, forwards to dashboard.</li>
+<li><code>TourOperationLogDAO.getLogsByScheduleId(scheduleId)</code> fetches logs JOINed with User (operator name) and Role (operator role), ordered by CreatedAt DESC.</li>
+<li>Forwards to <code>/views/guide/operation-logs.jsp</code>. Renders Tour info grid + Timeline view: vertical line, circular markers (first green, rest blue).</li>
+<li>Each timeline item: timestamp (HH:mm:ss - dd/MM/yyyy), activity description, operator name with role badge.</li>
+</ol>
+<h3>Normal Sequence/Flow — Admin View</h3>
+<ol>
+<li>Admin clicks "Nhật Ký Vận Hành" in sidebar → GET <code>/admin/operation-logs?search=&page=1</code>.</li>
+<li><code>AdminOperationLogController</code> verifies role is Admin or Staff.</li>
+<li>Calls <code>TourOperationLogDAO.getAllLogsPaged(page, 15, search)</code> with pagination (15 rows/page) and search across Activity, FullName, TourName.</li>
+<li>Calls <code>TourOperationLogDAO.getLogsCount(search)</code> → calculates totalPages.</li>
+<li>Forwards to <code>/admin/operation-logs.jsp</code>. Table: Mã Log, Tour & Lịch KH, Hoạt Động, Người TH, Vai Trò, Thời Gian + Search bar + Pagination.</li>
+</ol>
+<h3>Business Rules</h3>
+<table><tr><th>BR</th><th>Nội dung</th><th>Status</th></tr>
+<tr><td>BR-30</td><td>The system shall maintain logs of user login activities, booking updates, and financial operations for auditing purposes.</td><td class="green">✓</td></tr>
+<tr><td>BR-40</td><td>The system shall retain operational and financial history records for auditing and reporting purposes according to company policy.</td><td class="green">✓</td></tr>
+</table>
+
+
+<!-- ===== UC-46 ===== -->
+<h2>2.46. Moderate User Content</h2>
+<p><strong>Primary Actors:</strong> Admin<br><strong>Secondary Actors:</strong> None</p>
+<p><strong>Description:</strong> Allows administrators to moderate reviews, community posts, and comments by hiding inappropriate content, restoring hidden content, managing flagged reports from users, and viewing moderation history.</p>
+<p><strong>Preconditions:</strong> Admin is authenticated with roleId=1 or has "Content Management" permission.</p>
+<p><strong>Postconditions:</strong> 1. Content visibility (IsVisible) is toggled. 2. A ModerationRecord is created. 3. Flagged status (IsFlagged) is cleared when content is hidden or flag is dismissed.</p>
+
+<h3>Normal Sequence/Flow — Viewing</h3>
+<ol>
+<li>Admin accesses <code>/admin/moderation</code>.</li>
+<li><code>AdminModerationController</code> checks <code>hasModerationPermission()</code>: allows roleId=1 or role with "Content Management" permission.</li>
+<li>Forwards to <code>/admin/moderation.jsp</code>. 4 tabs: Đánh Giá, Bài Viết, Bình Luận, Lịch Sử.</li>
+<li>Checkbox "Chỉ hiển thị nội dung bị báo cáo (Flagged)" for client-side filtering.</li>
+<li>Each tab loads via AJAX: reviews/posts/comments from methods with WHERE IsVisible=1, includes IsFlagged field.</li>
+<li>Each row: ID, content, author, date, status badge, flagged badge ("Bị báo cáo"), action buttons (Ẩn/Khôi phục/Bỏ qua).</li>
+</ol>
+<h3>Normal Sequence/Flow — Hide</h3>
+<ol start="7">
+<li>Admin clicks "Ẩn" → JS opens reason modal: Spam/Ngôn từ kích động/Sai lệch/Vi phạm/Khác.</li>
+<li>JS sends AJAX POST: action=Hide, entityType, entityId, reason.</li>
+<li><code>ModerationDAO.moderateContent()</code> transaction:
+    <ul>
+    <li>UPDATE {Table} SET IsVisible = 0, IsFlagged = 0.</li>
+    <li>INSERT INTO ModerationRecord.</li>
+    </ul>
+</li>
+</ol>
+<h3>Normal Sequence/Flow — Restore</h3>
+<ol start="10">
+<li>Admin clicks "Khôi phục" → JS sends AJAX POST immediately: action=Restore.</li>
+<li>Sets IsVisible = 1, inserts ModerationRecord.</li>
+</ol>
+<h3>Normal Sequence/Flow — Dismiss Flag</h3>
+<ol start="12">
+<li>Admin clicks "Bỏ qua" on flagged content → AJAX POST: action=DismissFlag.</li>
+<li>Calls <code>ModerationDAO.dismissFlag(entityType, entityId)</code>: UPDATE SET IsFlagged = 0.</li>
+</ol>
+<h3>Business Rules</h3>
+<table><tr><th>BR</th><th>Nội dung</th><th>Status</th></tr>
+<tr><td>BR-26</td><td>Administrators have the right to moderate or remove inappropriate reviews, comments, or community content.</td><td class="green">✓</td></tr>
+</table>
+
+
+<!-- ===== FOOTER ===== -->
+<p style="margin-top:40px; border-top:1px solid #ccc; padding-top:10px; font-size:10pt; color:#666;">
+Document generated from actual code analysis — TourBuddy SRS<br>
+Prepared by: Dương Quang Sơn — 09/07/2026
+</p>
+
+</body>
+</html>
