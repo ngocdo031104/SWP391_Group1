@@ -42,6 +42,9 @@ public class AdminAnalyticsController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
         
         // 1. Check permissions
         User sessionUser = (User) request.getSession().getAttribute("sessionUser");

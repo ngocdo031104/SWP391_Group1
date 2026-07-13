@@ -4,6 +4,7 @@ import Entities.Conversation;
 import Entities.Message;
 import Entities.User;
 import Model.ChatDAO;
+import Model.BuddyRequestDAO;
 import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -24,6 +25,9 @@ public class ChatController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
         
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("sessionUser");
@@ -45,6 +49,9 @@ public class ChatController extends HttpServlet {
                     offset = Integer.parseInt(request.getParameter("offset"));
                 }
                 
+                // Mark messages as read by this user
+                chatDAO.markConversationAsRead(conversationId, user.getUserId());
+                
                 List<Message> messages = chatDAO.getMessages(conversationId, limit, offset);
                 response.getWriter().write(gson.toJson(messages));
             } catch (Exception e) {
@@ -53,6 +60,11 @@ public class ChatController extends HttpServlet {
             }
             return;
         }
+
+        // Fetch accepted buddies for Create Group feature
+        BuddyRequestDAO buddyDAO = new BuddyRequestDAO();
+        List<User> buddies = buddyDAO.getAcceptedBuddies(user.getUserId());
+        request.setAttribute("buddies", buddies);
 
         // Load the main chat page
         List<Conversation> conversations = chatDAO.getUserConversations(user.getUserId());
@@ -79,6 +91,19 @@ public class ChatController extends HttpServlet {
                 int conversationId = chatDAO.getOrCreateDirectConversation(user.getUserId(), targetUserId);
                 
                 response.sendRedirect(request.getContextPath() + "/customer/chat?convId=" + conversationId);
+            } catch (Exception e) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            }
+        } else if ("createGroup".equals(action)) {
+            try {
+                String groupName = request.getParameter("groupName");
+                String[] participants = request.getParameterValues("participants");
+                if (groupName != null && !groupName.trim().isEmpty() && participants != null && participants.length > 0) {
+                    int conversationId = chatDAO.createGroupConversation(groupName.trim(), user.getUserId(), participants);
+                    response.sendRedirect(request.getContextPath() + "/customer/chat?convId=" + conversationId);
+                } else {
+                    response.sendRedirect(request.getContextPath() + "/customer/chat?error=InvalidGroupData");
+                }
             } catch (Exception e) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             }

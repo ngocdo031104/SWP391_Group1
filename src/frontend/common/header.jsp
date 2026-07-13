@@ -1,4 +1,5 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
+
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="vi">
@@ -61,11 +62,11 @@
                     <c:otherwise>
                         <a href="${pageContext.request.contextPath}/customer/chat" class="notification-bell" id="chat-btn" aria-label="Tin nhắn" style="text-decoration: none; margin-right: 15px;">
                             <i data-lucide="message-square"></i>
-                            <span class="badge-count" id="chat-count">1</span>
+                            <span class="badge-count" id="chat-count" style="display: none;">0</span>
                         </a>
                         <a href="${pageContext.request.contextPath}/customer/notifications" class="notification-bell" id="notification-btn" aria-label="Thông báo" style="text-decoration: none;">
                             <i data-lucide="bell"></i>
-                            <span class="badge-count" id="notification-count">3</span>
+                            <span class="badge-count" id="notification-count" style="display: none;">0</span>
                         </a>
 
                         <div class="user-avatar-wrapper">
@@ -104,3 +105,28 @@
             </div>
         </div>
     </header>
+
+    <c:if test="${not empty sessionUser}">
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const ctx = "${pageContext.request.contextPath}";
+            fetch(ctx + '/api/header-counts')
+                .then(response => response.json())
+                .then(data => {
+                    const chatCount = document.getElementById('chat-count');
+                    const notifCount = document.getElementById('notification-count');
+                    
+                    if (data.unreadMessages > 0) {
+                        chatCount.textContent = data.unreadMessages > 99 ? '99+' : data.unreadMessages;
+                        chatCount.style.display = 'block';
+                    }
+                    
+                    if (data.unreadNotifications > 0) {
+                        notifCount.textContent = data.unreadNotifications > 99 ? '99+' : data.unreadNotifications;
+                        notifCount.style.display = 'block';
+                    }
+                })
+                .catch(err => console.error("Error fetching header counts:", err));
+        });
+    </script>
+    </c:if>

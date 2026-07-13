@@ -38,6 +38,9 @@ public class DetailController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
         // Thiết lập bộ mã UTF-8 để đảm bảo khi đọc tham số tiếng Việt từ URL hoặc request không bị lỗi hiển thị.
         request.setCharacterEncoding("UTF-8");
         

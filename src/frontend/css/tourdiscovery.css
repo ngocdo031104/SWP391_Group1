@@ -910,7 +910,7 @@
     border-color: var(--slate-100);
 }
 
-/* 7. Recommendations Section (Tour DÃ nh Cho Báº¡n) */
+/* 7. Recommendations Section (Tour DÃ nh Cho Bạn) */
 .recommendations-section-outer {
     background-color: #ffffff;
     border-top: 1px solid rgba(2, 132, 199, 0.08);
@@ -1057,7 +1057,7 @@
         padding: 1.5rem var(--space-md);
     }
     
-    /* Collapsible Filters Sidebar -> TrÆ°á»£t trÆ°á»£t bÃªn Mobile Drawer */
+    /* Collapsible Filters Sidebar -> TrÆ°ọ£t trÆ°ọ£t bÃªn Mobile Drawer */
     .filter-sidebar {
         position: fixed;
         top: 0;
@@ -1096,7 +1096,7 @@
         width: 100%;
     }
 
-    /* Map pane -> co giÃ£n toÃ n bá»™ */
+    /* Map pane -> co giÃ£n toÃ n bọ™ */
     .explore-map-section {
         display: none;
         width: 100%;

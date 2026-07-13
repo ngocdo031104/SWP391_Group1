@@ -106,4 +106,191 @@ public class PaymentDAO extends DBContext {
         }
         return null;
     }
+
+    public java.util.List<Entities.FraudTransactionDTO> getFraudulentTransactions(String dateFrom, String dateTo, String bookingId, String transactionRef, String gateway, String paymentStatus, String reviewStatus, int page, int pageSize) {
+        java.util.List<Entities.FraudTransactionDTO> list = new java.util.ArrayList<>();
+        StringBuilder sql = new StringBuilder(
+            "WITH FraudScan AS (" +
+            "   SELECT p.PaymentID, p.TransactionRef, p.BookingID, p.Amount, p.Currency, " +
+            "          p.Status AS PaymentStatus, p.GatewayResponse, p.PaidAt, p.ReviewStatus, " +
+            "          b.TotalAmount AS ExpectedAmount, u.FullName AS CustomerName, i.InvoiceID, " +
+            "          LTRIM(RTRIM(" +
+            "              CASE WHEN EXISTS (SELECT 1 FROM Payment p2 WHERE p2.TransactionRef = p.TransactionRef AND p2.PaymentID <> p.PaymentID AND p.TransactionRef IS NOT NULL AND p.TransactionRef <> '') THEN 'Duplicate TransactionRef; ' ELSE '' END + " +
+            "              CASE WHEN p.Amount <> b.TotalAmount THEN 'Amount Mismatch; ' ELSE '' END + " +
+            "              CASE WHEN (SELECT COUNT(*) FROM Payment p3 WHERE p3.BookingID = p.BookingID AND p3.Status = 'Failed') > 1 THEN 'Multiple Failed; ' ELSE '' END + " +
+            "              CASE WHEN p.GatewayResponse LIKE '%ERROR%' OR p.GatewayResponse LIKE '%TIMEOUT%' OR p.GatewayResponse LIKE '%FAILED%' OR p.GatewayResponse LIKE '%DUPLICATE%' OR p.GatewayResponse LIKE '%INVALID%' THEN 'Suspicious Gateway Response; ' ELSE '' END + " +
+            "              CASE WHEN b.Status = 'Paid' AND p.Status = 'Success' AND EXISTS (SELECT 1 FROM Payment p4 WHERE p4.BookingID = p.BookingID AND p4.Status = 'Success' AND p4.PaymentID <> p.PaymentID) THEN 'Multiple Success Payments; ' ELSE '' END " +
+            "          )) AS FraudReason " +
+            "   FROM Payment p " +
+            "   JOIN Booking b ON p.BookingID = b.BookingID " +
+            "   JOIN [User] u ON b.CustomerID = u.UserID " +
+            "   LEFT JOIN Invoice i ON p.PaymentID = i.PaymentID " +
+            "   WHERE 1=1 "
+        );
+
+        if (dateFrom != null && !dateFrom.trim().isEmpty()) sql.append(" AND CAST(p.PaidAt AS DATE) >= ? ");
+        if (dateTo != null && !dateTo.trim().isEmpty()) sql.append(" AND CAST(p.PaidAt AS DATE) <= ? ");
+        if (bookingId != null && !bookingId.trim().isEmpty()) sql.append(" AND p.BookingID = ? ");
+        if (transactionRef != null && !transactionRef.trim().isEmpty()) sql.append(" AND p.TransactionRef LIKE ? ");
+        if (gateway != null && !gateway.trim().isEmpty()) sql.append(" AND p.GatewayResponse LIKE ? ");
+        if (paymentStatus != null && !paymentStatus.trim().isEmpty()) sql.append(" AND p.Status = ? ");
+
+        sql.append(") SELECT * FROM FraudScan WHERE (FraudReason <> '' OR ReviewStatus IN ('Under Review', 'Suspicious', 'Cleared')) ");
+
+        if (reviewStatus != null && !reviewStatus.trim().isEmpty()) sql.append(" AND ReviewStatus = ? ");
+
+        sql.append(" ORDER BY PaidAt DESC ");
+        
+        if (page > 0 && pageSize > 0) {
+            sql.append(" OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
+        }
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            int paramIndex = 1;
+            if (dateFrom != null && !dateFrom.trim().isEmpty()) ps.setString(paramIndex++, dateFrom);
+            if (dateTo != null && !dateTo.trim().isEmpty()) ps.setString(paramIndex++, dateTo);
+            if (bookingId != null && !bookingId.trim().isEmpty()) ps.setInt(paramIndex++, Integer.parseInt(bookingId));
+            if (transactionRef != null && !transactionRef.trim().isEmpty()) ps.setString(paramIndex++, "%" + transactionRef + "%");
+            if (gateway != null && !gateway.trim().isEmpty()) ps.setString(paramIndex++, "%" + gateway + "%");
+            if (paymentStatus != null && !paymentStatus.trim().isEmpty()) ps.setString(paramIndex++, paymentStatus);
+            if (reviewStatus != null && !reviewStatus.trim().isEmpty()) ps.setString(paramIndex++, reviewStatus);
+            
+            if (page > 0 && pageSize > 0) {
+                ps.setInt(paramIndex++, (page - 1) * pageSize);
+                ps.setInt(paramIndex++, pageSize);
+            }
+
+            try (java.sql.ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Entities.FraudTransactionDTO dto = new Entities.FraudTransactionDTO();
+                    dto.setPaymentId(rs.getInt("PaymentID"));
+                    dto.setTransactionRef(rs.getString("TransactionRef"));
+                    dto.setBookingId(rs.getInt("BookingID"));
+                    dto.setInvoiceId(rs.getInt("InvoiceID"));
+                    dto.setCustomerName(rs.getString("CustomerName"));
+                    dto.setAmount(rs.getBigDecimal("Amount"));
+                    dto.setExpectedAmount(rs.getBigDecimal("ExpectedAmount"));
+                    dto.setCurrency(rs.getString("Currency"));
+                    dto.setPaymentStatus(rs.getString("PaymentStatus"));
+                    dto.setGatewayResponse(rs.getString("GatewayResponse"));
+                    dto.setPaidAt(rs.getTimestamp("PaidAt"));
+                    dto.setFraudReason(rs.getString("FraudReason"));
+                    dto.setReviewStatus(rs.getString("ReviewStatus"));
+                    list.add(dto);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public int getTotalFraudulentTransactions(String dateFrom, String dateTo, String bookingId, String transactionRef, String gateway, String paymentStatus, String reviewStatus) {
+        StringBuilder sql = new StringBuilder(
+            "WITH FraudScan AS (" +
+            "   SELECT p.PaymentID, p.ReviewStatus, " +
+            "          LTRIM(RTRIM(" +
+            "              CASE WHEN EXISTS (SELECT 1 FROM Payment p2 WHERE p2.TransactionRef = p.TransactionRef AND p2.PaymentID <> p.PaymentID AND p.TransactionRef IS NOT NULL AND p.TransactionRef <> '') THEN 'Duplicate TransactionRef; ' ELSE '' END + " +
+            "              CASE WHEN p.Amount <> b.TotalAmount THEN 'Amount Mismatch; ' ELSE '' END + " +
+            "              CASE WHEN (SELECT COUNT(*) FROM Payment p3 WHERE p3.BookingID = p.BookingID AND p3.Status = 'Failed') > 1 THEN 'Multiple Failed; ' ELSE '' END + " +
+            "              CASE WHEN p.GatewayResponse LIKE '%ERROR%' OR p.GatewayResponse LIKE '%TIMEOUT%' OR p.GatewayResponse LIKE '%FAILED%' OR p.GatewayResponse LIKE '%DUPLICATE%' OR p.GatewayResponse LIKE '%INVALID%' THEN 'Suspicious Gateway Response; ' ELSE '' END + " +
+            "              CASE WHEN b.Status = 'Paid' AND p.Status = 'Success' AND EXISTS (SELECT 1 FROM Payment p4 WHERE p4.BookingID = p.BookingID AND p4.Status = 'Success' AND p4.PaymentID <> p.PaymentID) THEN 'Multiple Success Payments; ' ELSE '' END " +
+            "          )) AS FraudReason " +
+            "   FROM Payment p JOIN Booking b ON p.BookingID = b.BookingID " +
+            "   WHERE 1=1 "
+        );
+
+        if (dateFrom != null && !dateFrom.trim().isEmpty()) sql.append(" AND CAST(p.PaidAt AS DATE) >= ? ");
+        if (dateTo != null && !dateTo.trim().isEmpty()) sql.append(" AND CAST(p.PaidAt AS DATE) <= ? ");
+        if (bookingId != null && !bookingId.trim().isEmpty()) sql.append(" AND p.BookingID = ? ");
+        if (transactionRef != null && !transactionRef.trim().isEmpty()) sql.append(" AND p.TransactionRef LIKE ? ");
+        if (gateway != null && !gateway.trim().isEmpty()) sql.append(" AND p.GatewayResponse LIKE ? ");
+        if (paymentStatus != null && !paymentStatus.trim().isEmpty()) sql.append(" AND p.Status = ? ");
+
+        sql.append(") SELECT COUNT(*) FROM FraudScan WHERE (FraudReason <> '' OR ReviewStatus IN ('Under Review', 'Suspicious', 'Cleared')) ");
+
+        if (reviewStatus != null && !reviewStatus.trim().isEmpty()) sql.append(" AND ReviewStatus = ? ");
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            int paramIndex = 1;
+            if (dateFrom != null && !dateFrom.trim().isEmpty()) ps.setString(paramIndex++, dateFrom);
+            if (dateTo != null && !dateTo.trim().isEmpty()) ps.setString(paramIndex++, dateTo);
+            if (bookingId != null && !bookingId.trim().isEmpty()) ps.setInt(paramIndex++, Integer.parseInt(bookingId));
+            if (transactionRef != null && !transactionRef.trim().isEmpty()) ps.setString(paramIndex++, "%" + transactionRef + "%");
+            if (gateway != null && !gateway.trim().isEmpty()) ps.setString(paramIndex++, "%" + gateway + "%");
+            if (paymentStatus != null && !paymentStatus.trim().isEmpty()) ps.setString(paramIndex++, paymentStatus);
+            if (reviewStatus != null && !reviewStatus.trim().isEmpty()) ps.setString(paramIndex++, reviewStatus);
+            
+            try (java.sql.ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public java.util.Map<String, Object> getFraudulentStats() {
+        java.util.Map<String, Object> stats = new java.util.HashMap<>();
+        stats.put("total", 0);
+        stats.put("suspicious", 0);
+        stats.put("duplicate", 0);
+        stats.put("mismatch", 0);
+        stats.put("successCount", 0);
+
+        String sql = "WITH FraudScan AS (" +
+            "   SELECT p.PaymentID, p.ReviewStatus, p.Status AS PaymentStatus, " +
+            "          CASE WHEN EXISTS (SELECT 1 FROM Payment p2 WHERE p2.TransactionRef = p.TransactionRef AND p2.PaymentID <> p.PaymentID AND p.TransactionRef IS NOT NULL AND p.TransactionRef <> '') THEN 1 ELSE 0 END AS IsDuplicate, " +
+            "          CASE WHEN p.Amount <> b.TotalAmount THEN 1 ELSE 0 END AS IsMismatch, " +
+            "          CASE WHEN (SELECT COUNT(*) FROM Payment p3 WHERE p3.BookingID = p.BookingID AND p3.Status = 'Failed') > 1 THEN 1 ELSE 0 END AS IsMultipleFailed, " +
+            "          CASE WHEN p.GatewayResponse LIKE '%ERROR%' OR p.GatewayResponse LIKE '%TIMEOUT%' OR p.GatewayResponse LIKE '%FAILED%' OR p.GatewayResponse LIKE '%DUPLICATE%' OR p.GatewayResponse LIKE '%INVALID%' THEN 1 ELSE 0 END AS IsGatewaySuspicious, " +
+            "          CASE WHEN b.Status = 'Paid' AND p.Status = 'Success' AND EXISTS (SELECT 1 FROM Payment p4 WHERE p4.BookingID = p.BookingID AND p4.Status = 'Success' AND p4.PaymentID <> p.PaymentID) THEN 1 ELSE 0 END AS IsMultipleSuccess " +
+            "   FROM Payment p JOIN Booking b ON p.BookingID = b.BookingID " +
+            ") SELECT " +
+            "  COUNT(*) AS Total, " +
+            "  SUM(CASE WHEN IsDuplicate=1 OR IsMismatch=1 OR IsMultipleFailed=1 OR IsGatewaySuspicious=1 OR IsMultipleSuccess=1 OR ReviewStatus='Suspicious' THEN 1 ELSE 0 END) AS Suspicious, " +
+            "  SUM(IsDuplicate) AS DuplicateCount, " +
+            "  SUM(IsMismatch) AS MismatchCount, " +
+            "  SUM(CASE WHEN PaymentStatus='Success' THEN 1 ELSE 0 END) AS SuccessCount " +
+            "FROM FraudScan";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             java.sql.ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                stats.put("total", rs.getInt("Total"));
+                stats.put("suspicious", rs.getInt("Suspicious"));
+                stats.put("duplicate", rs.getInt("DuplicateCount"));
+                stats.put("mismatch", rs.getInt("MismatchCount"));
+                stats.put("successCount", rs.getInt("SuccessCount"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return stats;
+    }
+
+    public String getReviewStatus(int paymentId) {
+        String sql = "SELECT ReviewStatus FROM Payment WHERE PaymentID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, paymentId);
+            try (java.sql.ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getString(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "Normal";
+    }
+
+    public boolean updateReviewStatus(int paymentId, String status) {
+        String sql = "UPDATE Payment SET ReviewStatus = ? WHERE PaymentID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, status);
+            ps.setInt(2, paymentId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

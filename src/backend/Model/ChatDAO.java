@@ -73,11 +73,12 @@ public class ChatDAO extends DBContext {
 
     // Insert a new message
     public Message saveMessage(Message msg) {
-        String sql = "INSERT INTO ChatMessage (ConversationID, SenderID, Content, IsVisible) OUTPUT INSERTED.MessageID VALUES (?, ?, ?, 1)";
+        String sql = "INSERT INTO ChatMessage (ConversationID, SenderID, Content, MessageType, IsVisible) OUTPUT INSERTED.MessageID VALUES (?, ?, ?, ?, 1)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, msg.getConversationId());
             ps.setInt(2, msg.getSenderId());
             ps.setString(3, msg.getContent());
+            ps.setString(4, msg.getMessageType() != null ? msg.getMessageType() : "Text");
             
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -114,7 +115,7 @@ public class ChatDAO extends DBContext {
                     m.setConversationId(rs.getInt("ConversationID"));
                     m.setSenderId(rs.getInt("SenderID"));
                     m.setContent(rs.getString("Content"));
-                    m.setMessageType("Text"); // fallback since it doesn't exist
+                    m.setMessageType(rs.getString("MessageType")); 
                     m.setCreatedAt(rs.getTimestamp("SentAt"));
                     m.setIsDeleted(!rs.getBoolean("IsVisible"));
                     m.setSenderName(rs.getString("SenderName"));
@@ -132,6 +133,8 @@ public class ChatDAO extends DBContext {
     // Get active conversations for a user
     public List<Conversation> getUserConversations(int userId) {
         List<Conversation> list = new ArrayList<>();
+        java.util.Set<Integer> addedIds = new java.util.HashSet<>();
+        
         // Removed c.UpdatedAt since ChatConversation doesn't have it
         String sql = "SELECT c.*, u.FullName AS OtherName, up.AvatarURL AS OtherAvatar, u.UserID AS OtherID " +
                      "FROM ChatConversation c " +
@@ -146,8 +149,13 @@ public class ChatDAO extends DBContext {
             ps.setInt(2, userId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
+                    int convId = rs.getInt("ConversationID");
+                    if (!addedIds.add(convId)) {
+                        continue; // Skip duplicate rows for group chats
+                    }
+                    
                     Conversation c = new Conversation();
-                    c.setConversationId(rs.getInt("ConversationID"));
+                    c.setConversationId(convId);
                     c.setType(rs.getString("ConversationType"));
                     
                     if ("Direct".equals(rs.getString("ConversationType"))) {
@@ -185,5 +193,79 @@ public class ChatDAO extends DBContext {
             Logger.getLogger(ChatDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
+    }
+
+    // Count unread messages for a specific user
+    public int getUnreadMessageCount(int userId) {
+        String sql = "SELECT COUNT(*) FROM ChatMessage m " +
+                     "JOIN ConversationParticipant cp ON m.ConversationID = cp.ConversationID " +
+                     "WHERE cp.UserID = ? AND m.SenderID != ? AND m.IsRead = 0 AND m.IsVisible = 1";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ps.setInt(2, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ChatDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
+    }
+
+    // Mark all messages in a conversation as read by a specific user
+    public void markConversationAsRead(int conversationId, int userId) {
+        String sql = "UPDATE ChatMessage SET IsRead = 1 WHERE ConversationID = ? AND SenderID != ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, conversationId);
+            ps.setInt(2, userId);
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(ChatDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    // Create Group Conversation
+    public int createGroupConversation(String groupName, int createdBy, String[] participantIds) {
+        int newConversationId = -1;
+        String insertConv = "INSERT INTO ChatConversation (ConversationType, GroupName, CreatedBy) OUTPUT INSERTED.ConversationID VALUES ('Group', ?, ?)";
+        try (PreparedStatement ps = connection.prepareStatement(insertConv)) {
+            ps.setString(1, groupName);
+            ps.setInt(2, createdBy);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    newConversationId = rs.getInt(1);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ChatDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        if (newConversationId != -1) {
+            String insertPart = "INSERT INTO ConversationParticipant (ConversationID, UserID) VALUES (?, ?)";
+            try (PreparedStatement ps = connection.prepareStatement(insertPart)) {
+                // Add the creator
+                ps.setInt(1, newConversationId);
+                ps.setInt(2, createdBy);
+                ps.executeUpdate();
+
+                // Add all selected participants
+                if (participantIds != null) {
+                    for (String pIdStr : participantIds) {
+                        try {
+                            int pId = Integer.parseInt(pIdStr);
+                            ps.setInt(1, newConversationId);
+                            ps.setInt(2, pId);
+                            ps.executeUpdate();
+                        } catch (NumberFormatException ignored) {}
+                    }
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(ChatDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        return newConversationId;
     }
 }

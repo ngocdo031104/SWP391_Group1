@@ -1,8 +1,9 @@
+<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 <%-- 
     Document   : register.jsp
     Purpose    : Trang đăng ký tài khoản cho người dùng mới (Customer). Cung cấp form nhập liệu có xác thực phía client.
 --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="vi">

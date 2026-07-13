@@ -306,7 +306,8 @@ CREATE TABLE Payment (
                        CHECK (Status IN ('Pending','Success','Failed','Refunded')),
     PaidAt         DATETIME2     NULL,
     GatewayResponse NVARCHAR(MAX) NULL,
-    CreatedAt      DATETIME2     NOT NULL DEFAULT SYSDATETIME()
+    CreatedAt      DATETIME2     NOT NULL DEFAULT SYSDATETIME(),
+    ReviewStatus   NVARCHAR(50)  NOT NULL DEFAULT 'Normal'
 );
 GO
 
@@ -1953,6 +1954,15 @@ GO
 -- TourBuddy Chat Module Schema
 -- ============================================================
 
+CREATE TABLE ChatMessage (
+    MessageID       INT IDENTITY(1,1) PRIMARY KEY,
+    ConversationID  INT NOT NULL REFERENCES ChatConversation(ConversationID),
+    SenderID        INT NOT NULL REFERENCES [User](UserID),
+    Content         NVARCHAR(MAX) NOT NULL,
+    SentAt          DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    IsVisible       BIT NOT NULL DEFAULT 1,
+    IsRead          BIT NOT NULL DEFAULT 0
+);
 -- Table for tracking chat threads (1-to-1 or Group)
 CREATE TABLE Conversation (
     ConversationID  INT IDENTITY(1,1) PRIMARY KEY,
