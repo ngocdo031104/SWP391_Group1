@@ -115,11 +115,14 @@ public class PaymentDAO extends DBContext {
             "          p.Status AS PaymentStatus, p.GatewayResponse, p.PaidAt, p.ReviewStatus, " +
             "          b.TotalAmount AS ExpectedAmount, u.FullName AS CustomerName, i.InvoiceID, " +
             "          LTRIM(RTRIM(" +
-            "              CASE WHEN EXISTS (SELECT 1 FROM Payment p2 WHERE p2.TransactionRef = p.TransactionRef AND p2.PaymentID <> p.PaymentID AND p.TransactionRef IS NOT NULL AND p.TransactionRef <> '') THEN 'Duplicate TransactionRef; ' ELSE '' END + " +
-            "              CASE WHEN p.Amount <> b.TotalAmount THEN 'Amount Mismatch; ' ELSE '' END + " +
-            "              CASE WHEN (SELECT COUNT(*) FROM Payment p3 WHERE p3.BookingID = p.BookingID AND p3.Status = 'Failed') > 1 THEN 'Multiple Failed; ' ELSE '' END + " +
-            "              CASE WHEN p.GatewayResponse LIKE '%ERROR%' OR p.GatewayResponse LIKE '%TIMEOUT%' OR p.GatewayResponse LIKE '%FAILED%' OR p.GatewayResponse LIKE '%DUPLICATE%' OR p.GatewayResponse LIKE '%INVALID%' THEN 'Suspicious Gateway Response; ' ELSE '' END + " +
-            "              CASE WHEN b.Status = 'Paid' AND p.Status = 'Success' AND EXISTS (SELECT 1 FROM Payment p4 WHERE p4.BookingID = p.BookingID AND p4.Status = 'Success' AND p4.PaymentID <> p.PaymentID) THEN 'Multiple Success Payments; ' ELSE '' END " +
+            "              CASE WHEN EXISTS (SELECT 1 FROM Payment p2 WHERE p2.TransactionRef = p.TransactionRef AND p2.PaymentID <> p.PaymentID AND p.TransactionRef IS NOT NULL AND p.TransactionRef <> '') THEN N'Trùng lặp mã giao dịch (Nghi ngờ Replay Attack); ' ELSE '' END + " +
+            "              CASE WHEN p.Amount <> b.TotalAmount THEN N'Sai lệch số tiền so với hóa đơn (Rủi ro can thiệp dữ liệu); ' ELSE '' END + " +
+            "              CASE WHEN (SELECT COUNT(*) FROM Payment p3 WHERE p3.BookingID = p.BookingID AND p3.Status = 'Failed') > 1 THEN N'Thanh toán thất bại liên tiếp (Dấu hiệu dò thẻ/BIN Attack); ' ELSE '' END + " +
+            "              CASE WHEN p.GatewayResponse LIKE '%ERROR%' OR p.GatewayResponse LIKE '%TIMEOUT%' OR p.GatewayResponse LIKE '%FAILED%' OR p.GatewayResponse LIKE '%DUPLICATE%' OR p.GatewayResponse LIKE '%INVALID%' THEN N'Phản hồi cổng thanh toán bất thường (Cảnh báo thẻ bị đánh cắp/IP blacklist); ' ELSE '' END + " +
+            "              CASE WHEN b.Status = 'Paid' AND p.Status = 'Success' AND EXISTS (SELECT 1 FROM Payment p4 WHERE p4.BookingID = p.BookingID AND p4.Status = 'Success' AND p4.PaymentID <> p.PaymentID) THEN N'Thanh toán thành công nhiều lần cho 1 đặt chỗ (Rủi ro Chargeback); ' ELSE '' END + " +
+            "              CASE WHEN p.Amount >= 50000000 THEN N'Giá trị GD cực lớn (Rủi ro rửa tiền); ' ELSE '' END + " +
+            "              CASE WHEN DATEPART(hour, p.PaidAt) BETWEEN 0 AND 4 THEN N'Giao dịch đêm khuya (Giờ rủi ro cao); ' ELSE '' END + " +
+            "              CASE WHEN (SELECT COUNT(*) FROM Payment p5 WHERE p5.BookingID = p.BookingID AND p5.PaidAt >= DATEADD(minute, -10, ISNULL(p.PaidAt, SYSDATETIME())) AND p5.PaidAt <= ISNULL(p.PaidAt, SYSDATETIME())) > 3 THEN N'Booking Spam (Giao dịch liên tục); ' ELSE '' END " +
             "          )) AS FraudReason " +
             "   FROM Payment p " +
             "   JOIN Booking b ON p.BookingID = b.BookingID " +
@@ -190,11 +193,14 @@ public class PaymentDAO extends DBContext {
             "WITH FraudScan AS (" +
             "   SELECT p.PaymentID, p.ReviewStatus, " +
             "          LTRIM(RTRIM(" +
-            "              CASE WHEN EXISTS (SELECT 1 FROM Payment p2 WHERE p2.TransactionRef = p.TransactionRef AND p2.PaymentID <> p.PaymentID AND p.TransactionRef IS NOT NULL AND p.TransactionRef <> '') THEN 'Duplicate TransactionRef; ' ELSE '' END + " +
-            "              CASE WHEN p.Amount <> b.TotalAmount THEN 'Amount Mismatch; ' ELSE '' END + " +
-            "              CASE WHEN (SELECT COUNT(*) FROM Payment p3 WHERE p3.BookingID = p.BookingID AND p3.Status = 'Failed') > 1 THEN 'Multiple Failed; ' ELSE '' END + " +
-            "              CASE WHEN p.GatewayResponse LIKE '%ERROR%' OR p.GatewayResponse LIKE '%TIMEOUT%' OR p.GatewayResponse LIKE '%FAILED%' OR p.GatewayResponse LIKE '%DUPLICATE%' OR p.GatewayResponse LIKE '%INVALID%' THEN 'Suspicious Gateway Response; ' ELSE '' END + " +
-            "              CASE WHEN b.Status = 'Paid' AND p.Status = 'Success' AND EXISTS (SELECT 1 FROM Payment p4 WHERE p4.BookingID = p.BookingID AND p4.Status = 'Success' AND p4.PaymentID <> p.PaymentID) THEN 'Multiple Success Payments; ' ELSE '' END " +
+            "              CASE WHEN EXISTS (SELECT 1 FROM Payment p2 WHERE p2.TransactionRef = p.TransactionRef AND p2.PaymentID <> p.PaymentID AND p.TransactionRef IS NOT NULL AND p.TransactionRef <> '') THEN N'Trùng lặp mã giao dịch (Nghi ngờ Replay Attack); ' ELSE '' END + " +
+            "              CASE WHEN p.Amount <> b.TotalAmount THEN N'Sai lệch số tiền so với hóa đơn (Rủi ro can thiệp dữ liệu); ' ELSE '' END + " +
+            "              CASE WHEN (SELECT COUNT(*) FROM Payment p3 WHERE p3.BookingID = p.BookingID AND p3.Status = 'Failed') > 1 THEN N'Thanh toán thất bại liên tiếp (Dấu hiệu dò thẻ/BIN Attack); ' ELSE '' END + " +
+            "              CASE WHEN p.GatewayResponse LIKE '%ERROR%' OR p.GatewayResponse LIKE '%TIMEOUT%' OR p.GatewayResponse LIKE '%FAILED%' OR p.GatewayResponse LIKE '%DUPLICATE%' OR p.GatewayResponse LIKE '%INVALID%' THEN N'Phản hồi cổng thanh toán bất thường (Cảnh báo thẻ bị đánh cắp/IP blacklist); ' ELSE '' END + " +
+            "              CASE WHEN b.Status = 'Paid' AND p.Status = 'Success' AND EXISTS (SELECT 1 FROM Payment p4 WHERE p4.BookingID = p.BookingID AND p4.Status = 'Success' AND p4.PaymentID <> p.PaymentID) THEN N'Thanh toán thành công nhiều lần cho 1 đặt chỗ (Rủi ro Chargeback); ' ELSE '' END + " +
+            "              CASE WHEN p.Amount >= 50000000 THEN N'Giá trị GD cực lớn (Rủi ro rửa tiền); ' ELSE '' END + " +
+            "              CASE WHEN DATEPART(hour, p.PaidAt) BETWEEN 0 AND 4 THEN N'Giao dịch đêm khuya (Giờ rủi ro cao); ' ELSE '' END + " +
+            "              CASE WHEN (SELECT COUNT(*) FROM Payment p5 WHERE p5.BookingID = p.BookingID AND p5.PaidAt >= DATEADD(minute, -10, ISNULL(p.PaidAt, SYSDATETIME())) AND p5.PaidAt <= ISNULL(p.PaidAt, SYSDATETIME())) > 3 THEN N'Booking Spam (Giao dịch liên tục); ' ELSE '' END " +
             "          )) AS FraudReason " +
             "   FROM Payment p JOIN Booking b ON p.BookingID = b.BookingID " +
             "   WHERE 1=1 "

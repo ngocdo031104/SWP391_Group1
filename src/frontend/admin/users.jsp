@@ -84,6 +84,7 @@
         .badge.role-Customer { background: #E0F2FE; color: #0284C7; }
         .badge.role-Guide { background: #FEF3C7; color: #D97706; }
         .badge.role-Staff { background: #FFE4E6; color: #E11D48; }
+        .badge.role-Accountant { background: #DCFCE7; color: #15803D; }
         .badge.status-active { background: var(--success-light); color: var(--success); }
         .badge.status-locked { background: var(--danger-light); color: var(--danger); }
         
@@ -211,6 +212,7 @@
                             <option value="Customer">Customer</option>
                             <option value="Guide">Guide</option>
                             <option value="Staff">Staff</option>
+                            <option value="Accountant">Accountant</option>
                         </select>
                         <select class="filter-select" id="statusFilter">
                             <option value="all">Tất cả trạng thái</option>
@@ -351,6 +353,7 @@
                 <option value="4">Customer</option>
                 <option value="2">Guide</option>
                 <option value="3">Staff</option>
+                <option value="5">Accountant</option>
             </select>
             <div style="display: flex; justify-content: flex-end; gap: 12px;">
                 <button type="button" class="btn-modern btn-outline" onclick="closeBulkRoleModal()">Hủy</button>
