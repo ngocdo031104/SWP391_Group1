@@ -66,6 +66,8 @@ public class AuthorizationFilter implements Filter {
         
         if (user.getRoleId() == 1) { // Super Admin bypass
             hasPermission = true;
+        } else if ("Accountant".equals(user.getRole().getRoleName()) && uri.contains("/admin/analytics")) {
+            hasPermission = true;
         } else if (!requiredModule.isEmpty() && user.getRole() != null && user.getRole().getPermissions() != null) {
             for (Entities.Permission p : user.getRole().getPermissions()) {
                 if (requiredModule.equalsIgnoreCase(p.getModuleName()) 

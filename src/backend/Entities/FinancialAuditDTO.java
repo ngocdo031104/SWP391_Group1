@@ -16,6 +16,8 @@ public class FinancialAuditDTO {
     private String currency;
     private String paymentStatus;
     private Timestamp createdAt;
+    private boolean isDiscrepancy;
+    private String discrepancyReason;
 
     public FinancialAuditDTO() {
     }
@@ -114,5 +116,21 @@ public class FinancialAuditDTO {
 
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public boolean isIsDiscrepancy() {
+        return isDiscrepancy;
+    }
+
+    public void setIsDiscrepancy(boolean isDiscrepancy) {
+        this.isDiscrepancy = isDiscrepancy;
+    }
+
+    public String getDiscrepancyReason() {
+        return discrepancyReason;
+    }
+
+    public void setDiscrepancyReason(String discrepancyReason) {
+        this.discrepancyReason = discrepancyReason;
     }
 }
