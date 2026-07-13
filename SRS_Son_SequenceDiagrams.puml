@@ -1,0 +1,466 @@
+@startuml
+title UC-14: View Guide Dashboard
+
+actor Guide
+participant "GuideDashboardController" as Ctrl
+participant "GuideDAO" as GDAO
+participant "AttendanceDAO" as ADAO
+participant "DB" as DB
+participant "dashboard.jsp" as Dash
+participant "participants.jsp" as Part
+
+== Dashboard Main ==
+Guide -> Ctrl: GET /guide/dashboard
+Ctrl -> Ctrl: check session, role == "Guide"
+alt not authorized
+    Ctrl -> Guide: redirect /login or /home
+end
+Ctrl -> GDAO: getAssignmentsByGuideId(guideId)
+GDAO -> DB: JOIN TourSchedule,Tour,TourStatus WHERE GuideID=?
+DB --> GDAO: List<TourAssignment>
+GDAO --> Ctrl: assignments
+Ctrl -> Dash: forward /views/guide/dashboard.jsp
+Dash --> Guide: Table: Tour, Destination, Departure, Status, Action buttons
+
+== View Participants ==
+Guide -> Dash: click "Danh sách đoàn"
+Dash -> Ctrl: GET ?action=participants&scheduleId=X
+Ctrl -> Ctrl: verify schedule is assigned to guide
+alt not assigned
+    Ctrl -> Dash: error msg → forward dashboard
+end
+Ctrl -> ADAO: getAttendanceByScheduleId(scheduleId)
+ADAO -> DB: LEFT JOIN BookingParticipant + Attendance\nWHERE Booking.Status != 'Cancelled'
+DB --> ADAO: participants with check-in data
+ADAO --> Ctrl: participants
+Ctrl -> Ctrl: calc checkedInCount, totalCount
+Ctrl -> Part: forward /views/guide/participants.jsp
+Part --> Guide: Progress bar X/Y, Table with check-in toggle
+@enduml
+
+
+@startuml
+title UC-15: Manage Favorite Tours
+
+actor Customer
+participant "JS (TourCard)" as JS
+participant "WishlistController" as Ctrl
+participant "WishlistDAO" as DAO
+participant "DB" as DB
+
+Customer -> JS: click heart icon
+JS -> Ctrl: AJAX POST /customer/wishlist/toggle?tourId=X
+Ctrl -> Ctrl: check sessionUser != null
+alt not logged in
+    Ctrl -> JS: 401 {"status":"error"}
+end
+
+Ctrl -> DAO: toggleFavorite(userId, tourId)
+DAO -> DB: SELECT COUNT(*) FROM FavoriteTour\nWHERE UserID=? AND TourID=?
+
+alt already exists
+    DAO -> DB: DELETE FROM FavoriteTour
+    DAO --> Ctrl: "removed"
+    Ctrl -> JS: {"status":"removed"}
+    JS -> JS: heart icon → empty
+else not exists
+    DAO -> DB: INSERT INTO FavoriteTour
+    DAO --> Ctrl: "added"
+    Ctrl -> JS: {"status":"added"}
+    JS -> JS: heart icon → filled
+end
+@enduml
+
+
+@startuml
+title UC-16: Submit Tour Review
+
+actor Customer
+participant "detail.jsp" as JSP
+participant "DetailController" as Ctrl
+participant "TourDAO" as DAO
+participant "DB" as DB
+
+Customer -> JSP: select stars (1-5), type content
+JSP -> JSP: JS updates #review-rating-input
+
+Customer -> JSP: click "Gửi Đánh Giá"
+JSP -> Ctrl: POST /detail (tourId, rating, content)
+
+Ctrl -> Ctrl: check sessionUser != null
+alt not logged in
+    Ctrl -> Customer: redirect /login
+end
+
+Ctrl -> Ctrl: name = sessionUser.getFullName()\nemail = sessionUser.getEmail()
+
+Ctrl -> DAO: insertReview(name, email, tourId, rating, content)
+
+DAO -> DB: Step 1: SELECT UserID FROM [User] WHERE Email=?
+alt user not found
+    DAO -> DB: INSERT [User] (role=4) + UserProfile
+end
+
+DAO -> DB: Step 3: SELECT BookingID\nJOIN Booking,TourSchedule\nWHERE CustomerID=? AND TourID=?
+note right: KHÔNG check Status='Completed'
+alt no booking
+    DAO -> DB: fallback SELECT or INSERT dummy booking
+end
+
+DAO -> DB: INSERT INTO Review\n(TourID, BookingID, CustomerID, Rating, Content, IsVisible=1)
+DB --> DAO: ok
+DAO --> Ctrl: true
+
+Ctrl -> Customer: redirect /detail?id={tourId}
+JSP --> Customer: page reload, new review visible
+@enduml
+
+
+@startuml
+title UC-28: Assign Tour Guide
+
+actor "Admin/Staff" as Admin
+participant "schedules-pricing.jsp" as JSP
+participant "AdminSchedulePricingController" as Ctrl
+participant "TourScheduleDAO" as SDAO
+participant "GuideDAO" as GDAO
+participant "DB" as DB
+
+Admin -> JSP: select guide, fill schedule form, click Save
+JSP -> Ctrl: POST /admin/schedules-pricing
+
+alt action = addSchedule
+    Ctrl -> SDAO: insertSchedule(sched)
+    SDAO -> DB: INSERT INTO TourSchedule
+    DB --> SDAO: newId
+else action = updateSchedule
+    Ctrl -> SDAO: updateSchedule(sched)
+    SDAO -> DB: UPDATE TourSchedule
+    Ctrl -> Ctrl: compare old GuideID vs new GuideID
+end
+
+alt guideId > 0 (or guide changed)
+    Ctrl -> GDAO: assignGuideToSchedule(scheduleId, guideId, assignedBy, notes)
+    GDAO -> DB: BEGIN TRANSACTION
+    GDAO -> DB: Step 1: UPDATE TourSchedule SET GuideID=?
+    GDAO -> DB: Step 2: INSERT INTO TourStatus (Status='Scheduled')
+    GDAO -> DB: Step 3: MERGE INTO TourAssignment (upsert)
+    alt success
+        GDAO -> DB: COMMIT
+        GDAO --> Ctrl: true
+    else failure
+        GDAO -> DB: ROLLBACK
+        GDAO --> Ctrl: false
+    end
+end
+
+Ctrl -> Admin: JSON {"status":"success"}
+@enduml
+
+
+@startuml
+title UC-29: Check In Participants
+
+actor Guide
+participant "participants.jsp" as JSP
+participant "GuideDashboardController" as Ctrl
+participant "AttendanceDAO" as DAO
+participant "DB" as DB
+
+Guide -> JSP: click "Điểm danh" / "Hủy check-in"
+
+JSP -> JSP: toggleCheckIn(participantId)\nread data-checked → toggle\nread notes from input
+
+JSP -> Ctrl: AJAX POST /guide/dashboard\naction=checkin, scheduleId, participantId, checkedIn, notes
+
+Ctrl -> Ctrl: check session, role=Guide
+Ctrl -> Ctrl: verify guide is assigned to schedule
+alt not assigned
+    Ctrl -> JSP: 403 error
+end
+
+Ctrl -> DAO: saveAttendance(scheduleId, participantId, checkedIn, guideId, notes)
+
+DAO -> DB: MERGE INTO Attendance\nON (ScheduleID, ParticipantID)\nWHEN MATCHED → UPDATE\nWHEN NOT MATCHED → INSERT
+
+alt checkedIn=true
+    DAO -> DAO: checkInTime = now()
+else checkedIn=false
+    DAO -> DAO: checkInTime = null
+end
+
+DB --> DAO: ok
+DAO --> Ctrl: true
+
+Ctrl -> JSP: JSON {status:"success", checkInTime:"HH:mm dd/MM"}
+
+JSP -> JSP: updateProgress() — recount, update bar\nupdate status cell + button\nNO page reload
+@enduml
+
+
+@startuml
+title UC-38: Export Revenue Reports
+
+actor "Admin/Accountant" as User
+participant "analytics.jsp" as JSP
+participant "AdminAnalyticsController" as Ctrl
+participant "AnalyticsDAO" as DAO
+participant "DB" as DB
+
+== Load Page ==
+User -> Ctrl: GET /admin/analytics
+Ctrl -> Ctrl: check session, roleId==1 or 5
+Ctrl -> JSP: forward analytics.jsp
+JSP --> User: 5 tabs (Revenue/Bookings/Performance/Guides/Reports)
+
+== Load Tab Data ==
+User -> JSP: click tab → AJAX ?ajax=true&type=revenue
+JSP -> Ctrl: AJAX GET
+Ctrl -> DAO: getRevenueByMonth / getRevenueByCategory / getRevenueByTour
+DAO -> DB: aggregate queries (JOIN Booking,TourSchedule,Tour,TourCategory)
+DB --> DAO: data
+DAO --> Ctrl: data
+Ctrl -> JSP: JSON
+JSP --> User: Chart.js renders charts
+
+== Export CSV (client-side) ==
+User -> JSP: click export button
+JSP -> JSP: read HTML table → generate CSV\n→ Blob download
+JSP --> User: CSV file downloaded
+
+== Save Snapshot (server-side) ==
+User -> JSP: "Chụp Snapshot" → click save
+JSP -> Ctrl: POST action=saveSnapshot
+Ctrl -> DAO: insertReport(report)
+DAO -> DB: INSERT INTO AnalyticsReport (JSON data)
+DB --> DAO: reportId
+DAO --> Ctrl: reportId
+Ctrl -> JSP: {"success":true}
+@enduml
+
+
+@startuml
+title UC-39: Perform Predictive Analytics
+
+actor Admin
+participant "forecast.jsp" as JSP
+participant "AdminForecastController" as Ctrl
+participant "AnalyticsDAO" as DAO
+participant "DB" as DB
+
+== Load History ==
+Admin -> Ctrl: GET /admin/forecast
+Ctrl -> Ctrl: check session, roleId==1
+Ctrl -> DAO: getAllPredictions()
+DAO -> DB: SELECT pr.*, u.FullName\nORDER BY GeneratedAt DESC
+DB --> DAO: history
+DAO --> Ctrl: predictionsHistory
+Ctrl -> JSP: forward forecast.jsp
+JSP --> Admin: chart area + type selector
+
+== Run Forecast ==
+Admin -> JSP: select type → AJAX GET ?action=getCalculations&type=Revenue
+
+Ctrl -> DAO: calculateForecast(type)
+
+group Revenue / BookingTrend
+    DAO -> DB: getRevenueByMonth(6) or getBookingCountByMonth(6)
+    DB --> DAO: 6 months historical
+    DAO -> DAO: Linear Regression: slope, intercept\nR² → confidence (default 85% if all zero)\nPredict next 3 months
+    DAO --> Ctrl: {historical, forecast, regression, confidence}
+end
+
+group Demand
+    DAO -> DB: TOP 5 tours by bookings in 3 months
+    DB --> DAO: topTours (fallback: random data if empty)
+    DAO -> DAO: projectedBookings = round(avgPerMonth*1.15+2)\nconfidence = 88.5 (hardcoded)
+    DAO --> Ctrl: {historical_top_tours, projected_demand, confidence:88.5}
+end
+
+Ctrl -> JSP: JSON forecast data
+JSP --> Admin: Chart.js renders
+
+== Save Snapshot ==
+Admin -> JSP: click "Run Forecast" → POST
+Ctrl -> Ctrl: extract confidence, inputData, resultData
+Ctrl -> DAO: insertPrediction(pr)
+DAO -> DB: INSERT INTO PredictionResult\n(ModelVersion="v1.0-Regression/WMA")
+DB --> DAO: newId
+DAO --> Ctrl: newId
+Ctrl -> JSP: {"status":"success","newId":X}
+@enduml
+
+
+@startuml
+title UC-42: Update Tour Status
+
+actor Guide
+participant "dashboard.jsp" as JSP
+participant "GuideDashboardController" as Ctrl
+participant "GuideDAO" as GDAO
+participant "DB" as DB
+
+Guide -> JSP: click "Trạng thái" button
+JSP -> JSP: openStatusModal(scheduleId, currentStatus)\n- dropdown: Preparing|Scheduled|InProgress|Completed|Cancelled\n- textarea: notes
+
+Guide -> JSP: select new status, enter notes, click "Xác nhận"
+
+JSP -> Ctrl: AJAX POST /guide/dashboard\naction=updateStatus, scheduleId, newStatus, notes
+
+Ctrl -> Ctrl: check session, role=Guide
+Ctrl -> Ctrl: verify guide assigned to schedule
+alt not assigned
+    Ctrl -> JSP: 403
+end
+Ctrl -> Ctrl: validate newStatus ∈ {Preparing,Scheduled,InProgress,Completed,Cancelled}
+alt invalid
+    Ctrl -> JSP: 400
+end
+
+Ctrl -> GDAO: updateTourStatus(scheduleId, newStatus, notes, guideId)
+
+GDAO -> DB: BEGIN TRANSACTION
+GDAO -> DB: Step 1: UPDATE TourSchedule SET Status=newStatus
+GDAO -> DB: Step 2: INSERT INTO TourStatus (history)
+GDAO -> DB: Step 3: INSERT INTO TourOperationLog\n(Activity="HDV Cập nhật: "+newStatus)
+
+alt success
+    GDAO -> DB: COMMIT
+    GDAO --> Ctrl: true
+    Ctrl -> JSP: {"status":"success"}
+    JSP -> JSP: alert → closeModal() → reload
+else failure
+    GDAO -> DB: ROLLBACK
+    GDAO --> Ctrl: false
+    Ctrl -> JSP: {"status":"error"}
+end
+@enduml
+
+
+@startuml
+title UC-43: Report Tour Incident
+
+actor Guide
+participant "dashboard.jsp / incidents.jsp" as JSP
+participant "GuideDashboardController" as Ctrl
+participant "IncidentReportDAO" as DAO
+participant "DB" as DB
+
+== View Incidents ==
+Guide -> JSP: click "Sự cố" → GET ?action=incidents&scheduleId=X
+Ctrl -> Ctrl: check session, role=Guide, verify assigned
+Ctrl -> DAO: getIncidentsByScheduleId(scheduleId)
+DAO -> DB: SELECT ir.*, u.FullName\nJOIN [User] u\nWHERE ScheduleID=? ORDER BY CreatedAt DESC
+DB --> DAO: List<IncidentReport>
+DAO --> Ctrl: incidents
+Ctrl -> JSP: forward /views/guide/incidents.jsp
+JSP --> Guide: Table: Mã SC, Tiêu Đề, Thời Gian, Mức Độ, Trạng Thái, Mô Tả
+
+== Report New Incident ==
+Guide -> JSP: click "Báo Cáo Sự Cố Mới"
+JSP -> JSP: openIncidentModal()\n- title, severity (Low/Medium/High/Critical), description
+
+Guide -> JSP: fill form → click "Gửi báo cáo"
+JSP -> JSP: validate title & description not empty
+JSP -> Ctrl: AJAX POST action=reportIncident, scheduleId, title, severity, description
+
+Ctrl -> Ctrl: validate severity ∈ {Low,Medium,High,Critical}
+Ctrl -> DAO: insertIncidentReport(report)
+DAO -> DB: INSERT INTO IncidentReport\n(ScheduleID, ReportedBy, Title, Description, Severity, Status='Open')
+DB --> DAO: ok
+DAO --> Ctrl: true
+Ctrl -> JSP: {"status":"success"}
+JSP -> JSP: alert → closeModal → reload
+@enduml
+
+
+@startuml
+title UC-44: View Tour Operation Logs
+
+actor Guide
+actor Admin
+participant "GuideDashboardController" as GCtrl
+participant "AdminOperationLogController" as ACtrl
+participant "TourOperationLogDAO" as DAO
+participant "DB" as DB
+participant "guide/operation-logs.jsp" as GJSP
+participant "admin/operation-logs.jsp" as AJSP
+
+== Guide View (Timeline) ==
+Guide -> GCtrl: GET ?action=operationLogs&scheduleId=X
+GCtrl -> GCtrl: check session, role=Guide, verify assigned
+GCtrl -> DAO: getLogsByScheduleId(scheduleId)
+DAO -> DB: SELECT tol.*, u.FullName, r.RoleName\nFROM TourOperationLog tol\nLEFT JOIN [User] u, [Role] r\nWHERE ScheduleID=? ORDER BY CreatedAt DESC
+DB --> DAO: List<TourOperationLog>
+DAO --> GCtrl: logs
+GCtrl -> GJSP: forward /views/guide/operation-logs.jsp
+GJSP --> Guide: Timeline: vertical line + markers\nEach item: timestamp, activity, operator, role badge
+
+== Admin View (Table + Pagination) ==
+Admin -> ACtrl: GET /admin/operation-logs?search=&page=1
+ACtrl -> ACtrl: check session, role Admin or Staff
+ACtrl -> DAO: getAllLogsPaged(page, 15, search)
+DAO -> DB: SELECT tol.*, t.TourName, ts.DepartureDate,\nu.FullName, r.RoleName\nJOIN TourSchedule, Tour\nLEFT JOIN [User], [Role]\nWHERE search LIKE?\nOFFSET 0 FETCH NEXT 15
+DB --> DAO: List<TourOperationLog>
+ACtrl -> DAO: getLogsCount(search)
+DAO -> DB: SELECT COUNT(*)
+DB --> DAO: total
+ACtrl -> ACtrl: totalPages = ceil(total/15)
+ACtrl -> AJSP: forward /admin/operation-logs.jsp
+AJSP --> Admin: Search bar + Table\n(Mã Log, Tour, Hoạt Động, Người TH, Vai Trò, Thời Gian)\n+ Pagination
+@enduml
+
+
+@startuml
+title UC-46: Moderate User Content
+
+actor Admin
+participant "moderation.jsp" as JSP
+participant "AdminModerationController" as Ctrl
+participant "ModerationDAO" as DAO
+participant "DB" as DB
+
+== View Content ==
+Admin -> JSP: access /admin/moderation
+JSP -> Ctrl: AJAX load tabs (reviews/posts/comments/history)
+Ctrl -> Ctrl: hasModerationPermission()\nroleId==1 OR "Content Management"
+Ctrl -> DAO: getPendingReviews / getPendingPosts / getPendingComments
+DAO -> DB: SELECT ... WHERE IsVisible=1 (includes IsFlagged)
+DB --> DAO: content list
+DAO --> Ctrl: list
+Ctrl -> JSP: JSON
+JSP --> Admin: 4 tabs, each row: ID, content, author,\nstatus badge, flagged badge, action buttons
+
+== Hide Content ==
+Admin -> JSP: click "Ẩn"
+JSP -> JSP: open reason modal (dropdown: Spam/Kích động/Sai lệch/Vi phạm/Khác)
+Admin -> JSP: select reason → click "Ẩn nội dung"
+JSP -> Ctrl: AJAX POST action=Hide, entityType, entityId, reason
+
+Ctrl -> DAO: moderateContent(entityType, entityId, "Hide", reason, userId)
+DAO -> DB: BEGIN TRANSACTION
+DAO -> DB: UPDATE {Table} SET IsVisible=0, IsFlagged=0
+DAO -> DB: INSERT INTO ModerationRecord
+DAO -> DB: COMMIT
+DAO --> Ctrl: true
+Ctrl -> JSP: {"status":"success"}
+JSP -> JSP: reload tab
+
+== Restore Content ==
+Admin -> JSP: click "Khôi phục"
+JSP -> Ctrl: AJAX POST action=Restore
+Ctrl -> DAO: moderateContent(..., "Restore", "Khôi phục hiển thị", userId)
+DAO -> DB: UPDATE {Table} SET IsVisible=1 + INSERT ModerationRecord
+DAO --> Ctrl: true
+Ctrl -> JSP: {"status":"success"}
+JSP -> JSP: reload tab
+
+== Dismiss Flag ==
+Admin -> JSP: click "Bỏ qua" on flagged content
+JSP -> Ctrl: AJAX POST action=DismissFlag, entityType, entityId
+Ctrl -> DAO: dismissFlag(entityType, entityId)
+DAO -> DB: UPDATE {Table} SET IsFlagged=0
+DAO --> Ctrl: true
+Ctrl -> JSP: {"status":"success"}
+JSP -> JSP: reload tab
+@enduml
