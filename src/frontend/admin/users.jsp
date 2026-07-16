@@ -381,8 +381,8 @@
 <script>
     lucide.createIcons();
 
-    // Export users CSV — NOTE: JSP parser sẽ fail khi thấy chuỗi dạng ${...} bên trong <script>
-    // nên toàn bộ đoạn này chỉ dùng nối chuỗi bằng '+', KHÔNG dùng template literal.
+    // Export users CSV -- NOTE: JSP EL parser sẽ fail khi thấy chuỗi có dạng "${"..."}" bên trong script.
+    // Toàn bộ đoạn này chỉ dùng nối chuỗi bằng '+', KHÔNG dùng template literal.
     function exportUsersCSV() {
         const rows = Array.from(document.querySelectorAll('#usersTableBody tr'))
             .filter(function (row) { return row.style.display !== 'none'; })
