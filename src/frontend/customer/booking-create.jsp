@@ -1,4 +1,4 @@
-<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
+﻿<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 ﻿
 <%@ page import="java.util.List" %>
 <%@ page import="java.text.NumberFormat" %>
@@ -29,6 +29,16 @@
     // money định dạng số tiền theo kiểu Việt Nam; dateFormat định dạng ngày để người dùng dễ đọc.
     NumberFormat money = NumberFormat.getNumberInstance(new Locale("vi", "VN"));
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+    // today là ngày hiện tại (00:00:00) để so sánh với DepartureDate ở client.
+    // BR-19 / BR-20: tầng bảo vệ cuối cùng — nếu vì lý do gì controller/DAO chưa filter,
+    // JSP vẫn disable radio có DepartureDate ở quá khứ.
+    java.util.Calendar todayCal = java.util.Calendar.getInstance();
+    todayCal.set(java.util.Calendar.HOUR_OF_DAY, 0);
+    todayCal.set(java.util.Calendar.MINUTE, 0);
+    todayCal.set(java.util.Calendar.SECOND, 0);
+    todayCal.set(java.util.Calendar.MILLISECOND, 0);
+    long todayMillis = todayCal.getTimeInMillis();
 
     // hasSchedules quyết định có cho submit form hay không; sideBase là giá gốc hiển thị ở thẻ tổng quan bên phải.
     boolean hasSchedules = schedules != null && !schedules.isEmpty();
@@ -80,12 +90,14 @@
                     <%-- Khối lịch khởi hành: mỗi schedule được render thành radio để khách chọn đúng ngày đi. --%>
                     <div class="schedule-grid">
                         <% if (hasSchedules) { %>
-                            <% for (int i = 0; i < schedules.size(); i++) { TourSchedule schedule = schedules.get(i); %>
-                                <label class="schedule-card">
-                                    <input type="radio" name="scheduleId" value="<%= schedule.getScheduleId() %>" data-price-adult="<%= schedule.getPriceAdult() %>" data-price-child="<%= schedule.getPriceChild() %>" data-price-infant="<%= schedule.getPriceInfant() %>" <%= i == 0 ? "checked" : "" %>>
+                            <% for (int i = 0; i < schedules.size(); i++) { TourSchedule schedule = schedules.get(i);
+                                boolean isPast = schedule.getDepartureDate() != null && schedule.getDepartureDate().getTime() < todayMillis;
+                            %>
+                                <label class="schedule-card <%= isPast ? "schedule-card-past" : "" %>">
+                                    <input type="radio" name="scheduleId" value="<%= schedule.getScheduleId() %>" data-price-adult="<%= schedule.getPriceAdult() %>" data-price-child="<%= schedule.getPriceChild() %>" data-price-infant="<%= schedule.getPriceInfant() %>" data-departure-ms="<%= schedule.getDepartureDate() != null ? schedule.getDepartureDate().getTime() : 0 %>" <%= isPast ? "disabled" : (i == 0 ? "checked" : "") %>>
                                     <strong><%= dateFormat.format(schedule.getDepartureDate()) %></strong>
                                     <span><%= dateFormat.format(schedule.getDepartureDate()) %> - <%= dateFormat.format(schedule.getReturnDate()) %></span>
-                                    <small><%= schedule.getAvailableSeats() %> chỗ trống</small>
+                                    <small><%= schedule.getAvailableSeats() %> chỗ trống<%= isPast ? " (đã qua)" : "" %></small>
                                 </label>
                             <% } %>
                         <% } else { %>

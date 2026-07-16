@@ -1,4 +1,4 @@
-<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
+﻿<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
@@ -26,33 +26,17 @@
     <!-- Bootstrap CSS (for DataTables styling only) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-dashboard.css?v=1.8">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-dashboard.css?v=2.1">
     <style>
-        /* Tùy chỉnh modal và bảng cho phù hợp với theme */
         .admin-dashboard-page { padding: 20px; }
-        .dataTables_wrapper { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-top: 20px; }
-        .action-btn { background: none; border: none; cursor: pointer; color: var(--primary-color); }
-        .action-btn:hover { color: var(--primary-hover); }
-        .badge-active { background: #d1fae5; color: #065f46; padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; }
-        .badge-inactive { background: #fee2e2; color: #991b1b; padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; }
-        /* Fix: Tiêu đề header khu vực nội dung - chữ rõ ràng */
-        .dashboard-header h2 { color: #ffffff !important; }
-        .dashboard-header p { color: #ffffff !important; }
-        /* Fix: Modal header nền tím - chữ trắng rõ */
-        .modal-header { background: #4f46e5; color: #fff !important; }
-        .modal-title { font-family: 'Outfit', sans-serif; font-weight: 600; color: #fff !important; }
+        .action-btn { background: none; border: none; cursor: pointer; color: var(--accent-cyan); transition: color 0.2s; }
+        .action-btn:hover { color: #ffffff; }
+        .badge-active { background: rgba(16, 185, 129, 0.2); color: #10b981; padding: 6px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-inactive { background: rgba(239, 68, 68, 0.2); color: #ef4444; padding: 6px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; border: 1px solid rgba(239, 68, 68, 0.3); }
         .btn-close { filter: invert(1); }
-        /* Fix: Nội dung modal - nền trắng, chữ đen rõ */
-        .modal-content { color: #1a202c; background-color: #ffffff; }
-        .modal-body { background-color: #ffffff; }
-        .modal-footer { background-color: #f9fafb; border-top: 1px solid #e5e7eb; }
-        .modal-content .form-label { font-weight: 500; color: #374151; }
-        .modal-content .form-control, .modal-content .form-select { color: #1a202c; background-color: #fff; border-color: #d1d5db; }
-        .modal-content .form-control:focus, .modal-content .form-select:focus { border-color: #4f46e5; box-shadow: 0 0 0 0.25rem rgba(79, 70, 229, 0.25); }
-        /* Fix: Nút Hủy - màu xám rõ ràng, không bị chìm */
-        .modal-footer .btn-secondary { background-color: #6b7280 !important; border-color: #6b7280 !important; color: #ffffff !important; }
-        .modal-footer .btn-secondary:hover { background-color: #4b5563 !important; border-color: #4b5563 !important; }
     </style>
+
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-space-overrides.css?v=1.0">
 </head>
 <body class="dashboard-body">
 
@@ -117,13 +101,13 @@
             </div>
 
             <!-- Custom Filters & Search -->
-            <div class="row mb-3" style="background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <div class="row mb-3 filter-card-row">
                 <div class="col-md-3">
-                    <label class="form-label" style="font-weight: 500; color: #4a5568; font-size: 0.9rem;">Tìm kiếm mã/giá trị</label>
+                    <label class="form-label">Tìm kiếm mã/giá trị</label>
                     <input type="text" id="customSearch" class="form-control" placeholder="Nhập từ khóa...">
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label" style="font-weight: 500; color: #4a5568; font-size: 0.9rem;">Lọc theo loại giảm giá</label>
+                    <label class="form-label">Lọc theo loại giảm giá</label>
                     <select id="filterType" class="form-select">
                         <option value="">-- Tất cả --</option>
                         <option value="Phần Trăm (%)">Phần Trăm (%)</option>
@@ -131,7 +115,7 @@
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label" style="font-weight: 500; color: #4a5568; font-size: 0.9rem;">Lọc theo trạng thái</label>
+                    <label class="form-label">Lọc theo trạng thái</label>
                     <select id="filterStatus" class="form-select">
                         <option value="">-- Tất cả --</option>
                         <option value="Hoạt động">Hoạt động</option>
@@ -139,8 +123,8 @@
                     </select>
                 </div>
                 <div class="col-md-3 d-flex align-items-end">
-                    <button class="btn btn-outline-secondary w-100" id="resetFilters">
-                        <i data-lucide="refresh-cw" style="width: 16px; height: 16px;"></i> Đặt lại bộ lọc
+                    <button class="btn btn-outline-secondary w-100" id="resetFilters" style="padding: 9px 12px;">
+                        <i data-lucide="refresh-cw" style="width: 16px; height: 16px; vertical-align: middle;"></i> Đặt lại bộ lọc
                     </button>
                 </div>
             </div>

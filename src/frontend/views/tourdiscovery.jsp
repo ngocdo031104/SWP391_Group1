@@ -1,4 +1,4 @@
-﻿<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ page import="java.util.List" %>
 <%@ page import="Entities.Tour" %>
@@ -319,6 +319,7 @@
     </section>
 
 <script>
+    window.contextPath = '${pageContext.request.contextPath}';
     window.toursData = [
         <% 
         List<Tour> tours = (List<Tour>) request.getAttribute("tours");

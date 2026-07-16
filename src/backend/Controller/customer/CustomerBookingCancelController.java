@@ -55,6 +55,20 @@ public class CustomerBookingCancelController extends HttpServlet {
             return;
         }
 
+        // BR (UC26 Alternative 5a): chặn gửi yêu cầu hủy khi còn dưới 24 giờ trước departure.
+        // Policy: ngoài 24h trước departure mới được yêu cầu hủy; trong 24h thuộc non-refundable window.
+        if (booking.getSchedule() != null && booking.getSchedule().getDepartureDate() != null) {
+            long departureMs = booking.getSchedule().getDepartureDate().getTime();
+            long nowMs = System.currentTimeMillis();
+            long hoursLeft = (departureMs - nowMs) / 3_600_000L;
+            if (hoursLeft < 24) {
+                request.getSession().setAttribute("cancelError",
+                        "Đã quá thời hạn cho phép hủy tour (trước 24 giờ so với giờ khởi hành). Vui lòng liên hệ hỗ trợ nếu có sự cố đặc biệt.");
+                response.sendRedirect(request.getContextPath() + "/customer/booking/detail?code=" + bookingCode);
+                return;
+            }
+        }
+
         CancellationRequestDAO cancelDAO = new CancellationRequestDAO();
         
         // Check if there's already a pending request

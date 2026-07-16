@@ -1,3 +1,4 @@
+<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 <jsp:include page="/common/header.jsp" />
 
 <div class="container" style="margin-top: 120px; margin-bottom: 60px; max-width: 600px; font-family: 'Inter', sans-serif;">

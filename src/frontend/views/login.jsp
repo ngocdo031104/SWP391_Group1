@@ -1,4 +1,4 @@
-<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
+﻿<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 <%-- 
     Document   : login.jsp
     Purpose    : Trang đăng nhập vào hệ thống TourBuddy. Hiển thị form đăng nhập và xử lý thông báo lỗi.

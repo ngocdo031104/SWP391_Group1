@@ -157,6 +157,13 @@ public class ManageUserController extends HttpServlet {
             User currentAdmin = (User) request.getSession().getAttribute("sessionUser");
             boolean isMaster = isMasterAdmin(currentAdmin);
             
+            // Self-protection: admin không được tự khóa chính mình, kể cả Master Admin.
+            if (currentAdmin != null && userId == currentAdmin.getUserId()) {
+                request.getSession().setAttribute("errorMsg", "Bạn không thể tự thay đổi trạng thái tài khoản của chính mình.");
+                response.sendRedirect(request.getContextPath() + "/admin/users");
+                return;
+            }
+
             User targetUser = userDAO.getUserById(userId);
             if (targetUser != null && "Admin".equalsIgnoreCase(targetUser.getRole().getRoleName()) && !isMaster) {
                 request.getSession().setAttribute("errorMsg", "Bạn không có quyền thao tác với tài khoản Admin khác!");
@@ -267,18 +274,34 @@ public class ManageUserController extends HttpServlet {
                 
                 User currentAdmin = (User) request.getSession().getAttribute("sessionUser");
                 boolean isMaster = isMasterAdmin(currentAdmin);
+
+                int selfSkipCount = 0;
+                int adminDeleteBlockedCount = 0;
+                int adminLeftAfterDelete = -1;
                 
                 for (String idStr : userIds) {
                     int userId = Integer.parseInt(idStr);
-                    
-                    User userToDelete = userDAO.getUserById(userId);
-                    if (userToDelete != null && "Admin".equalsIgnoreCase(userToDelete.getRole().getRoleName())) {
-                        if (!isMaster) {
-                            adminSkipCount++;
-                            continue;
-                        }
+
+                    // Self-protection #1: không admin nào được xóa chính mình,
+                    // kể cả Master Admin — tránh khóa hệ thống vĩnh viễn.
+                    if (currentAdmin != null && userId == currentAdmin.getUserId()) {
+                        selfSkipCount++;
+                        continue;
                     }
-                    
+
+                    User userToDelete = userDAO.getUserById(userId);
+                    if (userToDelete == null) {
+                        otherErrorCount++;
+                        continue;
+                    }
+                    boolean targetIsAdmin = "Admin".equalsIgnoreCase(userToDelete.getRole().getRoleName());
+                    // Self-protection #2: chặn admin thường xóa các admin khác để tránh
+                    // chỉ còn lại 1 admin duy nhất. Master Admin thì được phép.
+                    if (targetIsAdmin && !isMaster) {
+                        adminSkipCount++;
+                        continue;
+                    }
+
                     String status = userDAO.deleteUserWithCheck(userId);
                     if ("success".equals(status)) {
                         successCount++;
@@ -298,6 +321,9 @@ public class ManageUserController extends HttpServlet {
                 }
                 
                 StringBuilder errorMsgBuilder = new StringBuilder();
+                if (selfSkipCount > 0) {
+                    errorMsgBuilder.append("Không thể tự xóa chính tài khoản đang đăng nhập. ");
+                }
                 if (adminSkipCount > 0) {
                     errorMsgBuilder.append("Không thể xóa ").append(adminSkipCount).append(" tài khoản vì là Admin. ");
                 }
@@ -334,7 +360,13 @@ public class ManageUserController extends HttpServlet {
                 
                 for (String idStr : userIds) {
                     int userId = Integer.parseInt(idStr);
-                    
+
+                    // Self-protection: không admin nào được tự khóa chính mình trong bulk action.
+                    if (currentAdmin != null && userId == currentAdmin.getUserId()) {
+                        adminSkipCount++;
+                        continue;
+                    }
+
                     User targetUser = userDAO.getUserById(userId);
                     if (targetUser != null && "Admin".equalsIgnoreCase(targetUser.getRole().getRoleName()) && !isMaster) {
                         adminSkipCount++;
