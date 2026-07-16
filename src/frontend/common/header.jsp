@@ -60,7 +60,7 @@
                     <c:otherwise>
                         <a href="${pageContext.request.contextPath}/customer/notifications" class="notification-bell" id="notification-btn" aria-label="Thông báo" style="text-decoration: none;">
                             <i data-lucide="bell"></i>
-                            <span class="badge-count" id="notification-count">3</span>
+                            <span class="badge-count" id="notification-count" style="display: none;">0</span>
                         </a>
 
                         <div class="user-avatar-wrapper">
