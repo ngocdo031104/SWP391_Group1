@@ -175,7 +175,7 @@
         captionText.innerText = caption || 'Không có mô tả';
 
         if (mediaType === 'Image') {
-            container.innerHTML = `<img src="${mediaUrl}" alt="Preview Image" class="lightbox-media">`;
+            container.innerHTML = '<img src="' + mediaUrl + '" alt="Preview Image" class="lightbox-media">';
         } else {
             // Kiểm tra xem là link file MP4 trực tiếp hay YouTube
             if (mediaUrl.includes('youtube.com') || mediaUrl.includes('youtu.be') || mediaUrl.includes('embed')) {
@@ -191,14 +191,14 @@
                     if (!videoId) {
                         videoId = mediaUrl.split('v=')[1].split('&')[0];
                     }
-                    embedUrl = `https://www.youtube.com/embed/${videoId}`;
+                    embedUrl = 'https://www.youtube.com/embed/' + videoId;
                 } else if (mediaUrl.includes('youtu.be/')) {
                     const videoId = mediaUrl.split('youtu.be/')[1].split('?')[0];
-                    embedUrl = `https://www.youtube.com/embed/${videoId}`;
+                    embedUrl = 'https://www.youtube.com/embed/' + videoId;
                 }
-                container.innerHTML = `<iframe class="lightbox-iframe" src="${embedUrl}" allowfullscreen></iframe>`;
+                container.innerHTML = '<iframe class="lightbox-iframe" src="' + embedUrl + '" allowfullscreen></iframe>';
             } else {
-                container.innerHTML = `<video src="${mediaUrl}" controls autoplay class="lightbox-media"></video>`;
+                container.innerHTML = '<video src="' + mediaUrl + '" controls autoplay class="lightbox-media"></video>';
             }
         }
 

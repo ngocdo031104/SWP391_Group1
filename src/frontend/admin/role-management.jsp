@@ -532,17 +532,17 @@
         });
     }
 
-    // Toasts
+    // Toasts — tránh template literal có ${} vì JSP EL parser sẽ cố parse và gây 500.
     function showToast(type, msg) {
         const container = document.getElementById('toast-container');
         const toast = document.createElement('div');
-        toast.className = `toast ${type}`;
-        
+        toast.className = 'toast ' + type;
+
         let icon = 'check-circle';
         if (type === 'error') icon = 'x-circle';
         if (type === 'warning') icon = 'alert-triangle';
-        
-        toast.innerHTML = `<i data-lucide="${icon}" style="width: 20px;"></i> ${msg}`;
+
+        toast.innerHTML = '<i data-lucide="' + icon + '" style="width: 20px;"></i> ' + msg;
         container.appendChild(toast);
         lucide.createIcons();
         

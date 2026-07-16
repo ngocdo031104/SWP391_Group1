@@ -381,34 +381,43 @@
 <script>
     lucide.createIcons();
 
-    // Export users CSV
+    // Export users CSV — NOTE: JSP parser sẽ fail khi thấy chuỗi dạng ${...} bên trong <script>
+    // nên toàn bộ đoạn này chỉ dùng nối chuỗi bằng '+', KHÔNG dùng template literal.
     function exportUsersCSV() {
         const rows = Array.from(document.querySelectorAll('#usersTableBody tr'))
-            .filter(row => row.style.display !== 'none')
-            .map(row => ({
-                id: row.querySelector('.row-checkbox')?.value || '',
-                name: row.querySelector('.user-name')?.textContent.trim() || '',
-                email: row.querySelector('.user-email')?.textContent.trim() || '',
-                role: row.getAttribute('data-role') || '',
-                status: row.getAttribute('data-status') || '',
-            }));
+            .filter(function (row) { return row.style.display !== 'none'; })
+            .map(function (row) {
+                return {
+                    id: row.querySelector('.row-checkbox') ? row.querySelector('.row-checkbox').value : '',
+                    name: row.querySelector('.user-name') ? row.querySelector('.user-name').textContent.trim() : '',
+                    email: row.querySelector('.user-email') ? row.querySelector('.user-email').textContent.trim() : '',
+                    role: row.getAttribute('data-role') || '',
+                    status: row.getAttribute('data-status') || ''
+                };
+            });
         if (rows.length === 0) {
             showToast('Không có người dùng nào để xuất.', 'error');
             return;
         }
         const header = ['UserID', 'FullName', 'Email', 'Role', 'Status'];
-        const escape = v => `"${String(v).replace(/"/g, '""')}"`;
-        const csv = [header.join(','), ...rows.map(r => [r.id, r.name, r.email, r.role, r.status].map(escape).join(','))].join('\n');
-        const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
+        function escapeCSV(v) {
+            return '"' + String(v).replace(/"/g, '""') + '"';
+        }
+        const lines = [header.join(',')];
+        rows.forEach(function (r) {
+            lines.push([r.id, r.name, r.email, r.role, r.status].map(escapeCSV).join(','));
+        });
+        const csv = lines.join('\n');
+        const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `users_${new Date().toISOString().slice(0,10)}.csv`;
+        link.download = 'users_' + new Date().toISOString().slice(0, 10) + '.csv';
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
-        showToast(`Đã xuất ${rows.length} người dùng.`, 'success');
+        showToast('Đã xuất ' + rows.length + ' người dùng.', 'success');
     }
 
     function openAddUserModal() {

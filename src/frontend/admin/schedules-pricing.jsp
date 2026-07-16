@@ -698,7 +698,7 @@
             let statusText = tourStatus;
             if (tourStatus === 'Scheduled') statusText = 'Scheduled (Lên lịch khởi hành)';
             else if (tourStatus === 'InProgress') statusText = 'InProgress (Đang đi)';
-            alert(`Không thể xóa lịch khởi hành đang ở trạng thái '${statusText}'. Chỉ cho phép xóa khi ở trạng thái Chuẩn bị, Hoàn thành hoặc Hủy đoàn.`);
+            alert("Không thể xóa lịch khởi hành đang ở trạng thái '" + statusText + "'. Chỉ cho phép xóa khi ở trạng thái Chuẩn bị, Hoàn thành hoặc Hủy đoàn.");
             return;
         }
 
