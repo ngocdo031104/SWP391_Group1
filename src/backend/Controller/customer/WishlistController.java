@@ -44,7 +44,7 @@ public class WishlistController extends HttpServlet {
         dao.close();
         
         try (PrintWriter out = response.getWriter()) {
-                      (isSaved ? "Đã lưu vào danh sách yêu thích!" : "Đã xóa khỏi danh sách yêu thích!") + "\"}");
+            out.print("{\"status\":\"success\",\"message\":\"" + (isSaved ? "Đã lưu vào danh sách yêu thích!" : "Đã xóa khỏi danh sách yêu thích!") + "\"}");
         }
     }
 }

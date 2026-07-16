@@ -42,4 +42,48 @@ public class WishlistDAO extends DBContext {
         }
         return false;
     }
+
+    public java.util.List<Entities.Tour> getWishlistTours(int userId) {
+        java.util.List<Entities.Tour> tours = new java.util.ArrayList<>();
+        TourDAO tourDAO = new TourDAO();
+        java.util.List<Integer> tourIds = getWishlistTourIds(userId);
+        for (int tourId : tourIds) {
+            Entities.Tour t = tourDAO.getTourById(tourId);
+            if (t != null) {
+                tours.add(t);
+            }
+        }
+        return tours;
+    }
+
+    public java.util.List<Integer> getWishlistTourIds(int userId) {
+        java.util.List<Integer> ids = new java.util.ArrayList<>();
+        String sql = "SELECT TourID FROM Wishlist WHERE UserID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    ids.add(rs.getInt("TourID"));
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(WishlistDAO.class.getName()).log(Level.SEVERE, "Error getting wishlist tour IDs", ex);
+        }
+        return ids;
+    }
+
+    public int countWishlistTours(int userId) {
+        String sql = "SELECT COUNT(*) FROM Wishlist WHERE UserID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(WishlistDAO.class.getName()).log(Level.SEVERE, "Error counting wishlist tours", ex);
+        }
+        return 0;
+    }
 }
