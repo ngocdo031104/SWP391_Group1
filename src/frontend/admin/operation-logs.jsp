@@ -1,4 +1,4 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+﻿<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!DOCTYPE html>
@@ -7,9 +7,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nhật Ký Vận Hành Tour — TourBuddy Admin</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-dashboard.css?v=2.0">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/admin-global.css?v=1.1">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/admin-dashboard.css?v=1.1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         .search-bar-group { display: flex; gap: 12px; margin-bottom: 20px; max-width: 600px; }
         .search-input { flex: 1; padding: 10px 14px; border: 1px solid var(--border-color, #e2e8f0); border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 0.9rem; outline: none; }
@@ -33,16 +33,17 @@
         .page-link:hover, .page-link.active { background-color: #2563eb; color: #ffffff; border-color: #2563eb; font-weight: bold; }
     </style>
 </head>
-<body class="dashboard-body">
+<body>
 
-<div class="dashboard-wrapper">
+<div class="admin-container">
     <!-- Sidebar -->
-    <c:set var="activePage" value="oplogs" scope="request" />
-    <jsp:include page="sidebar.jsp" />
+    <jsp:include page="/admin/sidebar.jsp">
+        <jsp:param name="activePage" value="oplogs" />
+    </jsp:include>
 
     <!-- Main Content Area -->
-    <main class="main-content">
-        <header class="top-header">
+    <main class="main-content" style="padding: 24px;">
+        <header class="content-header" style="margin-bottom: 24px;">
             <h1 style="font-size: 1.8rem; font-weight: 700; color: #1e293b; font-family: 'Outfit', sans-serif;">Nhật Ký Vận Hành Tour</h1>
             <p style="color: #64748b; font-size: 0.95rem; margin-top: 4px;">Giám sát lịch sử hoạt động, trạng thái chuyển đổi và thay đổi vận hành của các lịch trình khởi hành.</p>
         </header>

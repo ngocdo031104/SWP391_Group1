@@ -13,19 +13,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /* \u2500\u2500 Fetch Tours from Server \u2500\u2500 */
     function fetchDashboardData() {
-        // Fetch from AdminTourController's AJAX endpoint
-        fetch('tours?ajax=true')
-            .then(res => {
-                if (!res.ok) throw new Error('Kh\u00f4ng th\u1ec3 k\u1ebft n\u1ed1i \u0111\u1ebfn m\u00e1y ch\u1ee7');
+        // Tách 2 endpoint riêng để tránh share schema giữa 2 consumer:
+        //   - /admin/dashboard?ajax=true -> chỉ trả {monthlyRevenue} (chart)
+        //   - /admin/tours?ajax=true     -> trả {tours, monthlyRevenue} (table quản lý)
+        // Dashboard dùng revenue endpoint (lightweight) + tours endpoint cho overview stats.
+        Promise.all([
+            fetch('dashboard?ajax=true').then(res => {
+                if (!res.ok) throw new Error('Kh\u00f4ng th\u1ec3 k\u1ebft n\u1ed1i \u0111\u1ebfn m\u00e1y ch\u1ee7 (revenue)');
+                return res.json();
+            }),
+            fetch('tours?ajax=true').then(res => {
+                if (!res.ok) throw new Error('Kh\u00f4ng th\u1ec3 k\u1ebft n\u1ed1i \u0111\u1ebfn m\u00e1y ch\u1ee7 (tours)');
                 return res.json();
             })
-            .then(data => {
-                const tours = Array.isArray(data) ? data : data.tours;
-                const monthlyRev = data.monthlyRevenue || [0, 0, 0, 0, 0, 0];
+        ])
+            .then(([revenueData, toursData]) => {
+                const tours = Array.isArray(toursData) ? toursData : (toursData.tours || []);
+                const monthlyRev = revenueData.monthlyRevenue || toursData.monthlyRevenue || [0, 0, 0, 0, 0, 0];
                 allToursRaw = tours;
                 // Enrich data with derived properties to match the user's schema & stats formula
                 const enrichedTours = mapToursData(tours);
-                
+
                 // Render view elements
                 renderOverviewStats(enrichedTours, monthlyRev);
                 renderOverviewTable(enrichedTours);

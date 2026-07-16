@@ -1,4 +1,4 @@
-<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
+﻿<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ page import="java.util.List" %>
@@ -18,7 +18,9 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-dashboard.css?v=2.0">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-dashboard.css?v=2.1">
+
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-space-overrides.css?v=1.0">
 </head>
 <body class="dashboard-body">
 
@@ -167,8 +169,9 @@
             <h3 id="modal-title">Thêm Tour Mới</h3>
             <button class="modal-close-btn" id="modal-close">&times;</button>
         </div>
-        <form id="tour-form" method="POST">
+        <form id="tour-form" method="POST" action="${pageContext.request.contextPath}/admin/tours">
             <input type="hidden" id="tour-id" name="tourId" value="">
+            <input type="hidden" id="form-mode" name="formMode" value="create">
             <div class="modal-body">
                 
                 <!-- Section: General Info -->

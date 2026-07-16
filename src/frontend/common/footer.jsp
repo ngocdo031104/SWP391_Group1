@@ -133,8 +133,8 @@
             }
             
             setTimeout(() => {
-                toast.style.animation = 'slideOut 0.3s ease forwards';
-                setTimeout(() => toast.remove(), 300);
+                toast.style.animation = 'toastExit 0.35s cubic-bezier(.16,1,.3,1) forwards';
+                setTimeout(() => toast.remove(), 350);
             }, 3000);
         }
     </script>

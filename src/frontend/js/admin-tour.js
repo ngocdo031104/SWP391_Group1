@@ -248,37 +248,51 @@ document.addEventListener('DOMContentLoaded', () => {
             else if (tour.tourName.toLowerCase().includes('h\u00e0 giang')) previewImg = '../assets/images/tour_hagiang.png';
             else previewImg = '../assets/images/tour_halong.png'; // standard fallback
 
+            // Escape các trường do admin/người dùng nhập trước khi nhúng vào innerHTML
+            // để chặn stored XSS khi 1 admin khác (hoặc kẻ tấn công có session admin)
+            // cố tình nhập tourName/destination chứa <script> hoặc onerror handler.
+            const safeTourName = escapeHtml(tour.tourName);
+            const safePreviewImg = escapeHtml(previewImg);
+            const safeDepartureCity = escapeHtml(tour.departureCity);
+            const safeDestination = escapeHtml(tour.destination);
+            const safeCategoryName = escapeHtml(tour.categoryName);
+            const safeStatus = escapeHtml(tour.status);
+            const safeCreatedAt = escapeHtml(tour.createdAt || '2026-05-20');
+            const safeTourId = parseInt(tour.tourId, 10) || 0;
+            const safeDurationDays = parseInt(tour.durationDays, 10) || 0;
+            const safeBasePrice = Number(tour.basePrice) || 0;
+
             tr.innerHTML = `
                 <td>
                     <div class="tour-cell">
-                        <img src="${previewImg}" alt="${tour.tourName}" class="tour-cell-img" onerror="this.src='../assets/images/tour_halong.png'">
+                        <img src="${safePreviewImg}" alt="${safeTourName}" class="tour-cell-img" onerror="this.src='../assets/images/tour_halong.png'">
                         <div class="tour-cell-info">
-                            <span class="tour-cell-name" title="${tour.tourName}">${tour.tourName}</span>
+                            <span class="tour-cell-name" title="${safeTourName}">${safeTourName}</span>
                             <span class="tour-cell-dest">
                                 <i data-lucide="map-pin" style="width: 12px; height: 12px;"></i>
-                                ${tour.departureCity} &rarr; ${tour.destination}
+                                ${safeDepartureCity} &rarr; ${safeDestination}
                             </span>
                         </div>
                     </div>
                 </td>
-                <td><span style="font-weight: 500;">${tour.categoryName}</span></td>
-                <td>${tour.durationDays} Ng\u00e0y</td>
-                <td><span style="font-weight: 600; color: var(--warning-amber);">${tour.basePrice.toLocaleString('vi-VN')} \u20ab</span></td>
+                <td><span style="font-weight: 500;">${safeCategoryName}</span></td>
+                <td>${safeDurationDays} Ng\u00e0y</td>
+                <td><span style="font-weight: 600; color: var(--warning-amber);">${safeBasePrice.toLocaleString('vi-VN')} \u20ab</span></td>
                 <td>
-                    <span class="badge badge-${tour.status.toLowerCase()}">
+                    <span class="badge badge-${safeStatus.toLowerCase()}">
                         ${statusText}
                     </span>
                 </td>
-                <td><span style="color: var(--slate-500); font-size: 0.85rem;">${tour.createdAt || '2026-05-20'}</span></td>
+                <td><span style="color: var(--slate-500); font-size: 0.85rem;">${safeCreatedAt}</span></td>
                 <td style="text-align: right; padding-right: 2rem;">
                     <div class="actions-cell" style="justify-content: flex-end;">
-                        <button class="btn btn-secondary btn-icon-only btn-sm edit-btn" data-id="${tour.tourId}" title="Ch\u1ec9nh s\u1eeda tour">
+                        <button class="btn btn-secondary btn-icon-only btn-sm edit-btn" data-id="${safeTourId}" title="Ch\u1ec9nh s\u1eeda tour">
                             <i data-lucide="edit-3" style="width: 14px; height: 14px;"></i>
                         </button>
-                        <button class="btn btn-secondary btn-icon-only btn-sm toggle-status-btn" data-id="${tour.tourId}" data-status="${tour.status}" title="${tour.status === 'Active' ? 'T\u1ea1m ng\u01b0ng tour' : 'K\u00edch ho\u1ea1t ho\u1ea1t \u0111\u1ed9ng'}">
-                            <i data-lucide="${tour.status === 'Active' ? 'eye-off' : 'eye'}" style="width: 14px; height: 14px; color: ${tour.status === 'Active' ? 'var(--slate-500)' : 'var(--primary)'};"></i>
+                        <button class="btn btn-secondary btn-icon-only btn-sm toggle-status-btn" data-id="${safeTourId}" data-status="${safeStatus}" title="${safeStatus === 'Active' ? 'T\u1ea1m ng\u01b0ng tour' : 'K\u00edch ho\u1ea1t ho\u1ea1t \u0111\u1ed9ng'}">
+                            <i data-lucide="${safeStatus === 'Active' ? 'eye-off' : 'eye'}" style="width: 14px; height: 14px; color: ${safeStatus === 'Active' ? 'var(--slate-500)' : 'var(--primary)'};"></i>
                         </button>
-                        <button class="btn btn-danger btn-icon-only btn-sm delete-btn" data-id="${tour.tourId}" title="X\u00f3a tour">
+                        <button class="btn btn-danger btn-icon-only btn-sm delete-btn" data-id="${safeTourId}" title="X\u00f3a tour">
                             <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
                         </button>
                     </div>

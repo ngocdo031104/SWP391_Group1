@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+﻿<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
@@ -6,21 +6,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fraud Monitoring - TourBuddy Admin</title>
-    
+    <title>Giám Sát Gian Lận — TourBuddy Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link href="${pageContext.request.contextPath}/css/admin-dashboard.css?v=2.0" rel="stylesheet">
-    
-    <style>
-        .badge-normal { background-color: #6c757d; }
-        .badge-review { background-color: #ffc107; color: #212529; }
-        .badge-suspicious { background-color: #dc3545; }
-        .badge-cleared { background-color: #28a745; }
-        
-        .filter-row { margin-bottom: 20px; }
-        .empty-state { text-align: center; padding: 40px; color: #6c757d; }
-    </style>
+    <link href="${pageContext.request.contextPath}/css/admin-dashboard.css?v=2.1" rel="stylesheet">
+
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-space-overrides.css?v=1.0">
 </head>
 <body class="dashboard-body">
     <div class="dashboard-wrapper">
