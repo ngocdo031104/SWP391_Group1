@@ -45,6 +45,27 @@ public class BuddyRequestDAO extends DBContext {
         return false;
     }
 
+    public BuddyRequest getRequestById(int requestId) {
+        String sql = "SELECT * FROM BuddyRequest WHERE RequestId = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, requestId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return new BuddyRequest(
+                    rs.getInt("RequestId"),
+                    rs.getInt("SenderId"),
+                    rs.getInt("ReceiverId"),
+                    rs.getString("Status"),
+                    rs.getTimestamp("CreatedAt"),
+                    rs.getTimestamp("UpdatedAt")
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public List<BuddyRequest> getPendingRequests(int receiverId) {
         return getReceivedRequests(receiverId).stream().filter(r -> "Pending".equals(r.getStatus())).toList();
     }
