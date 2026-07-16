@@ -1,4 +1,4 @@
-<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
+<%@ page pageEncoding="UTF-8" contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 
 <c:set var="userRoleId" value="${sessionScope.sessionUser != null ? sessionScope.sessionUser.roleId : 0}" />
@@ -56,6 +56,21 @@
             </li>
         </c:if>
         
+        <c:if test="${isAccountant || sessionScope.sessionUser.roleId eq 1}">
+            <li class="${activePage eq 'payments' ? 'active' : ''}">
+                <a href="${pageContext.request.contextPath}/accountant/payments">
+                    <i data-lucide="wallet"></i>
+                    <span>Quản Lý Dòng Tiền</span>
+                </a>
+            </li>
+            <li class="${activePage eq 'refunds' ? 'active' : ''}">
+                <a href="${pageContext.request.contextPath}/accountant/refunds">
+                    <i data-lucide="refresh-ccw"></i>
+                    <span>Xử Lý Hoàn Tiền</span>
+                </a>
+            </li>
+        </c:if>
+
         <li class="${activePage eq 'analytics' ? 'active' : ''}">
             <a href="${pageContext.request.contextPath}/admin/analytics">
                 <i data-lucide="bar-chart-3"></i>
