@@ -2,6 +2,7 @@ package Model;
 
 import Entities.Booking;
 import Entities.BookingParticipant;
+import Entities.User;
 import Utils.DBContext;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -448,6 +449,116 @@ public class BookingDAO extends DBContext {
      * Cancels a booking, releases seats in TourSchedule, and logs the change in BookingHistory.
      * Usually called by staff when approving a cancellation request, or by system/customer for unpaid bookings.
      */
+    // UC11: L\u1ea5y to\u00e0n b\u1ed9 booking c\u1ee7a h\u1ec7 th\u1ed1ng cho Staff qu\u1ea3n l\u00fd.
+    // JOIN TourSchedule + Tour \u0111\u1ec3 hi\u1ec3n th\u1ecb t\u00ean tour, ng\u00e0y kh\u1edfi h\u00e0nh.
+    // JOIN [User] \u0111\u1ec3 hi\u1ec3n th\u1ecb t\u00ean kh\u00e1ch h\u00e0ng.
+    // statusFilter = "All" \u0111\u1ec3 l\u1ea5y t\u1ea5t c\u1ea3, ho\u1eb7c t\u00ean status c\u1ee5 th\u1ec3.
+    // keyword t\u00ecm theo BookingCode ho\u1eb7c FullName kh\u00e1ch.
+    public List<Booking> getAllBookingsForStaff(String statusFilter, String keyword, int offset, int pageSize) {
+        List<Booking> list = new ArrayList<>();
+        StringBuilder sql = new StringBuilder(
+            "SELECT b.BookingID, b.BookingCode, b.ScheduleID, b.CustomerID, b.NumParticipants, " +
+            "b.BaseAmount, b.VATAmount, b.DiscountAmount, b.TotalAmount, b.Status, b.Notes, b.CouponID, b.CreatedAt, b.UpdatedAt, " +
+            "s.DepartureDate, t.TourName, t.Destination, " +
+            "u.FullName AS CustomerName, u.Email AS CustomerEmail, u.PhoneNumber AS CustomerPhone " +
+            "FROM Booking b " +
+            "JOIN TourSchedule s ON b.ScheduleID = s.ScheduleID " +
+            "JOIN Tour t ON s.TourID = t.TourID " +
+            "JOIN [User] u ON b.CustomerID = u.UserID " +
+            "WHERE 1=1 "
+        );
+        List<Object> params = new ArrayList<>();
+
+        if (statusFilter != null && !statusFilter.isEmpty() && !"All".equals(statusFilter)) {
+            sql.append("AND b.Status = ? ");
+            params.add(statusFilter);
+        }
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append("AND (b.BookingCode LIKE ? OR u.FullName LIKE ?) ");
+            params.add("%" + keyword.trim() + "%");
+            params.add("%" + keyword.trim() + "%");
+        }
+        sql.append("ORDER BY b.CreatedAt DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
+        params.add(offset);
+        params.add(pageSize);
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Booking b = mapBooking(rs);
+                    // G\u1eafn th\u00f4ng tin kh\u00e1ch h\u00e0ng v\u00e0o Booking.customer \u0111\u1ec3 JSP truy c\u1eadp qua EL
+                    User customer = new User();
+                    customer.setFullName(rs.getString("CustomerName"));
+                    customer.setEmail(rs.getString("CustomerEmail"));
+                    customer.setPhoneNumber(rs.getString("CustomerPhone"));
+                    b.setCustomer(customer);
+                    // G\u1eafn th\u00f4ng tin l\u1ecbch kh\u1edfi h\u00e0nh + t\u00ean tour
+                    Entities.TourSchedule schedule = new Entities.TourSchedule();
+                    schedule.setDepartureDate(rs.getDate("DepartureDate"));
+                    Entities.Tour tour = new Entities.Tour();
+                    tour.setTourName(rs.getString("TourName"));
+                    tour.setDestination(rs.getString("Destination"));
+                    schedule.setTour(tour);
+                    b.setSchedule(schedule);
+                    list.add(b);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(BookingDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return list;
+    }
+
+    // UC11: \u0110\u1ebfm t\u1ed5ng s\u1ed1 booking \u0111\u1ec3 t\u00ednh ph\u00e2n trang cho Staff.
+    public int countAllBookingsForStaff(String statusFilter, String keyword) {
+        StringBuilder sql = new StringBuilder(
+            "SELECT COUNT(*) FROM Booking b " +
+            "JOIN [User] u ON b.CustomerID = u.UserID " +
+            "WHERE 1=1 "
+        );
+        List<Object> params = new ArrayList<>();
+
+        if (statusFilter != null && !statusFilter.isEmpty() && !"All".equals(statusFilter)) {
+            sql.append("AND b.Status = ? ");
+            params.add(statusFilter);
+        }
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append("AND (b.BookingCode LIKE ? OR u.FullName LIKE ?) ");
+            params.add("%" + keyword.trim() + "%");
+            params.add("%" + keyword.trim() + "%");
+        }
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(BookingDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
+    }
+
+    // UC11: Staff c\u1eadp nh\u1eadt ghi ch\u00fa v\u1eadn h\u00e0nh n\u1ed9i b\u1ed9 v\u00e0o booking.
+    // Notes \u0111\u01b0\u1ee3c gi\u1edbi h\u1ea1n 500 k\u00fd t\u1ef1 \u0111\u1ec3 ph\u00f9 h\u1ee3p v\u1edbi constraint c\u1ee7a DB.
+    public boolean updateOperationalNotes(int bookingId, String notes) {
+        String sql = "UPDATE Booking SET Notes = ?, UpdatedAt = SYSDATETIME() WHERE BookingID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            String safeNotes = notes != null ? notes.trim() : "";
+            ps.setString(1, safeNotes.length() > 500 ? safeNotes.substring(0, 500) : safeNotes);
+            ps.setInt(2, bookingId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(BookingDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
     public boolean cancelBookingAndReleaseSeats(int bookingId, int changedBy, String reason) {
         String getBookingSql = "SELECT ScheduleID, NumParticipants, Status FROM Booking WHERE BookingID = ?";
         String updateSeatsSql = "UPDATE TourSchedule SET AvailableSeats = CASE "

@@ -16,9 +16,6 @@ public class WishlistController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
         
         response.setContentType("application/json;charset=UTF-8");
         User sessionUser = (User) request.getSession().getAttribute("sessionUser");
@@ -47,7 +44,6 @@ public class WishlistController extends HttpServlet {
         dao.close();
         
         try (PrintWriter out = response.getWriter()) {
-            out.print("{\"status\":\"" + (isSaved ? "added" : "removed") + "\",\"isSaved\":" + isSaved + ",\"message\":\"" + 
                       (isSaved ? "Đã lưu vào danh sách yêu thích!" : "Đã xóa khỏi danh sách yêu thích!") + "\"}");
         }
     }
