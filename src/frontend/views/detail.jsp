@@ -1,4 +1,5 @@
-﻿<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
+
 <%@ page import="java.util.List" %>
 <%@ page import="Entities.Tour" %>
 <%@ page import="Entities.TourCategory" %>
@@ -10,13 +11,14 @@
 <%@ page import="Entities.Review" %>
 <%@ page import="Entities.User" %>
 <%
-    // LÝ DO VÀ CHỨC NĂNG CỦA ĐOẠN CODE NÀY:
+    // LÝ DO VÀ CHỨC NàNG CỦA ĐOẠN CODE NÀY:
     // - extraCss: Thuộc tính này được header.jsp đọc để nhúng file CSS detail.css tương ứng (tạo giao diện riêng cho trang chi tiết).
     // - activeTour: Đối tượng Tour chính được Servlet DetailController.java nạp từ DB (bằng tourDAO.getTourById(id))
     //   và đẩy vào request attribute để JSP này hiển thị thông tin động.
     request.setAttribute("extraCss", "css/detail.css");
     request.setAttribute("bodyClass", "detail-page");
     Tour activeTour = (Tour) request.getAttribute("tour");
+    boolean isLoggedIn = (session.getAttribute("sessionUser") != null);
     
     List<Review> tourReviews = activeTour != null ? activeTour.getReviews() : null;
     int totalReviews = (tourReviews != null) ? tourReviews.size() : 0;
@@ -82,8 +84,16 @@
                     <button class="btn btn-secondary btn-icon-text" id="share-btn">
                         <i data-lucide="share-2"></i> Chia sẻ
                     </button>
-                    <button class="btn btn-secondary btn-icon-text btn-wishlist-detail" id="wishlist-detail-btn">
-                        <i data-lucide="heart"></i> Lưu vào Yêu thích
+                    <%
+                        List<Integer> wishlistTourIds = (List<Integer>) request.getAttribute("wishlistTourIds");
+                        boolean isWishlisted = activeTour != null && wishlistTourIds != null && wishlistTourIds.contains(activeTour.getTourId());
+                    %>
+                    <button class="btn btn-secondary btn-icon-text btn-wishlist-detail <%= isWishlisted ? "active" : "" %>" id="wishlist-detail-btn" data-tour-id="<%= activeTour != null ? activeTour.getTourId() : "" %>">
+                        <% if (isWishlisted) { %>
+                            <i data-lucide="heart" fill="currentColor"></i> Đã lưu Yêu thích
+                        <% } else { %>
+                            <i data-lucide="heart"></i> Lưu vào Yêu thích
+                        <% } %>
                     </button>
                 </div>
             </div>
@@ -126,25 +136,13 @@
                         galleryImages.add(request.getContextPath() + "/" + mainImgUrl);
                     }
 
-                    // Fallbacks to pad up to 5 images
-                    String[] defaultPool = {
-                        "assets/images/tour_halong.png",
-                        "assets/images/tour_phuquoc.png",
-                        "assets/images/hero_beach.png",
-                        "assets/images/tour_dalat.png",
-                        "assets/images/tour_danang.png",
-                        "assets/images/tour_hoian.png",
-                        "assets/images/tour_sapa.png",
-                        "assets/images/tour_nhatrang.png",
-                        "assets/images/tour_hagiang.png"
-                    };
-                    int poolIdx = 0;
-                    while (galleryImages.size() < 5 && poolIdx < defaultPool.length) {
-                        String fallbackUrl = request.getContextPath() + "/" + defaultPool[poolIdx];
-                        if (!galleryImages.contains(fallbackUrl)) {
-                            galleryImages.add(fallbackUrl);
-                        }
-                        poolIdx++;
+                    // Pad up to 5 images using the main image to avoid displaying unrelated tours
+                    String resolvedMainImg = mainImgUrl;
+                    if (!resolvedMainImg.startsWith("http") && !resolvedMainImg.startsWith("/")) {
+                        resolvedMainImg = request.getContextPath() + "/" + resolvedMainImg;
+                    }
+                    while (galleryImages.size() < 5) {
+                        galleryImages.add(resolvedMainImg);
                     }
                 %>
                 <div class="gallery-item main-photo">
@@ -227,7 +225,7 @@
                 </div>
 
                 <!-- Included / Excluded Services Card -->
-                <!-- LÝ DO VÀ CHỨC NĂNG CỦA ĐOẠN NÀY:
+                <!-- LÝ DO VÀ CHỨC NàNG CỦA ĐOẠN NÀY:
                      - Giúp người dùng biết tour bao gồm những tiện ích gì (INCLUDED) và những gì họ phải tự trả chi phí (EXCLUDED).
                      - Tải động từ bảng TourInclusion thông qua tour.getInclusions().
                      - Phân tách làm hai cột trái và phải. Nếu DB chưa có dữ liệu, sẽ hiển thị danh sách tĩnh mặc định để giữ UI đẹp. -->
@@ -354,6 +352,7 @@
                                     <div class="reviewer-meta">
                                         <span class="reviewer-name"><%= rev.getCustomerName() %></span>
                                         <span class="reviewer-date">Đăng ngày: <%= dateStr %></span>
+                                        <button class="btn-report-review" data-id="<%= rev.getReviewId() %>" style="background:none; border:none; color:#ea580c; cursor:pointer; font-size:0.75rem; margin-top:4px; display:inline-flex; align-items:center; gap:4px; padding:0; outline:none;"><i class="fa-solid fa-flag"></i> Báo cáo vi phạm</button>
                                     </div>
                                 </div>
                                 <div class="reviewer-actions">
@@ -387,7 +386,7 @@
                         %>
                     </div>
 
-                    <!-- BIỂU MẪU ĐĂNG KÝ BÌNH LUẬN / ĐÁNH GIÁ (ADD REVIEW FORM)
+                    <!-- BIỂU MẪU ĐàNG KÝ BÌNH LUẬN / ĐÁNH GIÁ (ADD REVIEW FORM)
                          Lý do tại sao lại phải làm như vậy:
                          - Cho phép khách hàng chia sẻ cảm nhận, bình chọn số sao thực tế từ 1-5.
                          - Form post dữ liệu trực tiếp lên DetailController (/detail) thông qua phương thức POST.
@@ -397,13 +396,33 @@
                     <div class="add-review-card">
                         <h4>Chia Sẻ Trải Nghiệm Của Bạn</h4>
                         <% 
-                            boolean isLoggedIn = (session.getAttribute("sessionUser") != null);
+                            String reviewError = (String) session.getAttribute("reviewError");
+                            String reviewSuccess = (String) session.getAttribute("reviewSuccess");
+                            if (reviewError != null) {
+                                session.removeAttribute("reviewError");
+                        %>
+                            <div style="background: #fee2e2; border: 1px solid #fecaca; color: #ef4444; padding: 12px; border-radius: 8px; margin-bottom: 16px; font-weight: 500; font-family: 'Inter', sans-serif;">
+                                <i class="fa-solid fa-triangle-exclamation"></i> <%= reviewError %>
+                            </div>
+                        <% 
+                            }
+                            if (reviewSuccess != null) {
+                                session.removeAttribute("reviewSuccess");
+                        %>
+                            <div style="background: #d1fae5; border: 1px solid #a7f3d0; color: #065f46; padding: 12px; border-radius: 8px; margin-bottom: 16px; font-weight: 500; font-family: 'Inter', sans-serif;">
+                                <i class="fa-solid fa-circle-check"></i> <%= reviewSuccess %>
+                            </div>
+                        <% 
+                            }
+                        %>
+                        <% 
+                            isLoggedIn = (session.getAttribute("sessionUser") != null);
                             User currentUser = isLoggedIn ? (User) session.getAttribute("sessionUser") : null;
                             if (isLoggedIn && currentUser != null) {
                         %>
                             <p>Ý kiến của bạn giúp cộng đồng du lịch có thêm những quyết định đúng đắn.</p>
                             
-                            <form class="add-review-form" id="new-review-form" action="${pageContext.request.contextPath}/detail" method="POST">
+                            <form class="add-review-form" id="new-review-form" action="${pageContext.request.contextPath}/detail" method="POST" enctype="multipart/form-data">
                                 <!-- Lưu ID của Tour để Controller biết cần gán review này cho tour nào -->
                                 <input type="hidden" name="tourId" value="<%= activeTour != null ? activeTour.getTourId() : 1 %>">
                                 <!-- Lưu số sao đánh giá (sẽ được cập nhật bằng JS khi người dùng click vào các ngôi sao bên dưới) -->
@@ -440,8 +459,9 @@
                                     <label>Tải lên hình ảnh chuyến đi</label>
                                     <div class="upload-simulator-btn" id="upload-sim-btn">
                                         <i data-lucide="camera"></i>
-                                        <span>Tải ảnh lên (Mô phỏng)</span>
+                                        <span>Chọn hình ảnh từ thiết bị của bạn</span>
                                     </div>
+                                    <input type="file" id="review-image-input" name="reviewImage" accept="image/*" style="display: none;">
                                     <div class="uploaded-images-preview" id="uploaded-images-preview-row"></div>
                                 </div>
 
@@ -545,7 +565,7 @@
                                 <span>Cổng đăng ký trực tuyến chính thức</span>
                             </div>
                             <button type="button" class="btn btn-primary btn-payment-cta" id="go-payment-btn"
-                                    onclick="window.location.href='${pageContext.request.contextPath}/customer/booking/create?tourId=<%= activeTour != null ? activeTour.getTourId() : 1 %>'">
+                                    onclick="if (<%= isLoggedIn %>) { window.location.href='${pageContext.request.contextPath}/customer/booking/create?tourId=<%= activeTour != null ? activeTour.getTourId() : 1 %>' } else { alert('Vui lòng đăng nhập để thực hiện đặt tour!'); window.location.href='${pageContext.request.contextPath}/login'; }">
                                 <span class="btn-payment-text">
                                     <i data-lucide="compass"></i>
                                     Đăng ký tham gia ngay
@@ -747,7 +767,7 @@
 <script>
     window.itinerariesData = {};
 
-    // LÝ DO VÀ CHỨC NĂNG CỦA ĐOẠN DƯỚI ĐÂY:
+    // LÝ DO VÀ CHỨC NàNG CỦA ĐOẠN DƯỚI ĐÂY:
     // - Dữ liệu lịch trình (TourItinerary) cần được chuyển sang môi trường Client (JavaScript)
     //   để detail.js vẽ trục thời gian (Timeline) động.
     // - Đoạn code Java ở dưới sẽ kiểm tra xem Tour này đã có Lịch trình chi tiết trong DB chưa:
@@ -840,7 +860,7 @@
 </script>
 
 <%
-    // CHỨC NĂNG CỦA ĐOẠN NÀY:
+    // CHỨC NàNG CỦA ĐOẠN NÀY:
     // - extraScript: header/footer dùng chung sẽ đọc thuộc tính này để tự động nhúng file JavaScript detail.js
     //   ở phía cuối trang, đảm bảo trang HTML được load xong hết mới chạy script xử lý giao diện.
 %>
