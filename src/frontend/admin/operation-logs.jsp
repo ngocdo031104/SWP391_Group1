@@ -1,4 +1,4 @@
-﻿<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="jakarta.tags.core"%>
 <%@taglib prefix="fmt" uri="jakarta.tags.fmt"%>
 <c:if test="${empty sessionScope.sessionUser || (sessionScope.sessionUser.roleId ne 1 && sessionScope.userRole ne 'Admin')}">
@@ -10,12 +10,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nhật Ký Vận Hành Tour — TourBuddy Admin</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/admin-global.css?v=1.1">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/admin-dashboard.css?v=1.1">
+    <!-- Outfit & Inter Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons & FontAwesome CDNs -->
+    <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-dashboard.css?v=2.1">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-space-overrides.css?v=1.0">
     <style>
         .search-bar-group { display: flex; gap: 12px; margin-bottom: 20px; max-width: 600px; }
-        .search-input { flex: 1; padding: 10px 14px; border: 1px solid var(--border-color, #e2e8f0); border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 0.9rem; outline: none; }
+        .search-input { flex: 1; padding: 10px 14px; border: 1px solid var(--border-color, #e2e8f0); border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 0.9rem; outline: none; background-color: #ffffff; color: #334155; }
         .search-input:focus { border-color: var(--primary-color, #2563eb); }
         .btn-search { background-color: #2563eb; color: #ffffff; padding: 10px 20px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; transition: background 0.2s; font-family: 'Outfit', sans-serif; }
         .btn-search:hover { background-color: #1d4ed8; }
@@ -36,19 +42,22 @@
         .page-link:hover, .page-link.active { background-color: #2563eb; color: #ffffff; border-color: #2563eb; font-weight: bold; }
     </style>
 </head>
-<body>
+<body class="dashboard-body">
 
-<div class="admin-container">
-    <!-- Sidebar -->
-    <jsp:include page="/admin/sidebar.jsp">
-        <jsp:param name="activePage" value="oplogs" />
-    </jsp:include>
+<div class="dashboard-wrapper">
+    <!-- ── Left Sidebar ── -->
+    <c:set var="activePage" value="oplogs" scope="request" />
+    <jsp:include page="sidebar.jsp" />
 
-    <!-- Main Content Area -->
-    <main class="main-content" style="padding: 24px;">
-        <header class="content-header" style="margin-bottom: 24px;">
-            <h1 style="font-size: 1.8rem; font-weight: 700; color: #1e293b; font-family: 'Outfit', sans-serif;">Nhật Ký Vận Hành Tour</h1>
-            <p style="color: #64748b; font-size: 0.95rem; margin-top: 4px;">Giám sát lịch sử hoạt động, trạng thái chuyển đổi và thay đổi vận hành của các lịch trình khởi hành.</p>
+    <!-- ── Main Content Area ── -->
+    <main class="main-content">
+        <!-- Top Header -->
+        <header class="top-header" style="margin-bottom: 24px;">
+            <div>
+                <h1 style="font-size: 24px; color: var(--gray-900); margin: 0 0 8px 0;">Nhật Ký Vận Hành Tour</h1>
+                <p style="color: var(--gray-500); margin: 0; font-size: 14px;">Giám sát lịch sử hoạt động, trạng thái chuyển đổi và thay đổi vận hành của các lịch trình khởi hành.</p>
+            </div>
+            <jsp:include page="admin-header-right.jsp" />
         </header>
 
         <!-- Search group -->
@@ -58,7 +67,7 @@
         </form>
 
         <!-- Log List Card -->
-        <div class="card" style="background: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+        <div class="card" style="background: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid var(--gray-200);">
             <c:choose>
                 <c:when test="${empty logs}">
                     <div class="empty-state" style="text-align: center; padding: 40px 20px; color: #94a3b8;">
@@ -140,7 +149,10 @@
 <!-- Icons loading helper -->
 <script src="https://unpkg.com/lucide@latest"></script>
 <script>
-    lucide.createIcons();
+    if (window.lucide) {
+        lucide.createIcons();
+    }
 </script>
+<script src="${pageContext.request.contextPath}/js/admin-dashboard.js"></script>
 </body>
 </html>
