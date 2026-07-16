@@ -657,7 +657,9 @@ CREATE TABLE ChatMessage (
     ConversationID INT           NOT NULL REFERENCES ChatConversation(ConversationID),
     SenderID       INT           NOT NULL REFERENCES [User](UserID),
     Content        NVARCHAR(MAX) NOT NULL,
+    MessageType    NVARCHAR(50)  NOT NULL DEFAULT 'Text',
     IsVisible      BIT           NOT NULL DEFAULT 1,
+    IsRead         BIT           NOT NULL DEFAULT 0,
     SentAt         DATETIME2     NOT NULL DEFAULT SYSDATETIME()
 );
 GO
@@ -1739,7 +1741,9 @@ CREATE TABLE ChatMessage (
     ConversationID INT           NOT NULL REFERENCES ChatConversation(ConversationID),
     SenderID       INT           NOT NULL REFERENCES [User](UserID),
     Content        NVARCHAR(MAX) NOT NULL,
+    MessageType    NVARCHAR(50)  NOT NULL DEFAULT 'Text',
     IsVisible      BIT           NOT NULL DEFAULT 1,
+    IsRead         BIT           NOT NULL DEFAULT 0,
     SentAt         DATETIME2     NOT NULL DEFAULT SYSDATETIME()
 );
 GO

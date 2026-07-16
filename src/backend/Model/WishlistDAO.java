@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import Entities.Tour;
+import Entities.TourMedia;
 
 public class WishlistDAO extends DBContext {
 
