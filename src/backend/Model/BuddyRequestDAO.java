@@ -152,6 +152,20 @@ public class BuddyRequestDAO extends DBContext {
         return false;
     }
 
+    public boolean unfriendBuddy(int user1, int user2) {
+        String sql = "DELETE FROM BuddyRequest WHERE ((SenderId = ? AND ReceiverId = ?) OR (SenderId = ? AND ReceiverId = ?)) AND Status = 'Accepted'";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, user1);
+            ps.setInt(2, user2);
+            ps.setInt(3, user2);
+            ps.setInt(4, user1);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public List<User> getAcceptedBuddies(int userId) {
         List<User> list = new ArrayList<>();
         // Get buddies where user is sender OR receiver
