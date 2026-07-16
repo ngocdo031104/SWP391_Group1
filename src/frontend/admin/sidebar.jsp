@@ -1,7 +1,8 @@
 <%@ page pageEncoding="UTF-8" contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 
-<c:set var="isAccountant" value="${sessionScope.sessionUser.roleId eq 5 || sessionScope.userRole eq 'Accountant'}" />
+<c:set var="userRoleId" value="${sessionScope.sessionUser != null ? sessionScope.sessionUser.roleId : 0}" />
+<c:set var="isAccountant" value="${userRoleId eq 5 || sessionScope.userRole eq 'Accountant'}" />
 
 <aside class="sidebar">
     <div class="sidebar-brand">
@@ -76,49 +77,49 @@
                 <span>Thống Kê Chi Tiết</span>
             </a>
         </li>
-        <li class="${activePage eq 'revenue' ? 'active' : ''}">
-            <a href="#">
-                <i data-lucide="file-text"></i>
-                <span>Báo Cáo Doanh Thu</span>
-            </a>
-        </li>
+
         <li class="${activePage eq 'forecast' ? 'active' : ''}">
             <a href="${pageContext.request.contextPath}/admin/forecast">
                 <i data-lucide="trending-up"></i>
                 <span>Dự Báo & Xu Hướng</span>
             </a>
         </li>
-        <li class="${activePage eq 'financial-audit' ? 'active' : ''}">
-            <a href="${pageContext.request.contextPath}/admin/financial-audit">
-                <i data-lucide="file-check-2"></i>
-                <span>Kiểm Toán Tài Chính</span>
-            </a>
-        </li>
+
         <li class="${activePage eq 'fraud-monitor' ? 'active' : ''}">
             <a href="${pageContext.request.contextPath}/admin/fraud-monitor">
                 <i data-lucide="shield-alert"></i>
                 <span>Giám Sát Gian Lận</span>
             </a>
         </li>
+
+        <li class="${activePage eq 'financial-audit' ? 'active' : ''}">
+            <a href="${pageContext.request.contextPath}/admin/financial-audit">
+                <i data-lucide="file-check-2"></i>
+                <span>Kiểm Toán Tài Chính</span>
+            </a>
+        </li>
+
         <li class="${activePage eq 'moderation' ? 'active' : ''}">
             <a href="${pageContext.request.contextPath}/admin/moderation">
                 <i data-lucide="shield-alert"></i>
                 <span>Kiểm Duyệt Nội Dung</span>
             </a>
         </li>
+
         <li class="${activePage eq 'assignments' ? 'active' : ''}">
             <a href="${pageContext.request.contextPath}/admin/assignments">
                 <i data-lucide="clipboard-list"></i>
                 <span>Nhật Ký Phân Công</span>
             </a>
         </li>
+
         <li class="${activePage eq 'oplogs' ? 'active' : ''}">
             <a href="${pageContext.request.contextPath}/admin/operation-logs">
-                <i data-lucide="history"></i>
+                <i data-lucide="scroll-text"></i>
                 <span>Nhật Ký Vận Hành</span>
             </a>
         </li>
-        
+
         <c:if test="${!isAccountant}">
             <li class="${activePage eq 'roles' ? 'active' : ''}">
                 <a href="${pageContext.request.contextPath}/admin/roles">

@@ -7,6 +7,7 @@
 <%@ page import="Entities.Review" %>
 <%@ page import="Entities.Coupon" %>
 <%
+    request.setAttribute("bodyClass", "home-page");
     if (request.getAttribute("categories") == null) {
         // Prevent redirect loop if the request is a forward from HomeController
         if (request.getAttribute("jakarta.servlet.forward.request_uri") == null) {
@@ -187,8 +188,12 @@
                     <div class="tour-img-wrapper">
                         <img src="<%= imageUrl %>" alt="<%= tour.getTourName() %>" class="tour-img">
                         <div class="tour-badge"><span class="badge badge-featured"><%= badgeName %></span></div>
-                        <button class="btn-wishlist" id="wishlist-<%= tour.getTourId() %>" aria-label="Thêm vào yêu thích">
-                            <i data-lucide="heart"></i>
+                        <%
+                            List<Integer> wishlistTourIds = (List<Integer>) request.getAttribute("wishlistTourIds");
+                            boolean isWishlisted = wishlistTourIds != null && wishlistTourIds.contains(tour.getTourId());
+                        %>
+                        <button class="btn-wishlist<%= isWishlisted ? " active" : "" %>" id="wishlist-<%= tour.getTourId() %>" aria-label="Thêm vào yêu thích">
+                            <i data-lucide="heart"<%= isWishlisted ? " fill=\"currentColor\"" : "" %>></i>
                         </button>
                     </div>
                     <div class="tour-details">

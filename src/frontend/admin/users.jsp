@@ -2,7 +2,7 @@
 
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
-<c:if test="${empty sessionScope.sessionUser || (sessionScope.sessionUser.roleId ne 1 && sessionScope.sessionUser.role.roleName ne 'Admin')}">
+<c:if test="${empty sessionScope.sessionUser || (sessionScope.sessionUser.roleId ne 1 && sessionScope.userRole ne 'Admin')}">
     <c:redirect url="/login" />
 </c:if>
 <!DOCTYPE html>
@@ -148,10 +148,10 @@
                 <button class="btn-modern btn-outline" onclick="window.location.reload()">
                     <i data-lucide="refresh-cw" style="width: 16px;"></i> Làm mới
                 </button>
-                <button class="btn-modern btn-outline">
+                <button class="btn-modern btn-outline" id="exportUsersBtn">
                     <i data-lucide="download" style="width: 16px;"></i> Xuất dữ liệu
                 </button>
-                <button class="btn-modern btn-primary">
+                <button class="btn-modern btn-primary" id="addUserBtn">
                     <i data-lucide="plus" style="width: 16px;"></i> Thêm người dùng
                 </button>
             </div>
@@ -257,27 +257,27 @@
                     </thead>
                     <tbody id="usersTableBody">
                         <c:forEach var="user" items="${users}">
-                            <tr data-role="${user.role.roleName}" data-status="${user.isActive ? 'active' : 'locked'}" data-search="${user.fullName} ${user.email} ${user.phoneNumber}">
-                                <td><input type="checkbox" class="custom-checkbox row-checkbox" value="${user.userId}"></td>
+                            <tr data-role="<c:out value='${user.role.roleName}'/>" data-status="${user.isActive ? 'active' : 'locked'}" data-search="<c:out value='${user.fullName} ${user.email} ${user.phoneNumber}'/>">
+                                <td><input type="checkbox" class="custom-checkbox row-checkbox" value="<c:out value='${user.userId}'/>"></td>
                                 <td>
                                     <div class="user-cell">
                                         <c:choose>
                                             <c:when test="${not empty user.profile and not empty user.profile.avatarUrl}">
-                                                <img src="${user.profile.avatarUrl}" alt="Avatar" class="user-avatar">
+                                                <img src="<c:out value='${user.profile.avatarUrl}'/>" alt="Avatar" class="user-avatar">
                                             </c:when>
                                             <c:otherwise>
-                                                <div class="user-avatar">${user.fullName.substring(0,1)}</div>
+                                                <div class="user-avatar"><c:out value="${empty user.fullName ? '?' : user.fullName.substring(0,1)}"/></div>
                                             </c:otherwise>
                                         </c:choose>
                                         <div class="user-info">
-                                            <div class="user-name">${user.fullName}</div>
-                                            <div class="user-email">${user.email}</div>
+                                            <div class="user-name"><c:out value="${user.fullName}"/></div>
+                                            <div class="user-email"><c:out value="${user.email}"/></div>
                                         </div>
                                     </div>
                                 </td>
                                 <td>
-                                    <span class="badge role-${user.role.roleName}">
-                                        ${user.role.roleName}
+                                    <span class="badge role-<c:out value='${user.role.roleName}'/>">
+                                        <c:out value="${user.role.roleName}"/>
                                     </span>
                                 </td>
                                 <td>
@@ -291,27 +291,22 @@
                                     </c:choose>
                                 </td>
                                 <td>
-                                    <c:choose>
-                                        <c:when test="${not empty user.createdAt}">
-                                            <fmt:formatDate value="${user.createdAt}" pattern="dd/MM/yyyy" />
-                                        </c:when>
-                                        <c:otherwise>N/A</c:otherwise>
-                                    </c:choose>
+                                    <fmt:formatDate var="createdDate" value="${user.createdAt}" pattern="dd/MM/yyyy" />
                                 </td>
                                 <td>
                                     <div class="row-actions" style="justify-content: flex-end;">
-                                        <button class="action-icon" title="Xem chi tiết" onclick="openDrawer(${user.userId})">
+                                        <button class="action-icon" title="Xem chi tiết" onclick="openDrawer('<c:out value='${user.userId}'/>')">
                                             <i data-lucide="eye" style="width: 18px;"></i>
                                         </button>
-                                        <button class="action-icon" title="Chỉnh sửa vai trò" onclick="openSingleRoleModal(${user.userId})">
+                                        <button class="action-icon" title="Chỉnh sửa vai trò" onclick="openSingleRoleModal('<c:out value='${user.userId}'/>')">
                                             <i data-lucide="pencil" style="width: 18px;"></i>
                                         </button>
                                         <c:if test="${user.userId ne sessionScope.sessionUser.userId}">
                                             <form action="?action=toggleStatus" method="POST" style="margin:0;">
-                                                <input type="hidden" name="userId" value="${user.userId}">
+                                                <input type="hidden" name="userId" value="<c:out value='${user.userId}'/>">
                                                 <input type="hidden" name="status" value="${!user.isActive}">
-                                                <button type="button" class="action-icon ${user.isActive ? 'danger' : ''}" title="${user.isActive ? 'Khóa tài khoản' : 'Mở khóa'}" onclick="confirmToggleStatus(this.form, ${user.isActive})">
-                                                    <i data-lucide="${user.isActive ? 'lock' : 'unlock'}" style="width: 18px;"></i>
+                                                <button type="button" class="action-icon <c:out value='${user.isActive ? "danger" : ""}'/>" title="<c:out value='${user.isActive ? "Khóa tài khoản" : "Mở khóa"}'/>" onclick="confirmToggleStatus(this.form, ${user.isActive})">
+                                                    <i data-lucide="<c:out value='${user.isActive ? "lock" : "unlock"}'/>" style="width: 18px;"></i>
                                                 </button>
                                             </form>
                                         </c:if>
@@ -369,7 +364,7 @@
 <c:if test="${not empty sessionScope.successMsg}">
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            showToast("${sessionScope.successMsg}", 'success');
+            showToast('<c:out value="${sessionScope.successMsg}" escapeXml="false"/>', 'success');
         });
     </script>
     <c:remove var="successMsg" scope="session"/>
@@ -377,7 +372,7 @@
 <c:if test="${not empty sessionScope.errorMsg}">
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            showToast("${sessionScope.errorMsg}", 'error');
+            showToast('<c:out value="${sessionScope.errorMsg}" escapeXml="false"/>', 'error');
         });
     </script>
     <c:remove var="errorMsg" scope="session"/>
@@ -385,6 +380,52 @@
 
 <script>
     lucide.createIcons();
+
+    // Export users CSV -- NOTE: JSP EL parser sẽ fail khi thấy chuỗi có dạng "${"..."}" bên trong script.
+    // Toàn bộ đoạn này chỉ dùng nối chuỗi bằng '+', KHÔNG dùng template literal.
+    function exportUsersCSV() {
+        const rows = Array.from(document.querySelectorAll('#usersTableBody tr'))
+            .filter(function (row) { return row.style.display !== 'none'; })
+            .map(function (row) {
+                return {
+                    id: row.querySelector('.row-checkbox') ? row.querySelector('.row-checkbox').value : '',
+                    name: row.querySelector('.user-name') ? row.querySelector('.user-name').textContent.trim() : '',
+                    email: row.querySelector('.user-email') ? row.querySelector('.user-email').textContent.trim() : '',
+                    role: row.getAttribute('data-role') || '',
+                    status: row.getAttribute('data-status') || ''
+                };
+            });
+        if (rows.length === 0) {
+            showToast('Không có người dùng nào để xuất.', 'error');
+            return;
+        }
+        const header = ['UserID', 'FullName', 'Email', 'Role', 'Status'];
+        function escapeCSV(v) {
+            return '"' + String(v).replace(/"/g, '""') + '"';
+        }
+        const lines = [header.join(',')];
+        rows.forEach(function (r) {
+            lines.push([r.id, r.name, r.email, r.role, r.status].map(escapeCSV).join(','));
+        });
+        const csv = lines.join('\n');
+        const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'users_' + new Date().toISOString().slice(0, 10) + '.csv';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        showToast('Đã xuất ' + rows.length + ' người dùng.', 'success');
+    }
+
+    function openAddUserModal() {
+        showToast('Chức năng tạo người dùng đang được phát triển. Vui lòng dùng form đăng ký công khai.', 'warning');
+    }
+
+    document.getElementById('exportUsersBtn')?.addEventListener('click', exportUsersCSV);
+    document.getElementById('addUserBtn')?.addEventListener('click', openAddUserModal);
 
     // Filtering Logic
     function applyFilters() {

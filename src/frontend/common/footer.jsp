@@ -110,7 +110,8 @@
     %>
     <div id="toastContainer" class="toast-container"></div>
     <script>
-        window.showToast = function(message, type = 'success') {
+        window.showToast = function(message, type) {
+            type = type || 'success';
             let container = document.getElementById('toastContainer');
             if (!container) {
                 container = document.createElement('div');
@@ -119,17 +120,21 @@
                 document.body.appendChild(container);
             }
             const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
+            toast.className = 'toast ' + type;
             
             let icon = 'check-circle';
             if (type === 'error') icon = 'alert-triangle';
             else if (type === 'warning') icon = 'alert-circle';
             
-            toast.innerHTML = `<i data-lucide="${icon}"></i> <span>${message}</span>`;
+            toast.innerHTML = '<i data-lucide="' + icon + '"></i> <span>' + (message || '') + '</span>';
             container.appendChild(toast);
             
             if (window.lucide) {
-                window.lucide.createIcons();
+                try {
+                    window.lucide.createIcons();
+                } catch (e) {
+                    console.error(e);
+                }
             }
             
             setTimeout(() => {

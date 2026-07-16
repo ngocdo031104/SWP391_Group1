@@ -235,18 +235,18 @@ public class ManageUserController extends HttpServlet {
                 if (adminSkipCount > 0) {
                     msgBuilder.append("Không thể đổi vai trò của ").append(adminSkipCount).append(" tài khoản Admin.");
                 }
-                
-                if (count > 0 && adminSkipCount == 0) {
+
+                if (msgBuilder.length() == 0) {
+                    request.getSession().setAttribute("errorMsg", "Không có thay đổi nào được áp dụng.");
+                } else if (count > 0) {
                     request.getSession().setAttribute("successMsg", msgBuilder.toString().trim());
-                } else if (count > 0 && adminSkipCount > 0) {
-                    request.getSession().setAttribute("successMsg", msgBuilder.toString().trim());
-                } else if (count == 0 && adminSkipCount > 0) {
+                } else {
                     request.getSession().setAttribute("errorMsg", msgBuilder.toString().trim());
                 }
-                
+
                 // Log action
                 if (currentAdmin != null && count > 0) {
-                    String details = "Admin " + currentAdmin.getEmail() + " assigned role ID: " 
+                    String details = "Admin " + currentAdmin.getEmail() + " assigned role ID: "
                                      + roleId + " to " + count + " users";
                     auditLogDAO.insertLog(currentAdmin.getUserId(), "BULK_ASSIGN_ROLE", null, details);
                 }
@@ -276,9 +276,7 @@ public class ManageUserController extends HttpServlet {
                 boolean isMaster = isMasterAdmin(currentAdmin);
 
                 int selfSkipCount = 0;
-                int adminDeleteBlockedCount = 0;
-                int adminLeftAfterDelete = -1;
-                
+
                 for (String idStr : userIds) {
                     int userId = Integer.parseInt(idStr);
 
