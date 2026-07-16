@@ -51,14 +51,20 @@ public class AuditLogDAO extends DBContext {
         return list;
     }
 
-    public java.util.List<Entities.FinancialAuditDTO> getFinancialAuditLogs(String dateFrom, String dateTo, String operator, String status, String transactionRef, int page, int pageSize) {
+    public java.util.List<Entities.FinancialAuditDTO> getFinancialAuditLogs(String dateFrom, String dateTo, String operator, String status, String transactionRef, String discrepancy, int page, int pageSize) {
         java.util.List<Entities.FinancialAuditDTO> list = new java.util.ArrayList<>();
         StringBuilder sql = new StringBuilder(
             "SELECT f.AuditID, f.Action, f.NewValues, f.PerformedBy, u.FullName as OperatorName, " +
-            "f.CreatedAt, p.TransactionRef, p.BookingID, p.Amount, p.Currency, p.Status as PaymentStatus " +
+            "f.CreatedAt, p.TransactionRef, p.BookingID, p.Amount, p.Currency, p.Status as PaymentStatus, " +
+            "LTRIM(RTRIM(" +
+            "   CASE WHEN p.Status = 'Success' AND i.InvoiceID IS NULL THEN N'Thiếu hóa đơn; ' ELSE '' END + " +
+            "   CASE WHEN p.Status = 'Success' AND p.Amount <> b.TotalAmount THEN N'Lệch số tiền với Đơn hàng; ' ELSE '' END " +
+            ")) AS DiscrepancyReason " +
             "FROM FinancialAuditLog f " +
             "LEFT JOIN Payment p ON f.EntityType = 'Payment' AND f.EntityID = p.PaymentID " +
             "LEFT JOIN [User] u ON f.PerformedBy = u.UserID " +
+            "LEFT JOIN Booking b ON p.BookingID = b.BookingID " +
+            "LEFT JOIN Invoice i ON p.PaymentID = i.PaymentID " +
             "WHERE 1=1 "
         );
 
@@ -76,6 +82,11 @@ public class AuditLogDAO extends DBContext {
         }
         if (transactionRef != null && !transactionRef.trim().isEmpty()) {
             sql.append(" AND p.TransactionRef LIKE ?");
+        }
+        if ("yes".equals(discrepancy)) {
+            sql.append(" AND (p.Status = 'Success' AND (i.InvoiceID IS NULL OR p.Amount <> b.TotalAmount))");
+        } else if ("no".equals(discrepancy)) {
+            sql.append(" AND NOT (p.Status = 'Success' AND (i.InvoiceID IS NULL OR p.Amount <> b.TotalAmount))");
         }
 
         sql.append(" ORDER BY f.CreatedAt DESC");
@@ -116,6 +127,15 @@ public class AuditLogDAO extends DBContext {
                     dto.setCurrency(rs.getString("Currency"));
                     dto.setPaymentStatus(rs.getString("PaymentStatus"));
                     dto.setCreatedAt(rs.getTimestamp("CreatedAt"));
+                    
+                    String discrepancyStr = rs.getString("DiscrepancyReason");
+                    if (discrepancyStr != null && !discrepancyStr.trim().isEmpty()) {
+                        dto.setIsDiscrepancy(true);
+                        dto.setDiscrepancyReason(discrepancyStr);
+                    } else {
+                        dto.setIsDiscrepancy(false);
+                    }
+                    
                     list.add(dto);
                 }
             }
@@ -125,11 +145,13 @@ public class AuditLogDAO extends DBContext {
         return list;
     }
 
-    public int getTotalFinancialAuditLogs(String dateFrom, String dateTo, String operator, String status, String transactionRef) {
+    public int getTotalFinancialAuditLogs(String dateFrom, String dateTo, String operator, String status, String transactionRef, String discrepancy) {
         StringBuilder sql = new StringBuilder(
             "SELECT COUNT(*) FROM FinancialAuditLog f " +
             "LEFT JOIN Payment p ON f.EntityType = 'Payment' AND f.EntityID = p.PaymentID " +
             "LEFT JOIN [User] u ON f.PerformedBy = u.UserID " +
+            "LEFT JOIN Booking b ON p.BookingID = b.BookingID " +
+            "LEFT JOIN Invoice i ON p.PaymentID = i.PaymentID " +
             "WHERE 1=1 "
         );
 
@@ -147,6 +169,11 @@ public class AuditLogDAO extends DBContext {
         }
         if (transactionRef != null && !transactionRef.trim().isEmpty()) {
             sql.append(" AND p.TransactionRef LIKE ?");
+        }
+        if ("yes".equals(discrepancy)) {
+            sql.append(" AND (p.Status = 'Success' AND (i.InvoiceID IS NULL OR p.Amount <> b.TotalAmount))");
+        } else if ("no".equals(discrepancy)) {
+            sql.append(" AND NOT (p.Status = 'Success' AND (i.InvoiceID IS NULL OR p.Amount <> b.TotalAmount))");
         }
 
         try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
@@ -178,7 +205,7 @@ public class AuditLogDAO extends DBContext {
         return 0;
     }
 
-    public java.util.Map<String, Object> getFinancialAuditStats(String dateFrom, String dateTo, String operator, String status, String transactionRef) {
+    public java.util.Map<String, Object> getFinancialAuditStats(String dateFrom, String dateTo, String operator, String status, String transactionRef, String discrepancy) {
         java.util.Map<String, Object> stats = new java.util.HashMap<>();
         stats.put("total", 0);
         stats.put("success", 0);
@@ -195,6 +222,8 @@ public class AuditLogDAO extends DBContext {
             "FROM FinancialAuditLog f " +
             "LEFT JOIN Payment p ON f.EntityType = 'Payment' AND f.EntityID = p.PaymentID " +
             "LEFT JOIN [User] u ON f.PerformedBy = u.UserID " +
+            "LEFT JOIN Booking b ON p.BookingID = b.BookingID " +
+            "LEFT JOIN Invoice i ON p.PaymentID = i.PaymentID " +
             "WHERE 1=1 "
         );
 
@@ -212,6 +241,11 @@ public class AuditLogDAO extends DBContext {
         }
         if (transactionRef != null && !transactionRef.trim().isEmpty()) {
             sql.append(" AND p.TransactionRef LIKE ?");
+        }
+        if ("yes".equals(discrepancy)) {
+            sql.append(" AND (p.Status = 'Success' AND (i.InvoiceID IS NULL OR p.Amount <> b.TotalAmount))");
+        } else if ("no".equals(discrepancy)) {
+            sql.append(" AND NOT (p.Status = 'Success' AND (i.InvoiceID IS NULL OR p.Amount <> b.TotalAmount))");
         }
 
         try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {

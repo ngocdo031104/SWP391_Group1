@@ -14,6 +14,27 @@ public class CancellationRequest implements Serializable {
     private String notes;
     private Timestamp createdAt;
 
+    // Extra fields for Accountant View
+    private String bookingCode;
+    private double totalAmount;
+    private String customerName;
+    private String customerEmail;
+    private String tourName;
+    private java.sql.Date departureDate;
+
+    public String getBookingCode() { return bookingCode; }
+    public void setBookingCode(String bookingCode) { this.bookingCode = bookingCode; }
+    public double getTotalAmount() { return totalAmount; }
+    public void setTotalAmount(double totalAmount) { this.totalAmount = totalAmount; }
+    public String getCustomerName() { return customerName; }
+    public void setCustomerName(String customerName) { this.customerName = customerName; }
+    public String getCustomerEmail() { return customerEmail; }
+    public void setCustomerEmail(String customerEmail) { this.customerEmail = customerEmail; }
+    public String getTourName() { return tourName; }
+    public void setTourName(String tourName) { this.tourName = tourName; }
+    public java.sql.Date getDepartureDate() { return departureDate; }
+    public void setDepartureDate(java.sql.Date departureDate) { this.departureDate = departureDate; }
+
     public CancellationRequest() {
     }
 

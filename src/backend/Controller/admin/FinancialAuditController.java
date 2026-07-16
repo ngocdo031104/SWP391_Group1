@@ -39,6 +39,7 @@ public class FinancialAuditController extends HttpServlet {
         String operator = request.getParameter("operator");
         String status = request.getParameter("status");
         String transactionRef = request.getParameter("transactionRef");
+        String discrepancy = request.getParameter("discrepancy");
         
         int page = 1;
         String pageParam = request.getParameter("page");
@@ -52,11 +53,11 @@ public class FinancialAuditController extends HttpServlet {
         }
 
         AuditLogDAO auditLogDAO = new AuditLogDAO();
-        List<FinancialAuditDTO> logs = auditLogDAO.getFinancialAuditLogs(dateFrom, dateTo, operator, status, transactionRef, page, PAGE_SIZE);
-        int totalRecords = auditLogDAO.getTotalFinancialAuditLogs(dateFrom, dateTo, operator, status, transactionRef);
+        List<FinancialAuditDTO> logs = auditLogDAO.getFinancialAuditLogs(dateFrom, dateTo, operator, status, transactionRef, discrepancy, page, PAGE_SIZE);
+        int totalRecords = auditLogDAO.getTotalFinancialAuditLogs(dateFrom, dateTo, operator, status, transactionRef, discrepancy);
         int totalPages = (int) Math.ceil((double) totalRecords / PAGE_SIZE);
         
-        java.util.Map<String, Object> stats = auditLogDAO.getFinancialAuditStats(dateFrom, dateTo, operator, status, transactionRef);
+        java.util.Map<String, Object> stats = auditLogDAO.getFinancialAuditStats(dateFrom, dateTo, operator, status, transactionRef, discrepancy);
 
         request.setAttribute("logs", logs);
         request.setAttribute("currentPage", page);
@@ -70,6 +71,7 @@ public class FinancialAuditController extends HttpServlet {
         request.setAttribute("operator", operator);
         request.setAttribute("status", status);
         request.setAttribute("transactionRef", transactionRef);
+        request.setAttribute("discrepancy", discrepancy);
         
         request.setAttribute("activePage", "financial-audit");
 

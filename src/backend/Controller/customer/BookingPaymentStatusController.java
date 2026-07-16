@@ -6,12 +6,16 @@ package Controller.customer;
 // Ý nghĩa: Cho JavaScript polling trạng thái Booking sau khi webhook SePay ghi nhận thanh toán và chuyển đơn sang trạng thái Success.
 
 import Entities.Booking;
+import Entities.Notification;
+import Entities.User;
 import Model.BookingDAO;
+import Model.NotificationDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 @WebServlet(name = "CustomerBookingPaymentStatusController", urlPatterns = {"/customer/booking/payment-status"})
@@ -39,6 +43,37 @@ public class BookingPaymentStatusController extends HttpServlet {
             boolean paid = booking != null && ("Success".equalsIgnoreCase(booking.getStatus()) || "Completed".equalsIgnoreCase(booking.getStatus()));
             String status = booking != null ? booking.getStatus() : "NotFound";
             boolean expired = booking != null && "Cancelled".equalsIgnoreCase(booking.getStatus());
+
+            // UC30: Gửi thông báo 1 lần duy nhất khi phát hiện booking vừa chuyển sang Success.
+            // Dùng session flag "notif_sent_{bookingCode}" để tránh gửi trùng qua mỗi lần polling.
+            if (paid && booking != null) {
+                HttpSession session = request.getSession(false);
+                String flagKey = "notif_sent_" + bookingCode;
+                if (session != null && session.getAttribute(flagKey) == null) {
+                    session.setAttribute(flagKey, true);
+                    try {
+                        User currentUser = (User) session.getAttribute("sessionUser");
+                        int customerId = (currentUser != null) ? currentUser.getUserId() : booking.getCustomerId();
+
+                        NotificationDAO notifDAO = new NotificationDAO();
+                        Notification notif = new Notification();
+                        notif.setUserId(customerId);
+                        notif.setSenderId(null);
+                        notif.setTitle("Đặt tour thành công — " + bookingCode);
+                        notif.setContent("Booking " + bookingCode + " đã được xác nhận thanh toán. Cảm ơn bạn đã đặt tour tại TourBuddy! Xem chi tiết tại mục Lịch sử đặt tour.");
+                        notif.setChannel("SYSTEM");
+                        notif.setCategory("Booking");
+                        notif.setScheduledAt(null);
+                        notif.setStatus("SENT");
+                        notifDAO.insertNotification(notif);
+                        notifDAO.close();
+                    } catch (Exception notifEx) {
+                        // Không để lỗi notification làm hỏng response polling
+                        notifEx.printStackTrace();
+                    }
+                }
+            }
+
             response.getWriter().write("{\"paid\":" + paid + ",\"expired\":" + expired + ",\"status\":\"" + escapeJson(status) + "\"}");
         } finally {
             if (bookingDAO != null) {

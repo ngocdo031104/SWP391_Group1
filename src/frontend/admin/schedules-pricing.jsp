@@ -587,6 +587,9 @@
         // Kiểm tra ràng buộc trẻ sơ sinh đối với tour mạo hiểm
         checkInfantRestriction();
         
+        // Kiểm tra ràng buộc trẻ sơ sinh đối với tour mạo hiểm
+        checkInfantRestriction();
+        
         openModal("schedule-modal");
     }
 

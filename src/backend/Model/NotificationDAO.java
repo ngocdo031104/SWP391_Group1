@@ -45,8 +45,8 @@ public class NotificationDAO extends DBContext {
 
     public List<Notification> getNotificationsByUserId(int userId) {
         List<Notification> list = new ArrayList<>();
-        String sql = "SELECT n.*, u.fullName as senderName FROM Notifications n "
-                   + "LEFT JOIN Users u ON n.senderId = u.userId "
+        String sql = "SELECT n.*, u.FullName as senderName FROM Notifications n "
+                   + "LEFT JOIN [User] u ON n.senderId = u.UserID "
                    + "WHERE n.userId = ? AND (n.scheduledAt IS NULL OR n.scheduledAt <= GETDATE()) "
                    + "ORDER BY n.createdAt DESC";
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -115,8 +115,8 @@ public class NotificationDAO extends DBContext {
 
     public List<Notification> getNotificationsWithFilters(int userId, String category, String keyword, boolean unreadOnly) {
         List<Notification> list = new ArrayList<>();
-        StringBuilder sql = new StringBuilder("SELECT n.*, u.fullName as senderName FROM Notifications n ");
-        sql.append("LEFT JOIN Users u ON n.senderId = u.userId ");
+        StringBuilder sql = new StringBuilder("SELECT n.*, u.FullName as senderName FROM Notifications n ");
+        sql.append("LEFT JOIN [User] u ON n.senderId = u.UserID ");
         sql.append("WHERE n.userId = ? AND (n.scheduledAt IS NULL OR n.scheduledAt <= GETDATE()) ");
         
         List<Object> params = new ArrayList<>();
@@ -137,7 +137,7 @@ public class NotificationDAO extends DBContext {
             sql.append("AND n.isRead = 0 ");
         }
         
-        sql.append("ORDER BY n.createdAt DESC");
+        sql.append("ORDER BY CASE WHEN n.isRead = 0 THEN 0 ELSE 1 END ASC, n.createdAt DESC");
         
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
             for (int i = 0; i < params.size(); i++) {

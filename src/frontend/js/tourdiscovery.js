@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+﻿document.addEventListener('DOMContentLoaded', () => {
     // Initialize Lucide Icons
     lucide.createIcons();
 
@@ -495,7 +495,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 .then(data => {
                     if (!data) return;
                     
-                    if (data.status === 'success') {
+                    if (data.status === 'success' || data.status === 'added' || data.status === 'removed') {
                         wishlistBtn.classList.toggle('active', data.isSaved);
                         const heartIcon = wishlistBtn.querySelector('svg') || wishlistBtn.querySelector('i');
                         if (heartIcon) {

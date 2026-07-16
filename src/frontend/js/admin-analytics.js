@@ -1,5 +1,5 @@
 /**
- * \u2500\u2500 Admin Analytics JS Controller \u2500\u2500
+ * ── Admin Analytics JS Controller ──
  * Uses Chart.js for premium glassmorphic dashboard visualization.
  */
 document.addEventListener("DOMContentLoaded", () => {
@@ -76,19 +76,19 @@ document.addEventListener("DOMContentLoaded", () => {
     function fetchAnalytics(type, callback) {
         fetch(`${contextPath}/admin/analytics?ajax=true&type=${type}`)
             .then(res => {
-                if (!res.ok) throw new Error("M\u1ea5t k\u1ebft n\u1ed1i m\u00e1y ch\u1ee7");
+                if (!res.ok) throw new Error("Mất kết nối máy chủ");
                 return res.json();
             })
             .then(data => {
                 if (data.error) {
-                    alert("L\u1ed7i t\u1ea3i d\u1eef li\u1ec7u: " + data.error);
+                    alert("Lỗi tải dữ liệu: " + data.error);
                 } else {
                     callback(data);
                 }
             })
             .catch(err => {
                 console.error(err);
-                alert("Kh\u00f4ng th\u1ec3 t\u1ea3i th\u00f4ng tin th\u1ed1ng k\u00ea: " + err.message);
+                alert("Không thể tải thông tin thống kê: " + err.message);
             });
     }
 
@@ -102,75 +102,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         monthlyList.forEach(item => totalRev += item.revenue);
         document.getElementById("kpi-total-revenue").innerText = formatCurrency(totalRev);
-        
-        const avgRev = monthlyList.length > 0 ? totalRev / monthlyList.length : 0;
-        document.getElementById("kpi-avg-revenue").innerText = formatCurrency(avgRev);
-        
-        const topCatName = categoriesList.length > 0 ? categoriesList[0].category : "N/A";
-        document.getElementById("kpi-top-category").innerText = topCatName;
-
-        // 1. Tinh toan Xu huong Doanh thu gan day (So sanh thang cuoi cung vs thang ke cuoi)
-        const revTrendEl = document.getElementById("kpi-revenue-trend");
-        const revTrendText = document.getElementById("kpi-revenue-trend-text");
-        if (monthlyList.length >= 2) {
-            const lastMonthRev = monthlyList[monthlyList.length - 1].revenue;
-            const prevMonthRev = monthlyList[monthlyList.length - 2].revenue;
-            if (prevMonthRev > 0) {
-                const percentage = ((lastMonthRev - prevMonthRev) / prevMonthRev) * 100;
-                const formattedPercent = percentage.toFixed(1);
-                if (percentage >= 0) {
-                    revTrendEl.className = "kpi-trend up";
-                    revTrendEl.innerHTML = `<i data-lucide="arrow-up-right"></i> +${formattedPercent}% so v\u1edbi th\u00e1ng tr\u01b0\u1edbc`;
-                } else {
-                    revTrendEl.className = "kpi-trend down";
-                    revTrendEl.innerHTML = `<i data-lucide="arrow-down-right"></i> ${formattedPercent}% so v\u1edbi th\u00e1ng tr\u01b0\u1edbc`;
-                }
-            } else {
-                revTrendEl.className = "kpi-trend up";
-                revTrendText.innerText = "T\u0103ng tr\u01b0\u1edfng m\u1edbi";
-            }
-        } else {
-            revTrendEl.className = "kpi-trend up";
-            revTrendText.innerText = "Thi\u1ebfu d\u1eef li\u1ec7u so s\u00e1nh";
-        }
-
-        // 2. Tinh toan Xu huong Doanh thu trung binh thang (So sanh thang cuoi vs Doanh thu TB)
-        const avgTrendEl = document.getElementById("kpi-avg-trend");
-        const avgTrendText = document.getElementById("kpi-avg-trend-text");
-        if (monthlyList.length > 0 && avgRev > 0) {
-            const lastMonthRev = monthlyList[monthlyList.length - 1].revenue;
-            const dev = ((lastMonthRev - avgRev) / avgRev) * 100;
-            if (Math.abs(dev) < 10) {
-                avgTrendEl.className = "kpi-trend up";
-                avgTrendEl.innerHTML = `<i data-lucide="arrow-up-right"></i> \u1ed4n \u0111\u1ecbnh (\u0111\u1ed9 l\u1ec7ch ${dev.toFixed(1)}%)`;
-            } else if (dev >= 10) {
-                avgTrendEl.className = "kpi-trend up";
-                avgTrendEl.innerHTML = `<i data-lucide="arrow-up-right"></i> T\u0103ng tr\u01b0\u1edfng (+${dev.toFixed(1)}%)`;
-            } else {
-                avgTrendEl.className = "kpi-trend down";
-                avgTrendEl.innerHTML = `<i data-lucide="arrow-down-right"></i> Suy gi\u1ea3m (${dev.toFixed(1)}%)`;
-            }
-        } else {
-            avgTrendEl.className = "kpi-trend up";
-            avgTrendText.innerText = "\u1ed4n \u0111\u1ecbnh";
-        }
-
-        // 3. Tinh toan Hieu suat cua danh muc dan dau (Ty trong tren tong doanh thu)
-        const catTrendEl = document.getElementById("kpi-category-trend");
-        const catTrendText = document.getElementById("kpi-category-trend-text");
-        if (categoriesList.length > 0 && totalRev > 0) {
-            const topCatRev = categoriesList[0].revenue;
-            const ratio = (topCatRev / totalRev) * 100;
-            catTrendEl.className = "kpi-trend up";
-            catTrendEl.innerHTML = `Chi\u1ebfm ${ratio.toFixed(1)}% c\u01a1 c\u1ea5u doanh thu`;
-        } else {
-            catTrendEl.className = "kpi-trend up";
-            catTrendText.innerText = "Hi\u1ec7u su\u1ea5t cao nh\u1ea5t";
-        }
-
-        if (typeof lucide !== "undefined") {
-            lucide.createIcons({ attrs: { class: "lucide-icon" } });
-        }
+        document.getElementById("kpi-avg-revenue").innerText = formatCurrency(monthlyList.length > 0 ? totalRev / monthlyList.length : 0);
+        document.getElementById("kpi-top-category").innerText = categoriesList.length > 0 ? categoriesList[0].category : "N/A";
 
         // Chart 1: Monthly Line Chart
         const months = monthlyList.map(item => item.month);
@@ -314,7 +247,7 @@ document.addEventListener("DOMContentLoaded", () => {
             data: {
                 labels: trendDates,
                 datasets: [{
-                    label: "S\u1ed1 l\u01b0\u1ee3t \u0111\u1eb7t ch\u1ed7",
+                    label: "Số lượt đặt chỗ",
                     data: trendCounts,
                     borderColor: "#10b981",
                     backgroundColor: gradTrend,
@@ -414,7 +347,7 @@ document.addEventListener("DOMContentLoaded", () => {
             tr.innerHTML = `
                 <td style="font-weight: 600;">#${item.userId}</td>
                 <td>${item.fullName}</td>
-                <td>${item.yearsOfExperience} n\u0103m</td>
+                <td>${item.yearsOfExperience} năm</td>
                 <td>
                     <div style="display: flex; align-items: center; gap: 4px;">
                         <i data-lucide="star" style="width: 14px; fill: #fbbf24; stroke: #fbbf24;"></i>
@@ -422,10 +355,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                 </td>
                 <td>${item.totalToursLed} / ${item.assignedToursCount}</td>
-                <td>${item.specialization || "T\u1ed5ng h\u1ee3p"}</td>
+                <td>${item.specialization || "Tổng hợp"}</td>
                 <td>
                     <span class="badge-status ${item.isActive ? 'confirmed' : 'cancelled'}">
-                        ${item.isActive ? '\u0110ang Ho\u1ea1t \u0110\u1ed9ng' : 'T\u1ea1m Kh\u00f3a'}
+                        ${item.isActive ? 'Đang Hoạt Động' : 'Tạm Khóa'}
                     </span>
                 </td>
             `;
@@ -447,15 +380,15 @@ document.addEventListener("DOMContentLoaded", () => {
             tr.innerHTML = `
                 <td>#${item.reportId}</td>
                 <td><span class="badge-status completed">${item.reportType}</span></td>
-                <td>${item.periodStart} \u0111\u1ebfn ${item.periodEnd}</td>
-                <td>${item.generatedByName || 'H\u1ec7 th\u1ed1ng'}</td>
+                <td>${item.periodStart} đến ${item.periodEnd}</td>
+                <td>${item.generatedByName || 'Hệ thống'}</td>
                 <td>${item.generatedAt}</td>
                 <td>
                     <button class="btn-action btn-primary view-report-btn" data-id="${item.reportId}">
                         <i data-lucide="eye" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i> Xem
                     </button>
                     <button class="btn-action download-csv-report-btn" data-id="${item.reportId}">
-                        T\u1ea3i CSV
+                        Tải CSV
                     </button>
                 </td>
             `;
@@ -487,7 +420,7 @@ document.addEventListener("DOMContentLoaded", () => {
         btnSaveSnapshot.addEventListener("click", () => {
             const reportType = snapshotTypeSelect.value;
             showConfirmation(
-                `B\u1ea1n c\u00f3 ch\u1eafc ch\u1eafn mu\u1ed1n ch\u1ee5p v\u00e0 l\u01b0u l\u1ea1i snapshot b\u00e1o c\u00e1o lo\u1ea1i <strong>${reportType}</strong> t\u1ea1i th\u1eddi \u0111i\u1ec3m n\u00e0y kh\u00f4ng?`,
+                `Bạn có chắc chắn muốn chụp và lưu lại snapshot báo cáo loại <strong>${reportType}</strong> tại thời điểm này không?`,
                 () => {
                     executeSaveSnapshot(reportType);
                 }
@@ -497,7 +430,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function executeSaveSnapshot(reportType) {
         btnSaveSnapshot.disabled = true;
-        btnSaveSnapshot.innerText = "\u0110ang l\u01b0u...";
+        btnSaveSnapshot.innerText = "Đang lưu...";
 
         fetch(`${contextPath}/admin/analytics?action=saveSnapshot`, {
             method: "POST",
@@ -507,23 +440,23 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(res => res.json())
         .then(data => {
             if (data.success) {
-                alert("\u0110\u00e3 ch\u1ee5p v\u00e0 l\u01b0u b\u00e1o c\u00e1o th\u00e0nh c\u00f4ng!");
+                alert("Đã chụp và lưu báo cáo thành công!");
                 // Refresh snapshots if current tab is snapshots
                 const activeTab = document.querySelector(".tab-btn.active").getAttribute("data-tab");
                 if (activeTab === "tab-reports") {
                     loadTabData("tab-reports");
                 }
             } else {
-                alert("L\u01b0u b\u00e1o c\u00e1o th\u1ea5t b\u1ea1i: " + data.message);
+                alert("Lưu báo cáo thất bại: " + data.message);
             }
         })
         .catch(err => {
             console.error(err);
-            alert("L\u1ed7i k\u1ebft n\u1ed1i khi l\u01b0u b\u00e1o c\u00e1o.");
+            alert("Lỗi kết nối khi lưu báo cáo.");
         })
         .finally(() => {
             btnSaveSnapshot.disabled = false;
-            btnSaveSnapshot.innerText = "Ch\u1ee5p Snapshot";
+            btnSaveSnapshot.innerText = "Chụp Snapshot";
         });
     }
 
@@ -534,11 +467,11 @@ document.addEventListener("DOMContentLoaded", () => {
             .then(report => {
                 modalBody.innerHTML = `
                     <div style="margin-bottom: 15px;">
-                        <p><strong>M\u00e3 B\u00e1o c\u00e1o:</strong> #${report.reportId}</p>
-                        <p><strong>Lo\u1ea1i B\u00e1o c\u00e1o:</strong> ${report.reportType}</p>
-                        <p><strong>Kho\u1ea3ng th\u1eddi gian:</strong> ${report.periodStart} \u0111\u1ebfn ${report.periodEnd}</p>
-                        <p><strong>Th\u1eddi gian ch\u1ee5p:</strong> ${report.generatedAt}</p>
-                        <p><strong>Ng\u01b0\u1eddi th\u1ef1c hi\u1ec7n:</strong> ${report.generatedByName || 'H\u1ec7 th\u1ed1ng'}</p>
+                        <p><strong>Mã Báo cáo:</strong> #${report.reportId}</p>
+                        <p><strong>Loại Báo cáo:</strong> ${report.reportType}</p>
+                        <p><strong>Khoảng thời gian:</strong> ${report.periodStart} đến ${report.periodEnd}</p>
+                        <p><strong>Thời gian chụp:</strong> ${report.generatedAt}</p>
+                        <p><strong>Người thực hiện:</strong> ${report.generatedByName || 'Hệ thống'}</p>
                     </div>
                     <div style="background: rgba(15,23,42,0.6); padding: 15px; border-radius: 8px; max-height: 300px; overflow-y: auto;">
                         <pre style="color: var(--success-green); font-family: monospace; font-size: 0.85rem; white-space: pre-wrap; word-wrap: break-word;">${JSON.stringify(JSON.parse(report.data), null, 2)}</pre>
@@ -548,7 +481,7 @@ document.addEventListener("DOMContentLoaded", () => {
             })
             .catch(err => {
                 console.error(err);
-                alert("Kh\u00f4ng th\u1ec3 t\u1ea3i chi ti\u1ebft b\u00e1o c\u00e1o: " + err.message);
+                alert("Không thể tải chi tiết báo cáo: " + err.message);
             });
     }
 
@@ -581,7 +514,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 csvContent += keys.map(k => `"${String(row[k] || '').replace(/"/g, '""')}"`).join(",") + "\n";
                             });
                         } else {
-                            csvContent += `D\u1eef li\u1ec7u r\u1ed7ng ho\u1eb7c kh\u00f4ng c\u00f3 d\u1ea1ng b\u1ea3ng\n`;
+                            csvContent += `Dữ liệu rỗng hoặc không có dạng bảng\n`;
                         }
                     });
                 }
@@ -595,7 +528,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.body.removeChild(link);
             })
             .catch(err => {
-                alert("Xu\u1ea5t CSV th\u1ea5t b\u1ea1i: " + err.message);
+                alert("Xuất CSV thất bại: " + err.message);
             });
     }
 
@@ -633,36 +566,11 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Confirmation wrapper for Export (Handles unloaded tab data)
+    // Confirmation wrapper for Export
     window.confirmExport = function(tableId, filename) {
         showConfirmation(
-            "B\u1ea1n c\u00f3 ch\u1eafc mu\u1ed1n xu\u1ea5t d\u1eef li\u1ec7u n\u00e0y kh\u00f4ng? D\u1eef li\u1ec7u s\u1ebd \u0111\u01b0\u1ee3c k\u1ebft xu\u1ea5t d\u01b0\u1edbi d\u1ea1ng CSV v\u00e0 t\u1ea3i v\u1ec1 m\u00e1y t\u00ednh c\u1ee7a b\u1ea1n.",
+            "Bạn có chắc muốn xuất dữ liệu này không? Dữ liệu sẽ được kết xuất dưới dạng CSV và tải về máy tính của bạn.",
             () => {
-                const table = document.getElementById(tableId);
-                if (table) {
-                    const tbody = table.querySelector("tbody");
-                    // N\u1ebfu tbody ch\u01b0a \u0111\u01b0\u1ee3c load d\u1eef li\u1ec7u (ch\u01b0a c\u00f3 d\u00f2ng n\u00e0o)
-                    if (!tbody || tbody.children.length === 0) {
-                        let type = "";
-                        if (tableId === "tour-performance-table") type = "performance";
-                        else if (tableId === "guide-activity-table") type = "guides";
-
-                        if (type) {
-                            fetchAnalytics(type, data => {
-                                if (type === "performance") {
-                                    renderPerformanceDashboard(data);
-                                } else if (type === "guides") {
-                                    renderGuidesDashboard(data);
-                                }
-                                // Xu\u1ea5t sau khi d\u1eef li\u1ec7u \u0111\u00e3 \u0111\u01b0\u1ee3c render th\u00e0nh c\u00f4ng v\u00e0o DOM
-                                setTimeout(() => {
-                                    window.exportTableToCSV(tableId, filename);
-                                }, 150);
-                            });
-                            return;
-                        }
-                    }
-                }
                 window.exportTableToCSV(tableId, filename);
             }
         );
