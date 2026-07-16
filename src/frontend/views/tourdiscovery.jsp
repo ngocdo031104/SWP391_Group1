@@ -322,6 +322,7 @@
     window.toursData = [
         <% 
         List<Tour> tours = (List<Tour>) request.getAttribute("tours");
+        List<Integer> wishlistTourIds = (List<Integer>) request.getAttribute("wishlistTourIds");
         if (tours != null) {
             for (int i = 0; i < tours.size(); i++) {
                 Tour t = tours.get(i);
