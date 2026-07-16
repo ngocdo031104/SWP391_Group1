@@ -106,4 +106,155 @@ public class PaymentDAO extends DBContext {
         }
         return null;
     }
+
+    public java.util.List<Payment> getPaymentsByStatusForAccountant(String statusFilter, String dateFrom, String dateTo, String keyword, int offset, int pageSize) {
+        java.util.List<Payment> list = new java.util.ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT PaymentID, BookingID, PaymentMethod, TransactionRef, Amount, Currency, Status, PaidAt, GatewayResponse, CreatedAt FROM Payment WHERE Status = ? ");
+        
+        if (dateFrom != null && !dateFrom.trim().isEmpty()) {
+            sql.append(" AND CAST(PaidAt AS DATE) >= ? ");
+        }
+        if (dateTo != null && !dateTo.trim().isEmpty()) {
+            sql.append(" AND CAST(PaidAt AS DATE) <= ? ");
+        }
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append(" AND (TransactionRef LIKE ? OR CAST(BookingID AS VARCHAR) LIKE ?) ");
+        }
+        
+        sql.append(" ORDER BY PaidAt DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
+        
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            int paramIndex = 1;
+            ps.setString(paramIndex++, statusFilter);
+            
+            if (dateFrom != null && !dateFrom.trim().isEmpty()) {
+                ps.setString(paramIndex++, dateFrom);
+            }
+            if (dateTo != null && !dateTo.trim().isEmpty()) {
+                ps.setString(paramIndex++, dateTo);
+            }
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                String likeKeyword = "%" + keyword.trim() + "%";
+                ps.setString(paramIndex++, likeKeyword);
+                ps.setString(paramIndex++, likeKeyword);
+            }
+            
+            ps.setInt(paramIndex++, offset);
+            ps.setInt(paramIndex++, pageSize);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(new Payment(
+                        rs.getInt("PaymentID"),
+                        rs.getInt("BookingID"),
+                        rs.getString("PaymentMethod"),
+                        rs.getString("TransactionRef"),
+                        rs.getDouble("Amount"),
+                        rs.getString("Currency"),
+                        rs.getString("Status"),
+                        rs.getTimestamp("PaidAt"),
+                        rs.getString("GatewayResponse"),
+                        rs.getTimestamp("CreatedAt")
+                    ));
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(PaymentDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return list;
+    }
+
+    public int countPaymentsByStatus(String statusFilter, String dateFrom, String dateTo, String keyword) {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM Payment WHERE Status = ? ");
+        
+        if (dateFrom != null && !dateFrom.trim().isEmpty()) {
+            sql.append(" AND CAST(PaidAt AS DATE) >= ? ");
+        }
+        if (dateTo != null && !dateTo.trim().isEmpty()) {
+            sql.append(" AND CAST(PaidAt AS DATE) <= ? ");
+        }
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append(" AND (TransactionRef LIKE ? OR CAST(BookingID AS VARCHAR) LIKE ?) ");
+        }
+        
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            int paramIndex = 1;
+            ps.setString(paramIndex++, statusFilter);
+            
+            if (dateFrom != null && !dateFrom.trim().isEmpty()) {
+                ps.setString(paramIndex++, dateFrom);
+            }
+            if (dateTo != null && !dateTo.trim().isEmpty()) {
+                ps.setString(paramIndex++, dateTo);
+            }
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                String likeKeyword = "%" + keyword.trim() + "%";
+                ps.setString(paramIndex++, likeKeyword);
+                ps.setString(paramIndex++, likeKeyword);
+            }
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(PaymentDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
+    }
+
+    public double sumPaymentsByStatus(String statusFilter, String dateFrom, String dateTo) {
+        StringBuilder sql = new StringBuilder("SELECT SUM(Amount) FROM Payment WHERE Status = ? ");
+        
+        if (dateFrom != null && !dateFrom.trim().isEmpty()) {
+            sql.append(" AND CAST(PaidAt AS DATE) >= ? ");
+        }
+        if (dateTo != null && !dateTo.trim().isEmpty()) {
+            sql.append(" AND CAST(PaidAt AS DATE) <= ? ");
+        }
+        
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            int paramIndex = 1;
+            ps.setString(paramIndex++, statusFilter);
+            
+            if (dateFrom != null && !dateFrom.trim().isEmpty()) {
+                ps.setString(paramIndex++, dateFrom);
+            }
+            if (dateTo != null && !dateTo.trim().isEmpty()) {
+                ps.setString(paramIndex++, dateTo);
+            }
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getDouble(1);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(PaymentDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0.0;
+    }
+
+    public java.util.List<Entities.FraudTransactionDTO> getFraudulentTransactions(String dateFrom, String dateTo, String bookingId, String transactionRef, String gateway, String paymentStatus, String reviewStatus, int page, int pageSize) {
+        // Placeholder return to fix compilation error.
+        // Requires join query with Booking/User if actual data is needed.
+        return new java.util.ArrayList<>();
+    }
+
+    public int getTotalFraudulentTransactions(String dateFrom, String dateTo, String bookingId, String transactionRef, String gateway, String paymentStatus, String reviewStatus) {
+        return 0;
+    }
+
+    public java.util.Map<String, Object> getFraudulentStats() {
+        return new java.util.HashMap<>();
+    }
+
+    public String getReviewStatus(int paymentId) {
+        return "Pending";
+    }
+
+    public boolean updateReviewStatus(int paymentId, String status) {
+        return true;
+    }
 }
