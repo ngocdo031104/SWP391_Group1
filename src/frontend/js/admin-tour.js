@@ -683,6 +683,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const avatarMenu = document.getElementById('admin-avatar-menu');
     if (profileTrigger && avatarMenu) {
         profileTrigger.addEventListener('click', (e) => {
+            if (e.target.closest('#admin-avatar-menu')) {
+                return;
+            }
             e.stopPropagation();
             const isOpen = avatarMenu.style.display === 'flex';
             avatarMenu.style.display = isOpen ? 'none' : 'flex';

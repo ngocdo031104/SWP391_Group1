@@ -135,19 +135,22 @@
                         <c:choose>
                             <c:when test="${not empty assignments}">
                                 <c:forEach var="a" items="${assignments}">
-                                    <tr data-tour="${a.schedule.tour.tourName}" data-guide="${a.guide.fullName}">
+                                    <tr data-tour="<c:out value='${a.schedule.tour.tourName}'/>" data-guide="<c:out value='${a.guide.fullName}'/>">
                                         <td style="font-weight: 600;">#${a.assignmentId}</td>
-                                        <td style="font-weight: 500; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${a.schedule.tour.tourName}">
-                                            ${a.schedule.tour.tourName}
+                                        <td style="font-weight: 500; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="<c:out value='${a.schedule.tour.tourName}'/>">
+                                            <c:out value="${a.schedule.tour.tourName}"/>
                                         </td>
                                         <td><fmt:formatDate value="${a.schedule.departureDate}" pattern="dd/MM/yyyy" /></td>
                                         <td>
-                                            <span class="badge-operation"><i class="fa-solid fa-user-tie"></i> ${a.guide.fullName}</span>
+                                            <span class="badge-operation"><i class="fa-solid fa-user-tie"></i> <c:out value="${a.guide.fullName}"/></span>
                                         </td>
-                                        <td>${not empty a.assignedByName ? a.assignedByName : 'Hệ thống'}</td>
+                                        <td><c:out value="${not empty a.assignedByName ? a.assignedByName : 'Hệ thống'}"/></td>
                                         <td>
-                                            <div class="notes-text" title="${a.notes}">
-                                                ${not empty a.notes ? a.notes : '<span style="color:#4a5578;">Không có ghi chú</span>'}
+                                            <div class="notes-text" title="<c:out value='${a.notes}'/>">
+                                                <c:choose>
+                                                    <c:when test="${not empty a.notes}"><c:out value="${a.notes}"/></c:when>
+                                                    <c:otherwise><span style="color:#4a5578;">Không có ghi chú</span></c:otherwise>
+                                                </c:choose>
                                             </div>
                                         </td>
                                         <td style="font-size: 0.85rem;">
@@ -155,10 +158,10 @@
                                         </td>
                                         <td style="text-align: center;">
                                             <button class="btn-unassign-guide"
-                                                    data-schedule-id="${a.scheduleId}"
-                                                    data-guide-id="${a.guideId}"
-                                                    data-tour-name="${a.schedule.tour.tourName}"
-                                                    data-guide-name="${a.guide.fullName}">
+                                                    data-schedule-id="<c:out value='${a.scheduleId}'/>"
+                                                    data-guide-id="<c:out value='${a.guideId}'/>"
+                                                    data-tour-name="<c:out value='${a.schedule.tour.tourName}'/>"
+                                                    data-guide-name="<c:out value='${a.guide.fullName}'/>">
                                                 <i class="fa-solid fa-user-xmark"></i> Hủy phân công
                                             </button>
                                         </td>

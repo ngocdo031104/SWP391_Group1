@@ -75,14 +75,14 @@
         <div class="admin-dashboard-page">
             <c:if test="${not empty sessionScope.successMessage}">
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    ${sessionScope.successMessage}
+                    <c:out value="${sessionScope.successMessage}"/>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
                 <c:remove var="successMessage" scope="session"/>
             </c:if>
             <c:if test="${not empty sessionScope.errorMessage}">
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    ${sessionScope.errorMessage}
+                    <c:out value="${sessionScope.errorMessage}"/>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
                 <c:remove var="errorMessage" scope="session"/>
@@ -180,14 +180,16 @@
                             </td>
                             <td>
                                 <div style="display: flex; gap: 10px;">
-                                    <button class="action-btn" title="Chỉnh sửa" onclick="editCoupon(${c.couponId}, '${c.couponCode}', '${c.discountType}', ${c.discountValue}, ${c.minOrderAmount}, '${c.maxDiscountAmount != null ? c.maxDiscountAmount : ''}', '${c.maxUses != null ? c.maxUses : ''}', '${c.startDate}', '${c.endDate}', ${c.isActive})">
+                                    <button class="action-btn edit-coupon-btn"
+                                            title="Chỉnh sửa"
+                                            data-id="<c:out value='${c.couponId}'/>">
                                         <i data-lucide="edit"></i>
                                     </button>
                                     <form action="${pageContext.request.contextPath}/admin/coupons/toggle" method="post" style="display:inline;">
-                                        <input type="hidden" name="couponId" value="${c.couponId}">
+                                        <input type="hidden" name="couponId" value="<c:out value='${c.couponId}'/>">
                                         <input type="hidden" name="status" value="${!c.isActive}">
-                                        <button type="submit" class="action-btn" title="${c.isActive ? 'Tạm dừng' : 'Kích hoạt'}" style="color: ${c.isActive ? '#dc3545' : '#198754'}">
-                                            <i data-lucide="${c.isActive ? 'power-off' : 'power'}"></i>
+                                        <button type="submit" class="action-btn" title="<c:out value='${c.isActive ? "Tạm dừng" : "Kích hoạt"}'/>" style="color: <c:out value='${c.isActive ? "#dc3545" : "#198754"}'/>">
+                                            <i data-lucide="<c:out value='${c.isActive ? "power-off" : "power"}'/>"></i>
                                         </button>
                                     </form>
                                 </div>
@@ -332,26 +334,37 @@
         couponModal.show();
     }
 
-    function editCoupon(id, code, type, value, minOrder, maxDiscount, maxUses, start, end, isActive) {
-        document.getElementById('couponModalLabel').innerText = "Cập Nhật Coupon";
-        document.getElementById('couponId').value = id;
-        document.getElementById('couponCode').value = code;
-        document.getElementById('discountType').value = type;
-        document.getElementById('discountValue').value = value;
-        document.getElementById('minOrderAmount').value = minOrder;
-        document.getElementById('maxDiscountAmount').value = maxDiscount;
-        document.getElementById('maxUses').value = maxUses;
-        
-        // Convert date format from dd/MM/yyyy to yyyy-MM-dd for input[type=date]
-        const startParts = start.split('/');
-        const endParts = end.split('/');
-        if(startParts.length === 3) document.getElementById('startDate').value = startParts[2] + '-' + startParts[1] + '-' + startParts[0];
-        if(endParts.length === 3) document.getElementById('endDate').value = endParts[2] + '-' + endParts[1] + '-' + endParts[0];
-
-        document.getElementById('isActive').checked = isActive;
-        toggleMaxDiscountVisibility();
-        couponModal.show();
+    function editCoupon(id) {
+        const url = '${pageContext.request.contextPath}/admin/coupons?action=getCoupon&id=' + encodeURIComponent(id);
+        fetch(url)
+            .then(r => r.json())
+            .then(res => {
+                if (res.status !== 'success' || !res.coupon) {
+                    alert('Không tải được coupon: ' + (res.message || 'Lỗi không xác định.'));
+                    return;
+                }
+                const c = res.coupon;
+                document.getElementById('couponModalLabel').innerText = "Cập Nhật Coupon";
+                document.getElementById('couponId').value = c.couponId;
+                document.getElementById('couponCode').value = c.couponCode;
+                document.getElementById('discountType').value = c.discountType;
+                document.getElementById('discountValue').value = c.discountValue;
+                document.getElementById('minOrderAmount').value = c.minOrderAmount;
+                document.getElementById('maxDiscountAmount').value = c.maxDiscountAmount == null ? '' : c.maxDiscountAmount;
+                document.getElementById('maxUses').value = c.maxUses == null ? '' : c.maxUses;
+                document.getElementById('startDate').value = c.startDate || '';
+                document.getElementById('endDate').value = c.endDate || '';
+                document.getElementById('isActive').checked = !!c.isActive;
+                toggleMaxDiscountVisibility();
+                couponModal.show();
+            })
+            .catch(() => alert('Lỗi kết nối khi tải coupon.'));
     }
+
+    // Gắn handler cho tất cả nút edit — an toàn, không nhúng dữ liệu vào onclick.
+    document.querySelectorAll('.edit-coupon-btn').forEach(btn => {
+        btn.addEventListener('click', () => editCoupon(btn.getAttribute('data-id')));
+    });
 
     // Dương làm phần này: Tự động ẩn/hiện và bắt buộc nhập trường giảm tối đa tùy theo loại giảm giá
     function toggleMaxDiscountVisibility() {
@@ -407,8 +420,8 @@
         _couponCodeDuplicate = false;
     };
     const _origEditCoupon = editCoupon;
-    editCoupon = function(id, code, type, value, minOrder, maxDiscount, maxUses, start, end, isActive) {
-        _origEditCoupon(id, code, type, value, minOrder, maxDiscount, maxUses, start, end, isActive);
+    editCoupon = function(id) {
+        _origEditCoupon(id);
         document.getElementById('couponCodeError').style.display = 'none';
         document.getElementById('couponCode').classList.remove('is-invalid');
         _couponCodeDuplicate = false;

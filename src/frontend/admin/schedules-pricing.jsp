@@ -585,13 +585,10 @@
         document.getElementById("form-schedule-price-child").value = s.priceChild;
         document.getElementById("form-schedule-price-infant").value = s.priceInfant;
         document.getElementById("form-schedule-notes").value = s.notes || "";
-        
+
         // Kiểm tra ràng buộc trẻ sơ sinh đối với tour mạo hiểm
         checkInfantRestriction();
-        
-        // Kiểm tra ràng buộc trẻ sơ sinh đối với tour mạo hiểm
-        checkInfantRestriction();
-        
+
         openModal("schedule-modal");
     }
 

@@ -184,10 +184,10 @@
                             <button type="button" class="btn" id="cancelPermBtn" onclick="discardChanges()" style="background: transparent; color: #EF4444; border: 1px solid transparent; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background 0.2s;">
                                 Hủy thay đổi
                             </button>
-                            <button type="button" class="btn" id="resetPermBtn" onclick="restoreDefaults()" class="btn-cancel" style="border: 1px solid rgba(139,92,246,0.3); padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                            <button type="button" id="resetPermBtn" onclick="restoreDefaults()" class="btn-cancel" style="border: 1px solid rgba(139,92,246,0.3); padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer;">
                                 Khôi phục mặc định
                             </button>
-                            <button type="submit" class="btn btn-primary" id="savePermBtn" class="btn-forecast" style="width: auto; padding: 10px 25px;">
+                            <button type="submit" id="savePermBtn" class="btn btn-primary" style="width: auto; padding: 10px 25px;">
                                 Lưu thay đổi
                             </button>
                         </div>
@@ -200,8 +200,8 @@
 
 <!-- Modals -->
 <div id="roleModal" class="modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(15, 23, 42, 0.5); backdrop-filter: blur(4px);">
-    <div class="modal-content" class="modal-content" style="margin: 10% auto; padding: 30px; width: 400px;">
-        <h3 id="roleModalTitle" style="margin-top: 0; margin-bottom: 20px; color: #1e293b; font-size: 20px; font-weight: 600;">Tạo Vai Trò</h3>
+    <div class="modal-content" style="margin: 10% auto; padding: 30px; width: 400px;">
+        <h3 id="roleModalTitle" style="margin-top: 0; margin-bottom: 20px; color: #f8fafc; font-size: 20px; font-weight: 600;">Tạo Vai Trò</h3>
         
         <form action="${pageContext.request.contextPath}/admin/roles" method="post">
             <input type="hidden" name="action" id="roleActionInput" value="createRole">
@@ -226,12 +226,12 @@
 </div>
 
 <div id="deleteModal" class="modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(15, 23, 42, 0.5); backdrop-filter: blur(4px);">
-    <div class="modal-content" class="modal-content" style="margin: 15% auto; padding: 30px; width: 400px; text-align: center;">
+    <div class="modal-content" style="margin: 15% auto; padding: 30px; width: 400px; text-align: center;">
         <div style="width: 50px; height: 50px; border-radius: 50%; background: #fee2e2; color: #ef4444; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
             <i data-lucide="alert-triangle" style="width: 24px; height: 24px;"></i>
         </div>
-        <h3 style="margin-top: 0; margin-bottom: 10px; color: #1e293b; font-size: 20px; font-weight: 600;">Xóa vai trò?</h3>
-        <p style="color: #64748b; margin-bottom: 25px; font-size: 15px;">Bạn có chắc chắn muốn xóa vai trò này? Hành động này không thể hoàn tác.</p>
+        <h3 style="margin-top: 0; margin-bottom: 10px; color: #f8fafc; font-size: 20px; font-weight: 600;">Xóa vai trò?</h3>
+        <p style="color: #cbd5e1; margin-bottom: 25px; font-size: 15px;">Bạn có chắc chắn muốn xóa vai trò này? Hành động này không thể hoàn tác.</p>
         
         <form action="${pageContext.request.contextPath}/admin/roles" method="post" style="display: flex; justify-content: center; gap: 12px;">
             <input type="hidden" name="action" value="deleteRole">
@@ -250,18 +250,13 @@
     ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-    .role-item.active { background: rgba(95,59,246,0.2) !important; border: 1px solid rgba(139,92,246,0.4) !important; border-left: 4px solid #8b5cf6 !important; color: #f8fafc !important; } /*
-        background: #EFF6FF !important;
-        border: 1px solid #BFDBFE !important;
-        border-left: 4px solid #3B82F6 !important;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-    }
+    .role-item.active { background: rgba(95,59,246,0.2) !important; border: 1px solid rgba(139,92,246,0.4) !important; border-left: 4px solid #8b5cf6 !important; color: #f8fafc !important; }
     .role-item.active .lucide {
-        color: #3B82F6 !important;
+        color: #8b5cf6 !important;
     }
     .role-item:hover:not(.active) {
-        background: #F1F5F9 !important;
-        border-color: #E2E8F0 !important;
+        background: rgba(139,92,246,0.08) !important;
+        border-color: rgba(139,92,246,0.25) !important;
     }
     .custom-checkbox {
         width: 18px;

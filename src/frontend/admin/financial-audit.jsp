@@ -1,6 +1,8 @@
 ﻿<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
+<%-- Lưu contextPath vào biến JS để sử dụng bên trong các chuỗi JS (tránh lỗi EL bị chèn giữa string) --%>
+<c:set var="cp" value="${pageContext.request.contextPath}" />
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -323,10 +325,12 @@
             }
             html += "</table>";
             
+            // Lưu contextPath ra biến JS để nối chuỗi an toàn — tránh lỗi JSP EL bị chèn giữa string JS.
+            const ctxPath = '<c:out value="${cp}"/>';
             let excelFile = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:x='urn:schemas-microsoft-com:office:excel' xmlns='http://www.w3.org/TR/REC-html40'>";
-            excelFile += "<head><meta charset='utf-8'>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-space-overrides.css?v=1.0">
-</head>";
+            excelFile += "<head><meta charset='utf-8'>";
+            excelFile += "<link rel='stylesheet' href='" + ctxPath + "/css/admin-space-overrides.css?v=1.0'>";
+            excelFile += "</head>";
             excelFile += "<body>" + html + "</body></html>";
             
             downloadFile(excelFile, filename, 'application/vnd.ms-excel');
@@ -370,5 +374,6 @@
             }
         }
     </script>
+    <script>if (window.lucide) { lucide.createIcons(); }</script>
 </body>
 </html>

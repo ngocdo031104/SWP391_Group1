@@ -1,6 +1,9 @@
 ﻿<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@taglib prefix="c" uri="jakarta.tags.core"%>
+<%@taglib prefix="fmt" uri="jakarta.tags.fmt"%>
+<c:if test="${empty sessionScope.sessionUser || (sessionScope.sessionUser.roleId ne 1 && sessionScope.userRole ne 'Admin')}">
+    <c:redirect url="${pageContext.request.contextPath}/login"/>
+</c:if>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -113,15 +116,18 @@
 
                     <!-- Pagination -->
                     <c:if test="${totalPages > 1}">
+                        <c:url var="searchQs" value="">
+                            <c:param name="search" value="${search}" />
+                        </c:url>
                         <div class="pagination">
                             <c:if test="${currentPage > 1}">
-                                <a href="?page=${currentPage - 1}&search=${search}" class="page-link">&laquo; Trước</a>
+                                <a href="?page=${currentPage - 1}&search=<c:out value='${search}'/>" class="page-link">&laquo; Trước</a>
                             </c:if>
                             <c:forEach var="i" begin="1" end="${totalPages}">
-                                <a href="?page=${i}&search=${search}" class="page-link ${i == currentPage ? 'active' : ''}">${i}</a>
+                                <a href="?page=${i}&search=<c:out value='${search}'/>" class="page-link ${i == currentPage ? 'active' : ''}">${i}</a>
                             </c:forEach>
                             <c:if test="${currentPage < totalPages}">
-                                <a href="?page=${currentPage + 1}&search=${search}" class="page-link">Sau &raquo;</a>
+                                <a href="?page=${currentPage + 1}&search=<c:out value='${search}'/>" class="page-link">Sau &raquo;</a>
                             </c:if>
                         </div>
                     </c:if>

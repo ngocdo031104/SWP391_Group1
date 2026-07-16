@@ -2,7 +2,7 @@
 
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
-<c:if test="${empty sessionScope.sessionUser || (sessionScope.sessionUser.roleId ne 1 && sessionScope.sessionUser.role.roleName ne 'Admin')}">
+<c:if test="${empty sessionScope.sessionUser || (sessionScope.sessionUser.roleId ne 1 && sessionScope.userRole ne 'Admin')}">
     <c:redirect url="/login" />
 </c:if>
 <!DOCTYPE html>
@@ -48,9 +48,9 @@
                                 <tr>
                                     <td><fmt:formatDate value="${log.createdAt}" pattern="dd/MM/yyyy HH:mm:ss"/></td>
                                     <td>
-                                        <span style="font-weight: 500; color: #1a73e8;">${log.actionType}</span>
+                                        <span style="font-weight: 500; color: #1a73e8;"><c:out value="${log.actionType}"/></span>
                                     </td>
-                                    <td>${log.details}</td>
+                                    <td><c:out value="${log.details}"/></td>
                                 </tr>
                             </c:forEach>
                             <c:if test="${empty logs}">
