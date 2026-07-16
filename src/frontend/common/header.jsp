@@ -9,6 +9,8 @@
     <meta name="description" content="Khám phá tour du lịch cao cấp, resort sang trọng và ưu đãi hấp dẫn khắp Việt Nam. Đặt hành trình đáng nhớ cùng TourBuddy ngay hôm nay.">
     <!-- Using Lucide CDN for icons reliability -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Khai báo context path để các file JS tĩnh có thể dùng -->
+    <script>var APP_CONTEXT = '${pageContext.request.contextPath}';</script>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/header.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/footer.css">

@@ -15,7 +15,7 @@ public class NotificationDAO extends DBContext {
     public boolean insertNotification(Notification notification) {
         String sql = "INSERT INTO Notifications (userId, senderId, title, content, channel, category, isRead, createdAt, scheduledAt, status) "
                    + "VALUES (?, ?, ?, ?, ?, ?, 0, GETDATE(), ?, ?)";
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, notification.getUserId());
             if (notification.getSenderId() != null) {
                 ps.setInt(2, notification.getSenderId());
@@ -39,8 +39,8 @@ public class NotificationDAO extends DBContext {
             return rows > 0;
         } catch (SQLException e) {
             e.printStackTrace();
+            throw new RuntimeException("SQL Error in insertNotification: " + e.getMessage(), e);
         }
-        return false;
     }
 
     public List<Notification> getNotificationsByUserId(int userId) {
@@ -49,7 +49,7 @@ public class NotificationDAO extends DBContext {
                    + "LEFT JOIN [User] u ON n.senderId = u.UserID "
                    + "WHERE n.userId = ? AND (n.scheduledAt IS NULL OR n.scheduledAt <= GETDATE()) "
                    + "ORDER BY n.createdAt DESC";
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, userId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -77,7 +77,7 @@ public class NotificationDAO extends DBContext {
 
     public boolean markAsRead(int notificationId) {
         String sql = "UPDATE Notifications SET isRead = 1 WHERE notificationId = ?";
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, notificationId);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -89,7 +89,7 @@ public class NotificationDAO extends DBContext {
     public int getUnreadCount(int userId) {
         String sql = "SELECT COUNT(*) FROM Notifications "
                    + "WHERE userId = ? AND isRead = 0 AND (scheduledAt IS NULL OR scheduledAt <= GETDATE())";
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, userId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -104,7 +104,7 @@ public class NotificationDAO extends DBContext {
 
     public boolean markAllAsRead(int userId) {
         String sql = "UPDATE Notifications SET isRead = 1 WHERE userId = ? AND isRead = 0";
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, userId);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -139,7 +139,7 @@ public class NotificationDAO extends DBContext {
         
         sql.append("ORDER BY CASE WHEN n.isRead = 0 THEN 0 ELSE 1 END ASC, n.createdAt DESC");
         
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
             for (int i = 0; i < params.size(); i++) {
                 ps.setObject(i + 1, params.get(i));
             }

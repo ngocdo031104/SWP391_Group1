@@ -21,9 +21,6 @@ import java.util.List;
 @WebServlet(name = "SendNotificationController", urlPatterns = {"/staff/send-notification"})
 public class SendNotificationController extends HttpServlet {
 
-    private final UserDAO userDAO = new UserDAO();
-    private final NotificationDAO notificationDAO = new NotificationDAO();
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -39,8 +36,13 @@ public class SendNotificationController extends HttpServlet {
             return;
         }
 
-        List<User> customers = userDAO.getAllCustomers();
-        request.setAttribute("customers", customers);
+        UserDAO userDAO = new UserDAO();
+        try {
+            List<User> customers = userDAO.getAllCustomers();
+            request.setAttribute("customers", customers);
+        } finally {
+            userDAO.close();
+        }
         request.getRequestDispatcher("/views/staff/send-notification.jsp").forward(request, response);
     }
 
@@ -88,42 +90,58 @@ public class SendNotificationController extends HttpServlet {
 
         boolean hasError = false;
 
-        for (String userIdStr : selectedUsers) {
-            int userId = Integer.parseInt(userIdStr);
-            User targetUser = userDAO.getUserById(userId);
-            
-            if (targetUser != null) {
-                // Save to DB
-                Notification notification = new Notification();
-                notification.setUserId(userId);
-                notification.setSenderId(currentUser.getUserId());
-                notification.setTitle(title);
-                notification.setContent(content);
-                notification.setChannel(channel);
-                notification.setCategory(category);
-                notification.setScheduledAt(scheduledAt);
+        UserDAO userDAO = new UserDAO();
+        NotificationDAO notificationDAO = new NotificationDAO();
+        StringBuilder dbErrors = new StringBuilder();
+        try {
+            for (String userIdStr : selectedUsers) {
+                int userId = Integer.parseInt(userIdStr);
+                User targetUser = userDAO.getUserById(userId);
                 
-                if (scheduledAt != null) {
-                    notification.setStatus("SCHEDULED");
-                } else {
-                    notification.setStatus("SENT");
-                }
-                
-                notificationDAO.insertNotification(notification);
-                
-                // Send email immediately if not scheduled
-                if (scheduledAt == null && (channel.equals("EMAIL") || channel.equals("BOTH"))) {
-                    try {
-                        EmailUtil.sendNotificationEmail(targetUser.getEmail(), title, content);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        hasError = true;
+                if (targetUser != null) {
+                    // Save to DB
+                    Notification notification = new Notification();
+                    notification.setUserId(userId);
+                    notification.setSenderId(currentUser.getUserId());
+                    notification.setTitle(title);
+                    notification.setContent(content);
+                    notification.setChannel(channel);
+                    notification.setCategory(category);
+                    notification.setScheduledAt(scheduledAt);
+                    
+                    if (scheduledAt != null) {
+                        notification.setStatus("SCHEDULED");
+                    } else {
+                        notification.setStatus("SENT");
+                    }
+                    
+                    boolean inserted = notificationDAO.insertNotification(notification);
+                    if (!inserted) {
+                        dbErrors.append("Lỗi khi lưu thông báo cho UserID ").append(userId).append(". ");
+                    }
+                    
+                    // Send email immediately if not scheduled
+                    if (scheduledAt == null && (channel.equals("EMAIL") || channel.equals("BOTH"))) {
+                        try {
+                            EmailUtil.sendNotificationEmail(targetUser.getEmail(), title, content);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            hasError = true;
+                        }
                     }
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            dbErrors.append("Exception: ").append(e.getMessage());
+        } finally {
+            userDAO.close();
+            notificationDAO.close();
         }
 
-        if (hasError) {
+        if (dbErrors.length() > 0) {
+            request.setAttribute("error", "Lỗi CSDL: " + dbErrors.toString());
+        } else if (hasError) {
             request.setAttribute("warning", "Một số email có thể chưa được gửi đi, nhưng thông báo hệ thống đã được lưu.");
         } else {
             if (scheduledAt != null) {

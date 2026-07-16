@@ -171,12 +171,19 @@ public class StaffBookingManagementController extends HttpServlet {
                         notification.setStatus("SENT");
                     }
 
-                    NotificationDAO notifDAO = new NotificationDAO();
-                    notifDAO.insertNotification(notification);
+                    NotificationDAO notifDAO = null;
+                    try {
+                        notifDAO = new NotificationDAO();
+                        notifDAO.insertNotification(notification);
+                    } finally {
+                        if (notifDAO != null) {
+                            notifDAO.close();
+                        }
+                    }
 
                     session.setAttribute("staffBookingSuccess", "Gửi thông báo thành công.");
                 } catch (Exception e) {
-                    session.setAttribute("staffBookingError", "Có lỗi xảy ra khi gửi thông báo.");
+                    session.setAttribute("staffBookingError", "Có lỗi xảy ra khi gửi thông báo: " + e.getMessage());
                     e.printStackTrace();
                 }
             } else {

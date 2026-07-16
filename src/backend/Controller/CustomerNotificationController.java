@@ -15,30 +15,34 @@ import java.util.List;
 @WebServlet(name = "CustomerNotificationController", urlPatterns = {"/customer/notifications", "/customer/notifications/read", "/customer/notifications/read-all"})
 public class CustomerNotificationController extends HttpServlet {
 
-    private final NotificationDAO notificationDAO = new NotificationDAO();
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         User currentUser = (User) session.getAttribute("sessionUser");
-        
+
         if (currentUser == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
 
         String path = request.getServletPath();
-        
+
+        // --- Đánh dấu một thông báo đã đọc (AJAX) ---
         if (path.equals("/customer/notifications/read")) {
-            String idStr = request.getParameter("id");
-            if (idStr != null) {
-                try {
-                    int notifId = Integer.parseInt(idStr);
-                    notificationDAO.markAsRead(notifId);
-                } catch (NumberFormatException e) {
-                    // ignore
+            NotificationDAO dao = new NotificationDAO();
+            try {
+                String idStr = request.getParameter("id");
+                if (idStr != null) {
+                    try {
+                        int notifId = Integer.parseInt(idStr);
+                        dao.markAsRead(notifId);
+                    } catch (NumberFormatException e) {
+                        // ignore invalid id
+                    }
                 }
+            } finally {
+                dao.close();
             }
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
@@ -46,28 +50,40 @@ public class CustomerNotificationController extends HttpServlet {
             return;
         }
 
+        // --- Đánh dấu tất cả đã đọc ---
         if (path.equals("/customer/notifications/read-all")) {
-            notificationDAO.markAllAsRead(currentUser.getUserId());
+            NotificationDAO dao = new NotificationDAO();
+            try {
+                dao.markAllAsRead(currentUser.getUserId());
+            } finally {
+                dao.close();
+            }
             response.sendRedirect(request.getContextPath() + "/customer/notifications");
             return;
         }
 
-        // View notifications
-        String category = request.getParameter("category");
-        String keyword = request.getParameter("keyword");
-        String unreadOnlyStr = request.getParameter("unreadOnly");
-        boolean unreadOnly = unreadOnlyStr != null && unreadOnlyStr.equals("on");
-        
-        List<Notification> notifications = notificationDAO.getNotificationsWithFilters(currentUser.getUserId(), category, keyword, unreadOnly);
-        int unreadCount = notificationDAO.getUnreadCount(currentUser.getUserId());
-        
-        request.setAttribute("notifications", notifications);
-        request.setAttribute("unreadCount", unreadCount);
-        request.setAttribute("currentCategory", category);
-        request.setAttribute("currentKeyword", keyword);
-        request.setAttribute("currentUnreadOnly", unreadOnly);
-        
-        request.getRequestDispatcher("/views/customer/notifications.jsp").forward(request, response);
+        // --- Xem danh sách thông báo (tạo DAO mới mỗi request) ---
+        NotificationDAO dao = new NotificationDAO();
+        try {
+            String category = request.getParameter("category");
+            String keyword = request.getParameter("keyword");
+            String unreadOnlyStr = request.getParameter("unreadOnly");
+            boolean unreadOnly = "on".equals(unreadOnlyStr);
+
+            List<Notification> notifications = dao.getNotificationsWithFilters(
+                    currentUser.getUserId(), category, keyword, unreadOnly);
+            int unreadCount = dao.getUnreadCount(currentUser.getUserId());
+
+            request.setAttribute("notifications", notifications);
+            request.setAttribute("unreadCount", unreadCount);
+            request.setAttribute("currentCategory", category);
+            request.setAttribute("currentKeyword", keyword);
+            request.setAttribute("currentUnreadOnly", unreadOnly);
+
+            request.getRequestDispatcher("/views/customer/notifications.jsp").forward(request, response);
+        } finally {
+            dao.close();
+        }
     }
 
     @Override

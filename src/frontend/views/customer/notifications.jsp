@@ -301,60 +301,57 @@
         lucide.createIcons();
     }
 
+    // Số lượng thông báo chưa đọc hiện tại trên trang
+    let unreadOnPage = ${unreadCount};
+
+    // Cập nhật badge trên header ngay khi trang load
+    (function syncHeaderBadge() {
+        const badge = document.getElementById('notification-count');
+        if (!badge) return;
+        if (unreadOnPage > 0) {
+            badge.innerText = unreadOnPage;
+            badge.style.display = 'flex';
+        } else {
+            badge.style.display = 'none';
+        }
+    })();
+
     function markAsRead(notifId, element) {
-        // Tránh click nhiều lần
+        // Tránh click nhiều lần vào cùng 1 thông báo
         if (!element.classList.contains('unread')) return;
-        
-        // Gọi API ẩn để đánh dấu đã đọc (dùng cache-buster để tránh trình duyệt cache GET request)
-        fetch('${pageContext.request.contextPath}/customer/notifications/read?id=' + notifId + '&t=' + new Date().getTime(), { 
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json'
+
+        // Lạc quan: cập nhật UI trước, rồi mới gọi server
+        element.classList.remove('unread');
+        element.style.cursor = 'default';
+        element.onclick = null;
+
+        // Cập nhật badge header
+        unreadOnPage = Math.max(0, unreadOnPage - 1);
+        const headerBadge = document.getElementById('notification-count');
+        if (headerBadge) {
+            if (unreadOnPage === 0) {
+                headerBadge.style.display = 'none';
+            } else {
+                headerBadge.innerText = unreadOnPage;
+                headerBadge.style.display = 'flex';
             }
-        })
-            .then(response => {
-                if (!response.ok) throw new Error("Network error");
-                return response.json();
-            })
-            .then(data => {
-                if (data.success) {
-                    // Xóa highlight chưa đọc
-                    element.classList.remove('unread');
-                    element.style.cursor = 'default';
-                    element.onclick = null;
-                    
-                    // Cập nhật số badge trên header ngay lập tức (nếu có)
-                    const headerBadge = document.getElementById('notification-count');
-                    if (headerBadge) {
-                        let currentCount = parseInt(headerBadge.innerText);
-                        if (!isNaN(currentCount) && currentCount > 0) {
-                            currentCount--;
-                            if (currentCount === 0) {
-                                headerBadge.style.display = 'none';
-                            } else {
-                                headerBadge.innerText = currentCount;
-                            }
-                        }
-                    }
-                    
-                    // Cập nhật số badge trong hero section
-                    const heroBadge = document.querySelector('.hero-section .badge');
-                    if (heroBadge) {
-                        let currentHeroCount = parseInt(heroBadge.innerText);
-                        if (!isNaN(currentHeroCount) && currentHeroCount > 0) {
-                            currentHeroCount--;
-                            if (currentHeroCount === 0) {
-                                heroBadge.style.display = 'none';
-                            } else {
-                                heroBadge.innerText = currentHeroCount + ' mới';
-                            }
-                        }
-                    }
-                } else {
-                    console.error("Lỗi cập nhật CSDL");
-                }
-            })
-            .catch(err => console.error(err));
+        }
+
+        // Cập nhật badge trong hero section
+        const heroBadge = document.querySelector('.hero-section .badge');
+        if (heroBadge) {
+            if (unreadOnPage === 0) {
+                heroBadge.style.display = 'none';
+            } else {
+                heroBadge.innerText = unreadOnPage + ' mới';
+            }
+        }
+
+        // Gọi server lưu trạng thái đã đọc vào DB
+        const ctx = (typeof APP_CONTEXT !== 'undefined') ? APP_CONTEXT : '';
+        fetch(ctx + '/customer/notifications/read?id=' + notifId + '&t=' + new Date().getTime(), {
+            method: 'GET'
+        }).catch(err => console.error('markAsRead error:', err));
     }
 </script>
 <jsp:include page="/common/footer.jsp" />
