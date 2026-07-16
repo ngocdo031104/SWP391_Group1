@@ -159,6 +159,15 @@
         if (!checkedSchedule) {
             if (scheduleError) scheduleError.textContent = 'Vui lòng chọn một lịch khởi hành.';
             valid = false;
+        } else {
+            // BR-19 / BR-20: server-side DAO \u0111\u00e3 l\u1ecdc past-date nh\u01b0ng t\u1ea7ng b\u1ea3o v\u1ec7 cu\u1ed1i \u1edf client v\u1eabn ch\u1eb7n.
+            const todayMidnight = new Date();
+            todayMidnight.setHours(0, 0, 0, 0);
+            const departureMs = parseInt(checkedSchedule.dataset.departureMs || '0', 10);
+            if (departureMs && departureMs < todayMidnight.getTime()) {
+                if (scheduleError) scheduleError.textContent = 'L\u1ecbch kh\u1edfi h\u00e0nh \u0111\u00e3 \u1edf trong qu\u00e1 kh\u1ee9. Vui l\u00f2ng ch\u1ecdn l\u1ecbch kh\u00e1c.';
+                valid = false;
+            }
         }
 
         list.querySelectorAll('input, select').forEach(function (input) {

@@ -6,11 +6,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fraud Monitoring - TourBuddy Admin</title>
-    
+    <title>Giám Sát Gian Lận — TourBuddy Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link href="${pageContext.request.contextPath}/css/admin-dashboard.css" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="${pageContext.request.contextPath}/css/admin-dashboard.css?v=2.1" rel="stylesheet">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-space-overrides.css?v=1.0">
     
     <style>
         .badge-normal { background-color: #6c757d; }
@@ -32,8 +35,8 @@
         <main class="main-content">
             <header class="top-header" style="margin-bottom: 24px;">
                 <div>
-                    <h1 style="font-size: 24px; color: var(--gray-900); margin: 0 0 8px 0;">Giám sát Gian lận (Fraud Monitoring)</h1>
-                    <p style="color: var(--gray-500); margin: 0; font-size: 14px;">Giám sát thủ công các giao dịch đáng ngờ.</p>
+                    <h1 style="font-size: 24px; color: var(--gray-900); margin: 0 0 8px 0;">GiĂ¡m sĂ¡t Gian láº­n (Fraud Monitoring)</h1>
+                    <p style="color: var(--gray-500); margin: 0; font-size: 14px;">GiĂ¡m sĂ¡t thá»§ cĂ´ng cĂ¡c giao dá»‹ch Ä‘Ă¡ng ngá».</p>
                 </div>
             </header>
 
@@ -42,31 +45,31 @@
                 <div class="row mb-4">
                     <div class="col-md-2">
                         <div class="card shadow-sm text-center py-3" style="border-radius: 12px; border-left: 4px solid var(--gray-500);">
-                            <div class="text-muted small text-uppercase fw-bold mb-1">Tổng Thanh Toán</div>
+                            <div class="text-muted small text-uppercase fw-bold mb-1">Tá»•ng Thanh ToĂ¡n</div>
                             <h3 class="mb-0 text-dark"><fmt:formatNumber value="${stats.total}" pattern="#,###"/></h3>
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="card shadow-sm text-center py-3" style="border-radius: 12px; border-left: 4px solid var(--danger);">
-                            <div class="text-muted small text-uppercase fw-bold mb-1">Đáng ngờ</div>
+                            <div class="text-muted small text-uppercase fw-bold mb-1">ÄĂ¡ng ngá»</div>
                             <h3 class="mb-0 text-danger"><fmt:formatNumber value="${stats.suspicious}" pattern="#,###"/></h3>
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="card shadow-sm text-center py-3" style="border-radius: 12px; border-left: 4px solid var(--warning);">
-                            <div class="text-muted small text-uppercase fw-bold mb-1">Trùng lặp</div>
+                            <div class="text-muted small text-uppercase fw-bold mb-1">TrĂ¹ng láº·p</div>
                             <h3 class="mb-0 text-warning"><fmt:formatNumber value="${stats.duplicate}" pattern="#,###"/></h3>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="card shadow-sm text-center py-3" style="border-radius: 12px; border-left: 4px solid var(--info);">
-                            <div class="text-muted small text-uppercase fw-bold mb-1">Lệch số tiền</div>
+                            <div class="text-muted small text-uppercase fw-bold mb-1">Lá»‡ch sá»‘ tiá»n</div>
                             <h3 class="mb-0 text-info"><fmt:formatNumber value="${stats.mismatch}" pattern="#,###"/></h3>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="card shadow-sm text-center py-3" style="border-radius: 12px; border-left: 4px solid var(--success);">
-                            <div class="text-muted small text-uppercase fw-bold mb-1">TT Thành Công</div>
+                            <div class="text-muted small text-uppercase fw-bold mb-1">TT ThĂ nh CĂ´ng</div>
                             <h3 class="mb-0 text-success"><fmt:formatNumber value="${stats.successCount}" pattern="#,###"/></h3>
                         </div>
                     </div>
@@ -78,47 +81,47 @@
                         <form action="${pageContext.request.contextPath}/admin/fraud-monitor" method="GET">
                             <div class="row filter-row g-3">
                                 <div class="col-md-2">
-                                    <label class="form-label">Từ Ngày</label>
+                                    <label class="form-label">Tá»« NgĂ y</label>
                                     <input type="date" class="form-control" name="dateFrom" value="<c:out value="${dateFrom}"/>">
                                 </div>
                                 <div class="col-md-2">
-                                    <label class="form-label">Đến Ngày</label>
+                                    <label class="form-label">Äáº¿n NgĂ y</label>
                                     <input type="date" class="form-control" name="dateTo" value="<c:out value="${dateTo}"/>">
                                 </div>
                                 <div class="col-md-2">
-                                    <label class="form-label">Mã Đặt Tour (Booking ID)</label>
-                                    <input type="number" class="form-control" name="bookingId" placeholder="Mã số..." value="<c:out value="${bookingId}"/>">
+                                    <label class="form-label">MĂ£ Äáº·t Tour (Booking ID)</label>
+                                    <input type="number" class="form-control" name="bookingId" placeholder="MĂ£ sá»‘..." value="<c:out value="${bookingId}"/>">
                                 </div>
                                 <div class="col-md-2">
-                                    <label class="form-label">Mã Giao Dịch (Txn Ref)</label>
-                                    <input type="text" class="form-control" name="transactionRef" placeholder="Mã GD..." value="<c:out value="${transactionRef}"/>">
+                                    <label class="form-label">MĂ£ Giao Dá»‹ch (Txn Ref)</label>
+                                    <input type="text" class="form-control" name="transactionRef" placeholder="MĂ£ GD..." value="<c:out value="${transactionRef}"/>">
                                 </div>
                                 <div class="col-md-2">
-                                    <label class="form-label">Cổng TT (Gateway)</label>
-                                    <input type="text" class="form-control" name="gateway" placeholder="Nội dung..." value="<c:out value="${gateway}"/>">
+                                    <label class="form-label">Cá»•ng TT (Gateway)</label>
+                                    <input type="text" class="form-control" name="gateway" placeholder="Ná»™i dung..." value="<c:out value="${gateway}"/>">
                                 </div>
                                 <div class="col-md-2">
-                                    <label class="form-label">Trạng thái GD</label>
+                                    <label class="form-label">Tráº¡ng thĂ¡i GD</label>
                                     <select class="form-select" name="paymentStatus">
-                                        <option value="">Tất cả</option>
-                                        <option value="Success" <c:if test="${paymentStatus == 'Success'}">selected</c:if>>Thành công (Success)</option>
-                                        <option value="Pending" <c:if test="${paymentStatus == 'Pending'}">selected</c:if>>Chờ xử lý (Pending)</option>
-                                        <option value="Failed" <c:if test="${paymentStatus == 'Failed'}">selected</c:if>>Thất bại (Failed)</option>
+                                        <option value="">Táº¥t cáº£</option>
+                                        <option value="Success" <c:if test="${paymentStatus == 'Success'}">selected</c:if>>ThĂ nh cĂ´ng (Success)</option>
+                                        <option value="Pending" <c:if test="${paymentStatus == 'Pending'}">selected</c:if>>Chá» xá»­ lĂ½ (Pending)</option>
+                                        <option value="Failed" <c:if test="${paymentStatus == 'Failed'}">selected</c:if>>Tháº¥t báº¡i (Failed)</option>
                                     </select>
                                 </div>
                                 <div class="col-md-2">
-                                    <label class="form-label">Kiểm duyệt</label>
+                                    <label class="form-label">Kiá»ƒm duyá»‡t</label>
                                     <select class="form-select" name="reviewStatus">
-                                        <option value="">Tất cả</option>
-                                        <option value="Normal" <c:if test="${reviewStatus == 'Normal'}">selected</c:if>>Bình thường</option>
-                                        <option value="Under Review" <c:if test="${reviewStatus == 'Under Review'}">selected</c:if>>Đang xem xét</option>
-                                        <option value="Suspicious" <c:if test="${reviewStatus == 'Suspicious'}">selected</c:if>>Đáng ngờ</option>
-                                        <option value="Cleared" <c:if test="${reviewStatus == 'Cleared'}">selected</c:if>>Đã xóa án</option>
+                                        <option value="">Táº¥t cáº£</option>
+                                        <option value="Normal" <c:if test="${reviewStatus == 'Normal'}">selected</c:if>>BĂ¬nh thÆ°á»ng</option>
+                                        <option value="Under Review" <c:if test="${reviewStatus == 'Under Review'}">selected</c:if>>Äang xem xĂ©t</option>
+                                        <option value="Suspicious" <c:if test="${reviewStatus == 'Suspicious'}">selected</c:if>>ÄĂ¡ng ngá»</option>
+                                        <option value="Cleared" <c:if test="${reviewStatus == 'Cleared'}">selected</c:if>>ÄĂ£ xĂ³a Ă¡n</option>
                                     </select>
                                 </div>
                                 <div class="col-md-2 d-flex align-items-end">
-                                    <button type="submit" class="btn btn-primary me-2"><i class="fas fa-search"></i> Tìm kiếm</button>
-                                    <a href="${pageContext.request.contextPath}/admin/fraud-monitor" class="btn btn-outline-secondary text-secondary border-secondary"><i class="fas fa-undo"></i> Đặt lại</a>
+                                    <button type="submit" class="btn btn-primary me-2"><i class="fas fa-search"></i> TĂ¬m kiáº¿m</button>
+                                    <a href="${pageContext.request.contextPath}/admin/fraud-monitor" class="btn btn-outline-secondary text-secondary border-secondary"><i class="fas fa-undo"></i> Äáº·t láº¡i</a>
                                 </div>
                             </div>
                         </form>
@@ -132,16 +135,16 @@
                             <table class="table table-hover mb-0">
                                 <thead class="table-light" style="position: sticky; top: 0; z-index: 10;">
                                     <tr>
-                                        <th style="white-space: nowrap;">Thời gian TT</th>
-                                        <th style="white-space: nowrap;">Mã Giao Dịch</th>
+                                        <th style="white-space: nowrap;">Thá»i gian TT</th>
+                                        <th style="white-space: nowrap;">MĂ£ Giao Dá»‹ch</th>
                                         <th style="white-space: nowrap;">Booking</th>
-                                        <th style="white-space: nowrap;">Khách hàng</th>
-                                        <th style="white-space: nowrap;">Số tiền TT</th>
-                                        <th style="white-space: nowrap;">Số tiền cần TT</th>
-                                        <th style="white-space: nowrap;">Trạng thái</th>
-                                        <th style="white-space: nowrap;">Lý do Gian lận</th>
-                                        <th style="white-space: nowrap;">Kiểm duyệt</th>
-                                        <th style="white-space: nowrap;">Thao tác</th>
+                                        <th style="white-space: nowrap;">KhĂ¡ch hĂ ng</th>
+                                        <th style="white-space: nowrap;">Sá»‘ tiá»n TT</th>
+                                        <th style="white-space: nowrap;">Sá»‘ tiá»n cáº§n TT</th>
+                                        <th style="white-space: nowrap;">Tráº¡ng thĂ¡i</th>
+                                        <th style="white-space: nowrap;">LĂ½ do Gian láº­n</th>
+                                        <th style="white-space: nowrap;">Kiá»ƒm duyá»‡t</th>
+                                        <th style="white-space: nowrap;">Thao tĂ¡c</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -195,43 +198,43 @@
                                                         <div class="modal-content">
                                                             <form action="${pageContext.request.contextPath}/admin/fraud-monitor" method="POST">
                                                                 <div class="modal-header">
-                                                                    <h5 class="modal-title">Kiểm duyệt Giao dịch #${txn.paymentId}</h5>
-                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                                                                    <h5 class="modal-title">Kiá»ƒm duyá»‡t Giao dá»‹ch #${txn.paymentId}</h5>
+                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="ÄĂ³ng"></button>
                                                                 </div>
                                                                 <div class="modal-body">
                                                                     <input type="hidden" name="action" value="updateStatus">
                                                                     <input type="hidden" name="paymentId" value="${txn.paymentId}">
                                                                     
                                                                     <div class="mb-3">
-                                                                        <strong>Mã GD:</strong> <c:out value="${txn.transactionRef}" />
+                                                                        <strong>MĂ£ GD:</strong> <c:out value="${txn.transactionRef}" />
                                                                     </div>
                                                                     <div class="mb-3">
-                                                                        <strong>Phản hồi cổng TT:</strong> <br>
+                                                                        <strong>Pháº£n há»“i cá»•ng TT:</strong> <br>
                                                                         <small class="text-muted"><c:out value="${txn.gatewayResponse}" /></small>
                                                                     </div>
                                                                     <div class="mb-3">
-                                                                        <strong>Lý do gian lận:</strong> <br>
+                                                                        <strong>LĂ½ do gian láº­n:</strong> <br>
                                                                         <span class="text-danger"><c:out value="${txn.fraudReason}" /></span>
                                                                     </div>
                                                                     
                                                                     <hr>
                                                                     <div class="mb-3">
-                                                                        <label class="form-label">Đổi Trạng thái</label>
+                                                                        <label class="form-label">Äá»•i Tráº¡ng thĂ¡i</label>
                                                                         <select class="form-select" name="newStatus" required>
-                                                                            <option value="Normal" <c:if test="${txn.reviewStatus == 'Normal'}">selected</c:if>>Bình thường</option>
-                                                                            <option value="Under Review" <c:if test="${txn.reviewStatus == 'Under Review'}">selected</c:if>>Đang xem xét</option>
-                                                                            <option value="Suspicious" <c:if test="${txn.reviewStatus == 'Suspicious'}">selected</c:if>>Đáng ngờ</option>
-                                                                            <option value="Cleared" <c:if test="${txn.reviewStatus == 'Cleared'}">selected</c:if>>Đã xóa án</option>
+                                                                            <option value="Normal" <c:if test="${txn.reviewStatus == 'Normal'}">selected</c:if>>BĂ¬nh thÆ°á»ng</option>
+                                                                            <option value="Under Review" <c:if test="${txn.reviewStatus == 'Under Review'}">selected</c:if>>Äang xem xĂ©t</option>
+                                                                            <option value="Suspicious" <c:if test="${txn.reviewStatus == 'Suspicious'}">selected</c:if>>ÄĂ¡ng ngá»</option>
+                                                                            <option value="Cleared" <c:if test="${txn.reviewStatus == 'Cleared'}">selected</c:if>>ÄĂ£ xĂ³a Ă¡n</option>
                                                                         </select>
                                                                     </div>
                                                                     <div class="mb-3">
-                                                                        <label class="form-label">Ghi chú (Comment)</label>
-                                                                        <textarea class="form-control" name="comment" rows="2" placeholder="Thêm ghi chú cho lần kiểm duyệt này..."></textarea>
+                                                                        <label class="form-label">Ghi chĂº (Comment)</label>
+                                                                        <textarea class="form-control" name="comment" rows="2" placeholder="ThĂªm ghi chĂº cho láº§n kiá»ƒm duyá»‡t nĂ y..."></textarea>
                                                                     </div>
                                                                 </div>
                                                                 <div class="modal-footer">
-                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                                                                    <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ÄĂ³ng</button>
+                                                                    <button type="submit" class="btn btn-primary">LÆ°u thay Ä‘á»•i</button>
                                                                 </div>
                                                             </form>
                                                         </div>
@@ -243,8 +246,8 @@
                                             <tr>
                                                 <td colspan="10" class="empty-state">
                                                     <i class="fas fa-shield-alt fa-3x mb-3 text-muted"></i>
-                                                    <h5>Không tìm thấy giao dịch gian lận nào.</h5>
-                                                    <p>Vui lòng thử thay đổi các bộ lọc.</p>
+                                                    <h5>KhĂ´ng tĂ¬m tháº¥y giao dá»‹ch gian láº­n nĂ o.</h5>
+                                                    <p>Vui lĂ²ng thá»­ thay Ä‘á»•i cĂ¡c bá»™ lá»c.</p>
                                                 </td>
                                             </tr>
                                         </c:otherwise>
@@ -258,12 +261,12 @@
                     <c:if test="${totalPages > 1}">
                         <div class="card-footer bg-white d-flex justify-content-between align-items-center">
                             <div>
-                                Hiển thị <c:out value="${transactions.size()}" /> trên <c:out value="${totalRecords}" /> bản ghi
+                                Hiá»ƒn thá»‹ <c:out value="${transactions.size()}" /> trĂªn <c:out value="${totalRecords}" /> báº£n ghi
                             </div>
                             <nav aria-label="Page navigation">
                                 <ul class="pagination mb-0">
                                     <li class="page-item <c:if test='${currentPage == 1}'>disabled</c:if>">
-                                        <a class="page-link" href="?page=${currentPage - 1}&dateFrom=${dateFrom}&dateTo=${dateTo}&bookingId=${bookingId}&transactionRef=${transactionRef}&gateway=${gateway}&paymentStatus=${paymentStatus}&reviewStatus=${reviewStatus}">Trước</a>
+                                        <a class="page-link" href="?page=${currentPage - 1}&dateFrom=${dateFrom}&dateTo=${dateTo}&bookingId=${bookingId}&transactionRef=${transactionRef}&gateway=${gateway}&paymentStatus=${paymentStatus}&reviewStatus=${reviewStatus}">TrÆ°á»›c</a>
                                     </li>
                                     
                                     <c:forEach begin="1" end="${totalPages}" var="i">
@@ -297,3 +300,4 @@
     </script>
 </body>
 </html>
+

@@ -859,6 +859,35 @@
     // Đánh giá đã được nạp và kết xuất trực tiếp bằng mã nguồn JSP ở phía trên, không sử dụng javascript.
 </script>
 
+<script>
+    // ── Safety net: nếu footer.jsp chưa kịp định nghĩa showToast (cache, lỗi include), vẫn có bản fallback ──
+    (function () {
+        if (typeof window.showToast === 'function') return;
+        window.showToast = function (message, type) {
+            type = type || 'success';
+            let container = document.getElementById('toastContainer');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'toastContainer';
+                container.className = 'toast-container';
+                document.body.appendChild(container);
+            }
+            const toast = document.createElement('div');
+            toast.className = 'toast ' + type;
+            let icon = 'check-circle';
+            if (type === 'error') icon = 'alert-triangle';
+            else if (type === 'warning') icon = 'alert-circle';
+            toast.innerHTML = '<i data-lucide="' + icon + '"></i> <span>' + (message || '') + '</span>';
+            container.appendChild(toast);
+            if (window.lucide) { try { window.lucide.createIcons(); } catch (e) {} }
+            setTimeout(function () {
+                toast.style.animation = 'toastExit 0.35s cubic-bezier(.16,1,.3,1) forwards';
+                setTimeout(function () { toast.remove(); }, 350);
+            }, 3000);
+        };
+    })();
+</script>
+
 <%
     // CHỨC NàNG CỦA ĐOẠN NÀY:
     // - extraScript: header/footer dùng chung sẽ đọc thuộc tính này để tự động nhúng file JavaScript detail.js

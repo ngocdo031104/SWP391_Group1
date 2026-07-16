@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="vi">
@@ -60,6 +60,10 @@
                         <button class="btn btn-primary" id="register-button" onclick="window.location.href='${pageContext.request.contextPath}/register'">Đăng Ký</button>
                     </c:when>
                     <c:otherwise>
+                        <a href="${pageContext.request.contextPath}/customer/chat" class="notification-bell" id="chat-btn" aria-label="Tin nhắn" style="text-decoration: none; margin-right: 15px;">
+                            <i data-lucide="message-square"></i>
+                            <span class="badge-count" id="chat-count" style="display: none;">0</span>
+                        </a>
                         <a href="${pageContext.request.contextPath}/customer/notifications" class="notification-bell" id="notification-btn" aria-label="Thông báo" style="text-decoration: none;">
                             <i data-lucide="bell"></i>
                             <span class="badge-count" id="notification-count" style="display: none;">0</span>
@@ -84,11 +88,11 @@
                                 <a href="${pageContext.request.contextPath}/profile" id="dropdown-profile-link"><i data-lucide="user"></i> Hồ Sơ Của Tôi</a>
                                 <a href="${pageContext.request.contextPath}/bookings" id="dropdown-bookings-link"><i data-lucide="compass"></i> Đơn Đặt Chỗ</a>
                                 <a href="${pageContext.request.contextPath}/customer/buddies" id="dropdown-buddies-link"><i data-lucide="users"></i> Mạng Lưới Buddy</a>
-                                <a href="#" id="dropdown-wishlist-link"><i data-lucide="heart"></i> Yêu Thích</a>
+                                <a href="${pageContext.request.contextPath}/customer/wishlist" id="dropdown-wishlist-link"><i data-lucide="heart"></i> Yêu Thích</a>
                                 <c:if test="${sessionUser.role.roleName eq 'Admin'}">
                                     <a href="${pageContext.request.contextPath}/admin/dashboard" id="dropdown-admin-link"><i data-lucide="shield-alert"></i> Quản Trị (Admin)</a>
                                 </c:if>
-                                <a href="#" id="dropdown-settings-link"><i data-lucide="settings"></i> Cài Đặt</a>
+                                <a href="${pageContext.request.contextPath}/profile" id="dropdown-settings-link"><i data-lucide="settings"></i> Cài Đặt</a>
                                 <a href="${pageContext.request.contextPath}/logout" class="logout-btn" id="dropdown-logout-btn"><i data-lucide="log-out"></i> Đăng Xuất</a>
                             </div>
                         </div>
@@ -101,3 +105,28 @@
             </div>
         </div>
     </header>
+
+    <c:if test="${not empty sessionUser}">
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const ctx = APP_CONTEXT || "${pageContext.request.contextPath}";
+            fetch(ctx + '/api/header-counts')
+                .then(response => response.json())
+                .then(data => {
+                    const chatCount = document.getElementById('chat-count');
+                    const notifCount = document.getElementById('notification-count');
+                    
+                    if (chatCount && data.unreadMessages > 0) {
+                        chatCount.textContent = data.unreadMessages > 99 ? '99+' : data.unreadMessages;
+                        chatCount.style.display = 'block';
+                    }
+                    
+                    if (notifCount && data.unreadNotifications > 0) {
+                        notifCount.textContent = data.unreadNotifications > 99 ? '99+' : data.unreadNotifications;
+                        notifCount.style.display = 'block';
+                    }
+                })
+                .catch(err => console.error("Error fetching header counts:", err));
+        });
+    </script>
+    </c:if>

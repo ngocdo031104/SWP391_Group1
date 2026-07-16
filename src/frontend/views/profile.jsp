@@ -1,4 +1,4 @@
-<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
+﻿<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 <%-- 
     Document   : profile.jsp
     Purpose    : Hiển thị và quản lý thông tin hồ sơ người dùng, lịch sử hoạt động, bảo mật và cài đặt thông báo.

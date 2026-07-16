@@ -377,9 +377,9 @@ public class UserDAO extends DBContext {
                      "  FROM Payment p JOIN Booking b ON p.BookingID = b.BookingID " +
                      "  WHERE b.CustomerID = ? " +
                      "  UNION ALL " +
-                     "  SELECT 'WISHLIST' AS Type, N'Đã yêu thích tour ' + t.TourName AS Action, w.CreatedAt AS CreatedAt " +
-                     "  FROM Wishlist w JOIN Tour t ON w.TourID = t.TourID " +
-                     "  WHERE w.UserID = ? " +
+                     "  SELECT 'WISHLIST' AS Type, N'Đã yêu thích tour ' + t.TourName AS Action, w.AddedAt AS CreatedAt " +
+                     "  FROM FavoriteTour w JOIN Tour t ON w.TourID = t.TourID " +
+                     "  WHERE w.CustomerID = ? " +
                      ") AS ActivityLogs " +
                      "ORDER BY CreatedAt DESC";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -562,7 +562,7 @@ public class UserDAO extends DBContext {
                 "DELETE FROM GuideProfile WHERE UserID = ?",
                 "DELETE FROM UserProfile WHERE UserID = ?",
                 "DELETE FROM BuddyMatch WHERE CustomerID = ? OR MatchedUserID = ?",
-                "DELETE FROM BuddyRequest WHERE SenderID = ? OR ReceiverID = ?",
+                "DELETE FROM BuddyRequest WHERE SenderId = ? OR ReceiverId = ?",
                 "DELETE FROM ChatMessage WHERE SenderID = ?",
                 "DELETE FROM ConversationParticipant WHERE UserID = ?",
                 "DELETE FROM Review WHERE CustomerID = ?",

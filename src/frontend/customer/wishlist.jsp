@@ -1,10 +1,14 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+﻿<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
 <%@ page import="Entities.Tour" %>
 <%@ page import="Entities.TourMedia" %>
 <%@ page import="Entities.TourSchedule" %>
 <%@ page import="java.util.List" %>
+<%
+    request.setAttribute("bodyClass", "wishlist-page");
+    request.setAttribute("extraCss", "css/wishlist.css");
+%>
 
 <jsp:include page="/common/header.jsp"/>
 
