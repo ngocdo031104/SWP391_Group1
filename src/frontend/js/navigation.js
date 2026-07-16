@@ -108,7 +108,7 @@
     if (newsletterForm) {
         newsletterForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            alert('Đăng ký nhận tin thành công! Cảm ơn bạn đã theo dõi TourBuddy.');
+            alert('\u0110\u0103ng k\u00fd nh\u1eadn tin th\u00e0nh c\u00f4ng! C\u1ea3m \u01a1n b\u1ea1n \u0111\u00e3 theo d\u00f5i TourBuddy.');
             newsletterForm.reset();
         });
     }

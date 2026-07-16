@@ -1,4 +1,5 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
+
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt"  prefix="fmt" %>
 <c:if test="${empty sessionUser || (sessionUser.roleId ne 1 && userRole ne 'Admin')}">
@@ -267,6 +268,10 @@
                             <option value="Completed">Completed (Đã hoàn thành)</option>
                             <option value="Cancelled">Cancelled (Đã hủy đoàn)</option>
                         </select>
+                    </div>
+                    <div class="form-group form-grid-full">
+                        <label>Ghi chú phân công HDV (Notes)</label>
+                        <textarea name="notes" id="form-schedule-notes" class="form-control" rows="2" placeholder="Nhập ghi chú cho hướng dẫn viên..." style="resize: vertical; min-height: 60px; font-family: inherit; font-size: 0.9rem; padding: 8px 12px;"></textarea>
                     </div>
                     
                     <div class="form-grid-full" style="border-top: 1px solid var(--border-dark); margin: 0.5rem 0; padding-top: 1rem;">
@@ -577,6 +582,10 @@
         document.getElementById("form-schedule-price-adult").value = s.priceAdult;
         document.getElementById("form-schedule-price-child").value = s.priceChild;
         document.getElementById("form-schedule-price-infant").value = s.priceInfant;
+        document.getElementById("form-schedule-notes").value = s.notes || "";
+        
+        // Kiểm tra ràng buộc trẻ sơ sinh đối với tour mạo hiểm
+        checkInfantRestriction();
         
         // Kiểm tra ràng buộc trẻ sơ sinh đối với tour mạo hiểm
         checkInfantRestriction();

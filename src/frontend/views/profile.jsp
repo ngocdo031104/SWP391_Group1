@@ -1,8 +1,9 @@
+<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 <%-- 
     Document   : profile.jsp
     Purpose    : Hiển thị và quản lý thông tin hồ sơ người dùng, lịch sử hoạt động, bảo mật và cài đặt thông báo.
 --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt"  prefix="fmt" %>
 <%
@@ -579,6 +580,7 @@
                       <c:when test="${log.type eq 'BOOKING'}"><i class="fa fa-suitcase"></i></c:when>
                       <c:when test="${log.type eq 'PAYMENT'}"><i class="fa fa-credit-card"></i></c:when>
                       <c:when test="${log.type eq 'REVIEW'}"><i class="fa fa-star"></i></c:when>
+                      <c:when test="${log.type eq 'WISHLIST'}"><i class="fa fa-heart" style="color: var(--danger);"></i></c:when>
                       <c:otherwise><i class="fa fa-right-to-bracket"></i></c:otherwise>
                     </c:choose>
                   </div>

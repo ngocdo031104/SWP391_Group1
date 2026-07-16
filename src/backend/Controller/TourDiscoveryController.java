@@ -18,6 +18,9 @@ public class TourDiscoveryController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
         
         TourDAO tourDAO = null;
         try {
@@ -58,6 +61,15 @@ public class TourDiscoveryController extends HttpServlet {
             // Set attributes để chuyển tiếp dữ liệu hiển thị sang trang JSP
             request.setAttribute("categories", categories);
             request.setAttribute("tours", tours);
+            
+            // Nạp wishlist nếu người dùng đã đăng nhập
+            Entities.User sessionUser = (Entities.User) request.getSession().getAttribute("sessionUser");
+            if (sessionUser != null) {
+                Model.WishlistDAO wishlistDAO = new Model.WishlistDAO();
+                List<Integer> wishlistTourIds = wishlistDAO.getWishlistTourIds(sessionUser.getUserId());
+                request.setAttribute("wishlistTourIds", wishlistTourIds);
+                wishlistDAO.close();
+            }
             
             // Trả lại các từ khóa tìm kiếm cũ lên form để người dùng thấy họ đã tìm gì
             request.setAttribute("searchDest", dest != null ? dest : "");

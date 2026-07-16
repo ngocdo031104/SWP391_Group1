@@ -24,6 +24,7 @@ public class TourSchedule implements Serializable {
     private User guide;           // Đối tượng HDV chứa thông tin chi tiết (FullName, Avatar...)
     private Tour tour;            // Đối tượng Tour tương ứng với lịch khởi hành này
     private GuideProfile guideProfile; // Hồ sơ chi tiết của Hướng dẫn viên
+    private String notes;
 
     public TourSchedule() {
     }
@@ -177,5 +178,13 @@ public class TourSchedule implements Serializable {
 
     public void setGuideProfile(GuideProfile guideProfile) {
         this.guideProfile = guideProfile;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 }

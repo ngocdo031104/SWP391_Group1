@@ -1,4 +1,5 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
+
     <footer class="footer">
         <div class="container footer-main">
             <div class="footer-col footer-brand">
@@ -103,9 +104,39 @@
         String extraScript = (String) request.getAttribute("extraScript");
         if (extraScript != null && !extraScript.trim().isEmpty()) {
     %>
-    <script src="${pageContext.request.contextPath}/<%= extraScript %>?v=2.1"></script>
+    <script src="${pageContext.request.contextPath}/<%= extraScript %>?v=2.2" charset="UTF-8"></script>
     <% 
         }
     %>
+    <div id="toastContainer" class="toast-container"></div>
+    <script>
+        window.showToast = function(message, type = 'success') {
+            let container = document.getElementById('toastContainer');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'toastContainer';
+                container.className = 'toast-container';
+                document.body.appendChild(container);
+            }
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            let icon = 'check-circle';
+            if (type === 'error') icon = 'alert-triangle';
+            else if (type === 'warning') icon = 'alert-circle';
+            
+            toast.innerHTML = `<i data-lucide="${icon}"></i> <span>${message}</span>`;
+            container.appendChild(toast);
+            
+            if (window.lucide) {
+                window.lucide.createIcons();
+            }
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease forwards';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+    </script>
 </body>
 </html>

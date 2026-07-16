@@ -25,6 +25,9 @@ public class AdminCouponController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
         request.setCharacterEncoding("UTF-8");
         HttpSession session = request.getSession();
         User sessionUser = (User) session.getAttribute("sessionUser");
@@ -108,7 +111,7 @@ public class AdminCouponController extends HttpServlet {
             coupon.setIsActive(isActive);
 
             CouponDAO couponDAO = new CouponDAO();
-            if (couponIdStr == null || couponIdStr.trim().isEmpty()) {
+                if (couponIdStr == null || couponIdStr.trim().isEmpty()) {
                 // Create — kiểm tra trùng mã, excludeId = -1 (không loại trừ ai)
                 if (couponDAO.isCouponCodeExists(couponCode, -1)) {
                     session.setAttribute("errorMessage", "Mã coupon \"" + couponCode + "\" đã tồn tại. Vui lòng dùng mã khác.");
@@ -119,8 +122,12 @@ public class AdminCouponController extends HttpServlet {
                 if (admin != null) {
                     coupon.setCreatedBy(admin.getUserId());
                 }
-                couponDAO.createCoupon(coupon);
-                session.setAttribute("successMessage", "Thêm mới coupon thành công!");
+                boolean created = couponDAO.createCoupon(coupon);
+                if (created) {
+                    session.setAttribute("successMessage", "Thêm mới coupon thành công!");
+                } else {
+                    session.setAttribute("errorMessage", "Thêm mới coupon thất bại. Vui lòng kiểm tra lại Cơ Sở Dữ Liệu (có thể thiếu cột MaxDiscountAmount).");
+                }
             } else {
                 // Update — kiểm tra trùng mã, bỏ qua chính coupon đang chỉnh sửa
                 int couponId = Integer.parseInt(couponIdStr);
@@ -130,8 +137,12 @@ public class AdminCouponController extends HttpServlet {
                     return;
                 }
                 coupon.setCouponId(couponId);
-                couponDAO.updateCoupon(coupon);
-                session.setAttribute("successMessage", "Cập nhật coupon thành công!");
+                boolean updated = couponDAO.updateCoupon(coupon);
+                if (updated) {
+                    session.setAttribute("successMessage", "Cập nhật coupon thành công!");
+                } else {
+                    session.setAttribute("errorMessage", "Cập nhật coupon thất bại. Vui lòng kiểm tra lại Cơ Sở Dữ Liệu.");
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -52,10 +52,12 @@ public class TourScheduleDAO extends DBContext {
                    + "ts.PriceAdult, ts.PriceChild, ts.PriceInfant, ts.Transportation, ts.Status, ts.CreatedAt, "
                    + "ts.GuideID, ts.TourStatus, "
                    + "u.Email, u.FullName, u.PhoneNumber, "
-                   + "up.AvatarURL "
+                   + "up.AvatarURL, "
+                   + "ta.Notes as AssignmentNotes "
                    + "FROM TourSchedule ts "
                    + "LEFT JOIN [User] u ON ts.GuideID = u.UserID "
                    + "LEFT JOIN UserProfile up ON u.UserID = up.UserID "
+                   + "LEFT JOIN TourAssignment ta ON ts.ScheduleID = ta.ScheduleID AND ts.GuideID = ta.GuideID "
                    + "WHERE ts.TourID = ? "
                    + "ORDER BY ts.DepartureDate DESC";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -76,6 +78,7 @@ public class TourScheduleDAO extends DBContext {
                         rs.getString("Status"),
                         rs.getTimestamp("CreatedAt")
                     );
+                    sched.setNotes(rs.getString("AssignmentNotes"));
                     
                     int guideId = rs.getInt("GuideID");
                     if (!rs.wasNull()) {

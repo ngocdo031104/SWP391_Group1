@@ -33,6 +33,9 @@ public class ProfileController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
 
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("sessionUser") == null) {
@@ -67,6 +70,12 @@ public class ProfileController extends HttpServlet {
             myPref = new Entities.TravelPreference();
         }
         request.setAttribute("myPref", myPref);
+        
+        // Fetch wishlist count
+        Model.WishlistDAO wishlistDAO = new Model.WishlistDAO();
+        int totalFavorites = wishlistDAO.countWishlistTours(user.getUserId());
+        request.setAttribute("totalFavorites", totalFavorites);
+        wishlistDAO.close();
         
         request.getRequestDispatcher("/views/profile.jsp").forward(request, response);
     }

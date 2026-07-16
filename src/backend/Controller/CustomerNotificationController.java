@@ -12,21 +12,15 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(name = "CustomerNotificationController", urlPatterns = {
-    "/customer/notifications",
-    "/customer/notifications/read",
-    "/customer/notifications/read-all",
-    "/api/notifications/count",
-    "/api/notifications/mark-all-read"
-})
+@WebServlet(name = "CustomerNotificationController", urlPatterns = {"/customer/notifications", "/customer/notifications/read", "/customer/notifications/read-all"})
 public class CustomerNotificationController extends HttpServlet {
+
+    private final NotificationDAO notificationDAO = new NotificationDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        NotificationDAO notificationDAO = new NotificationDAO();
-        try {
-            HttpSession session = request.getSession();
+        HttpSession session = request.getSession();
         User currentUser = (User) session.getAttribute("sessionUser");
         
         if (currentUser == null) {
@@ -35,38 +29,18 @@ public class CustomerNotificationController extends HttpServlet {
         }
 
         String path = request.getServletPath();
-
-        // --- JSON API: Trả số thông báo chưa đọc (dùng cho badge chuông trên header) ---
-        if (path.equals("/api/notifications/count")) {
-            response.setContentType("application/json;charset=UTF-8");
-            int count = notificationDAO.getUnreadCount(currentUser.getUserId());
-            response.getWriter().write("{\"unread\":" + count + "}");
-            return;
-        }
-
-        // --- JSON API: Đánh dấu tất cả đã đọc (gọi khi click vào chuông) ---
-        if (path.equals("/api/notifications/mark-all-read")) {
-            response.setContentType("application/json;charset=UTF-8");
-            notificationDAO.markAllAsRead(currentUser.getUserId());
-            response.getWriter().write("{\"success\":true}");
-            return;
-        }
-
-        // --- JSON API: Đánh dấu 1 thông báo đã đọc ---
+        
         if (path.equals("/customer/notifications/read")) {
-            response.setContentType("application/json;charset=UTF-8");
             String idStr = request.getParameter("id");
             if (idStr != null) {
                 try {
                     int notifId = Integer.parseInt(idStr);
                     notificationDAO.markAsRead(notifId);
-                    response.getWriter().write("{\"success\":true}");
-                    return;
                 } catch (NumberFormatException e) {
                     // ignore
                 }
             }
-            response.getWriter().write("{\"success\":false}");
+            response.sendRedirect(request.getContextPath() + "/customer/notifications");
             return;
         }
 
@@ -92,11 +66,6 @@ public class CustomerNotificationController extends HttpServlet {
         request.setAttribute("currentUnreadOnly", unreadOnly);
         
         request.getRequestDispatcher("/views/customer/notifications.jsp").forward(request, response);
-        } finally {
-            if (notificationDAO != null) {
-                notificationDAO.close();
-            }
-        }
     }
 
     @Override

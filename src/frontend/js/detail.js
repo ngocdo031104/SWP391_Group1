@@ -6,18 +6,18 @@
     const EXCHANGE_RATE = 25000; // 1 USD = 25,000 VND
 
     /* ==========================================================================
-       DỮ LIỆU CƠ BẢN TOUR ĐỒNG BỘ VỚI EXPLORE.JS
+       D\u1eee LI\u1ec6U C\u01a0 B\u1ea2N TOUR \u0110\u1ed2NG B\u1ed8 V\u1edaI EXPLORE.JS
        ========================================================================== */
     const toursData = window.toursData || [];
 
     /* ==========================================================================
-       DỮ LIỆU LỊCH TRÌNH CHI TIẾT TỪNG NGÀY (DAILY ITINERARIES)
+       D\u1eee LI\u1ec6U L\u1ecaCH TR\u00ccNH CHI TI\u1ebeT T\u1eeaNG NG\u00c0Y (DAILY ITINERARIES)
        ========================================================================== */
     const itinerariesData = window.itinerariesData || {};
 
 
     /* ==========================================================================
-       ĐÁNH GIÁ — Chỉ tải từ DB qua detail.jsp, không dùng dữ liệu gen cứng
+       \u0110\u00c1NH GI\u00c1 \u2014 Ch\u1ec9 t\u1ea3i t\u1eeb DB qua detail.jsp, kh\u00f4ng d\u00f9ng d\u1eef li\u1ec7u gen c\u1ee9ng
        ========================================================================== */
     const reviewsData = window.reviewsData || {};
     const defaultReviews = [];
@@ -48,7 +48,7 @@
     if (detailRating) detailRating.textContent = activeTour.rating.toFixed(1);
     
     const detailReviewsCount = document.getElementById('detail-reviews-count');
-    if (detailReviewsCount) detailReviewsCount.textContent = `(${activeTour.reviews} đánh giá)`;
+    if (detailReviewsCount) detailReviewsCount.textContent = `(${activeTour.reviews} \u0111\u00e1nh gi\u00e1)`;
     
     const detailLocationName = document.getElementById('detail-location-name');
     if (detailLocationName) detailLocationName.textContent = activeTour.location;
@@ -61,11 +61,11 @@
 
     // Load category translation
     let categoryText = "Premium";
-    if (activeTour.category === "luxury") categoryText = "Nghỉ dưỡng 5★";
-    else if (activeTour.category === "beach") categoryText = "Khám phá Biển";
-    else if (activeTour.category === "hiking") categoryText = "Trekking Thử thách";
-    else if (activeTour.category === "cultural") categoryText = "Văn hóa Hoài cổ";
-    else if (activeTour.category === "adventure") categoryText = "Thám hiểm Mạo hiểm";
+    if (activeTour.category === "luxury") categoryText = "Ngh\u1ec9 d\u01b0\u1ee1ng 5\u2605";
+    else if (activeTour.category === "beach") categoryText = "Kh\u00e1m ph\u00e1 Bi\u1ec3n";
+    else if (activeTour.category === "hiking") categoryText = "Trekking Th\u1eed th\u00e1ch";
+    else if (activeTour.category === "cultural") categoryText = "V\u0103n h\u00f3a Ho\u00e0i c\u1ed5";
+    else if (activeTour.category === "adventure") categoryText = "Th\u00e1m hi\u1ec3m M\u1ea1o hi\u1ec3m";
     
     const detailCategoryBadge = document.getElementById('detail-category-badge');
     if (detailCategoryBadge) detailCategoryBadge.textContent = categoryText;
@@ -75,18 +75,18 @@
     if (tourDetailDesc) tourDetailDesc.textContent = activeTour.description;
 
     // Highlights translation
-    let difficultyText = "Nhẹ nhàng";
-    if (activeTour.difficulty === "medium") difficultyText = "Trung bình";
-    else if (activeTour.difficulty === "hard") difficultyText = "Thử thách mạnh";
+    let difficultyText = "Nh\u1eb9 nh\u00e0ng";
+    if (activeTour.difficulty === "medium") difficultyText = "Trung b\u00ecnh";
+    else if (activeTour.difficulty === "hard") difficultyText = "Th\u1eed th\u00e1ch m\u1ea1nh";
     
     const hlDifficulty = document.getElementById('hl-difficulty');
     if (hlDifficulty) hlDifficulty.textContent = difficultyText;
     
     const hlDuration = document.getElementById('hl-duration');
-    if (hlDuration) hlDuration.textContent = `${activeTour.duration} Ngày`;
+    if (hlDuration) hlDuration.textContent = `${activeTour.duration} Ng\u00e0y`;
     
     const hlGroupSize = document.getElementById('hl-group-size');
-    if (hlGroupSize) hlGroupSize.textContent = `${activeTour.seatsLeft} Chỗ`;
+    if (hlGroupSize) hlGroupSize.textContent = `${activeTour.seatsLeft} Ch\u1ed7`;
     const hlLang = document.getElementById('hl-languages');
     if (hlLang && activeTour.languages) {
         hlLang.textContent = activeTour.languages;
@@ -97,10 +97,10 @@
     if (seatsPill) {
         if (activeTour.seatsLeft <= 5) {
             seatsPill.className = "price-side-right warning-pill";
-            seatsPill.innerHTML = `<span>Chỉ còn ${activeTour.seatsLeft} chỗ!</span>`;
+            seatsPill.innerHTML = `<span>Ch\u1ec9 c\u00f2n ${activeTour.seatsLeft} ch\u1ed7!</span>`;
         } else {
             seatsPill.className = "price-side-right";
-            seatsPill.innerHTML = `<span>Còn ${activeTour.seatsLeft} chỗ trống</span>`;
+            seatsPill.innerHTML = `<span>C\u00f2n ${activeTour.seatsLeft} ch\u1ed7 tr\u1ed1ng</span>`;
         }
     }
 
@@ -142,7 +142,7 @@
     function formatPrice(vndAmount) {
         const currency = getActiveCurrency();
         if (currency === 'vnd') {
-            return `${vndAmount.toLocaleString('vi-VN')} ₫`;
+            return `${vndAmount.toLocaleString('vi-VN')} \u20ab`;
         } else {
             const usdAmount = Math.round(vndAmount / EXCHANGE_RATE);
             return `$${usdAmount.toLocaleString('en-US')}`;
@@ -207,7 +207,7 @@
             } else {
                 if (promoMessageTxt) {
                     promoMessageTxt.style.color = "#dc2626";
-                    promoMessageTxt.textContent = `Đơn hàng chưa đạt tối thiểu ${formatPrice(appliedCoupon.minOrderAmount)}.`;
+                    promoMessageTxt.textContent = `\u0110\u01a1n h\u00e0ng ch\u01b0a \u0111\u1ea1t t\u1ed1i thi\u1ec3u ${formatPrice(appliedCoupon.minOrderAmount)}.`;
                 }
                 isPromoApplied = false;
                 appliedCoupon = null;
@@ -222,7 +222,7 @@
         const totalVND = taxableAmountVND + taxVND;
 
         // Render calculations
-        if (billCalcLabel) billCalcLabel.textContent = `${travelers} khách x ${formatPrice(basePriceVND)}`;
+        if (billCalcLabel) billCalcLabel.textContent = `${travelers} kh\u00e1ch x ${formatPrice(basePriceVND)}`;
         if (billSubtotalVal) billSubtotalVal.textContent = formatPrice(subtotalVND);
         if (billTaxVal) billTaxVal.textContent = formatPrice(taxVND);
         if (billTotalVal) billTotalVal.textContent = formatPrice(totalVND);
@@ -268,21 +268,21 @@
                     isPromoApplied = false;
                     appliedCoupon = null;
                     promoMessageTxt.style.color = "#dc2626";
-                    promoMessageTxt.textContent = `Mã yêu cầu đơn hàng tối thiểu từ ${formatPrice(found.minOrderAmount)}.`;
+                    promoMessageTxt.textContent = `M\u00e3 y\u00eau c\u1ea7u \u0111\u01a1n h\u00e0ng t\u1ed1i thi\u1ec3u t\u1eeb ${formatPrice(found.minOrderAmount)}.`;
                     runCalculations();
                 } else {
                     isPromoApplied = true;
                     appliedCoupon = found;
                     promoMessageTxt.style.color = "#16a34a";
                     const desc = found.discountType.toLowerCase().includes('percent') || found.discountType.toLowerCase() === 'percentage' ? `${found.discountValue}%` : formatPrice(found.discountValue);
-                    promoMessageTxt.textContent = `Áp dụng mã giảm giá ${desc} thành công!`;
+                    promoMessageTxt.textContent = `\u00c1p d\u1ee5ng m\u00e3 gi\u1ea3m gi\u00e1 ${desc} th\u00e0nh c\u00f4ng!`;
                     runCalculations();
                 }
             } else {
                 isPromoApplied = false;
                 appliedCoupon = null;
                 promoMessageTxt.style.color = "#dc2626";
-                promoMessageTxt.textContent = "Mã giảm giá không tồn tại hoặc đã hết hạn.";
+                promoMessageTxt.textContent = "M\u00e3 gi\u1ea3m gi\u00e1 kh\u00f4ng t\u1ed3n t\u1ea1i ho\u1eb7c \u0111\u00e3 h\u1ebft h\u1ea1n.";
                 runCalculations();
             }
         });
@@ -305,7 +305,7 @@
         
         const itinerary = itinerariesData[activeTour.id];
         if (!itinerary || itinerary.length === 0) {
-            timelineContainer.innerHTML = '<p class="no-itinerary-msg" style="padding: 2rem; text-align: center; color: var(--slate-500);">Đang cập nhật lịch trình chi tiết cho tour này...</p>';
+            timelineContainer.innerHTML = '<p class="no-itinerary-msg" style="padding: 2rem; text-align: center; color: var(--slate-500);">\u0110ang c\u1eadp nh\u1eadt l\u1ecbch tr\u00ecnh chi ti\u1ebft cho tour n\u00e0y...</p>';
             return;
         }
 
@@ -331,7 +331,7 @@
                 </div>
                 <div class="timeline-panel">
                     <div class="timeline-heading">
-                        <span class="timeline-day-label">Ngày ${item.day}</span>
+                        <span class="timeline-day-label">Ng\u00e0y ${item.day}</span>
                         <h4>${item.title}</h4>
                         <i data-lucide="chevron-down" class="timeline-arrow"></i>
                     </div>
@@ -367,7 +367,7 @@
     function openLightbox(index) {
         currentPhotoIndex = index;
         if (expandedImg) expandedImg.src = photosList[currentPhotoIndex];
-        if (captionTxt) captionTxt.textContent = `Hình ảnh ${currentPhotoIndex + 1} / ${photosList.length} - ${activeTour.title}`;
+        if (captionTxt) captionTxt.textContent = `H\u00ecnh \u1ea3nh ${currentPhotoIndex + 1} / ${photosList.length} - ${activeTour.title}`;
         if (lightbox) lightbox.classList.add('active');
     }
 
@@ -401,14 +401,14 @@
     function nextSlide() {
         currentPhotoIndex = (currentPhotoIndex + 1) % photosList.length;
         if (expandedImg) expandedImg.src = photosList[currentPhotoIndex];
-        if (captionTxt) captionTxt.textContent = `Hình ảnh ${currentPhotoIndex + 1} / ${photosList.length} - ${activeTour.title}`;
+        if (captionTxt) captionTxt.textContent = `H\u00ecnh \u1ea3nh ${currentPhotoIndex + 1} / ${photosList.length} - ${activeTour.title}`;
     }
 
     // Prev Slide
     function prevSlide() {
         currentPhotoIndex = (currentPhotoIndex - 1 + photosList.length) % photosList.length;
         if (expandedImg) expandedImg.src = photosList[currentPhotoIndex];
-        if (captionTxt) captionTxt.textContent = `Hình ảnh ${currentPhotoIndex + 1} / ${photosList.length} - ${activeTour.title}`;
+        if (captionTxt) captionTxt.textContent = `H\u00ecnh \u1ea3nh ${currentPhotoIndex + 1} / ${photosList.length} - ${activeTour.title}`;
     }
 
     if (nextLightboxBtn) nextLightboxBtn.addEventListener('click', nextSlide);
@@ -427,7 +427,7 @@
     if (playVideoBtn) {
         playVideoBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            alert("Đang tải video giới thiệu hành trình du lịch cao cấp của TourBuddy...");
+            alert("\u0110ang t\u1ea3i video gi\u1edbi thi\u1ec7u h\u00e0nh tr\u00ecnh du l\u1ecbch cao c\u1ea5p c\u1ee7a TourBuddy...");
         });
     }
 
@@ -466,30 +466,38 @@
     }
 
     // Simulator Upload image
+    // Real Upload image handling
     const uploadSimBtn = document.getElementById('upload-sim-btn');
+    const reviewImageInput = document.getElementById('review-image-input');
     const uploadPreviewRow = document.getElementById('uploaded-images-preview-row');
-    let simulatedUploadedImgUrl = '';
 
-    if (uploadSimBtn) {
+    if (uploadSimBtn && reviewImageInput) {
         uploadSimBtn.addEventListener('click', () => {
-            // Simulated upload of a beautiful landscape image
-            simulatedUploadedImgUrl = "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=400&q=80";
-            if (uploadPreviewRow) {
-                uploadPreviewRow.innerHTML = `
-                    <div class="preview-img-wrapper">
-                        <img src="${simulatedUploadedImgUrl}" alt="Ảnh xem trước">
-                        <span class="remove-preview-btn" id="remove-preview-img-btn">&times;</span>
-                    </div>
-                `;
-                document.getElementById('remove-preview-img-btn').addEventListener('click', () => {
-                    uploadPreviewRow.innerHTML = '';
-                    simulatedUploadedImgUrl = '';
-                });
+            reviewImageInput.click();
+        });
+
+        reviewImageInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file && uploadPreviewRow) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    uploadPreviewRow.innerHTML = `
+                        <div class="preview-img-wrapper" style="position: relative; display: inline-block;">
+                            <img src="${event.target.result}" alt="\u1ea2nh xem tr\u01b0\u1edbc" style="max-width: 150px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                            <span class="remove-preview-btn" id="remove-preview-img-btn" style="position: absolute; top: -6px; right: -6px; background: #ef4444; color: #ffffff; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px; font-weight: bold; border: 1px solid #ffffff;">&times;</span>
+                        </div>
+                    `;
+                    document.getElementById('remove-preview-img-btn').addEventListener('click', () => {
+                        uploadPreviewRow.innerHTML = '';
+                        reviewImageInput.value = ''; // Clear file input
+                    });
+                };
+                reader.readAsDataURL(file);
             }
         });
     }
 
-    // LÝ DO VÀ CHỨC NĂNG CỦA ĐOẠN SUBMIT FORM ĐÁNH GIÁ (SUBMIT REVIEW FORM):
+    // LÝ DO VÀ CHỨC NàNG CỦA ĐOẠN SUBMIT FORM ĐÁNH GIÁ (SUBMIT REVIEW FORM):
     // - Khi người dùng bấm nút gửi đánh giá, trình duyệt sẽ kích hoạt sự kiện submit này.
     // - Ta cần đọc biến `selectedRatingVal` (chứa số sao người dùng vừa chọn bằng cách click vào các ngôi sao trên giao diện).
     // - Gán giá trị sao này vào thẻ input ẩn `#review-rating-input` để nó được gửi đi cùng dữ liệu form POST.
@@ -537,7 +545,7 @@
                 <div class="tour-img-wrapper">
                     <img src="${tour.image}" alt="${tour.title}" class="tour-img">
                     <div class="tour-badge">
-                        <span class="badge badge-featured">Tương Tự</span>
+                        <span class="badge badge-featured">T\u01b0\u01a1ng T\u1ef1</span>
                     </div>
                 </div>
                 <div class="tour-details">
@@ -548,7 +556,7 @@
                     <h3>${tour.title}</h3>
                     <div class="tour-footer">
                         <div class="tour-price">
-                            <span class="price-label">Giá từ</span>
+                            <span class="price-label">Gi\u00e1 t\u1eeb</span>
                             <span class="price-val">${formatPrice(tour.priceVND)}</span>
                         </div>
                         <button class="btn btn-primary btn-sm" onclick="window.location.href='detail?id=${tour.id}'">Xem Ngay</button>
@@ -578,7 +586,7 @@
     const shareBtn = document.getElementById('share-btn');
     if (shareBtn) {
         shareBtn.addEventListener('click', () => {
-            alert(`Đã sao chép liên kết chia sẻ hành trình:\n${window.location.href}`);
+            alert(`\u0110\u00e3 sao ch\u00e9p li\u00ean k\u1ebft chia s\u1ebb h\u00e0nh tr\u00ecnh:\n${window.location.href}`);
         });
     }
 
@@ -586,18 +594,103 @@
     const wishlistDetailBtn = document.getElementById('wishlist-detail-btn');
     if (wishlistDetailBtn) {
         wishlistDetailBtn.addEventListener('click', () => {
-            wishlistDetailBtn.classList.toggle('active');
-            const heartIcon = wishlistDetailBtn.querySelector('svg');
-            if (wishlistDetailBtn.classList.contains('active')) {
-                heartIcon.setAttribute('fill', 'currentColor');
-                wishlistDetailBtn.innerHTML = `<i data-lucide="heart" fill="currentColor"></i> Đã lưu Yêu thích`;
-            } else {
-                heartIcon.setAttribute('fill', 'none');
-                wishlistDetailBtn.innerHTML = `<i data-lucide="heart"></i> Lưu vào Yêu thích`;
-            }
-            lucide.createIcons();
+            const tourId = wishlistDetailBtn.getAttribute('data-tour-id');
+            const contextPath = window.contextPath || '';
+            
+            fetch(`${contextPath}/customer/wishlist/toggle?tourId=${tourId}`, {
+                method: 'POST'
+            })
+            .then(res => {
+                if (res.status === 401) {
+                    window.showToast('Vui l\u00f2ng \u0111\u0103ng nh\u1eadp \u0111\u1ec3 l\u01b0u tour y\u00eau th\u00edch.', 'warning');
+                    return null;
+                }
+                if (!res.ok) throw new Error('L\u1ed7i h\u1ec7 th\u1ed1ng');
+                return res.json();
+            })
+            .then(data => {
+                if (!data) return;
+                
+                if (data.status === 'success' || data.status === 'added' || data.status === 'removed') {
+                    wishlistDetailBtn.classList.toggle('active', data.isSaved);
+                    if (data.isSaved) {
+                        wishlistDetailBtn.innerHTML = `<i data-lucide="heart" fill="currentColor"></i> Đã lưu Yêu thích`;
+                    } else {
+                        wishlistDetailBtn.innerHTML = `<i data-lucide="heart"></i> Lưu vào Yêu thích`;
+                    }
+                    if (window.lucide) window.lucide.createIcons();
+                    window.showToast(data.message, 'success');
+                } else {
+                    window.showToast(data.message, 'error');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                window.showToast('\u0110\u00e3 x\u1ea3y ra l\u1ed7i k\u1ebft n\u1ed1i!', 'error');
+            });
         });
     }
+
+    // Flag/Report review click listener
+    const reportReviewBtns = document.querySelectorAll('.btn-report-review');
+    reportReviewBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const reviewId = btn.getAttribute('data-id');
+            const contextPath = window.contextPath || '';
+            
+            const params = new URLSearchParams();
+            params.append("entityType", "Review");
+            params.append("entityId", reviewId);
+
+            fetch(`${contextPath}/customer/report`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: params
+            })
+            .then(res => {
+                if (res.status === 401) {
+                    if (window.showToast) {
+                        window.showToast('Vui l\u00f2ng \u0111\u0103ng nh\u1eadp \u0111\u1ec3 b\u00e1o c\u00e1o vi ph\u1ea1m.', 'warning');
+                    } else {
+                        alert('Vui l\u00f2ng \u0111\u0103ng nh\u1eadp \u0111\u1ec3 b\u00e1o c\u00e1o vi ph\u1ea1m.');
+                    }
+                    return null;
+                }
+                if (!res.ok) throw new Error('Thao t\u00e1c th\u1ea5t b\u1ea1i');
+                return res.json();
+            })
+            .then(data => {
+                if (!data) return;
+                if (data.status === 'success') {
+                    if (window.showToast) {
+                        window.showToast(data.message, 'success');
+                    } else {
+                        alert(data.message);
+                    }
+                    // Disable button after successful reporting
+                    btn.disabled = true;
+                    btn.style.color = '#94a3b8';
+                    btn.innerHTML = `<i class="fa-solid fa-flag"></i> \u0110\u00e3 b\u00e1o c\u00e1o`;
+                } else {
+                    if (window.showToast) {
+                        window.showToast(data.message, 'error');
+                    } else {
+                        alert(data.message);
+                    }
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                if (window.showToast) {
+                    window.showToast('\u0110\u00e3 x\u1ea3y ra l\u1ed7i k\u1ebft n\u1ed1i!', 'error');
+                } else {
+                    alert('\u0110\u00e3 x\u1ea3y ra l\u1ed7i k\u1ebft n\u1ed1i!');
+                }
+            });
+        });
+    });
 
 });
 

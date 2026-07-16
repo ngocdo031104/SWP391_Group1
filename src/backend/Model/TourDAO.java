@@ -698,35 +698,28 @@ public class TourDAO extends DBContext {
             Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        // Bước 2: Nếu chưa có User ứng với Email này -> Tạo tài khoản dummy với mật khẩu mặc định rỗng
-        // để lưu họ tên và email của khách vãng lai, phục vụ việc ràng buộc khóa ngoại (CustomerID)
+        // Nếu không có tài khoản ứng với email này -> Trả về false luôn vì chưa mua/chưa đi tour
         if (userId == -1) {
-            String insertUserSql = "INSERT INTO [User] (RoleID, Email, PasswordHash, FullName, PhoneNumber, IsActive, IsVerified) VALUES (4, ?, 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855', ?, '', 1, 1)";
-            try (PreparedStatement ps = connection.prepareStatement(insertUserSql, Statement.RETURN_GENERATED_KEYS)) {
-                ps.setString(1, email);
-                ps.setString(2, name);
-                ps.executeUpdate();
-                try (ResultSet rs = ps.getGeneratedKeys()) {
-                    if (rs.next()) {
-                        userId = rs.getInt(1);
-                    }
+            return false;
+        }
+
+        // Bước 1.5: Kiểm tra xem tài khoản này đã từng đánh giá tour này chưa (chống trùng lặp)
+        String checkReviewSql = "SELECT COUNT(*) FROM Review WHERE CustomerID = ? AND TourID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(checkReviewSql)) {
+            ps.setInt(1, userId);
+            ps.setInt(2, tourId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next() && rs.getInt(1) > 0) {
+                    return false;
                 }
-                
-                // Khởi tạo UserProfile kèm avatar mặc định cho tài khoản vừa tạo
-                String insertProfileSql = "INSERT INTO UserProfile (UserID, AvatarURL) VALUES (?, 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80')";
-                try (PreparedStatement ps2 = connection.prepareStatement(insertProfileSql)) {
-                    ps2.setInt(1, userId);
-                    ps2.executeUpdate();
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, null, ex);
-                return false;
             }
+        } catch (SQLException ex) {
+            Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        // Bước 3: Tìm xem tài khoản này đã từng đặt tour này chưa (để hiển thị tích "Đã mua hàng / Verified Booking")
+        // Bước 2: Tìm booking thỏa mãn điều kiện đã hoàn thành (Status = 'Completed') của tour này
         int bookingId = -1;
-        String findBookingSql = "SELECT BookingID FROM Booking b JOIN TourSchedule s ON b.ScheduleID = s.ScheduleID WHERE b.CustomerID = ? AND s.TourID = ?";
+        String findBookingSql = "SELECT b.BookingID FROM Booking b JOIN TourSchedule s ON b.ScheduleID = s.ScheduleID WHERE b.CustomerID = ? AND s.TourID = ? AND b.Status = 'Completed'";
         try (PreparedStatement ps = connection.prepareStatement(findBookingSql)) {
             ps.setInt(1, userId);
             ps.setInt(2, tourId);
@@ -739,62 +732,12 @@ public class TourDAO extends DBContext {
             Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        // Bước 4: Fallback nếu họ chưa mua, nạp đại 1 BookingID bất kỳ đã có trong DB của Tour này
-        if (bookingId == -1) {
-            String fallbackBookingSql = "SELECT TOP 1 BookingID FROM Booking b JOIN TourSchedule s ON b.ScheduleID = s.ScheduleID WHERE s.TourID = ?";
-            try (PreparedStatement ps = connection.prepareStatement(fallbackBookingSql)) {
-                ps.setInt(1, tourId);
-                try (ResultSet rs = ps.executeQuery()) {
-                    if (rs.next()) {
-                        bookingId = rs.getInt("BookingID");
-                    }
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        
-        // Bước 5: Nếu tour này mới tinh, chưa hề có ai đặt (không có Booking nào) -> Phải tự tạo 1 "Dummy Booking"
-        // nhằm thỏa mãn ràng buộc khóa ngoại (FOREIGN KEY) BookingID của bảng Review (không cho phép null).
-        // Đây là điểm kỹ thuật đặc biệt phục vụ xử lý tạm thời cơ sở dữ liệu.
-        if (bookingId == -1) {
-            int scheduleId = -1;
-            String findScheduleSql = "SELECT TOP 1 ScheduleID FROM TourSchedule WHERE TourID = ?";
-            try (PreparedStatement ps = connection.prepareStatement(findScheduleSql)) {
-                ps.setInt(1, tourId);
-                try (ResultSet rs = ps.executeQuery()) {
-                    if (rs.next()) {
-                        scheduleId = rs.getInt("ScheduleID");
-                    }
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            
-            if (scheduleId != -1) {
-                String insertBookingSql = "INSERT INTO Booking (BookingCode, ScheduleID, CustomerID, NumParticipants, BaseAmount, VATAmount, DiscountAmount, TotalAmount, Status, CreatedAt, UpdatedAt) VALUES (?, ?, ?, 1, 0, 0, 0, 0, 'Completed', SYSDATETIME(), SYSDATETIME())";
-                try (PreparedStatement ps = connection.prepareStatement(insertBookingSql, Statement.RETURN_GENERATED_KEYS)) {
-                    ps.setString(1, "BK_DUMMY_" + (System.currentTimeMillis() % 100000));
-                    ps.setInt(2, scheduleId);
-                    ps.setInt(3, userId);
-                    ps.executeUpdate();
-                    try (ResultSet rs = ps.getGeneratedKeys()) {
-                        if (rs.next()) {
-                            bookingId = rs.getInt(1);
-                        }
-                    }
-                } catch (SQLException ex) {
-                    Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        }
-        
-        // Nếu không có cách nào kiếm được hoặc tạo được BookingID thì chịu, không chèn review được
+        // Nếu không tìm thấy bất kỳ booking nào ở trạng thái Completed -> Từ chối đánh giá
         if (bookingId == -1) {
             return false;
         }
         
-        // Bước 6: Chèn trực tiếp đánh giá vào bảng Review
+        // Bước 3: Chèn trực tiếp đánh giá vào bảng Review
         String insertReviewSql = "INSERT INTO Review (TourID, BookingID, CustomerID, Rating, Content, IsVisible, CreatedAt, UpdatedAt, ImageURL) VALUES (?, ?, ?, ?, ?, 1, SYSDATETIME(), SYSDATETIME(), ?)";
         try (PreparedStatement ps = connection.prepareStatement(insertReviewSql)) {
             ps.setInt(1, tourId);

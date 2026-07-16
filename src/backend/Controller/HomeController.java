@@ -21,6 +21,9 @@ public class HomeController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
         
         TourDAO tourDAO = null;
         try {
@@ -48,6 +51,15 @@ public class HomeController extends HttpServlet {
                 for (Tour tour : featuredTours) {
                     tour.setSchedules(tourDAO.getSchedulesByTourId(tour.getTourId()));
                 }
+            }
+            
+            // Nạp wishlist nếu người dùng đã đăng nhập
+            Entities.User sessionUser = (Entities.User) request.getSession().getAttribute("sessionUser");
+            if (sessionUser != null) {
+                Model.WishlistDAO wishlistDAO = new Model.WishlistDAO();
+                List<Integer> wishlistTourIds = wishlistDAO.getWishlistTourIds(sessionUser.getUserId());
+                request.setAttribute("wishlistTourIds", wishlistTourIds);
+                wishlistDAO.close();
             }
             
             // Đóng gói toàn bộ list dữ liệu vừa query được vào request attribute để chuyển giao cho tầng View (JSP)

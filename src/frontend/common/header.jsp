@@ -58,22 +58,9 @@
                         <button class="btn btn-primary" id="register-button" onclick="window.location.href='${pageContext.request.contextPath}/register'">Đăng Ký</button>
                     </c:when>
                     <c:otherwise>
-                        <%
-                            int _unreadCount = 0;
-                            Entities.User _headerUser = (Entities.User) session.getAttribute("sessionUser");
-                            if (_headerUser != null) {
-                                try {
-                                    Model.NotificationDAO _notifDAO = new Model.NotificationDAO();
-                                    _unreadCount = _notifDAO.getUnreadCount(_headerUser.getUserId());
-                                    _notifDAO.close();
-                                } catch (Exception _e) { /* không làm vỡ header */ }
-                            }
-                        %>
                         <a href="${pageContext.request.contextPath}/customer/notifications" class="notification-bell" id="notification-btn" aria-label="Thông báo" style="text-decoration: none;">
                             <i data-lucide="bell"></i>
-                            <% if (_unreadCount > 0) { %>
-                                <span class="badge-count" id="notification-count"><%= _unreadCount > 99 ? "99+" : _unreadCount %></span>
-                            <% } %>
+                            <span class="badge-count" id="notification-count">3</span>
                         </a>
 
                         <div class="user-avatar-wrapper">
@@ -99,7 +86,7 @@
                                 <c:if test="${sessionUser.role.roleName eq 'Admin'}">
                                     <a href="${pageContext.request.contextPath}/admin/dashboard" id="dropdown-admin-link"><i data-lucide="shield-alert"></i> Quản Trị (Admin)</a>
                                 </c:if>
-                                <a href="${pageContext.request.contextPath}/profile" id="dropdown-settings-link"><i data-lucide="settings"></i> Cài Đặt</a>
+                                <a href="#" id="dropdown-settings-link"><i data-lucide="settings"></i> Cài Đặt</a>
                                 <a href="${pageContext.request.contextPath}/logout" class="logout-btn" id="dropdown-logout-btn"><i data-lucide="log-out"></i> Đăng Xuất</a>
                             </div>
                         </div>
@@ -112,4 +99,3 @@
             </div>
         </div>
     </header>
-

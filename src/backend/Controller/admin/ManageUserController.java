@@ -59,6 +59,9 @@ public class ManageUserController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
         String action = request.getParameter("action");
         if ("toggleStatus".equals(action)) {
             toggleUserStatus(request, response);
@@ -130,12 +133,8 @@ public class ManageUserController extends HttpServlet {
             if (user != null) {
                 result.addProperty("status", "success");
                 result.add("data", gson.toJsonTree(user));
-                // Mock stats for UI demonstration since these fields don't exist in DB
-                JsonObject stats = new JsonObject();
-                stats.addProperty("trips", (int)(Math.random() * 20));
-                stats.addProperty("bookings", (int)(Math.random() * 50));
-                stats.addProperty("reviews", (int)(Math.random() * 15));
-                stats.addProperty("companions", (int)(Math.random() * 10));
+                
+                JsonObject stats = userDAO.getUserStats(userId, user.getRole().getRoleName());
                 result.add("stats", stats);
             } else {
                 result.addProperty("status", "error");
@@ -155,6 +154,16 @@ public class ManageUserController extends HttpServlet {
             int userId = Integer.parseInt(request.getParameter("userId"));
             boolean status = Boolean.parseBoolean(request.getParameter("status"));
             
+            User currentAdmin = (User) request.getSession().getAttribute("sessionUser");
+            boolean isMaster = isMasterAdmin(currentAdmin);
+            
+            User targetUser = userDAO.getUserById(userId);
+            if (targetUser != null && "Admin".equalsIgnoreCase(targetUser.getRole().getRoleName()) && !isMaster) {
+                request.getSession().setAttribute("errorMsg", "Bạn không có quyền thao tác với tài khoản Admin khác!");
+                response.sendRedirect(request.getContextPath() + "/admin/users");
+                return;
+            }
+            
             boolean success = userDAO.updateUserStatus(userId, status);
             
             if (success) {
@@ -162,13 +171,12 @@ public class ManageUserController extends HttpServlet {
                 request.getSession().setAttribute("successMsg", msg);
                 
                 // Log action
-                User admin = (User) request.getSession().getAttribute("sessionUser");
-                if (admin != null) {
+                if (currentAdmin != null) {
                     String action = status ? "UNLOCK_USER" : "LOCK_USER";
-                    String details = "Admin " + admin.getEmail() 
+                    String details = "Admin " + currentAdmin.getEmail() 
                                      + (status ? " unlocked" : " locked") 
                                      + " user ID: " + userId;
-                    auditLogDAO.insertLog(admin.getUserId(), action, null, details);
+                    auditLogDAO.insertLog(currentAdmin.getUserId(), action, null, details);
                 }
             } else {
                 request.getSession().setAttribute("errorMsg", "Cập nhật trạng thái thất bại!");
@@ -184,24 +192,56 @@ public class ManageUserController extends HttpServlet {
             String[] userIds = request.getParameterValues("userIds");
             String roleIdStr = request.getParameter("newRoleId");
             
+            User currentAdmin = (User) request.getSession().getAttribute("sessionUser");
+            boolean isMaster = isMasterAdmin(currentAdmin);
+            
             if (userIds != null && roleIdStr != null) {
                 int roleId = Integer.parseInt(roleIdStr);
+                
+                // Chặn Admin thường cấp quyền Admin cho người khác
+                if (roleId == 1 && !isMaster) {
+                    request.getSession().setAttribute("errorMsg", "Chỉ Master Admin mới có quyền cấp vai trò Admin!");
+                    response.sendRedirect(request.getContextPath() + "/admin/users");
+                    return;
+                }
+                
                 int count = 0;
+                int adminSkipCount = 0;
                 for (String idStr : userIds) {
                     int userId = Integer.parseInt(idStr);
+                    
+                    User targetUser = userDAO.getUserById(userId);
+                    if (targetUser != null && "Admin".equalsIgnoreCase(targetUser.getRole().getRoleName()) && !isMaster) {
+                        adminSkipCount++;
+                        continue;
+                    }
+                    
                     if (userDAO.updateUserRole(userId, roleId)) {
                         count++;
                     }
                 }
-                String msg = "Đã cập nhật vai trò cho " + count + " người dùng thành công!";
-                request.getSession().setAttribute("successMsg", msg);
+                
+                StringBuilder msgBuilder = new StringBuilder();
+                if (count > 0) {
+                    msgBuilder.append("Đã cập nhật vai trò cho ").append(count).append(" người dùng thành công! ");
+                }
+                if (adminSkipCount > 0) {
+                    msgBuilder.append("Không thể đổi vai trò của ").append(adminSkipCount).append(" tài khoản Admin.");
+                }
+                
+                if (count > 0 && adminSkipCount == 0) {
+                    request.getSession().setAttribute("successMsg", msgBuilder.toString().trim());
+                } else if (count > 0 && adminSkipCount > 0) {
+                    request.getSession().setAttribute("successMsg", msgBuilder.toString().trim());
+                } else if (count == 0 && adminSkipCount > 0) {
+                    request.getSession().setAttribute("errorMsg", msgBuilder.toString().trim());
+                }
                 
                 // Log action
-                User admin = (User) request.getSession().getAttribute("sessionUser");
-                if (admin != null) {
-                    String details = "Admin " + admin.getEmail() + " assigned role ID: " 
+                if (currentAdmin != null && count > 0) {
+                    String details = "Admin " + currentAdmin.getEmail() + " assigned role ID: " 
                                      + roleId + " to " + count + " users";
-                    auditLogDAO.insertLog(admin.getUserId(), "BULK_ASSIGN_ROLE", null, details);
+                    auditLogDAO.insertLog(currentAdmin.getUserId(), "BULK_ASSIGN_ROLE", null, details);
                 }
             } else {
                 request.getSession().setAttribute("errorMsg", "Dữ liệu không hợp lệ!");
@@ -284,21 +324,48 @@ public class ManageUserController extends HttpServlet {
         try {
             String[] userIds = request.getParameterValues("userIds");
             boolean status = Boolean.parseBoolean(request.getParameter("status"));
+            
+            User currentAdmin = (User) request.getSession().getAttribute("sessionUser");
+            boolean isMaster = isMasterAdmin(currentAdmin);
+            
             if (userIds != null) {
                 int count = 0;
+                int adminSkipCount = 0;
+                
                 for (String idStr : userIds) {
                     int userId = Integer.parseInt(idStr);
+                    
+                    User targetUser = userDAO.getUserById(userId);
+                    if (targetUser != null && "Admin".equalsIgnoreCase(targetUser.getRole().getRoleName()) && !isMaster) {
+                        adminSkipCount++;
+                        continue;
+                    }
+                    
                     if (userDAO.updateUserStatus(userId, status)) {
                         count++;
                     }
                 }
-                String actionStr = status ? "mở khóa" : "khóa";
-                request.getSession().setAttribute("successMsg", "Đã " + actionStr + " " + count + " tài khoản!");
                 
-                User admin = (User) request.getSession().getAttribute("sessionUser");
-                if (admin != null) {
+                String actionStr = status ? "mở khóa" : "khóa";
+                StringBuilder msgBuilder = new StringBuilder();
+                if (count > 0) {
+                    msgBuilder.append("Đã ").append(actionStr).append(" ").append(count).append(" tài khoản! ");
+                }
+                if (adminSkipCount > 0) {
+                    msgBuilder.append("Không thể thao tác với ").append(adminSkipCount).append(" tài khoản Admin.");
+                }
+                
+                if (count > 0 && adminSkipCount == 0) {
+                    request.getSession().setAttribute("successMsg", msgBuilder.toString().trim());
+                } else if (count > 0 && adminSkipCount > 0) {
+                    request.getSession().setAttribute("successMsg", msgBuilder.toString().trim());
+                } else if (count == 0 && adminSkipCount > 0) {
+                    request.getSession().setAttribute("errorMsg", msgBuilder.toString().trim());
+                }
+                
+                if (currentAdmin != null && count > 0) {
                     String logMsg = "Admin " + (status ? "unlocked " : "locked ") + count + " users";
-                    auditLogDAO.insertLog(admin.getUserId(), status ? "BULK_UNLOCK_USER" : "BULK_LOCK_USER", null, logMsg);
+                    auditLogDAO.insertLog(currentAdmin.getUserId(), status ? "BULK_UNLOCK_USER" : "BULK_LOCK_USER", null, logMsg);
                 }
             } else {
                 request.getSession().setAttribute("errorMsg", "Dữ liệu không hợp lệ!");

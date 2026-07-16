@@ -9,8 +9,6 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.List;
-import java.util.ArrayList;
 
 public class PaymentDAO extends DBContext {
 
@@ -107,116 +105,5 @@ public class PaymentDAO extends DBContext {
             Logger.getLogger(PaymentDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
-    }
-
-    // --- ACCOUNTANT METHODS ---
-    public List<Payment> getPaymentsByStatusForAccountant(String status, String dateFrom, String dateTo, String keyword, int offset, int pageSize) {
-        List<Payment> list = new ArrayList<>();
-        StringBuilder sql = new StringBuilder(
-            "SELECT p.*, b.BookingCode, u.FullName AS CustomerName " +
-            "FROM Payment p " +
-            "JOIN Booking b ON p.BookingID = b.BookingID " +
-            "JOIN [User] u ON b.CustomerID = u.UserID " +
-            "WHERE 1=1 "
-        );
-        
-        if (status != null && !status.isEmpty() && !"All".equals(status)) {
-            sql.append("AND p.Status = '").append(status.replace("'", "''")).append("' ");
-        }
-        if (dateFrom != null && !dateFrom.isEmpty()) {
-            sql.append("AND CAST(p.PaidAt AS DATE) >= '").append(dateFrom.replace("'", "''")).append("' ");
-        }
-        if (dateTo != null && !dateTo.isEmpty()) {
-            sql.append("AND CAST(p.PaidAt AS DATE) <= '").append(dateTo.replace("'", "''")).append("' ");
-        }
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            String kw = keyword.trim().replace("'", "''");
-            sql.append("AND (p.TransactionRef LIKE '%").append(kw).append("%' " +
-                       "OR b.BookingCode LIKE '%").append(kw).append("%' " +
-                       "OR u.FullName LIKE N'%").append(kw).append("%') ");
-        }
-        
-        sql.append("ORDER BY p.PaidAt DESC ");
-        if (pageSize > 0) {
-            sql.append("OFFSET ").append(offset).append(" ROWS FETCH NEXT ").append(pageSize).append(" ROWS ONLY");
-        }
-
-        try (PreparedStatement ps = connection.prepareStatement(sql.toString());
-             ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                Payment p = new Payment();
-                p.setPaymentId(rs.getInt("PaymentID"));
-                p.setBookingId(rs.getInt("BookingID"));
-                p.setAmount(rs.getDouble("Amount"));
-                p.setPaymentMethod(rs.getString("PaymentMethod"));
-                p.setTransactionRef(rs.getString("TransactionRef"));
-                p.setStatus(rs.getString("Status"));
-                p.setPaidAt(rs.getTimestamp("PaidAt"));
-                // Set extra info (assuming these setters exist or using a subclass/DTO. If not, we just use the raw map or create them)
-                // Wait, Payment entity might not have setBookingCode and setCustomerName. 
-                // Let's check Payment.java if they are there, if not I will just add them.
-                p.setBookingCode(rs.getString("BookingCode"));
-                p.setCustomerName(rs.getString("CustomerName"));
-                list.add(p);
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(PaymentDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return list;
-    }
-
-    public int countPaymentsByStatus(String status, String dateFrom, String dateTo, String keyword) {
-        StringBuilder sql = new StringBuilder(
-            "SELECT COUNT(*) FROM Payment p " +
-            "JOIN Booking b ON p.BookingID = b.BookingID " +
-            "JOIN [User] u ON b.CustomerID = u.UserID " +
-            "WHERE 1=1 "
-        );
-        
-        if (status != null && !status.isEmpty() && !"All".equals(status)) {
-            sql.append("AND p.Status = '").append(status.replace("'", "''")).append("' ");
-        }
-        if (dateFrom != null && !dateFrom.isEmpty()) {
-            sql.append("AND CAST(p.PaidAt AS DATE) >= '").append(dateFrom.replace("'", "''")).append("' ");
-        }
-        if (dateTo != null && !dateTo.isEmpty()) {
-            sql.append("AND CAST(p.PaidAt AS DATE) <= '").append(dateTo.replace("'", "''")).append("' ");
-        }
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            String kw = keyword.trim().replace("'", "''");
-            sql.append("AND (p.TransactionRef LIKE '%").append(kw).append("%' " +
-                       "OR b.BookingCode LIKE '%").append(kw).append("%' " +
-                       "OR u.FullName LIKE N'%").append(kw).append("%') ");
-        }
-        
-        try (PreparedStatement ps = connection.prepareStatement(sql.toString());
-             ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) return rs.getInt(1);
-        } catch (SQLException ex) {
-            Logger.getLogger(PaymentDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return 0;
-    }
-
-    public double sumPaymentsByStatus(String status, String dateFrom, String dateTo) {
-        StringBuilder sql = new StringBuilder("SELECT SUM(Amount) FROM Payment WHERE 1=1 ");
-        
-        if (status != null && !status.isEmpty() && !"All".equals(status)) {
-            sql.append("AND Status = '").append(status.replace("'", "''")).append("' ");
-        }
-        if (dateFrom != null && !dateFrom.isEmpty()) {
-            sql.append("AND CAST(PaidAt AS DATE) >= '").append(dateFrom.replace("'", "''")).append("' ");
-        }
-        if (dateTo != null && !dateTo.isEmpty()) {
-            sql.append("AND CAST(PaidAt AS DATE) <= '").append(dateTo.replace("'", "''")).append("' ");
-        }
-        
-        try (PreparedStatement ps = connection.prepareStatement(sql.toString());
-             ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) return rs.getDouble(1);
-        } catch (SQLException ex) {
-            Logger.getLogger(PaymentDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return 0.0;
     }
 }

@@ -62,7 +62,7 @@
 
     // Update displayed budget value when sliding
     function formatVND(amount) {
-        return `${amount.toLocaleString('vi-VN')} ₫`;
+        return `${amount.toLocaleString('vi-VN')} \u20ab`;
     }
 
     if (budgetSlider && budgetValue) {
@@ -131,7 +131,7 @@
             }
         });
 
-        // Show/hide "Xem thêm" / "Thu gọn" button based on matchingCount
+        // Show/hide "Xem th\u00eam" / "Thu g\u1ecdn" button based on matchingCount
         if (viewMoreWrapper && viewMoreBtn) {
             if (matchingCount > 3) {
                 viewMoreWrapper.style.display = 'flex';
@@ -140,12 +140,12 @@
                 const iconContainer = document.getElementById('btn-view-more-icon');
                 
                 if (isExpanded) {
-                    if (btnLabel) btnLabel.textContent = 'Thu gọn';
+                    if (btnLabel) btnLabel.textContent = 'Thu g\u1ecdn';
                     if (iconContainer) {
                         iconContainer.innerHTML = '<i data-lucide="chevron-up"></i>';
                     }
                 } else {
-                    if (btnLabel) btnLabel.textContent = 'Xem thêm tour';
+                    if (btnLabel) btnLabel.textContent = 'Xem th\u00eam tour';
                     if (iconContainer) {
                         iconContainer.innerHTML = '<i data-lucide="chevron-down"></i>';
                     }
@@ -201,16 +201,45 @@
     wishlistBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation(); // Avoid card container events
-            btn.classList.toggle('active');
             
-            const heartIcon = btn.querySelector('svg') || btn.querySelector('i');
-            if (heartIcon) {
-                if (btn.classList.contains('active')) {
-                    heartIcon.setAttribute('fill', 'currentColor');
-                } else {
-                    heartIcon.setAttribute('fill', 'none');
+            const tourId = btn.id.replace('wishlist-', '');
+            const contextPath = window.contextPath || '';
+            
+            fetch(`${contextPath}/customer/wishlist/toggle?tourId=${tourId}`, {
+                method: 'POST'
+            })
+            .then(res => {
+                if (res.status === 401) {
+                    window.showToast('Vui l\u00f2ng \u0111\u0103ng nh\u1eadp \u0111\u1ec3 l\u01b0u tour y\u00eau th\u00edch.', 'warning');
+                    return null;
                 }
-            }
+                if (!res.ok) {
+                    throw new Error('L\u1ed7i h\u1ec7 th\u1ed1ng');
+                }
+                return res.json();
+            })
+            .then(data => {
+                if (!data) return;
+                
+                if (data.status === 'success' || data.status === 'added' || data.status === 'removed') {
+                    btn.classList.toggle('active', data.isSaved);
+                    const heartIcon = btn.querySelector('svg') || btn.querySelector('i');
+                    if (heartIcon) {
+                        if (data.isSaved) {
+                            heartIcon.setAttribute('fill', 'currentColor');
+                        } else {
+                            heartIcon.setAttribute('fill', 'none');
+                        }
+                    }
+                    window.showToast(data.message, 'success');
+                } else {
+                    window.showToast(data.message, 'error');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                window.showToast('\u0110\u00e3 x\u1ea3y ra l\u1ed7i k\u1ebft n\u1ed1i!', 'error');
+            });
         });
     });
 
@@ -261,7 +290,7 @@
             navigator.clipboard.writeText(textToCopy)
                 .then(() => {
                     const originalText = couponCode.textContent;
-                    couponCode.textContent = 'ĐÃ SAO CHÉP!';
+                    couponCode.textContent = '\u0110\u00c3 SAO CH\u00c9P!';
                     couponCode.style.backgroundColor = '#10b981';
                     couponCode.style.color = '#ffffff';
                     couponCode.style.borderColor = 'transparent';
@@ -274,7 +303,7 @@
                     }, 2000);
                 })
                 .catch(err => {
-                    console.error('Không thể sao chép mã coupon: ', err);
+                    console.error('Kh\u00f4ng th\u1ec3 sao ch\u00e9p m\u00e3 coupon: ', err);
                 });
         });
     }
@@ -355,12 +384,12 @@
                 const iconContainer = document.getElementById('btn-view-more-dests-icon');
                 
                 if (isDestsExpanded) {
-                    if (btnLabel) btnLabel.textContent = 'Thu gọn';
+                    if (btnLabel) btnLabel.textContent = 'Thu g\u1ecdn';
                     if (iconContainer) {
                         iconContainer.innerHTML = '<i data-lucide="chevron-up"></i>';
                     }
                 } else {
-                    if (btnLabel) btnLabel.textContent = 'Xem thêm điểm đến';
+                    if (btnLabel) btnLabel.textContent = 'Xem th\u00eam \u0111i\u1ec3m \u0111\u1ebfn';
                     if (iconContainer) {
                         iconContainer.innerHTML = '<i data-lucide="chevron-down"></i>';
                     }

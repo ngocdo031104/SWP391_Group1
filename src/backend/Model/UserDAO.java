@@ -376,11 +376,16 @@ public class UserDAO extends DBContext {
                      "  SELECT 'PAYMENT' AS Type, N'Thanh toán ' + FORMAT(p.Amount, 'N0') + N'đ qua ' + p.PaymentMethod AS Action, p.CreatedAt " +
                      "  FROM Payment p JOIN Booking b ON p.BookingID = b.BookingID " +
                      "  WHERE b.CustomerID = ? " +
+                     "  UNION ALL " +
+                     "  SELECT 'WISHLIST' AS Type, N'Đã yêu thích tour ' + t.TourName AS Action, w.CreatedAt AS CreatedAt " +
+                     "  FROM Wishlist w JOIN Tour t ON w.TourID = t.TourID " +
+                     "  WHERE w.UserID = ? " +
                      ") AS ActivityLogs " +
                      "ORDER BY CreatedAt DESC";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setInt(2, userId);
+            ps.setInt(3, userId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     ActivityLog log = new ActivityLog();
@@ -587,6 +592,64 @@ public class UserDAO extends DBContext {
         } finally {
             try { connection.setAutoCommit(true); } catch(SQLException ignored) {}
         }
+    }
+    public com.google.gson.JsonObject getUserStats(int userId, String roleName) {
+        com.google.gson.JsonObject stats = new com.google.gson.JsonObject();
+        int trips = 0;
+        int bookings = 0;
+        int reviews = 0;
+        int companions = 0;
+
+        try {
+            if ("Customer".equalsIgnoreCase(roleName)) {
+                // Bookings count
+                try (PreparedStatement ps = connection.prepareStatement("SELECT COUNT(*) FROM Booking WHERE CustomerID = ?")) {
+                    ps.setInt(1, userId);
+                    ResultSet rs = ps.executeQuery();
+                    if (rs.next()) bookings = rs.getInt(1);
+                }
+                
+                // Trips count (Completed bookings)
+                try (PreparedStatement ps = connection.prepareStatement("SELECT COUNT(*) FROM Booking WHERE CustomerID = ? AND Status = 'Completed'")) {
+                    ps.setInt(1, userId);
+                    ResultSet rs = ps.executeQuery();
+                    if (rs.next()) trips = rs.getInt(1);
+                }
+                
+                // Reviews count
+                try (PreparedStatement ps = connection.prepareStatement("SELECT COUNT(*) FROM Review WHERE CustomerID = ?")) {
+                    ps.setInt(1, userId);
+                    ResultSet rs = ps.executeQuery();
+                    if (rs.next()) reviews = rs.getInt(1);
+                }
+                
+                // Companions count
+                try (PreparedStatement ps = connection.prepareStatement("SELECT COUNT(*) FROM BuddyMatch WHERE CustomerID = ? OR MatchedUserID = ?")) {
+                    ps.setInt(1, userId);
+                    ps.setInt(2, userId);
+                    ResultSet rs = ps.executeQuery();
+                    if (rs.next()) companions = rs.getInt(1);
+                }
+            } else if ("Guide".equalsIgnoreCase(roleName)) {
+                // Guide assignments count (Trips/Bookings)
+                try (PreparedStatement ps = connection.prepareStatement("SELECT COUNT(*) FROM TourAssignment WHERE GuideID = ?")) {
+                    ps.setInt(1, userId);
+                    ResultSet rs = ps.executeQuery();
+                    if (rs.next()) {
+                        bookings = rs.getInt(1);
+                        trips = bookings;
+                    }
+                }
+            }
+            
+            stats.addProperty("trips", trips);
+            stats.addProperty("bookings", bookings);
+            stats.addProperty("reviews", reviews);
+            stats.addProperty("companions", companions);
+        } catch (SQLException ex) {
+            java.util.logging.Logger.getLogger(UserDAO.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        return stats;
     }
 }
 
