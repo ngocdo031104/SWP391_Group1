@@ -513,40 +513,59 @@ CREATE TABLE BuddyRequest (
     CONSTRAINT UQ_BuddyRequest UNIQUE (SenderID, ReceiverID),
     CONSTRAINT CHK_NotSelf CHECK (SenderID <> ReceiverID)
 );
-GO
+-- ============================================================
+-- TourBuddy Chat Module Schema
+-- ============================================================
 
-CREATE TABLE ChatConversation (
-    ConversationID INT IDENTITY(1,1) PRIMARY KEY,
-    ConversationType NVARCHAR(20) NOT NULL DEFAULT 'Direct'
-                         CHECK (ConversationType IN ('Direct','Group')),
-    GroupName      NVARCHAR(100) NULL,
-    CreatedBy      INT           NULL REFERENCES [User](UserID),
-    CreatedAt      DATETIME2     NOT NULL DEFAULT SYSDATETIME()
+-- Table for tracking chat threads (1-to-1 or Group)
+CREATE TABLE Conversation (
+    ConversationID  INT IDENTITY(1,1) PRIMARY KEY,
+    Type            NVARCHAR(20) NOT NULL CHECK (Type IN ('Direct', 'Group')),
+    Title           NVARCHAR(255) NULL, -- Null for Direct chats
+    CreatedAt       DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    UpdatedAt       DATETIME2 NOT NULL DEFAULT SYSDATETIME()
 );
 GO
 
+-- Table mapping users to conversations
 CREATE TABLE ConversationParticipant (
-    ID             INT IDENTITY(1,1) PRIMARY KEY,
-    ConversationID INT       NOT NULL REFERENCES ChatConversation(ConversationID),
-    UserID         INT       NOT NULL REFERENCES [User](UserID),
-    JoinedAt       DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
-    CONSTRAINT UQ_ConvParticipant UNIQUE (ConversationID, UserID)
+    ParticipantID   INT IDENTITY(1,1) PRIMARY KEY,
+    ConversationID  INT NOT NULL REFERENCES Conversation(ConversationID) ON DELETE CASCADE,
+    UserID          INT NOT NULL REFERENCES [User](UserID),
+    Role            NVARCHAR(20) NOT NULL DEFAULT 'Member' CHECK (Role IN ('Member', 'Admin')),
+    JoinedAt        DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    LastReadMessageID INT NULL,
+    CONSTRAINT UQ_Participant UNIQUE (ConversationID, UserID)
 );
 GO
 
-CREATE TABLE ChatMessage (
-    MessageID      INT IDENTITY(1,1) PRIMARY KEY,
-    ConversationID INT           NOT NULL REFERENCES ChatConversation(ConversationID),
-    SenderID       INT           NOT NULL REFERENCES [User](UserID),
-    Content        NVARCHAR(MAX) NOT NULL,
-    IsVisible      BIT           NOT NULL DEFAULT 1,
-    SentAt         DATETIME2     NOT NULL DEFAULT SYSDATETIME()
+-- Table for actual messages
+CREATE TABLE Message (
+    MessageID       INT IDENTITY(1,1) PRIMARY KEY,
+    ConversationID  INT NOT NULL REFERENCES Conversation(ConversationID) ON DELETE CASCADE,
+    SenderID        INT NOT NULL REFERENCES [User](UserID),
+    Content         NVARCHAR(MAX) NOT NULL,
+    MessageType     NVARCHAR(20) NOT NULL DEFAULT 'Text' CHECK (MessageType IN ('Text', 'Image', 'File', 'System')),
+    CreatedAt       DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    IsDeleted       BIT NOT NULL DEFAULT 0
 );
+GO
+
+-- Table for blocked users
+CREATE TABLE BlockList (
+    BlockID         INT IDENTITY(1,1) PRIMARY KEY,
+    BlockerID       INT NOT NULL REFERENCES [User](UserID),
+    BlockedID       INT NOT NULL REFERENCES [User](UserID),
+    CreatedAt       DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    CONSTRAINT UQ_BlockList UNIQUE (BlockerID, BlockedID)
+);
+GO
+
 GO
 
 CREATE TABLE VideoCallSchedule (
     CallID         INT IDENTITY(1,1) PRIMARY KEY,
-    ConversationID INT           NULL REFERENCES ChatConversation(ConversationID),
+    ConversationID INT           NULL REFERENCES Conversation(ConversationID),
     OrganizedBy    INT           NOT NULL REFERENCES [User](UserID),
     Title          NVARCHAR(200) NULL,
     ScheduledAt    DATETIME2     NOT NULL,
@@ -628,7 +647,7 @@ CREATE INDEX IX_Payment_BookingID  ON Payment(BookingID);
 CREATE INDEX IX_Payment_Status     ON Payment(Status);
 CREATE INDEX IX_Notification_UserID ON Notification(UserID);
 CREATE INDEX IX_Notification_IsRead ON Notification(IsRead);
-CREATE INDEX IX_ChatMessage_ConvID  ON ChatMessage(ConversationID);
+CREATE INDEX IX_Message_ConvID      ON Message(ConversationID);
 CREATE INDEX IX_Review_TourID       ON Review(TourID);
 CREATE INDEX IX_CommunityPost_Author ON CommunityPost(AuthorID);
 GO
@@ -1192,7 +1211,7 @@ BEGIN
     VALUES (5, 'sondqhe186525@fpt.edu.vn', @hashed_pass, N'Accountant Son DQ', '0922222222', 1, 1, SYSDATETIME(), SYSDATETIME());
 END
 
--- 3. sonkbgnh112@gmail.com -> Customer (RoleID = 4)
+$insertSql-- 3. sonkbgnh112@gmail.com -> Customer (RoleID = 4)
 IF EXISTS (SELECT 1 FROM [User] WHERE Email = 'sonkbgnh112@gmail.com')
 BEGIN
     UPDATE [User] SET RoleID = 4 WHERE Email = 'sonkbgnh112@gmail.com';
@@ -1720,7 +1739,7 @@ BEGIN
     VALUES (5, 'sondqhe186525@fpt.edu.vn', @hashed_pass, N'Accountant Son DQ', '0922222222', 1, 1, SYSDATETIME(), SYSDATETIME());
 END
 
--- 3. sonkbgnh112@gmail.com -> Customer (RoleID = 4)
+$insertSql-- 3. sonkbgnh112@gmail.com -> Customer (RoleID = 4)
 IF EXISTS (SELECT 1 FROM [User] WHERE Email = 'sonkbgnh112@gmail.com')
 BEGIN
     UPDATE [User] SET RoleID = 4 WHERE Email = 'sonkbgnh112@gmail.com';
@@ -1950,107 +1969,4 @@ BEGIN
     );
 END
 GO
--- ============================================================
--- TourBuddy Chat Module Schema
--- ============================================================
 
-CREATE TABLE ChatMessage (
-    MessageID       INT IDENTITY(1,1) PRIMARY KEY,
-    ConversationID  INT NOT NULL REFERENCES ChatConversation(ConversationID),
-    SenderID        INT NOT NULL REFERENCES [User](UserID),
-    Content         NVARCHAR(MAX) NOT NULL,
-    SentAt          DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
-    IsVisible       BIT NOT NULL DEFAULT 1,
-    IsRead          BIT NOT NULL DEFAULT 0
-);
--- Table for tracking chat threads (1-to-1 or Group)
-CREATE TABLE Conversation (
-    ConversationID  INT IDENTITY(1,1) PRIMARY KEY,
-    Type            NVARCHAR(20) NOT NULL CHECK (Type IN ('Direct', 'Group')),
-    Title           NVARCHAR(255) NULL, -- Null for Direct chats
-    CreatedAt       DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
-    UpdatedAt       DATETIME2 NOT NULL DEFAULT SYSDATETIME()
-);
-GO
-
--- Table mapping users to conversations
-CREATE TABLE ConversationParticipant (
-    ParticipantID   INT IDENTITY(1,1) PRIMARY KEY,
-    ConversationID  INT NOT NULL REFERENCES Conversation(ConversationID) ON DELETE CASCADE,
-    UserID          INT NOT NULL REFERENCES [User](UserID),
-    Role            NVARCHAR(20) NOT NULL DEFAULT 'Member' CHECK (Role IN ('Member', 'Admin')),
-    JoinedAt        DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
-    LastReadMessageID INT NULL,
-    CONSTRAINT UQ_Participant UNIQUE (ConversationID, UserID)
-);
-GO
-
--- Table for actual messages
-CREATE TABLE Message (
-    MessageID       INT IDENTITY(1,1) PRIMARY KEY,
-    ConversationID  INT NOT NULL REFERENCES Conversation(ConversationID) ON DELETE CASCADE,
-    SenderID        INT NOT NULL REFERENCES [User](UserID),
-    Content         NVARCHAR(MAX) NOT NULL,
-    MessageType     NVARCHAR(20) NOT NULL DEFAULT 'Text' CHECK (MessageType IN ('Text', 'Image', 'File', 'System')),
-    CreatedAt       DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
-    IsDeleted       BIT NOT NULL DEFAULT 0
-);
-GO
-
--- Table for blocked users
-CREATE TABLE BlockList (
-    BlockID         INT IDENTITY(1,1) PRIMARY KEY,
-    BlockerID       INT NOT NULL REFERENCES [User](UserID),
-    BlockedID       INT NOT NULL REFERENCES [User](UserID),
-    CreatedAt       DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
-    CONSTRAINT UQ_BlockList UNIQUE (BlockerID, BlockedID)
-);
-GO
-
--- ============================================================
--- TourBuddy Chat Module Schema
--- ============================================================
-
--- Table for tracking chat threads (1-to-1 or Group)
-CREATE TABLE Conversation (
-    ConversationID  INT IDENTITY(1,1) PRIMARY KEY,
-    Type            NVARCHAR(20) NOT NULL CHECK (Type IN ('Direct', 'Group')),
-    Title           NVARCHAR(255) NULL, -- Null for Direct chats
-    CreatedAt       DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
-    UpdatedAt       DATETIME2 NOT NULL DEFAULT SYSDATETIME()
-);
-GO
-
--- Table mapping users to conversations
-CREATE TABLE ConversationParticipant (
-    ParticipantID   INT IDENTITY(1,1) PRIMARY KEY,
-    ConversationID  INT NOT NULL REFERENCES Conversation(ConversationID) ON DELETE CASCADE,
-    UserID          INT NOT NULL REFERENCES [User](UserID),
-    Role            NVARCHAR(20) NOT NULL DEFAULT 'Member' CHECK (Role IN ('Member', 'Admin')),
-    JoinedAt        DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
-    LastReadMessageID INT NULL,
-    CONSTRAINT UQ_Participant UNIQUE (ConversationID, UserID)
-);
-GO
-
--- Table for actual messages
-CREATE TABLE Message (
-    MessageID       INT IDENTITY(1,1) PRIMARY KEY,
-    ConversationID  INT NOT NULL REFERENCES Conversation(ConversationID) ON DELETE CASCADE,
-    SenderID        INT NOT NULL REFERENCES [User](UserID),
-    Content         NVARCHAR(MAX) NOT NULL,
-    MessageType     NVARCHAR(20) NOT NULL DEFAULT 'Text' CHECK (MessageType IN ('Text', 'Image', 'File', 'System')),
-    CreatedAt       DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
-    IsDeleted       BIT NOT NULL DEFAULT 0
-);
-GO
-
--- Table for blocked users
-CREATE TABLE BlockList (
-    BlockID         INT IDENTITY(1,1) PRIMARY KEY,
-    BlockerID       INT NOT NULL REFERENCES [User](UserID),
-    BlockedID       INT NOT NULL REFERENCES [User](UserID),
-    CreatedAt       DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
-    CONSTRAINT UQ_BlockList UNIQUE (BlockerID, BlockedID)
-);
-GO

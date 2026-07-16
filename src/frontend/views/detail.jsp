@@ -352,7 +352,7 @@
                                     <div class="reviewer-meta">
                                         <span class="reviewer-name"><%= rev.getCustomerName() %></span>
                                         <span class="reviewer-date">Đăng ngày: <%= dateStr %></span>
-                                        <button class="btn-report-review" data-id="<%= rev.getReviewID() %>" style="background:none; border:none; color:#ea580c; cursor:pointer; font-size:0.75rem; margin-top:4px; display:inline-flex; align-items:center; gap:4px; padding:0; outline:none;"><i class="fa-solid fa-flag"></i> Báo cáo vi phạm</button>
+                                        <button class="btn-report-review" data-id="<%= rev.getReviewId() %>" style="background:none; border:none; color:#ea580c; cursor:pointer; font-size:0.75rem; margin-top:4px; display:inline-flex; align-items:center; gap:4px; padding:0; outline:none;"><i class="fa-solid fa-flag"></i> Báo cáo vi phạm</button>
                                     </div>
                                 </div>
                                 <div class="reviewer-actions">
