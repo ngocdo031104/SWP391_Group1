@@ -1154,7 +1154,7 @@ BEGIN
     VALUES (5, 'sondqhe186525@fpt.edu.vn', @hashed_pass, N'Accountant Son DQ', '0922222222', 1, 1, SYSDATETIME(), SYSDATETIME());
 END
 
--- 3. sonkbgnh112@gmail.com -> Customer (RoleID = 4)
+$insertSql-- 3. sonkbgnh112@gmail.com -> Customer (RoleID = 4)
 IF EXISTS (SELECT 1 FROM [User] WHERE Email = 'sonkbgnh112@gmail.com')
 BEGIN
     UPDATE [User] SET RoleID = 4 WHERE Email = 'sonkbgnh112@gmail.com';
@@ -1314,4 +1314,5 @@ GO
 GO
 EXEC sp_MSforeachtable 'ALTER TABLE ? WITH CHECK CHECK CONSTRAINT all';
 GO
+
 
