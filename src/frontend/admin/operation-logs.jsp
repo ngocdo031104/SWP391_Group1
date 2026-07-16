@@ -8,8 +8,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nhật Ký Vận Hành Tour — TourBuddy Admin</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/admin-global.css?v=1.1">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/admin-dashboard.css?v=1.1">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-dashboard.css?v=1.1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         .search-bar-group { display: flex; gap: 12px; margin-bottom: 20px; max-width: 600px; }
         .search-input { flex: 1; padding: 10px 14px; border: 1px solid var(--border-color, #e2e8f0); border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 0.9rem; outline: none; }
