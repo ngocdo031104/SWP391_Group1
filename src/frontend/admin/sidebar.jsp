@@ -70,17 +70,31 @@
             </a>
         </li>
 
-        <li class="${activePage eq 'fraud' ? 'active' : ''}">
+        <li class="${activePage eq 'fraud-monitor' ? 'active' : ''}">
             <a href="${pageContext.request.contextPath}/admin/fraud-monitor">
                 <i data-lucide="shield-alert"></i>
                 <span>Giám Sát Gian Lận</span>
             </a>
         </li>
 
-        <li class="${activePage eq 'financial' ? 'active' : ''}">
+        <li class="${activePage eq 'financial-audit' ? 'active' : ''}">
             <a href="${pageContext.request.contextPath}/admin/financial-audit">
-                <i data-lucide="file-search"></i>
+                <i data-lucide="file-check-2"></i>
                 <span>Kiểm Toán Tài Chính</span>
+            </a>
+        </li>
+
+        <li class="${activePage eq 'moderation' ? 'active' : ''}">
+            <a href="${pageContext.request.contextPath}/admin/moderation">
+                <i data-lucide="shield-alert"></i>
+                <span>Kiểm Duyệt Nội Dung</span>
+            </a>
+        </li>
+
+        <li class="${activePage eq 'assignments' ? 'active' : ''}">
+            <a href="${pageContext.request.contextPath}/admin/assignments">
+                <i data-lucide="clipboard-list"></i>
+                <span>Nhật Ký Phân Công</span>
             </a>
         </li>
 
