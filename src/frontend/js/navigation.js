@@ -102,30 +102,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* ==========================================================================
-       NEWSLETTER SUBSCRIPTION FORM
-       ========================================================================== */
-    const newsletterForm = document.getElementById('newsletter-subscription-form');
-    if (newsletterForm) {
-        newsletterForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            alert('\u0110\u0103ng k\u00fd nh\u1eadn tin th\u00e0nh c\u00f4ng! C\u1ea3m \u01a1n b\u1ea1n \u0111\u00e3 theo d\u00f5i TourBuddy.');
-            newsletterForm.reset();
-        });
-    }
-
-    /* ==========================================================================
        SYNC BADGES
        ========================================================================== */
     const notifCountBadge = document.getElementById('notification-count');
     if (notifCountBadge) {
-        // Base context path
-        const contextPath = window.location.pathname.substring(0, window.location.pathname.indexOf("/", 2)) === '/SWP391_Group1' ? '/SWP391_Group1' : '';
+        const contextPath = (typeof APP_CONTEXT !== 'undefined') ? APP_CONTEXT : '';
         fetch(contextPath + '/api/header-counts?t=' + new Date().getTime())
             .then(res => res.json())
             .then(data => {
                 if (data.unreadNotifications > 0) {
                     notifCountBadge.innerText = data.unreadNotifications;
-                    notifCountBadge.style.display = 'flex'; // show badge
+                    notifCountBadge.style.display = 'flex';
                 } else {
                     notifCountBadge.style.display = 'none';
                 }
