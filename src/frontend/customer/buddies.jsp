@@ -1,4 +1,4 @@
-﻿<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
+<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
@@ -804,6 +804,11 @@
                                         <input type="hidden" name="action" value="create">
                                         <input type="hidden" name="targetUserId" value="${friend.userId}">
                                         <button type="submit" class="btn-action btn-action-info"><i data-lucide="message-circle" style="width:16px;"></i> Nhắn tin</button>
+                                    </form>
+                                    <form action="${pageContext.request.contextPath}/customer/buddies" method="POST" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn hủy kết bạn với người này không?');">
+                                        <input type="hidden" name="action" value="unfriend">
+                                        <input type="hidden" name="targetId" value="${friend.userId}">
+                                        <button type="submit" class="btn-action btn-action-danger"><i data-lucide="user-minus" style="width:16px;"></i> Hủy kết bạn</button>
                                     </form>
                                     <c:set var="pref" value="${friendPrefs[friend.userId]}"/>
                                     <a href="javascript:void(0)" 

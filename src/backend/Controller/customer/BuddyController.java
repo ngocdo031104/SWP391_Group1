@@ -173,6 +173,16 @@ public class BuddyController extends HttpServlet {
                         session.setAttribute("errorMsg", "Không thể hủy lời mời. Lời mời có thể đã được chấp nhận hoặc bị từ chối.");
                     }
                     break;
+
+                case "unfriend":
+                    int targetId = Integer.parseInt(request.getParameter("targetId"));
+                    boolean unfriended = buddyRequestDAO.unfriendBuddy(currentUserId, targetId);
+                    if (unfriended) {
+                        session.setAttribute("successMsg", "Đã hủy kết bạn thành công.");
+                    } else {
+                        session.setAttribute("errorMsg", "Lỗi khi hủy kết bạn.");
+                    }
+                    break;
             }
         } catch (Exception e) {
             session.setAttribute("errorMsg", "Đã có lỗi xảy ra: " + e.getMessage());
