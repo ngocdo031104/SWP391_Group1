@@ -26,7 +26,7 @@
     <!-- Bootstrap CSS (for DataTables styling only) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-dashboard.css?v=1.8">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-dashboard.css?v=2.0">
     <style>
         /* Tùy chỉnh modal và bảng cho phù hợp với theme */
         .admin-dashboard-page { padding: 20px; }

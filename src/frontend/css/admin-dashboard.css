@@ -121,10 +121,14 @@
   background-color: rgba(139, 92, 246, 0.6);
 }
 
-.sidebar-menu {
-  list-style: none;
-  padding: 0;
+.sidebar-menu, .sidebar-submenu {
+  list-style: none !important;
+  list-style-type: none !important;
+  padding: 0 !important;
   margin: 0;
+}
+
+.sidebar-menu {
   display: flex;
   flex-direction: column;
   gap: 2px;

@@ -14,7 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-dashboard.css?v=1.6">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-dashboard.css?v=2.0">
     <style>
         .permission-badge { display: inline-block; background: #eef2ff; padding: 4px 8px; margin: 3px; border-radius: 4px; font-size: 12px; color: #4f46e5; border: 1px solid #c7d2fe; transition: all 0.2s; }
         .permission-badge:hover { background: #4f46e5 !important; color: #ffffff !important; border-color: #4f46e5; }
