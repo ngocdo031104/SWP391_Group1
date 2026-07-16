@@ -34,17 +34,16 @@
         .page-link:hover, .page-link.active { background-color: #2563eb; color: #ffffff; border-color: #2563eb; font-weight: bold; }
     </style>
 </head>
-<body>
+<body class="dashboard-body">
 
-<div class="admin-container">
+<div class="dashboard-wrapper">
     <!-- Sidebar -->
-    <jsp:include page="/admin/sidebar.jsp">
-        <jsp:param name="activePage" value="oplogs" />
-    </jsp:include>
+    <c:set var="activePage" value="oplogs" scope="request" />
+    <jsp:include page="sidebar.jsp" />
 
     <!-- Main Content Area -->
-    <main class="main-content" style="padding: 24px;">
-        <header class="content-header" style="margin-bottom: 24px;">
+    <main class="main-content">
+        <header class="top-header">
             <h1 style="font-size: 1.8rem; font-weight: 700; color: #1e293b; font-family: 'Outfit', sans-serif;">Nhật Ký Vận Hành Tour</h1>
             <p style="color: #64748b; font-size: 0.95rem; margin-top: 4px;">Giám sát lịch sử hoạt động, trạng thái chuyển đổi và thay đổi vận hành của các lịch trình khởi hành.</p>
         </header>
