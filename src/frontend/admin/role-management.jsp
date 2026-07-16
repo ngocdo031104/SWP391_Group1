@@ -532,7 +532,7 @@
         });
     }
 
-    // Toasts — tránh template literal có ${} vì JSP EL parser sẽ cố parse và gây 500.
+    // Toasts — tránh template literal có dollar-brace vì JSP EL parser sẽ cố parse và gây 500.
     function showToast(type, msg) {
         const container = document.getElementById('toast-container');
         const toast = document.createElement('div');

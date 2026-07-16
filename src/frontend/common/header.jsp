@@ -9,8 +9,10 @@
     <meta name="description" content="Khám phá tour du lịch cao cấp, resort sang trọng và ưu đãi hấp dẫn khắp Việt Nam. Đặt hành trình đáng nhớ cùng TourBuddy ngay hôm nay.">
     <!-- Using Lucide CDN for icons reliability -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Khai báo context path để các file JS tĩnh có thể dùng -->
-    <script>var APP_CONTEXT = '${pageContext.request.contextPath}';</script>
+    <script>
+        var APP_CONTEXT = '${pageContext.request.contextPath}';
+        window.contextPath = '${pageContext.request.contextPath}';
+    </script>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/header.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/footer.css">
@@ -91,6 +93,15 @@
                                 <a href="${pageContext.request.contextPath}/customer/wishlist" id="dropdown-wishlist-link"><i data-lucide="heart"></i> Yêu Thích</a>
                                 <c:if test="${sessionUser.role.roleName eq 'Admin'}">
                                     <a href="${pageContext.request.contextPath}/admin/dashboard" id="dropdown-admin-link"><i data-lucide="shield-alert"></i> Quản Trị (Admin)</a>
+                                </c:if>
+                                <c:if test="${sessionUser.role.roleName eq 'Staff'}">
+                                    <a href="${pageContext.request.contextPath}/staff/dashboard" id="dropdown-staff-link"><i data-lucide="shield-alert"></i> Quản Trị (Staff)</a>
+                                </c:if>
+                                <c:if test="${sessionUser.role.roleName eq 'Guide'}">
+                                    <a href="${pageContext.request.contextPath}/guide/dashboard" id="dropdown-guide-link"><i data-lucide="shield-alert"></i> Quản Trị (Guide)</a>
+                                </c:if>
+                                <c:if test="${sessionUser.role.roleName eq 'Accountant'}">
+                                    <a href="${pageContext.request.contextPath}/admin/analytics" id="dropdown-accountant-link"><i data-lucide="shield-alert"></i> Ban Kế Toán (Accountant)</a>
                                 </c:if>
                                 <a href="${pageContext.request.contextPath}/profile" id="dropdown-settings-link"><i data-lucide="settings"></i> Cài Đặt</a>
                                 <a href="${pageContext.request.contextPath}/logout" class="logout-btn" id="dropdown-logout-btn"><i data-lucide="log-out"></i> Đăng Xuất</a>
