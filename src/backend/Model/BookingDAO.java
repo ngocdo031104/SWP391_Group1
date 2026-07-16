@@ -491,6 +491,7 @@ public class BookingDAO extends DBContext {
                     Booking b = mapBooking(rs);
                     // G\u1eafn th\u00f4ng tin kh\u00e1ch h\u00e0ng v\u00e0o Booking.customer \u0111\u1ec3 JSP truy c\u1eadp qua EL
                     User customer = new User();
+                    customer.setUserId(rs.getInt("CustomerID"));
                     customer.setFullName(rs.getString("CustomerName"));
                     customer.setEmail(rs.getString("CustomerEmail"));
                     customer.setPhoneNumber(rs.getString("CustomerPhone"));
