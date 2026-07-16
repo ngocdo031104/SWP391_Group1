@@ -554,7 +554,7 @@ public class UserDAO extends DBContext {
             connection.setAutoCommit(false);
             
             String[] deleteQueries = {
-                "DELETE FROM Notification WHERE UserID = ?",
+                "DELETE FROM Notifications WHERE userId = ?",
                 "DELETE FROM TravelPreference WHERE UserId = ?",
                 "DELETE FROM PasswordRecovery WHERE UserID = ?",
                 "DELETE FROM AccountActivityLog WHERE UserID = ?",
