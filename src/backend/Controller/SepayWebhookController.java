@@ -6,12 +6,14 @@ package Controller;
 // Ý nghĩa: Khi SePay báo khách đã chuyển khoản đúng nội dung booking, controller tạo Payment và cập nhật Booking sang Success sau khi thanh toán hợp lệ.
 
 import Entities.Booking;
+import Entities.Invoice;
+import Entities.Notification;
 import Entities.Payment;
 import Model.BookingDAO;
 import Model.CouponDAO;
-import Model.PaymentDAO;
 import Model.InvoiceDAO;
-import Entities.Invoice;
+import Model.NotificationDAO;
+import Model.PaymentDAO;
 import Utils.SepayConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -116,6 +118,26 @@ public class SepayWebhookController extends HttpServlet {
             if (booking.getCouponId() != null) {
                 couponDAO = new CouponDAO();
                 couponDAO.updateCouponUsage(booking.getCouponId());
+            }
+
+            // UC30: Tự động gửi thông báo in-app cho khách khi booking được xác nhận thanh toán.
+            // Dùng NotificationDAO.insertNotification thay vì SendNotificationController vì đây là luồng server-to-server,
+            // không có HTTP request của người dùng. Channel=SYSTEM để thông báo hiện trong chuông thông báo của khách.
+            try {
+                NotificationDAO notifDAO = new NotificationDAO();
+                Notification notif = new Notification();
+                notif.setUserId(booking.getCustomerId());
+                notif.setSenderId(null); // Hệ thống gửi tự động, không có sender cụ thể
+                notif.setTitle("Đặt tour thành công — " + bookingCode);
+                notif.setContent("Booking " + bookingCode + " đã được xác nhận. Cảm ơn bạn đã đặt tour tại TourBuddy! Xem chi tiết tại mục Lịch sử đặt tour.");
+                notif.setChannel("SYSTEM");
+                notif.setCategory("Booking");
+                notif.setScheduledAt(null);
+                notif.setStatus("SENT");
+                notifDAO.insertNotification(notif);
+            } catch (Exception notifEx) {
+                // Không để lỗi notification làm hỏng response webhook
+                notifEx.printStackTrace();
             }
 
             response.getWriter().write("{\"success\":true,\"matched\":true,\"bookingCode\":\"" + escapeJson(bookingCode) + "\"}");

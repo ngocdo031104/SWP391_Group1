@@ -1,11 +1,12 @@
 package Controller.customer;
 
 import Entities.Booking;
-import Entities.BookingParticipant;
 import Entities.CancellationRequest;
+import Entities.Notification;
 import Entities.User;
 import Model.BookingDAO;
 import Model.CancellationRequestDAO;
+import Model.NotificationDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -83,6 +84,23 @@ public class CustomerBookingCancelController extends HttpServlet {
         cancelRequest.setReason(reason.trim());
 
         if (cancelDAO.createRequest(cancelRequest)) {
+            // UC30: Gửi thông báo in-app xác nhận đã tiếp nhận yêu cầu hủy.
+            // Không để lỗi notification chặn redirect vì createRequest() đã thành công.
+            try {
+                NotificationDAO notifDAO = new NotificationDAO();
+                Notification notif = new Notification();
+                notif.setUserId(user.getUserId());
+                notif.setSenderId(null);
+                notif.setTitle("Yêu cầu hủy đã được tiếp nhận — " + bookingCode);
+                notif.setContent("Yêu cầu hủy đặt tour của bạn (đơn " + bookingCode + ") đã được ghi nhận. Kế toán sẽ xử lý trong 1–3 ngày làm việc. Theo dõi trạng thái trong mục Lịch sử đặt tour.");
+                notif.setChannel("SYSTEM");
+                notif.setCategory("Booking");
+                notif.setScheduledAt(null);
+                notif.setStatus("SENT");
+                notifDAO.insertNotification(notif);
+            } catch (Exception notifEx) {
+                notifEx.printStackTrace();
+            }
             request.getSession().setAttribute("cancelSuccess", "Yêu cầu hủy đã được gửi thành công. Chúng tôi sẽ liên hệ lại với bạn sớm nhất.");
         } else {
             request.getSession().setAttribute("cancelError", "Có lỗi xảy ra khi gửi yêu cầu hủy. Vui lòng thử lại sau.");

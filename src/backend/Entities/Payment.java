@@ -15,6 +15,15 @@ public class Payment implements Serializable {
     private String gatewayResponse;
     private Timestamp createdAt;
 
+    // Extra fields for Accountant View
+    private String bookingCode;
+    private String customerName;
+
+    public String getBookingCode() { return bookingCode; }
+    public void setBookingCode(String bookingCode) { this.bookingCode = bookingCode; }
+    public String getCustomerName() { return customerName; }
+    public void setCustomerName(String customerName) { this.customerName = customerName; }
+
     public Payment() {
     }
 

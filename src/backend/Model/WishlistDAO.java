@@ -1,7 +1,5 @@
 package Model;
 
-import Entities.Tour;
-import Entities.TourMedia;
 import Utils.DBContext;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -59,7 +57,7 @@ public class WishlistDAO extends DBContext {
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(WishlistDAO.class.getName()).log(Level.SEVERE, "Error getting wishlist tour ids", ex);
+            Logger.getLogger(WishlistDAO.class.getName()).log(Level.SEVERE, "Error getting wishlist tour IDs", ex);
         }
         return list;
     }
@@ -143,4 +141,3 @@ public class WishlistDAO extends DBContext {
         return 0;
     }
 }
-

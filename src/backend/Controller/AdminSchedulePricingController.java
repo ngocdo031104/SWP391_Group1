@@ -32,9 +32,6 @@ public class AdminSchedulePricingController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
         
         // 1. Kiểm tra quyền Admin
         User sessionUser = (User) request.getSession().getAttribute("sessionUser");
@@ -68,7 +65,6 @@ public class AdminSchedulePricingController extends HttpServlet {
                         sJson.addProperty("guideName", s.getGuide() != null ? s.getGuide().getFullName() : "Chưa phân công");
                         sJson.addProperty("departureStr", s.getDepartureDate().toString());
                         sJson.addProperty("returnStr", s.getReturnDate().toString());
-                        sJson.addProperty("notes", s.getNotes() != null ? s.getNotes() : "");
                         jsonArray.add(sJson);
                     }
                     
@@ -176,135 +172,57 @@ public class AdminSchedulePricingController extends HttpServlet {
                 String tourStatus = request.getParameter("tourStatus"); // Scheduled, InProgress, Completed, Cancelled
 
                 // Validation
-                if (tourId <= 0 || depStr == null || retStr == null || totalSeats <= 0 || priceAdult < 0 || priceChild < 0 || priceInfant < 0) {
+                if (tourId <= 0 || depStr == null || retStr == null || totalSeats <= 0 || priceAdult < 0) {
                     result.addProperty("status", "error");
-                    result.addProperty("message", "Vui lòng nhập đầy đủ thông tin hợp lệ (Ngày, số chỗ > 0, giá vé lớn hơn hoặc bằng 0).");
+                    result.addProperty("message", "Vui lòng nhập đầy đủ thông tin hợp lệ (Ngày, số chỗ > 0, giá lớn hơn 0).");
                 } else {
-                    TourDAO tourDAO = null;
-                    Tour tour = null;
-                    try {
-                        tourDAO = new TourDAO();
-                        tour = tourDAO.getTourById(tourId);
-                    } catch (Exception e) {
-                        LOGGER.log(Level.SEVERE, "Lỗi khi lấy thông tin tour để kiểm tra điều kiện", e);
-                    } finally {
-                        if (tourDAO != null) tourDAO.close();
-                    }
+                    Date departureDate = Date.valueOf(depStr);
+                    Date returnDate = Date.valueOf(retStr);
 
-                    if (tour == null) {
+                    if (returnDate.before(departureDate)) {
                         result.addProperty("status", "error");
-                        result.addProperty("message", "Tour được chọn không tồn tại trên hệ thống.");
+                        result.addProperty("message", "Ngày về không được trước ngày khởi hành.");
                     } else {
-                        Date departureDate = Date.valueOf(depStr);
-                        Date returnDate = Date.valueOf(retStr);
-
-                        // Lấy ngày hiện tại
-                        Date today = new Date(System.currentTimeMillis());
-                        java.util.Calendar cal = java.util.Calendar.getInstance();
-                        cal.setTime(today);
-                        cal.set(java.util.Calendar.HOUR_OF_DAY, 0);
-                        cal.set(java.util.Calendar.MINUTE, 0);
-                        cal.set(java.util.Calendar.SECOND, 0);
-                        cal.set(java.util.Calendar.MILLISECOND, 0);
-                        Date todayStart = new Date(cal.getTimeInMillis());
-
-                        // 1. Kiểm tra ngày khởi hành ở quá khứ (chỉ áp dụng khi tạo mới)
-                        if ("addSchedule".equalsIgnoreCase(action) && departureDate.before(todayStart)) {
-                            result.addProperty("status", "error");
-                            result.addProperty("message", "Ngày khởi hành không được ở quá khứ.");
+                        TourSchedule sched = new TourSchedule();
+                        sched.setTourId(tourId);
+                        sched.setDepartureDate(departureDate);
+                        sched.setReturnDate(returnDate);
+                        sched.setTotalSeats(totalSeats);
+                        sched.setPriceAdult(priceAdult);
+                        sched.setPriceChild(priceChild);
+                        sched.setPriceInfant(priceInfant);
+                        sched.setTransportation(transportation);
+                        sched.setStatus(status);
+                        sched.setTourStatus(tourStatus != null ? tourStatus : "Scheduled");
+                        if (guideId > 0) {
+                            sched.setGuideId(guideId);
+                        } else {
+                            sched.setGuideId(null);
                         }
-                        // 2. Ngày về không được trước ngày khởi hành
-                        else if (returnDate.before(departureDate)) {
-                            result.addProperty("status", "error");
-                            result.addProperty("message", "Ngày về không được trước ngày khởi hành.");
+
+                        boolean success = false;
+                        if ("addSchedule".equalsIgnoreCase(action)) {
+                            sched.setAvailableSeats(totalSeats); // Mặc định số chỗ còn trống bằng tổng số chỗ khi mới tạo
+                            int newId = scheduleDAO.insertSchedule(sched);
+                            success = newId > 0;
+                        } else {
+                            int scheduleId = parseInt(request.getParameter("scheduleId"), 0);
+                            sched.setScheduleId(scheduleId);
+                            // Lấy availableSeats gửi từ form hoặc tự tính toán
+                            int availableSeats = parseInt(request.getParameter("availableSeats"), totalSeats);
+                            if (availableSeats > totalSeats) {
+                                availableSeats = totalSeats;
+                            }
+                            sched.setAvailableSeats(availableSeats);
+                            success = scheduleDAO.updateSchedule(sched);
                         }
-                        else {
-                            // 3. Tour không được kéo dài quá lâu (chênh lệch ngày không vượt quá thời lượng tour)
-                            long diffInMillies = Math.abs(returnDate.getTime() - departureDate.getTime());
-                            long diffDays = java.util.concurrent.TimeUnit.DAYS.convert(diffInMillies, java.util.concurrent.TimeUnit.MILLISECONDS) + 1;
-                            
-                            int availableSeats = "editSchedule".equalsIgnoreCase(action)
-                                    ? parseInt(request.getParameter("availableSeats"), totalSeats)
-                                    : totalSeats;
-                            
-                            if (diffDays > tour.getDurationDays()) {
-                                result.addProperty("status", "error");
-                                result.addProperty("message", "Lịch trình kéo dài quá lâu (" + diffDays + " ngày). Thời lượng tối đa được cấu hình cho tour này là " + tour.getDurationDays() + " ngày.");
-                            }
-                            // 3.5. Kiểm tra số ghế còn trống không được lớn hơn tổng số chỗ
-                            else if ("editSchedule".equalsIgnoreCase(action) && availableSeats > totalSeats) {
-                                result.addProperty("status", "error");
-                                result.addProperty("message", "Số ghế còn trống (" + availableSeats + ") không được vượt quá tổng số chỗ (" + totalSeats + ")!");
-                            }
-                            // 4. Khóa/chặn giá trẻ sơ sinh đối với các tour mạo hiểm (Biển/Núi)
-                            else if ((tour.getCategoryId() == 1 || tour.getCategoryId() == 2) && priceInfant > 0) {
-                                result.addProperty("status", "error");
-                                result.addProperty("message", "Tour thuộc danh mục mạo hiểm (Biển & Đảo / Núi & Rừng), không cho phép trẻ sơ sinh tham gia.");
-                            }
-                            else {
-                                TourSchedule sched = new TourSchedule();
-                                sched.setTourId(tourId);
-                                sched.setDepartureDate(departureDate);
-                                sched.setReturnDate(returnDate);
-                                sched.setTotalSeats(totalSeats);
-                                sched.setPriceAdult(priceAdult);
-                                sched.setPriceChild(priceChild);
-                                sched.setPriceInfant(priceInfant);
-                                sched.setTransportation(transportation);
-                                sched.setStatus(status);
-                                sched.setTourStatus(tourStatus != null ? tourStatus : "Scheduled");
-                                if (guideId > 0) {
-                                    sched.setGuideId(guideId);
-                                } else {
-                                    sched.setGuideId(null);
-                                }
 
-                                boolean success = false;
-                                String notes = request.getParameter("notes");
-                                if (notes == null) {
-                                    notes = "";
-                                }
-
-                                if ("addSchedule".equalsIgnoreCase(action)) {
-                                    sched.setAvailableSeats(totalSeats); // Mặc định số chỗ còn trống bằng tổng số chỗ khi mới tạo
-                                    int newId = scheduleDAO.insertSchedule(sched);
-                                    success = newId > 0;
-                                    if (success && guideId > 0) {
-                                        GuideDAO guideDAO = new GuideDAO();
-                                        try {
-                                            guideDAO.assignGuideToSchedule(newId, guideId, sessionUser.getUserId(), notes);
-                                        } finally {
-                                            guideDAO.close();
-                                        }
-                                    }
-                                } else {
-                                    int scheduleId = parseInt(request.getParameter("scheduleId"), 0);
-                                    sched.setScheduleId(scheduleId);
-                                    sched.setAvailableSeats(availableSeats);
-                                    
-                                    // Lấy thông tin HDV cũ để kiểm tra xem có thay đổi hay không
-                                    TourSchedule oldSched = scheduleDAO.getScheduleById(scheduleId);
-                                    Integer oldGuideId = (oldSched != null) ? oldSched.getGuideId() : null;
-
-                                    success = scheduleDAO.updateSchedule(sched);
-                                    if (success && guideId > 0 && (oldGuideId == null || oldGuideId != guideId)) {
-                                        GuideDAO guideDAO = new GuideDAO();
-                                        try {
-                                            guideDAO.assignGuideToSchedule(scheduleId, guideId, sessionUser.getUserId(), notes);
-                                        } finally {
-                                            guideDAO.close();
-                                        }
-                                    }
-                                }
-
-                                if (success) {
-                                    result.addProperty("status", "success");
-                                    result.addProperty("message", "Lưu thông tin lịch trình thành công!");
-                                } else {
-                                    result.addProperty("status", "error");
-                                    result.addProperty("message", "Lưu thông tin lịch trình thất bại.");
-                                }
-                            }
+                        if (success) {
+                            result.addProperty("status", "success");
+                            result.addProperty("message", "Lưu thông tin lịch trình thành công!");
+                        } else {
+                            result.addProperty("status", "error");
+                            result.addProperty("message", "Lưu thông tin lịch trình thất bại.");
                         }
                     }
                 }

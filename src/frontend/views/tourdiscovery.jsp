@@ -1,5 +1,4 @@
-﻿<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
-
+<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ page import="java.util.List" %>
 <%@ page import="Entities.Tour" %>
@@ -345,16 +344,13 @@
                     else if (dest.contains("hà giang")) imgUrl = "assets/images/tour_hagiang.png";
                 }
                 
-                // Map category dynamically matching names like HomePage
-                String catStr = "all";
-                if (categories != null) {
-                    for (TourCategory cat : categories) {
-                        if (cat.getCategoryId() == t.getCategoryId()) {
-                            catStr = Utils.CategoryHelper.toSlug(cat.getCategoryName());
-                            break;
-                        }
-                    }
-                }
+                // Map category
+                String catStr = "luxury";
+                if (t.getCategoryId() == 1) catStr = "beach";
+                else if (t.getCategoryId() == 2) catStr = "hiking";
+                else if (t.getCategoryId() == 3) catStr = "cultural";
+                else if (t.getCategoryId() == 4) catStr = "adventure";
+                else if (t.getCategoryId() == 5) catStr = "luxury";
                 
                 // Get seats and departure city
                 int seatsLeft = 10;
@@ -375,10 +371,10 @@
                 if (dl.contains("trung") || dl.contains("medium")) diffStr = "medium";
                 else if (dl.contains("khó") || dl.contains("hard") || dl.contains("thử thách")) diffStr = "hard";
                 
-                // Map pins coordinates dynamically matching destination
+                // Map pins coordinates
                 String lat = "48%";
                 String lng = "50%";
-                String destName = t.getDestination() != null ? t.getDestination() : "";
+                String destName = t.getDestination();
                 if (destName.contains("Đà Nẵng")) { lat = "45%"; lng = "52%"; }
                 else if (destName.contains("Phú Quốc")) { lat = "88%"; lng = "25%"; }
                 else if (destName.contains("Hạ Long")) { lat = "18%"; lng = "47%"; }
@@ -407,7 +403,6 @@
             category: "<%= catStr %>",
             seatsLeft: <%= seatsLeft %>,
             seatsTotal: <%= seatsTotal %>,
-            isWishlisted: <%= (wishlistTourIds != null && wishlistTourIds.contains(t.getTourId())) ? "true" : "false" %>,
             photos: [
                 <%
                 if (t.getMediaList() != null && !t.getMediaList().isEmpty()) {

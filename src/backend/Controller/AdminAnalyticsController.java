@@ -106,6 +106,17 @@ public class AdminAnalyticsController extends HttpServlet {
         }
 
         // Standard GET request, forward to JSP page
+        if (sessionUser.getRoleId() == 5) {
+            Model.CancellationRequestDAO cancelDAO = null;
+            try {
+                cancelDAO = new Model.CancellationRequestDAO();
+                int pendingRefunds = cancelDAO.getRequestsByStatusForAccountant("Pending").size();
+                request.setAttribute("pendingRefunds", pendingRefunds);
+            } finally {
+                if (cancelDAO != null) cancelDAO.close();
+            }
+        }
+        
         request.getRequestDispatcher("/admin/analytics.jsp").forward(request, response);
     }
 
