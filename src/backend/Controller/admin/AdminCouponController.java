@@ -87,10 +87,18 @@ public class AdminCouponController extends HttpServlet {
             Double maxDiscountAmount = (maxDiscountStr != null && !maxDiscountStr.trim().isEmpty()) ? Double.parseDouble(maxDiscountStr) : null;
             
             // Validate: Nếu là Percentage thì bắt buộc phải nhập số tiền giảm tối đa
-            if ("Percentage".equals(discountType) && maxDiscountAmount == null) {
-                session.setAttribute("errorMessage", "Vui lòng nhập số tiền Giảm Tối Đa khi tạo mã giảm giá theo Phần Trăm.");
-                response.sendRedirect(request.getContextPath() + "/admin/coupons");
-                return;
+            if ("Percentage".equals(discountType)) {
+                if (maxDiscountAmount == null) {
+                    session.setAttribute("errorMessage", "Vui lòng nhập số tiền Giảm Tối Đa khi tạo mã giảm giá theo Phần Trăm.");
+                    response.sendRedirect(request.getContextPath() + "/admin/coupons");
+                    return;
+                }
+                // BR: Percentage coupon không được vượt quá 100% để tránh discount âm / total > 100%.
+                if (discountValue > 100) {
+                    session.setAttribute("errorMessage", "Giá trị giảm theo phần trăm không được vượt quá 100%.");
+                    response.sendRedirect(request.getContextPath() + "/admin/coupons");
+                    return;
+                }
             }
 
             String maxUsesStr = request.getParameter("maxUses");

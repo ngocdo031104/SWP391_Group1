@@ -1,4 +1,4 @@
-﻿<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
@@ -6,12 +6,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nháº­t KĂ½ Kiá»ƒm ToĂ¡n TĂ i ChĂ­nh - TourBuddy Admin</title>
+    <title>Nhật Ký Kiểm Toán Tài Chính — TourBuddy Admin</title>
     
     <!-- Use exactly the same structure/CSS as users.jsp -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">`r`n    <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="${pageContext.request.contextPath}/css/admin-dashboard.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/css/admin-dashboard.css?v=2.1" rel="stylesheet">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-space-overrides.css?v=1.0">
     
     <style>
         .badge-success { background-color: #28a745; }
@@ -332,7 +335,9 @@
             html += "</table>";
             
             let excelFile = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:x='urn:schemas-microsoft-com:office:excel' xmlns='http://www.w3.org/TR/REC-html40'>";
-            excelFile += "<head><meta charset='utf-8'></head>";
+            excelFile += "<head><meta charset='utf-8'>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-space-overrides.css?v=1.0">
+</head>";
             excelFile += "<body>" + html + "</body></html>";
             
             downloadFile(excelFile, filename, 'application/vnd.ms-excel');

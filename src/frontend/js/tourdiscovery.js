@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+﻿document.addEventListener('DOMContentLoaded', () => {
     // Initialize Lucide Icons
     lucide.createIcons();
 
@@ -466,10 +466,20 @@ document.addEventListener('DOMContentLoaded', () => {
                             <span class="price-label">Gi\u00e1 m\u1ed7i kh\u00e1ch</span>
                             <span class="price-val">${priceText} ${priceSpan}</span>
                         </div>
-                        <button class="btn btn-primary btn-sm btn-cta-detail" onclick="window.location.href='detail?id=${tour.id}'">Xem Chi Ti\u1ebft</button>
+                        <button class="btn btn-primary btn-sm btn-cta-detail" onclick="event.stopPropagation(); const contextPath = window.contextPath || ''; window.location.href=contextPath + '/detail?id=${tour.id}'">Xem Chi Tiết</button>
                     </div>
                 </div>
             `;
+
+            // Click card to view details
+            card.style.cursor = 'pointer';
+            card.addEventListener('click', (e) => {
+                if (e.target.closest('.btn-wishlist')) {
+                    return;
+                }
+                const contextPath = window.contextPath || '';
+                window.location.href = `${contextPath}/detail?id=${tour.id}`;
+            });
 
             // Hover interactions to sync with Map Pins
             card.addEventListener('mouseenter', () => highlightPin(tour.id));
@@ -495,7 +505,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 .then(data => {
                     if (!data) return;
                     
-                    if (data.status === 'success') {
+                    if (data.status === 'success' || data.status === 'added' || data.status === 'removed') {
                         wishlistBtn.classList.toggle('active', data.isSaved);
                         const heartIcon = wishlistBtn.querySelector('svg') || wishlistBtn.querySelector('i');
                         if (heartIcon) {
@@ -873,10 +883,18 @@ document.addEventListener('DOMContentLoaded', () => {
                             <span class="price-label">Ch\u1ec9 t\u1eeb</span>
                             <span class="price-val">${formatPrice(tour.priceVND)}</span>
                         </div>
-                        <button class="btn btn-primary btn-sm" onclick="window.location.href='detail?id=${tour.id}'">Xem Ngay</button>
+                        <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); const contextPath = window.contextPath || ''; window.location.href=contextPath + '/detail?id=${tour.id}'">Xem Ngay</button>
                     </div>
                 </div>
             `;
+            
+            // Click card to view details
+            card.style.cursor = 'pointer';
+            card.addEventListener('click', () => {
+                const contextPath = window.contextPath || '';
+                window.location.href = `${contextPath}/detail?id=${tour.id}`;
+            });
+
             recToursGrid.appendChild(card);
         });
 

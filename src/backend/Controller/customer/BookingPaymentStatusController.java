@@ -6,12 +6,16 @@ package Controller.customer;
 // Ý nghĩa: Cho JavaScript polling trạng thái Booking sau khi webhook SePay ghi nhận thanh toán và chuyển đơn sang trạng thái Success.
 
 import Entities.Booking;
+import Entities.Notification;
+import Entities.User;
 import Model.BookingDAO;
+import Model.NotificationDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 @WebServlet(name = "CustomerBookingPaymentStatusController", urlPatterns = {"/customer/booking/payment-status"})
@@ -39,6 +43,10 @@ public class BookingPaymentStatusController extends HttpServlet {
             boolean paid = booking != null && ("Success".equalsIgnoreCase(booking.getStatus()) || "Completed".equalsIgnoreCase(booking.getStatus()));
             String status = booking != null ? booking.getStatus() : "NotFound";
             boolean expired = booking != null && "Cancelled".equalsIgnoreCase(booking.getStatus());
+
+            // Note: Notification logic was removed here because SepayWebhookController 
+            // already sends the "Booking Success" notification. We don't want duplicates.
+
             response.getWriter().write("{\"paid\":" + paid + ",\"expired\":" + expired + ",\"status\":\"" + escapeJson(status) + "\"}");
         } finally {
             if (bookingDAO != null) {

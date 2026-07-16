@@ -46,13 +46,17 @@ public class DetailController extends HttpServlet {
         
         // Đọc tham số "id" của tour từ query string (?id=X)
         String idStr = request.getParameter("id");
-        int id = 1; // Giá trị ID mặc định nếu không truyền hoặc truyền sai định dạng.
+        int id;
         if (idStr != null && !idStr.trim().isEmpty()) {
             try {
                 id = Integer.parseInt(idStr);
             } catch (NumberFormatException e) {
-                // Nếu tham số không phải là số hợp lệ, giữ nguyên id = 1 làm mặc định.
+                response.sendRedirect(request.getContextPath() + "/home");
+                return;
             }
+        } else {
+            response.sendRedirect(request.getContextPath() + "/home");
+            return;
         }
         
         TourDAO tourDAO = null;
@@ -91,6 +95,9 @@ public class DetailController extends HttpServlet {
                     request.setAttribute("wishlistTourIds", wishlistTourIds);
                     wishlistDAO.close();
                 }
+                // Chuyển tiếp yêu cầu (forward) sang trang giao diện detail.jsp
+                request.getRequestDispatcher("/views/detail.jsp").forward(request, response);
+                return;
             } else {
                 // Nếu không tìm thấy Tour với ID tương ứng trong DB, chuyển hướng người dùng về Trang chủ.
                 response.sendRedirect(request.getContextPath() + "/home");
@@ -98,15 +105,14 @@ public class DetailController extends HttpServlet {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            response.sendRedirect(request.getContextPath() + "/home");
+            return;
         } finally {
             // Đảm bảo đóng kết nối cơ sở dữ liệu an toàn để tránh rò rỉ kết nối (connection leak).
             if (tourDAO != null) {
                 tourDAO.close();
             }
         }
-        
-        // Chuyển tiếp yêu cầu (forward) sang trang giao diện detail.jsp nằm trong thư mục web/views/
-        request.getRequestDispatcher("/views/detail.jsp").forward(request, response);
     }
 
     /**
@@ -178,7 +184,11 @@ public class DetailController extends HttpServlet {
         try {
             tourDAO = new TourDAO();
             // Kiểm tra tính hợp lệ của dữ liệu trước khi chèn vào DB
-            if (name != null && email != null && content != null) {
+            if (content == null || content.trim().isEmpty()) {
+                session.setAttribute("reviewError", "Vui lòng nhập nội dung đánh giá!");
+            } else if (name == null || name.trim().isEmpty() || email == null || email.trim().isEmpty()) {
+                session.setAttribute("reviewError", "Vui lòng cung cấp đầy đủ họ tên và email!");
+            } else {
                 // Gọi hàm insertReview của DAO (phương thức 6 tham số có kèm imageUrl)
                 boolean success = tourDAO.insertReview(name.trim(), email.trim(), tourId, rating, content.trim(), imageUrl);
                 if (success) {

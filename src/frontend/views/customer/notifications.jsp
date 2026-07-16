@@ -1,4 +1,4 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+﻿<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="jakarta.tags.core"%>
 <%@taglib prefix="fmt" uri="jakarta.tags.fmt"%>
 <%
@@ -226,11 +226,7 @@
                     <span class="badge">${unreadCount} mới</span>
                 </c:if>
             </h1>
-            <c:if test="${unreadCount > 0}">
-                <a href="${pageContext.request.contextPath}/customer/notifications/read-all" class="btn-read-all">
-                    <i data-lucide="check-circle" style="width: 16px; height: 16px;"></i> Đánh dấu tất cả đã đọc
-                </a>
-            </c:if>
+
         </div>
         
         <form class="filter-bar" method="get" action="${pageContext.request.contextPath}/customer/notifications">
@@ -265,7 +261,12 @@
             <c:otherwise>
                 <ul class="notification-list">
                     <c:forEach var="notif" items="${notifications}">
-                        <li class="notification-item ${notif.isRead ? '' : 'unread'}">
+                        <li class="notification-item ${notif.isRead ? '' : 'unread'}"
+                            <c:if test="${!notif.isRead}">
+                                style="cursor: pointer;"
+                                onclick="markAsRead(${notif.notificationId}, this)"
+                            </c:if>
+                        >
                             <div class="notification-content">
                                 <h3 class="notification-title">
                                     ${notif.title}
@@ -283,13 +284,6 @@
                                     </c:if>
                                 </div>
                             </div>
-                            <c:if test="${!notif.isRead}">
-                                <div>
-                                    <a href="${pageContext.request.contextPath}/customer/notifications/read?id=${notif.notificationId}" class="btn-read" title="Đánh dấu đã đọc">
-                                        <i data-lucide="check" style="width: 16px; height: 16px;"></i>
-                                    </a>
-                                </div>
-                            </c:if>
                         </li>
                     </c:forEach>
                 </ul>
@@ -305,6 +299,59 @@
 <script>
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();
+    }
+
+    // Số lượng thông báo chưa đọc hiện tại trên trang
+    let unreadOnPage = ${unreadCount};
+
+    // Cập nhật badge trên header ngay khi trang load
+    (function syncHeaderBadge() {
+        const badge = document.getElementById('notification-count');
+        if (!badge) return;
+        if (unreadOnPage > 0) {
+            badge.innerText = unreadOnPage;
+            badge.style.display = 'flex';
+        } else {
+            badge.style.display = 'none';
+        }
+    })();
+
+    function markAsRead(notifId, element) {
+        // Tránh click nhiều lần vào cùng 1 thông báo
+        if (!element.classList.contains('unread')) return;
+
+        // Lạc quan: cập nhật UI trước, rồi mới gọi server
+        element.classList.remove('unread');
+        element.style.cursor = 'default';
+        element.onclick = null;
+
+        // Cập nhật badge header
+        unreadOnPage = Math.max(0, unreadOnPage - 1);
+        const headerBadge = document.getElementById('notification-count');
+        if (headerBadge) {
+            if (unreadOnPage === 0) {
+                headerBadge.style.display = 'none';
+            } else {
+                headerBadge.innerText = unreadOnPage;
+                headerBadge.style.display = 'flex';
+            }
+        }
+
+        // Cập nhật badge trong hero section
+        const heroBadge = document.querySelector('.hero-section .badge');
+        if (heroBadge) {
+            if (unreadOnPage === 0) {
+                heroBadge.style.display = 'none';
+            } else {
+                heroBadge.innerText = unreadOnPage + ' mới';
+            }
+        }
+
+        // Gọi server lưu trạng thái đã đọc vào DB
+        const ctx = (typeof APP_CONTEXT !== 'undefined') ? APP_CONTEXT : '';
+        fetch(ctx + '/customer/notifications/read?id=' + notifId + '&t=' + new Date().getTime(), {
+            method: 'GET'
+        }).catch(err => console.error('markAsRead error:', err));
     }
 </script>
 <jsp:include page="/common/footer.jsp" />

@@ -19,17 +19,17 @@ public class DBContext {
             if (user == null || user.trim().isEmpty()) {
                 user = "sa";
             }
-            
+
             String pass = System.getenv("DB_PASSWORD");
             if (pass == null) {
                 pass = "123";
             }
-            
+
             String url = System.getenv("DB_URL");
             if (url == null || url.trim().isEmpty()) {
                 url = "jdbc:sqlserver://localhost:1433;databaseName=TourBuddyDB;encrypt=true;trustServerCertificate=true;characterEncoding=UTF-8;MultipleActiveResultSets=true;";
             }
-            
+
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             connection = DriverManager.getConnection(url, user, pass);
         } catch (ClassNotFoundException ex) {

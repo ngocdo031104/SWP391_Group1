@@ -1,5 +1,4 @@
-﻿<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
-
+<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 
 <c:set var="isAccountant" value="${sessionScope.sessionUser.roleId eq 5 || sessionScope.userRole eq 'Accountant'}" />
@@ -15,43 +14,43 @@
             <li class="${activePage eq 'dashboard' ? 'active' : ''}">
                 <a href="${pageContext.request.contextPath}/admin/dashboard">
                     <i data-lucide="layout-dashboard"></i>
-                    <span>Tá»•ng Quan</span>
+                    <span>Tổng Quan</span>
                 </a>
             </li>
             <li class="${activePage eq 'users' ? 'active' : ''}">
                 <a href="${pageContext.request.contextPath}/admin/users">
                     <i data-lucide="users"></i>
-                    <span>Quáº£n LĂ½ NgÆ°á»i DĂ¹ng</span>
+                    <span>Quản Lý Người Dùng</span>
                 </a>
             </li>
             <li class="${activePage eq 'history' ? 'active' : ''}">
                 <a href="${pageContext.request.contextPath}/admin/users?action=history">
                     <i data-lucide="history"></i>
-                    <span>Lá»‹ch Sá»­ Quáº£n Trá»‹</span>
+                    <span>Lịch Sử Quản Trị</span>
                 </a>
             </li>
             <li class="${activePage eq 'tours' ? 'active' : ''}">
                 <a href="${pageContext.request.contextPath}/admin/tours">
                     <i data-lucide="compass"></i>
-                    <span>Quáº£n LĂ½ Tour</span>
+                    <span>Quản Lý Tour</span>
                 </a>
             </li>
             <li class="${activePage eq 'coupons' ? 'active' : ''}">
                 <a href="${pageContext.request.contextPath}/admin/coupons">
                     <i data-lucide="tag"></i>
-                    <span>Quáº£n LĂ½ Coupon</span>
+                    <span>Quản Lý Coupon</span>
                 </a>
             </li>
             <li class="${activePage eq 'schedules' ? 'active' : ''}">
                 <a href="${pageContext.request.contextPath}/admin/schedules">
                     <i data-lucide="calendar"></i>
-                    <span>Lá»‹ch TrĂ¬nh & GiĂ¡</span>
+                    <span>Lịch Trình & Giá</span>
                 </a>
             </li>
             <li class="${activePage eq 'media' ? 'active' : ''}">
                 <a href="${pageContext.request.contextPath}/admin/media">
                     <i data-lucide="image"></i>
-                    <span>ThÆ° Viá»‡n Media</span>
+                    <span>Thư Viện Media</span>
                 </a>
             </li>
         </c:if>
@@ -59,49 +58,49 @@
         <li class="${activePage eq 'analytics' ? 'active' : ''}">
             <a href="${pageContext.request.contextPath}/admin/analytics">
                 <i data-lucide="bar-chart-3"></i>
-                <span>Thá»‘ng KĂª Chi Tiáº¿t</span>
+                <span>Thống Kê Chi Tiết</span>
             </a>
         </li>
         <li class="${activePage eq 'revenue' ? 'active' : ''}">
             <a href="#">
                 <i data-lucide="file-text"></i>
-                <span>BĂ¡o CĂ¡o Doanh Thu</span>
+                <span>Báo Cáo Doanh Thu</span>
             </a>
         </li>
         <li class="${activePage eq 'forecast' ? 'active' : ''}">
             <a href="${pageContext.request.contextPath}/admin/forecast">
                 <i data-lucide="trending-up"></i>
-                <span>Dá»± BĂ¡o & Xu HÆ°á»›ng</span>
+                <span>Dự Báo & Xu Hướng</span>
             </a>
         </li>
         <li class="${activePage eq 'financial-audit' ? 'active' : ''}">
             <a href="${pageContext.request.contextPath}/admin/financial-audit">
                 <i data-lucide="file-check-2"></i>
-                <span>Kiá»ƒm ToĂ¡n TĂ i ChĂ­nh</span>
+                <span>Kiểm Toán Tài Chính</span>
             </a>
         </li>
         <li class="${activePage eq 'fraud-monitor' ? 'active' : ''}">
             <a href="${pageContext.request.contextPath}/admin/fraud-monitor">
                 <i data-lucide="shield-alert"></i>
-                <span>GiĂ¡m SĂ¡t Gian Láº­n</span>
+                <span>Giám Sát Gian Lận</span>
             </a>
         </li>
         <li class="${activePage eq 'moderation' ? 'active' : ''}">
             <a href="${pageContext.request.contextPath}/admin/moderation">
                 <i data-lucide="shield-alert"></i>
-                <span>Kiá»ƒm Duyá»‡t Ná»™i Dung</span>
+                <span>Kiểm Duyệt Nội Dung</span>
             </a>
         </li>
         <li class="${activePage eq 'assignments' ? 'active' : ''}">
             <a href="${pageContext.request.contextPath}/admin/assignments">
                 <i data-lucide="clipboard-list"></i>
-                <span>Nháº­t KĂ½ PhĂ¢n CĂ´ng</span>
+                <span>Nhật Ký Phân Công</span>
             </a>
         </li>
         <li class="${activePage eq 'oplogs' ? 'active' : ''}">
             <a href="${pageContext.request.contextPath}/admin/operation-logs">
                 <i data-lucide="history"></i>
-                <span>Nháº­t KĂ½ Váº­n HĂ nh</span>
+                <span>Nhật Ký Vận Hành</span>
             </a>
         </li>
         
@@ -109,7 +108,7 @@
             <li class="${activePage eq 'roles' ? 'active' : ''}">
                 <a href="${pageContext.request.contextPath}/admin/roles">
                     <i data-lucide="shield-check"></i>
-                    <span>PhĂ¢n Quyá»n</span>
+                    <span>Phân Quyền</span>
                 </a>
             </li>
         </c:if>
@@ -117,7 +116,7 @@
         <li class="${activePage eq 'settings' ? 'active' : ''}">
             <a href="#">
                 <i data-lucide="settings"></i>
-                <span>Cáº¥u HĂ¬nh</span>
+                <span>Cấu Hình</span>
             </a>
         </li>
     </ul>
@@ -125,11 +124,11 @@
     <div class="sidebar-footer">
         <a href="${pageContext.request.contextPath}/home" style="color: var(--text-gray);">
             <i data-lucide="home"></i>
-            <span>Vá» Trang Chá»§</span>
+            <span>Về Trang Chủ</span>
         </a>
         <a href="${pageContext.request.contextPath}/logout" style="color: var(--error-red); margin-top: 5px;">
             <i data-lucide="log-out"></i>
-            <span>ÄÄƒng Xuáº¥t</span>
+            <span>Đăng Xuất</span>
         </a>
     </div>
 </aside>

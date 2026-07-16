@@ -1,5 +1,4 @@
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
-
 <%@ page import="java.util.List" %>
 <%@ page import="Entities.Tour" %>
 <%@ page import="Entities.TourCategory" %>
@@ -91,8 +90,28 @@
                     if (categories != null) {
                         for (TourCategory cat : categories) {
                             String catName = cat.getCategoryName();
-                            String icon = Utils.CategoryHelper.getIcon(catName);
-                            String dataCategory = Utils.CategoryHelper.toSlug(catName);
+                            String icon = "compass";
+                            String dataCategory = "all";
+                            
+                            if (catName.toLowerCase().contains("biển")) {
+                                icon = "palmtree";
+                                dataCategory = "beach";
+                            } else if (catName.toLowerCase().contains("núi") || catName.toLowerCase().contains("trekking") || catName.toLowerCase().contains("hiking")) {
+                                icon = "mountain";
+                                dataCategory = "hiking";
+                            } else if (catName.toLowerCase().contains("văn hóa") || catName.toLowerCase().contains("di sản") || catName.toLowerCase().contains("cultural")) {
+                                icon = "landmark";
+                                dataCategory = "cultural";
+                            } else if (catName.toLowerCase().contains("city") || catName.toLowerCase().contains("mạo hiểm")) {
+                                icon = "map";
+                                dataCategory = "adventure";
+                            } else if (catName.toLowerCase().contains("mice") || catName.toLowerCase().contains("gia đình")) {
+                                icon = "briefcase";
+                                dataCategory = "family";
+                            } else if (catName.toLowerCase().contains("cao cấp") || catName.toLowerCase().contains("luxury")) {
+                                icon = "gem";
+                                dataCategory = "luxury";
+                            }
                 %>
                 <div class="category-card" data-category="<%= dataCategory %>" id="cat-<%= cat.getCategoryId() %>">
                     <div class="category-icon-wrapper"><i data-lucide="<%= icon %>"></i></div>
@@ -116,25 +135,20 @@
                     List<Tour> featuredTours = (List<Tour>) request.getAttribute("featuredTours");
                     if (featuredTours != null && !featuredTours.isEmpty()) {
                         for (Tour tour : featuredTours) {
-                            // Map category name/id to data category string dynamically
+                            // Map category ID to data category string
                             String catClass = "all";
-                            
-                            // Find the corresponding category name to map correctly
-                            if (categories != null) {
-                                for (TourCategory cat : categories) {
-                                    if (cat.getCategoryId() == tour.getCategoryId()) {
-                                        catClass = Utils.CategoryHelper.toSlug(cat.getCategoryName());
-                                        break;
-                                    }
-                                }
-                            }
+                            if (tour.getCategoryId() == 1) catClass = "beach";
+                            else if (tour.getCategoryId() == 2) catClass = "hiking";
+                            else if (tour.getCategoryId() == 3) catClass = "cultural";
+                            else if (tour.getCategoryId() == 4) catClass = "adventure";
+                            else if (tour.getCategoryId() == 5) catClass = "family";
                             
                             // Determine image
                             String imgUrl = "assets/images/tour_halong.png"; // Fallback
                             if (tour.getMediaList() != null && !tour.getMediaList().isEmpty()) {
                                 imgUrl = tour.getMediaList().get(0).getMediaUrl();
                             } else {
-                                String dest = (tour.getDestination() != null) ? tour.getDestination().toLowerCase() : "";
+                                String dest = tour.getDestination().toLowerCase();
                                 if (dest.contains("đà nẵng")) imgUrl = "assets/images/tour_danang.png";
                                 else if (dest.contains("phú quốc")) imgUrl = "assets/images/tour_phuquoc.png";
                                 else if (dest.contains("hạ long")) imgUrl = "assets/images/tour_halong.png";
@@ -169,16 +183,12 @@
                             if (tour.getTourId() % 3 == 0) badgeName = "Độc Quyền";
                             else if (tour.getTourId() % 3 == 2) badgeName = "Xu Hướng";
                 %>
-                <%
-                    List<Integer> wishlistTourIds = (List<Integer>) request.getAttribute("wishlistTourIds");
-                    boolean isWishlisted = wishlistTourIds != null && wishlistTourIds.contains(tour.getTourId());
-                %>
                 <div class="tour-card" data-tour-category="<%= catClass %>">
                     <div class="tour-img-wrapper">
                         <img src="<%= imageUrl %>" alt="<%= tour.getTourName() %>" class="tour-img">
                         <div class="tour-badge"><span class="badge badge-featured"><%= badgeName %></span></div>
-                        <button class="btn-wishlist <%= isWishlisted ? "active" : "" %>" id="wishlist-<%= tour.getTourId() %>" aria-label="Thêm vào yêu thích">
-                            <i data-lucide="heart" <%= isWishlisted ? "fill=\"currentColor\"" : "" %>></i>
+                        <button class="btn-wishlist" id="wishlist-<%= tour.getTourId() %>" aria-label="Thêm vào yêu thích">
+                            <i data-lucide="heart"></i>
                         </button>
                     </div>
                     <div class="tour-details">
@@ -223,7 +233,7 @@
                 %>
             </div>
 
-            <div class="view-more-container" id="view-more-tours-wrapper">
+            <div class="view-more-container" id="view-more-tours-wrapper" style="display: none;">
                 <button type="button" class="btn btn-secondary" id="btn-view-more-tours">
                     <span class="btn-label">Xem thêm tour</span>
                     <span id="btn-view-more-icon"><i data-lucide="chevron-down"></i></span>
@@ -263,7 +273,7 @@
                 %>
             </div>
 
-            <div class="view-more-container" id="view-more-dests-wrapper">
+            <div class="view-more-container" id="view-more-dests-wrapper" style="display: none;">
                 <button type="button" class="btn btn-secondary" id="btn-view-more-dests">
                     <span class="btn-label">Xem thêm điểm đến</span>
                     <span id="btn-view-more-dests-icon"><i data-lucide="chevron-down"></i></span>
@@ -286,15 +296,15 @@
 
                         <div class="promo-timer" id="flash-sale-timer">
                             <div class="timer-box">
-                                <span class="timer-num" id="timer-hours">--</span>
+                                <span class="timer-num" id="timer-hours">08</span>
                                 <span class="timer-label">Giờ</span>
                             </div>
                             <div class="timer-box">
-                                <span class="timer-num" id="timer-mins">--</span>
+                                <span class="timer-num" id="timer-mins">45</span>
                                 <span class="timer-label">Phút</span>
                             </div>
                             <div class="timer-box">
-                                <span class="timer-num" id="timer-secs">--</span>
+                                <span class="timer-num" id="timer-secs">29</span>
                                 <span class="timer-label">Giây</span>
                             </div>
                         </div>

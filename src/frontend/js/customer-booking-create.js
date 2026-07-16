@@ -1,26 +1,26 @@
-/*
- * Ng\u01b0\u1eddi l\u00e0m: D\u01b0\u01a1ng
- * Th\u1eddi gian t\u1ea1o: 04/06/2026
- * Ch\u1ee9c n\u0103ng: JavaScript cho m\u00e0n Customer t\u1ea1o booking.
- * \u00dd ngh\u0129a: Gi\u1eef d\u1eef li\u1ec7u ng\u01b0\u1eddi tham gia khi t\u0103ng/gi\u1ea3m s\u1ed1 l\u01b0\u1ee3ng, b\u1eaft ng\u01b0\u1eddi \u0111\u1ea1i di\u1ec7n l\u00e0 ng\u01b0\u1eddi l\u1edbn, validate l\u1ed7i d\u01b0\u1edbi t\u1eebng \u00f4 v\u00e0 t\u00ednh t\u1ea1m ti\u1ec1n tour theo nh\u00f3m tu\u1ed5i.
+﻿/*
+ * Người làm: Dương
+ * Thời gian tạo: 04/06/2026
+ * Chức năng: JavaScript cho màn Customer tạo booking.
+ * Ý nghĩa: Giữ dữ liệu người tham gia khi tăng/giảm số lượng, bắt người đại diện là người lớn, validate lỗi dưới từng ô và tính tạm tiền tour theo nhóm tuổi.
  */
 (function () {
-    // createForm l\u00e0 form g\u1eedi d\u1eef li\u1ec7u t\u1eeb m\u00e0n t\u1ea1o booking sang BookingCreateController.doPost.
+    // createForm là form gửi dữ liệu từ màn tạo booking sang BookingCreateController.doPost.
     const createForm = document.getElementById('booking-create-form');
-    // countInput l\u01b0u s\u1ed1 ng\u01b0\u1eddi tham gia hi\u1ec7n t\u1ea1i, \u0111\u01b0\u1ee3c g\u1eedi l\u00ean server b\u1eb1ng name participantCount.
+    // countInput lưu số người tham gia hiện tại, được gửi lên server bằng name participantCount.
     const countInput = document.getElementById('participant-count');
-    // list l\u00e0 v\u00f9ng ch\u1ee9a c\u00e1c card nh\u1eadp th\u00f4ng tin participant \u0111\u01b0\u1ee3c sinh \u0111\u1ed9ng b\u1eb1ng JavaScript.
+    // list là vùng chứa các card nhập thông tin participant được sinh động bằng JavaScript.
     const list = document.getElementById('participant-list');
-    // minusBtn v\u00e0 plusBtn \u0111i\u1ec1u ch\u1ec9nh s\u1ed1 ng\u01b0\u1eddi nh\u01b0ng kh\u00f4ng reload trang.
+    // minusBtn và plusBtn điều chỉnh số người nhưng không reload trang.
     const minusBtn = document.getElementById('minus-participant');
     const plusBtn = document.getElementById('plus-participant');
 
-    // formatMoney \u0111\u1ecbnh d\u1ea1ng s\u1ed1 ti\u1ec1n theo chu\u1ea9n Vi\u1ec7t Nam \u0111\u1ec3 b\u1ea3ng t\u1ed5ng quan d\u1ec5 \u0111\u1ecdc.
+    // formatMoney định dạng số tiền theo chuẩn Việt Nam để bảng tổng quan dễ đọc.
     function formatMoney(value) {
         return new Intl.NumberFormat('vi-VN').format(Math.round(Number(value) || 0));
     }
 
-    // getSelectedSchedulePrice l\u1ea5y gi\u00e1 Adult/Child/Infant t\u1eeb radio l\u1ecbch kh\u1edfi h\u00e0nh \u0111ang \u0111\u01b0\u1ee3c ch\u1ecdn.
+    // getSelectedSchedulePrice lấy giá Adult/Child/Infant từ radio lịch khởi hành đang được chọn.
     function getSelectedSchedulePrice() {
         const checkedSchedule = document.querySelector('[name="scheduleId"]:checked');
         return {
@@ -30,8 +30,8 @@
         };
     }
 
-    // collectParticipants \u0111\u1ecdc d\u1eef li\u1ec7u hi\u1ec7n c\u00f3 tr\u01b0\u1edbc khi render l\u1ea1i danh s\u00e1ch card.
-    // M\u1ee5c \u0111\u00edch l\u00e0 khi kh\u00e1ch b\u1ea5m t\u0103ng/gi\u1ea3m s\u1ed1 ng\u01b0\u1eddi, th\u00f4ng tin \u0111\u00e3 nh\u1eadp \u1edf c\u00e1c card c\u0169 kh\u00f4ng b\u1ecb m\u1ea5t.
+    // collectParticipants đọc dữ liệu hiện có trước khi render lại danh sách card.
+    // Mục đích là khi khách bấm tăng/giảm số người, thông tin đã nhập ở các card cũ không bị mất.
     function collectParticipants() {
         if (!list) return [];
         const cards = list.querySelectorAll('.participant-card');
@@ -47,33 +47,33 @@
         return data;
     }
 
-    // escapeHtml b\u1ea3o v\u1ec7 chu\u1ed7i nh\u1eadp t\u1eeb ng\u01b0\u1eddi d\u00f9ng tr\u01b0\u1edbc khi \u0111\u01b0a l\u1ea1i v\u00e0o innerHTML.
-    // H\u00e0m n\u00e0y tr\u00e1nh l\u1ed7i v\u1ee1 HTML khi t\u00ean/email ch\u1ee9a k\u00fd t\u1ef1 \u0111\u1eb7c bi\u1ec7t nh\u01b0 ", <, > ho\u1eb7c &.
+    // escapeHtml bảo vệ chuỗi nhập từ người dùng trước khi đưa lại vào innerHTML.
+    // Hàm này tránh lỗi vỡ HTML khi tên/email chứa ký tự đặc biệt như ", <, > hoặc &.
     function escapeHtml(value) {
         return String(value || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
-    // field t\u1ea1o m\u1ed9t label g\u1ed3m input/select v\u00e0 v\u00f9ng hi\u1ec3n th\u1ecb l\u1ed7i ngay d\u01b0\u1edbi \u00f4 nh\u1eadp.
-    // C\u00e1ch n\u00e0y gi\u00fap m\u1ecdi \u00f4 \u0111\u1ec1u c\u00f3 ch\u1ed7 in validate error ri\u00eang.
+    // field tạo một label gồm input/select và vùng hiển thị lỗi ngay dưới ô nhập.
+    // Cách này giúp mọi ô đều có chỗ in validate error riêng.
     function field(labelText, html) {
         return '<label>' + labelText + html + '<span class="field-error"></span></label>';
     }
 
-    // buildAgeTypeSelect t\u1ea1o select nh\u00f3m tu\u1ed5i.
-    // Ng\u01b0\u1eddi \u0111\u1ea1i di\u1ec7n ch\u1ec9 c\u00f3 Adult \u0111\u1ec3 \u0111\u1ea3m b\u1ea3o tr\u01b0\u1edfng \u0111o\u00e0n l\u00e0 ng\u01b0\u1eddi l\u1edbn; th\u00e0nh vi\u00ean c\u00f2n l\u1ea1i \u0111\u01b0\u1ee3c ch\u1ecdn \u0111\u1ee7 3 nh\u00f3m gi\u00e1.
+    // buildAgeTypeSelect tạo select nhóm tuổi.
+    // Người đại diện chỉ có Adult để đảm bảo trưởng đoàn là người lớn; thành viên còn lại được chọn đủ 3 nhóm giá.
     function buildAgeTypeSelect(index, currentAgeType) {
         if (index === 0) {
-            return '<input type="hidden" name="participantAgeType" value="Adult"><div class="leader-age-fixed">Ng\u01b0\u1eddi l\u1edbn (12 tu\u1ed5i tr\u1edf l\u00ean)</div>';
+            return '<input type="hidden" name="participantAgeType" value="Adult"><div class="leader-age-fixed">Người lớn (12 tuổi trở lên)</div>';
         }
         const value = currentAgeType || 'Adult';
-        return '<select name="participantAgeType" aria-label="\u0110\u1ed9 tu\u1ed5i ng\u01b0\u1eddi tham gia">' +
-            '<option value="Adult"' + (value === 'Adult' ? ' selected' : '') + '>Ng\u01b0\u1eddi l\u1edbn (12 tu\u1ed5i tr\u1edf l\u00ean)</option>' +
-            '<option value="Child"' + (value === 'Child' ? ' selected' : '') + '>Tr\u1ebb em (2 - d\u01b0\u1edbi 12 tu\u1ed5i)</option>' +
-            '<option value="Infant"' + (value === 'Infant' ? ' selected' : '') + '>Tr\u1ebb s\u01a1 sinh (d\u01b0\u1edbi 2 tu\u1ed5i)</option>' +
+        return '<select name="participantAgeType" aria-label="Độ tuổi người tham gia">' +
+            '<option value="Adult"' + (value === 'Adult' ? ' selected' : '') + '>Người lớn (12 tuổi trở lên)</option>' +
+            '<option value="Child"' + (value === 'Child' ? ' selected' : '') + '>Trẻ em (2 - dưới 12 tuổi)</option>' +
+            '<option value="Infant"' + (value === 'Infant' ? ' selected' : '') + '>Trẻ sơ sinh (dưới 2 tuổi)</option>' +
             '</select>';
     }
 
-    // updateBookingSummary \u0111\u1ebfm s\u1ed1 Adult/Child/Infant hi\u1ec7n t\u1ea1i v\u00e0 t\u00ednh l\u1ea1i t\u1ed5ng ti\u1ec1n tour theo l\u1ecbch \u0111ang ch\u1ecdn.
+    // updateBookingSummary đếm số Adult/Child/Infant hiện tại và tính lại tổng tiền tour theo lịch đang chọn.
     function updateBookingSummary() {
         const price = getSelectedSchedulePrice();
         let adultCount = 0;
@@ -100,7 +100,7 @@
             'summary-adult-price': formatMoney(price.adult),
             'summary-child-price': formatMoney(price.child),
             'summary-infant-price': formatMoney(price.infant),
-            'summary-base-amount': formatMoney(baseAmount) + ' \u0111'
+            'summary-base-amount': formatMoney(baseAmount) + ' đ'
         };
 
         Object.keys(targets).forEach(function (id) {
@@ -109,8 +109,8 @@
         });
     }
 
-    // renderParticipants d\u1ef1ng l\u1ea1i to\u00e0n b\u1ed9 form ng\u01b0\u1eddi tham gia theo s\u1ed1 l\u01b0\u1ee3ng hi\u1ec7n t\u1ea1i.
-    // previousData l\u00e0 d\u1eef li\u1ec7u c\u0169 \u0111\u00e3 collect tr\u01b0\u1edbc \u0111\u00f3 \u0111\u1ec3 \u0111\u1ed5 l\u1ea1i v\u00e0o c\u00e1c input sau khi render.
+    // renderParticipants dựng lại toàn bộ form người tham gia theo số lượng hiện tại.
+    // previousData là dữ liệu cũ đã collect trước đó để đổ lại vào các input sau khi render.
     function renderParticipants(previousData) {
         if (!countInput || !list) return;
         const count = parseInt(countInput.value, 10);
@@ -121,20 +121,20 @@
             const current = data[i] || { name: '', ageType: 'Adult', phone: '', email: '' };
             const card = document.createElement('div');
             card.className = 'participant-card';
-            const titleText = i === 0 ? 'Th\u00f4ng tin tr\u01b0\u1edfng \u0111o\u00e0n' : 'Th\u00f4ng tin ng\u01b0\u1eddi \u0111i c\u00f9ng #' + (i + 1);
-            const roleText = i === 0 ? 'Ng\u01b0\u1eddi \u0111\u1ea1i di\u1ec7n li\u00ean h\u1ec7' : 'Th\u00e0nh vi\u00ean';
-            const removeButton = i === 0 ? '' : '<button type="button" class="remove-participant-btn" data-remove-index="' + i + '" aria-label="X\u00f3a ng\u01b0\u1eddi \u0111i c\u00f9ng #' + (i + 1) + '" title="X\u00f3a ng\u01b0\u1eddi \u0111i c\u00f9ng"><i data-lucide="trash-2"></i></button>';
+            const titleText = i === 0 ? 'Thông tin trưởng đoàn' : 'Thông tin người đi cùng #' + (i + 1);
+            const roleText = i === 0 ? 'Người đại diện liên hệ' : 'Thành viên';
+            const removeButton = i === 0 ? '' : '<button type="button" class="remove-participant-btn" data-remove-index="' + i + '" aria-label="Xóa người đi cùng #' + (i + 1) + '" title="Xóa người đi cùng"><i data-lucide="trash-2"></i></button>';
             const phoneRequired = i === 0 ? ' data-required="true"' : '';
             const emailRequired = i === 0 ? ' data-required="true"' : '';
 
-            // M\u1ed7i card c\u00f3 4 tr\u01b0\u1eddng: h\u1ecd t\u00ean, \u0111\u1ed9 tu\u1ed5i, s\u1ed1 \u0111i\u1ec7n tho\u1ea1i, email.
-            // H\u1ecd t\u00ean b\u1eaft bu\u1ed9c cho t\u1ea5t c\u1ea3; phone/email ch\u1ec9 b\u1eaft bu\u1ed9c v\u1edbi tr\u01b0\u1edfng \u0111o\u00e0n.
+            // Mỗi card có 4 trường: họ tên, độ tuổi, số điện thoại, email.
+            // Họ tên bắt buộc cho tất cả; phone/email chỉ bắt buộc với trưởng đoàn.
             card.innerHTML =
                 '<div class="participant-card-head"><strong>' + titleText + '</strong><span>' + roleText + '</span>' + removeButton + '</div>' +
                 '<div class="participant-fields">' +
-                    field('H\u1ecd v\u00e0 t\u00ean', '<input name="participantName" data-required="true" value="' + escapeHtml(current.name) + '" placeholder="Nh\u1eadp h\u1ecd t\u00ean">') +
-                    field('\u0110\u1ed9 tu\u1ed5i', buildAgeTypeSelect(i, current.ageType)) +
-                    field('S\u1ed1 \u0111i\u1ec7n tho\u1ea1i', '<input name="participantPhone"' + phoneRequired + ' value="' + escapeHtml(current.phone) + '" placeholder="09xxxxxxxx">') +
+                    field('Họ và tên', '<input name="participantName" data-required="true" value="' + escapeHtml(current.name) + '" placeholder="Nhập họ tên">') +
+                    field('Độ tuổi', buildAgeTypeSelect(i, current.ageType)) +
+                    field('Số điện thoại', '<input name="participantPhone"' + phoneRequired + ' value="' + escapeHtml(current.phone) + '" placeholder="09xxxxxxxx">') +
                     field('Email', '<input name="participantEmail" type="email"' + emailRequired + ' value="' + escapeHtml(current.email) + '" placeholder="email@example.com">') +
                 '</div>';
             list.appendChild(card);
@@ -142,39 +142,48 @@
         updateBookingSummary();
     }
 
-    // setError in l\u1ed7i d\u01b0\u1edbi \u00f4 input v\u00e0 b\u1eadt class input-invalid \u0111\u1ec3 vi\u1ec1n \u00f4 chuy\u1ec3n sang tr\u1ea1ng th\u00e1i l\u1ed7i.
+    // setError in lỗi dưới ô input và bật class input-invalid để viền ô chuyển sang trạng thái lỗi.
     function setError(input, message) {
         const error = input.closest('label').querySelector('.field-error');
         if (error) error.textContent = message;
         input.classList.toggle('input-invalid', Boolean(message));
     }
 
-    // validateCreateForm ki\u1ec3m tra d\u1eef li\u1ec7u client-side tr\u01b0\u1edbc khi submit.
-    // Server v\u1eabn validate l\u1ea1i trong BookingCreateController \u0111\u1ec3 tr\u00e1nh d\u1eef li\u1ec7u s\u1eeda b\u1eb1ng devtool/request th\u1ee7 c\u00f4ng.
+    // validateCreateForm kiểm tra dữ liệu client-side trước khi submit.
+    // Server vẫn validate lại trong BookingCreateController để tránh dữ liệu sửa bằng devtool/request thủ công.
     function validateCreateForm() {
         let valid = true;
         const scheduleError = document.getElementById('schedule-error');
         const checkedSchedule = document.querySelector('[name="scheduleId"]:checked');
         if (scheduleError) scheduleError.textContent = '';
         if (!checkedSchedule) {
-            if (scheduleError) scheduleError.textContent = 'Vui l\u00f2ng ch\u1ecdn m\u1ed9t l\u1ecbch kh\u1edfi h\u00e0nh.';
+            if (scheduleError) scheduleError.textContent = 'Vui lòng chọn một lịch khởi hành.';
             valid = false;
+        } else {
+            // BR-19 / BR-20: server-side DAO \u0111\u00e3 l\u1ecdc past-date nh\u01b0ng t\u1ea7ng b\u1ea3o v\u1ec7 cu\u1ed1i \u1edf client v\u1eabn ch\u1eb7n.
+            const todayMidnight = new Date();
+            todayMidnight.setHours(0, 0, 0, 0);
+            const departureMs = parseInt(checkedSchedule.dataset.departureMs || '0', 10);
+            if (departureMs && departureMs < todayMidnight.getTime()) {
+                if (scheduleError) scheduleError.textContent = 'L\u1ecbch kh\u1edfi h\u00e0nh \u0111\u00e3 \u1edf trong qu\u00e1 kh\u1ee9. Vui l\u00f2ng ch\u1ecdn l\u1ecbch kh\u00e1c.';
+                valid = false;
+            }
         }
 
         list.querySelectorAll('input, select').forEach(function (input) {
             setError(input, '');
             if (input.dataset.required === 'true' && !input.value.trim()) {
-                setError(input, 'Vui l\u00f2ng nh\u1eadp th\u00f4ng tin n\u00e0y.');
+                setError(input, 'Vui lòng nhập thông tin này.');
                 valid = false;
             } else if (input.type === 'email' && input.value.trim() && !input.value.includes('@')) {
-                setError(input, 'Email ch\u01b0a \u0111\u00fang \u0111\u1ecbnh d\u1ea1ng.');
+                setError(input, 'Email chưa đúng định dạng.');
                 valid = false;
             }
         });
         return valid;
     }
 
-    // Khi gi\u1ea3m s\u1ed1 ng\u01b0\u1eddi, d\u1eef li\u1ec7u hi\u1ec7n t\u1ea1i \u0111\u01b0\u1ee3c collect tr\u01b0\u1edbc r\u1ed3i render l\u1ea1i theo s\u1ed1 l\u01b0\u1ee3ng m\u1edbi.
+    // Khi giảm số người, dữ liệu hiện tại được collect trước rồi render lại theo số lượng mới.
     if (minusBtn) {
         minusBtn.addEventListener('click', function () {
             const data = collectParticipants();
@@ -183,7 +192,7 @@
         });
     }
 
-    // Khi t\u0103ng s\u1ed1 ng\u01b0\u1eddi, gi\u1eef d\u1eef li\u1ec7u c\u0169 v\u00e0 th\u00eam m\u1ed9t card m\u1edbi r\u1ed7ng \u1edf cu\u1ed1i danh s\u00e1ch.
+    // Khi tăng số người, giữ dữ liệu cũ và thêm một card mới rỗng ở cuối danh sách.
     if (plusBtn) {
         plusBtn.addEventListener('click', function () {
             const data = collectParticipants();
@@ -192,7 +201,7 @@
         });
     }
 
-    // Thay \u0111\u1ed5i l\u1ecbch kh\u1edfi h\u00e0nh ho\u1eb7c nh\u00f3m tu\u1ed5i \u0111\u1ec1u c\u1eadp nh\u1eadt l\u1ea1i b\u1ea3ng t\u1ed5ng quan \u0111\u01a1n \u0111\u1eb7t.
+    // Thay đổi lịch khởi hành hoặc nhóm tuổi đều cập nhật lại bảng tổng quan đơn đặt.
     document.querySelectorAll('[name="scheduleId"]').forEach(function (radio) {
         radio.addEventListener('change', updateBookingSummary);
     });
@@ -205,8 +214,8 @@
     }
 
 
-    // D\u01b0\u01a1ng l\u00e0m \u0111o\u1ea1n n\u00e0y: n\u00fat th\u00f9ng r\u00e1c ch\u1ec9 xu\u1ea5t hi\u1ec7n \u1edf ng\u01b0\u1eddi \u0111i c\u00f9ng \u0111\u1ec3 xo\u00e1 nhanh \u0111\u00fang card \u0111\u00f3.
-    // Sau khi xo\u00e1, danh s\u00e1ch \u0111\u01b0\u1ee3c render l\u1ea1i \u0111\u1ec3 s\u1ed1 th\u1ee9 t\u1ef1, participantCount v\u00e0 b\u1ea3ng t\u1ed5ng quan ti\u1ec1n lu\u00f4n \u0111\u1ed3ng b\u1ed9.
+    // Dương làm đoạn này: nút thùng rác chỉ xuất hiện ở người đi cùng để xoá nhanh đúng card đó.
+    // Sau khi xoá, danh sách được render lại để số thứ tự, participantCount và bảng tổng quan tiền luôn đồng bộ.
     if (list) {
         list.addEventListener('click', function (event) {
             const removeButton = event.target.closest('.remove-participant-btn');
@@ -220,7 +229,7 @@
             if (window.lucide) lucide.createIcons();
         });
     }
-    // Ch\u1eb7n submit n\u1ebfu validate client-side ch\u01b0a \u0111\u1ea1t.
+    // Chặn submit nếu validate client-side chưa đạt.
     if (createForm) {
         createForm.addEventListener('submit', function (event) {
             if (!validateCreateForm()) {
@@ -230,8 +239,8 @@
     }
 
 
-    // D\u01b0\u01a1ng l\u00e0m \u0111o\u1ea1n n\u00e0y: customerNote t\u1ef1 t\u0103ng chi\u1ec1u cao theo n\u1ed9i dung kh\u00e1ch nh\u1eadp.
-    // Textarea v\u1eabn gi\u1eef maxlength=500 n\u00ean khi t\u1edbi gi\u1edbi h\u1ea1n tr\u00ecnh duy\u1ec7t s\u1ebd kh\u00f4ng cho nh\u1eadp th\u00eam k\u00fd t\u1ef1.
+    // Dương làm đoạn này: customerNote tự tăng chiều cao theo nội dung khách nhập.
+    // Textarea vẫn giữ maxlength=500 nên khi tới giới hạn trình duyệt sẽ không cho nhập thêm ký tự.
     const customerNote = document.getElementById('customer-note');
     function autoResizeCustomerNote() {
         if (!customerNote) return;
@@ -243,7 +252,7 @@
         customerNote.addEventListener('input', autoResizeCustomerNote);
         autoResizeCustomerNote();
     }
-    // Render m\u1eb7c \u0111\u1ecbnh m\u1ed9t participant khi trang v\u1eeba load.
+    // Render mặc định một participant khi trang vừa load.
     renderParticipants([]);
     if (window.lucide) lucide.createIcons();
 })();

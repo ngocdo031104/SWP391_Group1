@@ -1,4 +1,4 @@
-<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
+﻿<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt"  prefix="fmt" %>
@@ -18,10 +18,12 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-dashboard.css?v=1.6">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-dashboard.css?v=2.1">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-analytics.css?v=1.0">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-space-overrides.css?v=1.0">
 </head>
 <body class="analytics-body">
 
@@ -269,6 +271,60 @@
                 </table>
             </div>
         </div>
+        <!-- ── Kế Toán: Công Cụ Nghiệp Vụ Riêng ── -->
+        <c:if test="${isAccountant}">
+            <div class="accountant-dashboard-section" style="margin-top: 40px; padding-top: 20px; border-top: 2px dashed rgba(255,255,255,0.1);">
+                <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 20px; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
+                    <i data-lucide="briefcase" style="color: var(--primary);"></i> Bảng Điều Khiển Nghiệp Vụ Kế Toán
+                </h2>
+
+                <style>
+                    .acc-quick-actions-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px; }
+                    .acc-quick-card { background: var(--card-bg); border-radius: 12px; padding: 20px; border: 1px solid var(--card-border); text-decoration: none; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; transition: all .2s; }
+                    .acc-quick-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); border-color: var(--primary); background: rgba(30, 41, 59, 0.8); }
+                    .acc-quick-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+                    .acc-quick-card h3 { margin: 0; font-size: 15px; font-weight: 600; color: var(--text-main); }
+                    .acc-quick-card p  { margin: 0; font-size: 13px; color: var(--text-gray); line-height: 1.5; }
+                    .alert-pending { background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 8px; padding: 16px 20px; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; color: #FCD34D; font-weight: 500; }
+                </style>
+
+                <c:if test="${pendingRefunds > 0}">
+                    <div class="alert-pending">
+                        <i data-lucide="alert-triangle" style="width:20px;height:20px;color:#F59E0B;"></i>
+                        Có <strong>${pendingRefunds}</strong> yêu cầu hoàn tiền đang chờ bạn xử lý.
+                        <a href="${pageContext.request.contextPath}/accountant/refunds" style="margin-left:auto;color:#F59E0B;font-weight:600;text-decoration:underline;">
+                            Xử lý ngay →
+                        </a>
+                    </div>
+                </c:if>
+
+                <div class="acc-quick-actions-grid">
+                    <a href="${pageContext.request.contextPath}/accountant/payments?tab=in" class="acc-quick-card">
+                        <div class="acc-quick-icon" style="background: rgba(16, 185, 129, 0.15); color: #10B981;">
+                            <i data-lucide="trending-up"></i>
+                        </div>
+                        <h3>Dòng Tiền Vào</h3>
+                        <p>Theo dõi các khoản tiền khách hàng đã thanh toán thành công (Success).</p>
+                    </a>
+
+                    <a href="${pageContext.request.contextPath}/accountant/payments?tab=out" class="acc-quick-card">
+                        <div class="acc-quick-icon" style="background: rgba(239, 68, 68, 0.15); color: #EF4444;">
+                            <i data-lucide="trending-down"></i>
+                        </div>
+                        <h3>Dòng Tiền Ra</h3>
+                        <p>Danh sách các giao dịch hoàn tiền đã thực hiện cho khách hàng (Refunded).</p>
+                    </a>
+
+                    <a href="${pageContext.request.contextPath}/accountant/refunds" class="acc-quick-card">
+                        <div class="acc-quick-icon" style="background: rgba(245, 158, 11, 0.15); color: #F59E0B;">
+                            <i data-lucide="refresh-cw"></i>
+                        </div>
+                        <h3>Duyệt Hoàn Tiền</h3>
+                        <p>Xử lý, duyệt hoặc từ chối các yêu cầu hủy tour và thực hiện hoàn tiền.</p>
+                    </a>
+                </div>
+            </div>
+        </c:if>
     </main>
 </div>
 

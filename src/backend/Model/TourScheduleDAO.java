@@ -27,12 +27,22 @@ public class TourScheduleDAO extends DBContext {
 
     // Lấy toàn bộ lịch khởi hành thuộc một tour từ bảng TourSchedule.
     public List<TourSchedule> getSchedulesByTourId(int tourId) {
-        List<TourSchedule> schedules = new ArrayList<>();
-        String sql = SCHEDULE_SELECT
-                + "WHERE TourID = ? "
-                + "ORDER BY DepartureDate ASC";
+        return getSchedulesByTourId(tourId, false);
+    }
 
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+    // Lấy lịch khởi hành thuộc một tour, có tuỳ chọn lọc theo ngày hiện tại.
+    // BR-19 / BR-20: với luồng Customer, chỉ trả về các lịch có DepartureDate >= hôm nay
+    // để tránh khách đặt tour có ngày khởi hành ở quá khứ.
+    public List<TourSchedule> getSchedulesByTourId(int tourId, boolean futureOnly) {
+        List<TourSchedule> schedules = new ArrayList<>();
+        StringBuilder sql = new StringBuilder(SCHEDULE_SELECT)
+                .append("WHERE TourID = ? ");
+        if (futureOnly) {
+            sql.append("AND CAST(DepartureDate AS DATE) >= CAST(GETDATE() AS DATE) ");
+        }
+        sql.append("ORDER BY DepartureDate ASC");
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
             ps.setInt(1, tourId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {

@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.util.List;
 
 // Dương làm đoạn này
 // Thời gian tạo: 26/06/2026
@@ -61,11 +62,11 @@ public class CustomerBookingDetailController extends HttpServlet {
             Payment payment = paymentDAO.getPaymentByBookingId(booking.getBookingId());
 
             CancellationRequestDAO cancelDAO = new CancellationRequestDAO();
-            CancellationRequest pendingCancel = cancelDAO.getPendingRequestByBookingId(booking.getBookingId());
-
+            List<CancellationRequest> cancelHistory = cancelDAO.getRequestsByBookingId(booking.getBookingId());
+            
             request.setAttribute("booking", booking);
             request.setAttribute("payment", payment);
-            request.setAttribute("pendingCancel", pendingCancel);
+            request.setAttribute("cancelHistory", cancelHistory);
             
             request.getRequestDispatcher("/customer/booking-detail.jsp").forward(request, response);
         } catch (Exception e) {

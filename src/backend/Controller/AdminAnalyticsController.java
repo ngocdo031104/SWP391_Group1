@@ -28,7 +28,7 @@ public class AdminAnalyticsController extends HttpServlet {
     private boolean hasAnalyticsPermission(User user) {
         if (user == null) return false;
         if (user.getRoleId() == 1) return true; // Super Admin bypass
-        if ("Accountant".equals(user.getRole().getRoleName())) return true;
+        if (user.getRoleId() == 5 || (user.getRole() != null && "Accountant".equalsIgnoreCase(user.getRole().getRoleName()))) return true; // Accountant bypass
         if (user.getRole() != null && user.getRole().getPermissions() != null) {
             for (Entities.Permission p : user.getRole().getPermissions()) {
                 if ("System Settings".equalsIgnoreCase(p.getModuleName()) 
@@ -106,6 +106,17 @@ public class AdminAnalyticsController extends HttpServlet {
         }
 
         // Standard GET request, forward to JSP page
+        if (sessionUser.getRoleId() == 5) {
+            Model.CancellationRequestDAO cancelDAO = null;
+            try {
+                cancelDAO = new Model.CancellationRequestDAO();
+                int pendingRefunds = cancelDAO.getRequestsByStatusForAccountant("Pending").size();
+                request.setAttribute("pendingRefunds", pendingRefunds);
+            } finally {
+                if (cancelDAO != null) cancelDAO.close();
+            }
+        }
+        
         request.getRequestDispatcher("/admin/analytics.jsp").forward(request, response);
     }
 
