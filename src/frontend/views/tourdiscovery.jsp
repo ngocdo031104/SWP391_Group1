@@ -320,6 +320,7 @@
     </section>
 
 <script>
+    window.contextPath = '${pageContext.request.contextPath}';
     window.toursData = [
         <% 
         List<Tour> tours = (List<Tour>) request.getAttribute("tours");
