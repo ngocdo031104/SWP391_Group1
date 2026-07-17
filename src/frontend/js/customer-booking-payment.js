@@ -1,13 +1,13 @@
-\uFEFF/*
- * Ng\u01B0\u1EDDi l\u00E0m: D\u01B0\u01A1ng
- * Th\u1EDDi gian t\u1EA1o: 04/06/2026
- * Ch\u1EE9c n\u0103ng: JavaScript cho m\u00E0n Customer thanh to\u00E1n booking.
- * \u00DD ngh\u0129a: H\u01B0\u1EDBng d\u1EABn \u00E1p d\u1EE5ng coupon, \u0111\u1EBFm ng\u01B0\u1EE3c th\u1EDDi gian gi\u1EEF slot v\u00E0 polling tr\u1EA1ng th\u00E1i SePay \u0111\u1EC3 t\u1EF1 chuy\u1EC3n sang m\u00E0n th\u00E0nh c\u00F4ng khi webhook x\u00E1c nh\u1EADn ti\u1EC1n v\u00E0o.
+/*
+ * Người làm: Dương
+ * Thời gian tạo: 04/06/2026
+ * Chức năng: JavaScript cho màn Customer thanh toán booking.
+ * Ý nghĩa: Hướng dẫn áp dụng coupon, đếm ngược thời gian giữ slot và polling trạng thái SePay để tự chuyển sang màn thành công khi webhook xác nhận tiền vào.
  */
 (function () {
-    // couponBtn l\u00E0 n\u00FAt "\u00C1p d\u1EE5ng" \u1EDF khung coupon, ch\u1EC9 hi\u1EC3n th\u1ECB h\u01B0\u1EDBng d\u1EABn ch\u1EE9 kh\u00F4ng submit form.
+    // couponBtn là nút "Áp dụng" ở khung coupon, chỉ hiển thị hướng dẫn chứ không submit form.
     const couponBtn = document.getElementById('coupon-preview-btn');
-    // couponInput l\u00E0 \u00F4 nh\u1EADp m\u00E3 coupon, thu\u1ED9c payment-form th\u00F4ng qua thu\u1ED9c t\u00EDnh form="payment-form".
+    // couponInput là ô nhập mã coupon, thuộc payment-form thông qua thuộc tính form="payment-form".
     const couponInput = document.getElementById('payment-coupon-code');
     // couponError l\u00E0 v\u00F9ng th\u00F4ng b\u00E1o ngay d\u01B0\u1EDBi \u00F4 coupon.
     const couponError = document.getElementById('coupon-error');
