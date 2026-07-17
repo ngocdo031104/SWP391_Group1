@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (!data) return;
 
                 if (data.status === "success" || data.status === "removed") {
-                    window.showToast("Đã xóa tour khỏi danh sách yêu thích!", "success");
+                    window.showToast("\u0110\u00E3 x\u00F3a tour kh\u1ECFi danh s\u00E1ch y\u00EAu th\u00EDch!", "success");
                     
                     // Add fade out class
                     card.classList.add("fade-out");

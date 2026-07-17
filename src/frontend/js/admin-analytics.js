@@ -1,5 +1,5 @@
 /**
- * ── Admin Analytics JS Controller ──
+ * \u2500\u2500 Admin Analytics JS Controller \u2500\u2500
  * Uses Chart.js for premium glassmorphic dashboard visualization.
  */
 document.addEventListener("DOMContentLoaded", () => {
@@ -76,19 +76,19 @@ document.addEventListener("DOMContentLoaded", () => {
     function fetchAnalytics(type, callback) {
         fetch(`${contextPath}/admin/analytics?ajax=true&type=${type}`)
             .then(res => {
-                if (!res.ok) throw new Error("Mất kết nối máy chủ");
+                if (!res.ok) throw new Error("M\u1EA5t k\u1EBFt n\u1ED1i m\u00E1y ch\u1EE7");
                 return res.json();
             })
             .then(data => {
                 if (data.error) {
-                    alert("Lỗi tải dữ liệu: " + data.error);
+                    alert("L\u1ED7i t\u1EA3i d\u1EEF li\u1EC7u: " + data.error);
                 } else {
                     callback(data);
                 }
             })
             .catch(err => {
                 console.error(err);
-                alert("Không thể tải thông tin thống kê: " + err.message);
+                alert("Kh\u00F4ng th\u1EC3 t\u1EA3i th\u00F4ng tin th\u1ED1ng k\u00EA: " + err.message);
             });
     }
 
@@ -247,7 +247,7 @@ document.addEventListener("DOMContentLoaded", () => {
             data: {
                 labels: trendDates,
                 datasets: [{
-                    label: "Số lượt đặt chỗ",
+                    label: "S\u1ED1 l\u01B0\u1EE3t \u0111\u1EB7t ch\u1ED7",
                     data: trendCounts,
                     borderColor: "#10b981",
                     backgroundColor: gradTrend,
@@ -347,7 +347,7 @@ document.addEventListener("DOMContentLoaded", () => {
             tr.innerHTML = `
                 <td style="font-weight: 600;">#${item.userId}</td>
                 <td>${item.fullName}</td>
-                <td>${item.yearsOfExperience} năm</td>
+                <td>${item.yearsOfExperience} n\u0103m</td>
                 <td>
                     <div style="display: flex; align-items: center; gap: 4px;">
                         <i data-lucide="star" style="width: 14px; fill: #fbbf24; stroke: #fbbf24;"></i>
@@ -355,10 +355,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                 </td>
                 <td>${item.totalToursLed} / ${item.assignedToursCount}</td>
-                <td>${item.specialization || "Tổng hợp"}</td>
+                <td>${item.specialization || "T\u1ED5ng h\u1EE3p"}</td>
                 <td>
                     <span class="badge-status ${item.isActive ? 'confirmed' : 'cancelled'}">
-                        ${item.isActive ? 'Đang Hoạt Động' : 'Tạm Khóa'}
+                        ${item.isActive ? '\u0110ang Ho\u1EA1t \u0110\u1ED9ng' : 'T\u1EA1m Kh\u00F3a'}
                     </span>
                 </td>
             `;
@@ -380,15 +380,15 @@ document.addEventListener("DOMContentLoaded", () => {
             tr.innerHTML = `
                 <td>#${item.reportId}</td>
                 <td><span class="badge-status completed">${item.reportType}</span></td>
-                <td>${item.periodStart} đến ${item.periodEnd}</td>
-                <td>${item.generatedByName || 'Hệ thống'}</td>
+                <td>${item.periodStart} \u0111\u1EBFn ${item.periodEnd}</td>
+                <td>${item.generatedByName || 'H\u1EC7 th\u1ED1ng'}</td>
                 <td>${item.generatedAt}</td>
                 <td>
                     <button class="btn-action btn-primary view-report-btn" data-id="${item.reportId}">
                         <i data-lucide="eye" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i> Xem
                     </button>
                     <button class="btn-action download-csv-report-btn" data-id="${item.reportId}">
-                        Tải CSV
+                        T\u1EA3i CSV
                     </button>
                 </td>
             `;
@@ -420,7 +420,7 @@ document.addEventListener("DOMContentLoaded", () => {
         btnSaveSnapshot.addEventListener("click", () => {
             const reportType = snapshotTypeSelect.value;
             showConfirmation(
-                `Bạn có chắc chắn muốn chụp và lưu lại snapshot báo cáo loại <strong>${reportType}</strong> tại thời điểm này không?`,
+                `B\u1EA1n c\u00F3 ch\u1EAFc ch\u1EAFn mu\u1ED1n ch\u1EE5p v\u00E0 l\u01B0u l\u1EA1i snapshot b\u00E1o c\u00E1o lo\u1EA1i <strong>${reportType}</strong> t\u1EA1i th\u1EDDi \u0111i\u1EC3m n\u00E0y kh\u00F4ng?`,
                 () => {
                     executeSaveSnapshot(reportType);
                 }
@@ -430,7 +430,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function executeSaveSnapshot(reportType) {
         btnSaveSnapshot.disabled = true;
-        btnSaveSnapshot.innerText = "Đang lưu...";
+        btnSaveSnapshot.innerText = "\u0110ang l\u01B0u...";
 
         fetch(`${contextPath}/admin/analytics?action=saveSnapshot`, {
             method: "POST",
@@ -440,23 +440,23 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(res => res.json())
         .then(data => {
             if (data.success) {
-                alert("Đã chụp và lưu báo cáo thành công!");
+                alert("\u0110\u00E3 ch\u1EE5p v\u00E0 l\u01B0u b\u00E1o c\u00E1o th\u00E0nh c\u00F4ng!");
                 // Refresh snapshots if current tab is snapshots
                 const activeTab = document.querySelector(".tab-btn.active").getAttribute("data-tab");
                 if (activeTab === "tab-reports") {
                     loadTabData("tab-reports");
                 }
             } else {
-                alert("Lưu báo cáo thất bại: " + data.message);
+                alert("L\u01B0u b\u00E1o c\u00E1o th\u1EA5t b\u1EA1i: " + data.message);
             }
         })
         .catch(err => {
             console.error(err);
-            alert("Lỗi kết nối khi lưu báo cáo.");
+            alert("L\u1ED7i k\u1EBFt n\u1ED1i khi l\u01B0u b\u00E1o c\u00E1o.");
         })
         .finally(() => {
             btnSaveSnapshot.disabled = false;
-            btnSaveSnapshot.innerText = "Chụp Snapshot";
+            btnSaveSnapshot.innerText = "Ch\u1EE5p Snapshot";
         });
     }
 
@@ -467,11 +467,11 @@ document.addEventListener("DOMContentLoaded", () => {
             .then(report => {
                 modalBody.innerHTML = `
                     <div style="margin-bottom: 15px;">
-                        <p><strong>Mã Báo cáo:</strong> #${report.reportId}</p>
-                        <p><strong>Loại Báo cáo:</strong> ${report.reportType}</p>
-                        <p><strong>Khoảng thời gian:</strong> ${report.periodStart} đến ${report.periodEnd}</p>
-                        <p><strong>Thời gian chụp:</strong> ${report.generatedAt}</p>
-                        <p><strong>Người thực hiện:</strong> ${report.generatedByName || 'Hệ thống'}</p>
+                        <p><strong>M\u00E3 B\u00E1o c\u00E1o:</strong> #${report.reportId}</p>
+                        <p><strong>Lo\u1EA1i B\u00E1o c\u00E1o:</strong> ${report.reportType}</p>
+                        <p><strong>Kho\u1EA3ng th\u1EDDi gian:</strong> ${report.periodStart} \u0111\u1EBFn ${report.periodEnd}</p>
+                        <p><strong>Th\u1EDDi gian ch\u1EE5p:</strong> ${report.generatedAt}</p>
+                        <p><strong>Ng\u01B0\u1EDDi th\u1EF1c hi\u1EC7n:</strong> ${report.generatedByName || 'H\u1EC7 th\u1ED1ng'}</p>
                     </div>
                     <div style="background: rgba(15,23,42,0.6); padding: 15px; border-radius: 8px; max-height: 300px; overflow-y: auto;">
                         <pre style="color: var(--success-green); font-family: monospace; font-size: 0.85rem; white-space: pre-wrap; word-wrap: break-word;">${JSON.stringify(JSON.parse(report.data), null, 2)}</pre>
@@ -481,7 +481,7 @@ document.addEventListener("DOMContentLoaded", () => {
             })
             .catch(err => {
                 console.error(err);
-                alert("Không thể tải chi tiết báo cáo: " + err.message);
+                alert("Kh\u00F4ng th\u1EC3 t\u1EA3i chi ti\u1EBFt b\u00E1o c\u00E1o: " + err.message);
             });
     }
 
@@ -514,7 +514,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 csvContent += keys.map(k => `"${String(row[k] || '').replace(/"/g, '""')}"`).join(",") + "\n";
                             });
                         } else {
-                            csvContent += `Dữ liệu rỗng hoặc không có dạng bảng\n`;
+                            csvContent += `D\u1EEF li\u1EC7u r\u1ED7ng ho\u1EB7c kh\u00F4ng c\u00F3 d\u1EA1ng b\u1EA3ng\n`;
                         }
                     });
                 }
@@ -528,7 +528,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.body.removeChild(link);
             })
             .catch(err => {
-                alert("Xuất CSV thất bại: " + err.message);
+                alert("Xu\u1EA5t CSV th\u1EA5t b\u1EA1i: " + err.message);
             });
     }
 
@@ -569,7 +569,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Confirmation wrapper for Export
     window.confirmExport = function(tableId, filename) {
         showConfirmation(
-            "Bạn có chắc muốn xuất dữ liệu này không? Dữ liệu sẽ được kết xuất dưới dạng CSV và tải về máy tính của bạn.",
+            "B\u1EA1n c\u00F3 ch\u1EAFc mu\u1ED1n xu\u1EA5t d\u1EEF li\u1EC7u n\u00E0y kh\u00F4ng? D\u1EEF li\u1EC7u s\u1EBD \u0111\u01B0\u1EE3c k\u1EBFt xu\u1EA5t d\u01B0\u1EDBi d\u1EA1ng CSV v\u00E0 t\u1EA3i v\u1EC1 m\u00E1y t\u00EDnh c\u1EE7a b\u1EA1n.",
             () => {
                 window.exportTableToCSV(tableId, filename);
             }

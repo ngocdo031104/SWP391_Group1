@@ -1,4 +1,4 @@
-﻿document.addEventListener('DOMContentLoaded', () => {
+\uFEFFdocument.addEventListener('DOMContentLoaded', () => {
     // Initialize Lucide Icons
     lucide.createIcons();
 
@@ -466,7 +466,7 @@
                             <span class="price-label">Gi\u00e1 m\u1ed7i kh\u00e1ch</span>
                             <span class="price-val">${priceText} ${priceSpan}</span>
                         </div>
-                        <button class="btn btn-primary btn-sm btn-cta-detail" onclick="event.stopPropagation(); const contextPath = window.contextPath || ''; window.location.href=contextPath + '/detail?id=${tour.id}'">Xem Chi Tiết</button>
+                        <button class="btn btn-primary btn-sm btn-cta-detail" onclick="event.stopPropagation(); const contextPath = window.contextPath || ''; window.location.href=contextPath + '/detail?id=${tour.id}'">Xem Chi Ti\u1EBFt</button>
                     </div>
                 </div>
             `;

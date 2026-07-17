@@ -1,4 +1,4 @@
-﻿document.addEventListener('DOMContentLoaded', () => {
+\uFEFFdocument.addEventListener('DOMContentLoaded', () => {
     // Initialize Lucide Icons
     lucide.createIcons();
 
@@ -497,12 +497,12 @@
         });
     }
 
-    // LÝ DO VÀ CHỨC NàNG CỦA ĐOẠN SUBMIT FORM ĐÁNH GIÁ (SUBMIT REVIEW FORM):
-    // - Khi người dùng bấm nút gửi đánh giá, trình duyệt sẽ kích hoạt sự kiện submit này.
-    // - Ta cần đọc biến `selectedRatingVal` (chứa số sao người dùng vừa chọn bằng cách click vào các ngôi sao trên giao diện).
-    // - Gán giá trị sao này vào thẻ input ẩn `#review-rating-input` để nó được gửi đi cùng dữ liệu form POST.
-    // - Chúng ta KHÔNG gọi `e.preventDefault()` để cho phép biểu mẫu tự động submit tự nhiên lên servlet
-    //   DetailController (POST) lưu trữ vào cơ sở dữ liệu và tải lại trang chi tiết.
+    // L\u00DD DO V\u00C0 CH\u1EE8C N\u00E0NG C\u1EE6A \u0110O\u1EA0N SUBMIT FORM \u0110\u00C1NH GI\u00C1 (SUBMIT REVIEW FORM):
+    // - Khi ng\u01B0\u1EDDi d\u00F9ng b\u1EA5m n\u00FAt g\u1EEDi \u0111\u00E1nh gi\u00E1, tr\u00ECnh duy\u1EC7t s\u1EBD k\u00EDch ho\u1EA1t s\u1EF1 ki\u1EC7n submit n\u00E0y.
+    // - Ta c\u1EA7n \u0111\u1ECDc bi\u1EBFn `selectedRatingVal` (ch\u1EE9a s\u1ED1 sao ng\u01B0\u1EDDi d\u00F9ng v\u1EEBa ch\u1ECDn b\u1EB1ng c\u00E1ch click v\u00E0o c\u00E1c ng\u00F4i sao tr\u00EAn giao di\u1EC7n).
+    // - G\u00E1n gi\u00E1 tr\u1ECB sao n\u00E0y v\u00E0o th\u1EBB input \u1EA9n `#review-rating-input` \u0111\u1EC3 n\u00F3 \u0111\u01B0\u1EE3c g\u1EEDi \u0111i c\u00F9ng d\u1EEF li\u1EC7u form POST.
+    // - Ch\u00FAng ta KH\u00D4NG g\u1ECDi `e.preventDefault()` \u0111\u1EC3 cho ph\u00E9p bi\u1EC3u m\u1EABu t\u1EF1 \u0111\u1ED9ng submit t\u1EF1 nhi\u00EAn l\u00EAn servlet
+    //   DetailController (POST) l\u01B0u tr\u1EEF v\u00E0o c\u01A1 s\u1EDF d\u1EEF li\u1EC7u v\u00E0 t\u1EA3i l\u1EA1i trang chi ti\u1EBFt.
     if (newReviewForm) {
         newReviewForm.addEventListener('submit', (e) => {
             const ratingInput = document.getElementById('review-rating-input');
@@ -614,9 +614,9 @@
                 if (data.status === 'success' || data.status === 'added' || data.status === 'removed') {
                     wishlistDetailBtn.classList.toggle('active', data.isSaved);
                     if (data.isSaved) {
-                        wishlistDetailBtn.innerHTML = `<i data-lucide="heart" fill="currentColor"></i> Đã lưu Yêu thích`;
+                        wishlistDetailBtn.innerHTML = `<i data-lucide="heart" fill="currentColor"></i> \u0110\u00E3 l\u01B0u Y\u00EAu th\u00EDch`;
                     } else {
-                        wishlistDetailBtn.innerHTML = `<i data-lucide="heart"></i> Lưu vào Yêu thích`;
+                        wishlistDetailBtn.innerHTML = `<i data-lucide="heart"></i> L\u01B0u v\u00E0o Y\u00EAu th\u00EDch`;
                     }
                     if (window.lucide) window.lucide.createIcons();
                     window.showToast(data.message, 'success');
