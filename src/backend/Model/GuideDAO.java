@@ -538,7 +538,7 @@ public class GuideDAO extends DBContext {
      * Cập nhật trạng thái vận hành của Tour (Transaction-based).
      */
     public boolean updateTourStatus(int scheduleId, String newStatus, String notes, int guideId) {
-        String updateScheduleSql = "UPDATE TourSchedule SET Status = ? WHERE ScheduleID = ?";
+        String updateScheduleSql = "UPDATE TourSchedule SET TourStatus = ? WHERE ScheduleID = ?";
         String insertStatusSql = "INSERT INTO TourStatus (ScheduleID, Status, Notes, UpdatedBy, UpdatedAt) VALUES (?, ?, ?, ?, SYSDATETIME())";
         String insertLogSql = "INSERT INTO TourOperationLog (ScheduleID, Activity, OperatedBy, CreatedAt) VALUES (?, ?, ?, SYSDATETIME())";
 
