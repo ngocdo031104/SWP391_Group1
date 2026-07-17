@@ -217,4 +217,64 @@ public class TourOperationLogDAO extends DBContext {
         }
         return 0;
     }
+
+    /**
+     * Lấy tất cả nhật ký vận hành với phân trang (không tìm kiếm).
+     */
+    public List<TourOperationLog> getAllLogsPaged(int offset, int pageSize) {
+        List<TourOperationLog> list = new ArrayList<>();
+        String sql = "SELECT tol.LogID, tol.ScheduleID, tol.Activity, tol.OperatedBy, tol.CreatedAt, "
+                   + "       t.TourName, ts.DepartureDate, "
+                   + "       u.FullName AS OperatorName, r.RoleName AS OperatorRole "
+                   + "FROM TourOperationLog tol "
+                   + "JOIN TourSchedule ts ON tol.ScheduleID = ts.ScheduleID "
+                   + "JOIN Tour t ON ts.TourID = t.TourID "
+                   + "LEFT JOIN [User] u ON tol.OperatedBy = u.UserID "
+                   + "LEFT JOIN [Role] r ON u.RoleID = r.RoleID "
+                   + "ORDER BY tol.CreatedAt DESC "
+                   + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, offset);
+            ps.setInt(2, pageSize);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    TourOperationLog log = new TourOperationLog();
+                    log.setLogId(rs.getInt("LogID"));
+                    log.setScheduleId(rs.getInt("ScheduleID"));
+                    log.setActivity(rs.getString("Activity"));
+
+                    int operatedBy = rs.getInt("OperatedBy");
+                    if (!rs.wasNull()) {
+                        log.setOperatedBy(operatedBy);
+                    }
+                    log.setCreatedAt(rs.getTimestamp("CreatedAt"));
+                    log.setTourName(rs.getString("TourName"));
+                    log.setDepartureDate(rs.getTimestamp("DepartureDate"));
+                    log.setOperatorName(rs.getString("OperatorName"));
+                    log.setOperatorRole(rs.getString("OperatorRole"));
+                    list.add(log);
+                }
+            }
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Lỗi khi lấy tất cả nhật ký vận hành", ex);
+        }
+        return list;
+    }
+
+    /**
+     * Đếm tổng số nhật ký vận hành.
+     */
+    public int getTotalLogsCount() {
+        String sql = "SELECT COUNT(*) FROM TourOperationLog";
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Lỗi khi đếm tổng nhật ký vận hành", ex);
+        }
+        return 0;
+    }
 }

@@ -449,11 +449,11 @@ public class BookingDAO extends DBContext {
      * Cancels a booking, releases seats in TourSchedule, and logs the change in BookingHistory.
      * Usually called by staff when approving a cancellation request, or by system/customer for unpaid bookings.
      */
-    // UC11: L\u1ea5y to\u00e0n b\u1ed9 booking c\u1ee7a h\u1ec7 th\u1ed1ng cho Staff qu\u1ea3n l\u00fd.
-    // JOIN TourSchedule + Tour \u0111\u1ec3 hi\u1ec3n th\u1ecb t\u00ean tour, ng\u00e0y kh\u1edfi h\u00e0nh.
-    // JOIN [User] \u0111\u1ec3 hi\u1ec3n th\u1ecb t\u00ean kh\u00e1ch h\u00e0ng.
-    // statusFilter = "All" \u0111\u1ec3 l\u1ea5y t\u1ea5t c\u1ea3, ho\u1eb7c t\u00ean status c\u1ee5 th\u1ec3.
-    // keyword t\u00ecm theo BookingCode ho\u1eb7c FullName kh\u00e1ch.
+    // UC11: Lấy toàn bộ booking của hệ thống cho Staff quản lý.
+    // JOIN TourSchedule + Tour để hiển thị tên tour, ngày khởi hành.
+    // JOIN [User] để hiển thị tên khách hàng.
+    // statusFilter = "All" để lấy tất cả, hoặc tên status cụ thể.
+    // keyword tìm theo BookingCode hoặc FullName khách.
     public List<Booking> getAllBookingsForStaff(String statusFilter, String keyword, int offset, int pageSize) {
         List<Booking> list = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
@@ -638,5 +638,49 @@ public class BookingDAO extends DBContext {
             }
         }
         return false;
+    }
+}
+
+    // Lấy danh sách booking với thông tin schedule đầy đủ cho Staff xem guest list
+    public List<Booking> getAllBookingsWithSchedules() {
+        List<Booking> list = new ArrayList<>();
+        String sql = "SELECT b.BookingID, b.BookingCode, b.ScheduleID, b.CustomerID, b.NumParticipants, " +
+                     "b.BaseAmount, b.VATAmount, b.DiscountAmount, b.TotalAmount, b.Status, b.Notes, b.CouponID, b.CreatedAt, b.UpdatedAt, " +
+                     "s.DepartureDate, s.ReturnDate, t.TourName, t.Destination, " +
+                     "u.FullName AS CustomerName, u.Email AS CustomerEmail, u.PhoneNumber AS CustomerPhone " +
+                     "FROM Booking b " +
+                     "JOIN TourSchedule s ON b.ScheduleID = s.ScheduleID " +
+                     "JOIN Tour t ON s.TourID = t.TourID " +
+                     "JOIN [User] u ON b.CustomerID = u.UserID " +
+                     "WHERE b.Status = 'Success' " +
+                     "ORDER BY s.DepartureDate DESC";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Booking b = mapBooking(rs);
+                User customer = new User();
+                customer.setUserId(rs.getInt("CustomerID"));
+                customer.setFullName(rs.getString("CustomerName"));
+                customer.setEmail(rs.getString("CustomerEmail"));
+                customer.setPhoneNumber(rs.getString("CustomerPhone"));
+                b.setCustomer(customer);
+
+                Entities.TourSchedule schedule = new Entities.TourSchedule();
+                schedule.setScheduleId(rs.getInt("ScheduleID"));
+                schedule.setDepartureDate(rs.getDate("DepartureDate"));
+                schedule.setReturnDate(rs.getDate("ReturnDate"));
+
+                Entities.Tour tour = new Entities.Tour();
+                tour.setTourName(rs.getString("TourName"));
+                tour.setDestination(rs.getString("Destination"));
+                schedule.setTour(tour);
+                b.setSchedule(schedule);
+                list.add(b);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(BookingDAO.class.getName()).log(Level.SEVERE, "getAllBookingsWithSchedules failed", ex);
+        }
+        return list;
     }
 }

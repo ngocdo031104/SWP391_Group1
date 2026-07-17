@@ -651,5 +651,43 @@ public class UserDAO extends DBContext {
         }
         return stats;
     }
+
+    /**
+     * Lấy danh sách user theo các role IDs.
+     */
+    public List<User> getUsersByRoles(int[] roleIds) {
+        List<User> users = new ArrayList<>();
+        if (roleIds == null || roleIds.length == 0) return users;
+
+        StringBuilder placeholders = new StringBuilder();
+        for (int i = 0; i < roleIds.length; i++) {
+            placeholders.append(i > 0 ? ",?" : "?");
+        }
+
+        String sql = "SELECT u.UserID, u.RoleID, u.Email, u.FullName, u.PhoneNumber, u.IsActive, u.IsVerified "
+                   + "FROM [User] u WHERE u.RoleID IN (" + placeholders + ") AND u.IsActive = 1";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            for (int i = 0; i < roleIds.length; i++) {
+                ps.setInt(i + 1, roleIds[i]);
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    User user = new User();
+                    user.setUserId(rs.getInt("UserID"));
+                    user.setRoleId(rs.getInt("RoleID"));
+                    user.setEmail(rs.getString("Email"));
+                    user.setFullName(rs.getString("FullName"));
+                    user.setPhoneNumber(rs.getString("PhoneNumber"));
+                    user.setIsActive(rs.getBoolean("IsActive"));
+                    user.setIsVerified(rs.getBoolean("IsVerified"));
+                    users.add(user);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, "Lỗi khi lấy users theo roles", ex);
+        }
+        return users;
+    }
 }
 

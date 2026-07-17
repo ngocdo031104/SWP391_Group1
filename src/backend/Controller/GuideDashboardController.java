@@ -1,13 +1,20 @@
 package Controller;
 
 import Entities.IncidentReport;
+import Entities.Notification;
+import Entities.Notification;
 import Entities.TourAssignment;
 import Entities.TourOperationLog;
+import Entities.TourSchedule;
 import Entities.User;
 import Model.AttendanceDAO;
 import Model.GuideDAO;
 import Model.IncidentReportDAO;
+import Model.NotificationDAO;
 import Model.TourOperationLogDAO;
+import Model.TourScheduleDAO;
+import Model.TourScheduleDAO;
+import Model.UserDAO;
 import com.google.gson.JsonObject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -437,6 +444,9 @@ public class GuideDashboardController extends HttpServlet {
                     if (success) {
                         result.addProperty("status", "success");
                         result.addProperty("message", "Báo cáo sự cố đã được ghi nhận thành công!");
+
+                        // Tự động gửi thông báo cho Staff/Admin về sự cố mới
+                        sendIncidentNotificationToStaff(scheduleId, title, severity, description, user);
                     } else {
                         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                         result.addProperty("status", "error");
@@ -518,5 +528,51 @@ public class GuideDashboardController extends HttpServlet {
         }
 
         out.print(result.toString());
+    }
+
+    private void sendIncidentNotificationToStaff(int scheduleId, String title, String severity, String description, User reporter) {
+        try {
+            // Lấy thông tin schedule để biết tour
+            TourScheduleDAO scheduleDAO = new TourScheduleDAO();
+            TourSchedule schedule = scheduleDAO.getScheduleById(scheduleId);
+            scheduleDAO.close();
+
+            if (schedule != null) {
+                // Tạo nội dung notification
+                String tourName = schedule.getTour() != null ? schedule.getTour().getTourName() : "Tour #" + scheduleId;
+                String content = String.format(
+                    "Guide %s đã báo cáo sự cố mới:\n" +
+                    "Tour: %s\n" +
+                    "Tiêu đề: %s\n" +
+                    "Mức độ: %s\n" +
+                    "Mô tả: %s",
+                    reporter.getFullName(), tourName, title, severity, description
+                );
+
+                // Gửi notification cho tất cả Staff và Admin
+                UserDAO userDAO = new UserDAO();
+                List<User> staffAndAdmins = userDAO.getUsersByRoles(new int[]{1, 2}); // Admin=1, Staff=2
+                userDAO.close();
+
+                NotificationDAO notifDAO = new NotificationDAO();
+                try {
+                    for (User recipient : staffAndAdmins) {
+                        Notification notif = new Notification();
+                        notif.setUserId(recipient.getUserId());
+                        notif.setSenderId(reporter.getUserId());
+                        notif.setTitle("⚠️ Sự cố mới: " + title);
+                        notif.setContent(content);
+                        notif.setChannel("SYSTEM");
+                        notif.setCategory("Incident Report");
+                        notif.setStatus("SENT");
+                        notifDAO.insertNotification(notif);
+                    }
+                } finally {
+                    notifDAO.close();
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "Không thể gửi notification về sự cố cho Staff", e);
+        }
     }
 }
