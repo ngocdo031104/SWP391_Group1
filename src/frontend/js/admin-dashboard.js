@@ -1,4 +1,4 @@
-/* ── Admin Dashboard Logic & Charts ── */
+/* \u2500\u2500 Admin Dashboard Logic & Charts \u2500\u2500 */
 
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize Lucide Icons
@@ -11,12 +11,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const departuresTbody = document.getElementById('overview-departures-body');
     let overviewChartInstance = null;
 
-    /* ── Fetch Tours from Server ── */
+    /* \u2500\u2500 Fetch Tours from Server \u2500\u2500 */
     function fetchDashboardData() {
-        // Tách 2 endpoint riêng để tránh share schema giữa 2 consumer:
-        //   - /admin/dashboard?ajax=true -> chỉ trả {monthlyRevenue} (chart)
-        //   - /admin/tours?ajax=true     -> trả {tours, monthlyRevenue} (table quản lý)
-        // Dashboard dùng revenue endpoint (lightweight) + tours endpoint cho overview stats.
+        // T\u00E1ch 2 endpoint ri\u00EAng \u0111\u1EC3 tr\u00E1nh share schema gi\u1EEFa 2 consumer:
+        //   - /admin/dashboard?ajax=true -> ch\u1EC9 tr\u1EA3 {monthlyRevenue} (chart)
+        //   - /admin/tours?ajax=true     -> tr\u1EA3 {tours, monthlyRevenue} (table qu\u1EA3n l\u00FD)
+        // Dashboard d\u00F9ng revenue endpoint (lightweight) + tours endpoint cho overview stats.
         Promise.all([
             fetch('dashboard?ajax=true').then(res => {
                 if (!res.ok) throw new Error('Kh\u00f4ng th\u1ec3 k\u1ebft n\u1ed1i \u0111\u1ebfn m\u00e1y ch\u1ee7 (revenue)');
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
 
-    /* ── Map Database JSON to local overview variables ── */
+    /* \u2500\u2500 Map Database JSON to local overview variables \u2500\u2500 */
     function mapToursData(data) {
         return data.map(t => {
             let seatsTotal = t.totalSeats || t.maxParticipants || 20;
@@ -53,21 +53,21 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Image mapping
             let image = '';
-            if (t.tourName.toLowerCase().includes('đà nẵng') || t.tourName.toLowerCase().includes('bà nà')) {
+            if (t.tourName.toLowerCase().includes('\u0111\u00E0 n\u1EB5ng') || t.tourName.toLowerCase().includes('b\u00E0 n\u00E0')) {
                 image = '../assets/images/tour_danang.png';
-            } else if (t.tourName.toLowerCase().includes('phú quốc')) {
+            } else if (t.tourName.toLowerCase().includes('ph\u00FA qu\u1ED1c')) {
                 image = '../assets/images/tour_phuquoc.png';
-            } else if (t.tourName.toLowerCase().includes('hạ long')) {
+            } else if (t.tourName.toLowerCase().includes('h\u1EA1 long')) {
                 image = '../assets/images/tour_halong.png';
-            } else if (t.tourName.toLowerCase().includes('hội an')) {
+            } else if (t.tourName.toLowerCase().includes('h\u1ED9i an')) {
                 image = '../assets/images/tour_hoian.png';
-            } else if (t.tourName.toLowerCase().includes('đà lạt')) {
+            } else if (t.tourName.toLowerCase().includes('\u0111\u00E0 l\u1EA1t')) {
                 image = '../assets/images/tour_dalat.png';
             } else if (t.tourName.toLowerCase().includes('sa pa') || t.tourName.toLowerCase().includes('sapa')) {
                 image = '../assets/images/tour_sapa.png';
             } else if (t.tourName.toLowerCase().includes('nha trang')) {
                 image = '../assets/images/tour_nhatrang.png';
-            } else if (t.tourName.toLowerCase().includes('hà giang')) {
+            } else if (t.tourName.toLowerCase().includes('h\u00E0 giang')) {
                 image = '../assets/images/tour_hagiang.png';
             } else {
                 image = '../assets/images/tour_halong.png';
@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return {
                 id: t.tourId,
                 title: t.tourName,
-                location: t.departureCity + " → " + t.destination,
+                location: t.departureCity + " \u2192 " + t.destination,
                 category: t.categoryId,
                 categoryName: t.categoryName,
                 difficulty: t.difficultyLevel ? t.difficultyLevel.toLowerCase() : 'easy',
@@ -131,12 +131,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         <i data-lucide="${isUp ? 'trending-up' : 'trending-down'}"></i> 
                         ${isUp ? '+' : ''}${percentChange}%
                     </span>
-                    <span>so với tháng trước</span>
+                    <span>so v\u1EDBi th\u00E1ng tr\u01B0\u1EDBc</span>
                 `;
             } else {
                 revFooter.innerHTML = `
                     <span class="stat-trend up"><i data-lucide="trending-up"></i> +0%</span>
-                    <span>so với tháng trước</span>
+                    <span>so v\u1EDBi th\u00E1ng tr\u01B0\u1EDBc</span>
                 `;
             }
         }
@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const newToursInMonth = tours.filter(t => t.createdAt && t.createdAt.startsWith(currentMonthPrefix)).length;
             toursFooter.innerHTML = `
                 <span class="stat-trend up"><i data-lucide="trending-up"></i> +${newToursInMonth} tour</span>
-                <span>mới thêm trong tháng</span>
+                <span>m\u1EDBi th\u00EAm trong th\u00E1ng</span>
             `;
         }
 
@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const occupiedPercent = seatsTotal > 0 ? ((occupiedSeats / seatsTotal) * 100).toFixed(1) : 0;
             seatsFooter.innerHTML = `
                 <span class="stat-trend up"><i data-lucide="trending-up"></i> ${occupiedPercent}%</span>
-                <span>ghế đã được đặt chỗ</span>
+                <span>gh\u1EBF \u0111\u00E3 \u0111\u01B0\u1EE3c \u0111\u1EB7t ch\u1ED7</span>
             `;
         }
 
@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (fillFooter) {
             fillFooter.innerHTML = `
                 <span class="stat-trend up"><i data-lucide="trending-up"></i> ${fillRatePercent}%</span>
-                <span>tỷ lệ lấp đầy thực tế</span>
+                <span>t\u1EF7 l\u1EC7 l\u1EA5p \u0111\u1EA7y th\u1EF1c t\u1EBF</span>
             `;
         }
 
@@ -197,14 +197,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td><span style="font-weight: 500;">${tour.categoryName}</span></td>
                 <td>
                     <span class="badge ${tour.difficulty === 'easy' ? 'badge-active' : tour.difficulty === 'medium' ? 'badge-draft' : 'badge-disabled'}">
-                        ${tour.difficulty === 'easy' ? 'Dễ' : tour.difficulty === 'medium' ? 'Vừa' : 'Khó'}
+                        ${tour.difficulty === 'easy' ? 'D\u1EC5' : tour.difficulty === 'medium' ? 'V\u1EEBa' : 'Kh\u00F3'}
                     </span>
                 </td>
-                <td>★ ${tour.rating.toFixed(1)} (${tour.reviews})</td>
+                <td>\u2605 ${tour.rating.toFixed(1)} (${tour.reviews})</td>
                 <td>
                     <div class="capacity-cell">
                         <div class="capacity-text-row">
-                            <span>Còn ${tour.seatsLeft}/${tour.seatsTotal} chỗ</span>
+                            <span>C\u00F2n ${tour.seatsLeft}/${tour.seatsTotal} ch\u1ED7</span>
                         </div>
                         <div class="progress-bar">
                             <div class="progress-fill ${tour.seatsLeft <= 5 ? 'danger' : ''}" style="width: ${((tour.seatsTotal - tour.seatsLeft) / tour.seatsTotal * 100)}%;"></div>
@@ -232,7 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const tr = document.createElement('tr');
             const percent = ((tour.seatsTotal - tour.seatsLeft) / tour.seatsTotal * 100).toFixed(0);
             
-            let dateStr = 'Chưa có lịch';
+            let dateStr = 'Ch\u01B0a c\u00F3 l\u1ECBch';
             if (tour.nextDeparture) {
                 const parts = tour.nextDeparture.split('-');
                 if (parts.length === 3) {
@@ -251,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td style="font-size:0.8rem; font-weight:500; white-space: nowrap;">${dateStr}</td>
                 <td>
                     <div class="capacity-cell" style="width: 100px;">
-                        <span style="font-size:0.7rem; font-weight:600; color:var(--text-muted);">${percent}% Đã đặt</span>
+                        <span style="font-size:0.7rem; font-weight:600; color:var(--text-muted);">${percent}% \u0110\u00E3 \u0111\u1EB7t</span>
                         <div class="progress-bar" style="height:4px;">
                             <div class="progress-fill ${tour.seatsLeft <= 5 ? 'danger' : ''}" style="width: ${percent}%;"></div>
                         </div>
@@ -275,7 +275,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const today = new Date();
         for (let i = 5; i >= 0; i--) {
             const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
-            labels.push(`Tháng ${d.getMonth() + 1}`);
+            labels.push(`Th\u00E1ng ${d.getMonth() + 1}`);
         }
         
         overviewChartInstance = new Chart(ctx, {
@@ -283,7 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Doanh thu (₫)',
+                    label: 'Doanh thu (\u20AB)',
                     data: monthlyRev,
                     borderColor: '#818cf8',
                     backgroundColor: 'rgba(129, 140, 248, 0.1)',
@@ -308,7 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Helper functions
     function formatCurrency(val) {
-        return val.toLocaleString('vi-VN') + ' ₫';
+        return val.toLocaleString('vi-VN') + ' \u20AB';
     }
 
     // Toggle profile avatar dropdown

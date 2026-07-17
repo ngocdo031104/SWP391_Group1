@@ -1,4 +1,4 @@
-﻿document.addEventListener('DOMContentLoaded', () => {
+\uFEFFdocument.addEventListener('DOMContentLoaded', () => {
     // Initialize Lucide Icons
     if (window.lucide) {
         lucide.createIcons();
