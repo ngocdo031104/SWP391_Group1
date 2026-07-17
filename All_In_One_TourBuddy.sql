@@ -477,6 +477,7 @@ CREATE TABLE FinancialAuditLog (
 );
 GO
 
+
 CREATE TABLE FraudAlert (
     AlertID     INT IDENTITY(1,1) PRIMARY KEY,
     PaymentID   INT           NOT NULL REFERENCES Payment(PaymentID),
