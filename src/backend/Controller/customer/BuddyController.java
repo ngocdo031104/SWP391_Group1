@@ -124,6 +124,15 @@ public class BuddyController extends HttpServlet {
                         boolean sent = buddyRequestDAO.sendRequest(currentUserId, receiverId);
                         if (sent) {
                             session.setAttribute("successMsg", "Đã gửi lời mời kết nối thành công!");
+                            Notification notif = new Notification();
+                            notif.setUserId(receiverId);
+                            notif.setSenderId(currentUserId);
+                            notif.setTitle("Lời mời kết nối mới");
+                            notif.setContent(sessionUser.getFullName() + " vừa gửi cho bạn một lời mời kết nối Buddy. Hãy kiểm tra và phản hồi nhé!");
+                            notif.setChannel("In-App");
+                            notif.setCategory("Buddy Request");
+                            NotificationDAO notifDAO = new NotificationDAO();
+                            notifDAO.insertNotification(notif);
                         } else {
                             session.setAttribute("errorMsg", "Không thể gửi lời mời. Vui lòng thử lại.");
                         }

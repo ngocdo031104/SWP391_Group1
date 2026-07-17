@@ -120,7 +120,7 @@ function sendMessage() {
         socket.send(JSON.stringify(payload));
         input.value = ''; // Clear input
     } else {
-        alert("Mất kết nối máy chủ. Đang thử lại...");
+        alert("M\u1EA5t k\u1EBFt n\u1ED1i m\u00E1y ch\u1EE7. \u0110ang th\u1EED l\u1EA1i...");
     }
 }
 
@@ -136,13 +136,13 @@ window.onload = function() {
             if (!file) return;
             
             if (file.size > 5 * 1024 * 1024) {
-                alert("File ảnh không được vượt quá 5MB!");
+                alert("File \u1EA3nh kh\u00F4ng \u0111\u01B0\u1EE3c v\u01B0\u1EE3t qu\u00E1 5MB!");
                 this.value = '';
                 return;
             }
 
             if (!currentConversationId) {
-                alert("Vui lòng chọn cuộc trò chuyện trước khi gửi ảnh.");
+                alert("Vui l\u00F2ng ch\u1ECDn cu\u1ED9c tr\u00F2 chuy\u1EC7n tr\u01B0\u1EDBc khi g\u1EEDi \u1EA3nh.");
                 this.value = '';
                 return;
             }
@@ -166,12 +166,12 @@ window.onload = function() {
                     };
                     socket.send(JSON.stringify(payload));
                 } else if (data.error) {
-                    alert("Lỗi: " + data.error);
+                    alert("L\u1ED7i: " + data.error);
                 }
             })
             .catch(err => {
                 console.error("Upload error", err);
-                alert("Đã xảy ra lỗi khi upload file.");
+                alert("\u0110\u00E3 x\u1EA3y ra l\u1ED7i khi upload file.");
             })
             .finally(() => {
                 this.value = ''; // Reset input
@@ -200,8 +200,8 @@ window.onload = function() {
 
 // Video Call Scheduling Logic
 function openScheduleModal() {
-    document.getElementById('scheduleModalTitle').innerText = 'Lên lịch gọi Video';
-    document.getElementById('scheduleSubmitBtn').innerText = 'Tạo lịch gọi';
+    document.getElementById('scheduleModalTitle').innerText = 'L\u00EAn l\u1ECBch g\u1ECDi Video';
+    document.getElementById('scheduleSubmitBtn').innerText = 'T\u1EA1o l\u1ECBch g\u1ECDi';
     document.getElementById('callId').value = '';
     document.getElementById('scheduleForm').reset();
 
@@ -220,7 +220,7 @@ function closeScheduleModal() {
 function handleScheduleSubmit(event) {
     event.preventDefault();
     if (!currentConversationId) {
-        alert("Vui lòng chọn cuộc trò chuyện trước.");
+        alert("Vui l\u00F2ng ch\u1ECDn cu\u1ED9c tr\u00F2 chuy\u1EC7n tr\u01B0\u1EDBc.");
         return;
     }
 
@@ -245,7 +245,7 @@ function handleScheduleSubmit(event) {
     fetch(`${ctx}/customer/video-call`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
         },
         body: formData.toString()
     })
@@ -258,7 +258,7 @@ function handleScheduleSubmit(event) {
     })
     .then(data => {
         closeScheduleModal();
-        alert(action === 'create' ? 'Lên lịch gọi Video thành công!' : 'Cập nhật lịch gọi Video thành công!');
+        alert(action === 'create' ? 'L\u00EAn l\u1ECBch g\u1ECDi Video th\u00E0nh c\u00F4ng!' : 'C\u1EADp nh\u1EADt l\u1ECBch g\u1ECDi Video th\u00E0nh c\u00F4ng!');
         // Trigger reload of conversation to see the system message
         const currentName = document.getElementById('chatHeaderName').innerText;
         const currentAvatar = document.getElementById('chatHeaderAvatar').src;
@@ -289,7 +289,7 @@ function showUpcomingCalls() {
             listContainer.innerHTML = '';
             
             if (data.length === 0) {
-                listContainer.innerHTML = '<p style="padding: 20px; text-align: center; color: #6b7280;">Không có lịch hẹn video nào sắp tới.</p>';
+                listContainer.innerHTML = '<p style="padding: 20px; text-align: center; color: #6b7280;">Kh\u00F4ng c\u00F3 l\u1ECBch h\u1EB9n video n\u00E0o s\u1EAFp t\u1EDBi.</p>';
             } else {
                 data.forEach(call => {
                     const time = new Date(call.scheduledAt).toLocaleString();
@@ -301,8 +301,8 @@ function showUpcomingCalls() {
                     let actionsHtml = '';
                     if (isOrganizer) {
                         actionsHtml = `
-                            <button onclick='editCall(${JSON.stringify(call).replace(/'/g, "&apos;")})' style="background: none; border: none; color: #3b82f6; cursor: pointer; margin-right: 10px;">Sửa</button>
-                            <button onclick="cancelCall(${call.callId})" style="background: none; border: none; color: #ef4444; cursor: pointer;">Hủy</button>
+                            <button onclick='editCall(${JSON.stringify(call).replace(/'/g, "&apos;")})' style="background: none; border: none; color: #3b82f6; cursor: pointer; margin-right: 10px;">S\u1EEDa</button>
+                            <button onclick="cancelCall(${call.callId})" style="background: none; border: none; color: #ef4444; cursor: pointer;">H\u1EE7y</button>
                         `;
                     }
 
@@ -310,9 +310,9 @@ function showUpcomingCalls() {
                         <div>
                             <h4 style="margin: 0 0 5px 0; color: #111827;">${call.title}</h4>
                             <p style="margin: 0; font-size: 0.85rem; color: #6b7280;">
-                                ${time} (${call.durationMin} phút) - Bởi ${call.organizerName}
+                                ${time} (${call.durationMin} ph\u00FAt) - B\u1EDFi ${call.organizerName}
                             </p>
-                            <a href="${call.meetingUrl}" target="_blank" style="font-size: 0.85rem; color: #3b82f6; text-decoration: none; margin-top: 5px; display: inline-block;">Tham gia cuộc họp</a>
+                            <a href="${call.meetingUrl}" target="_blank" style="font-size: 0.85rem; color: #3b82f6; text-decoration: none; margin-top: 5px; display: inline-block;">Tham gia cu\u1ED9c h\u1ECDp</a>
                         </div>
                         <div>
                             ${actionsHtml}
@@ -325,14 +325,14 @@ function showUpcomingCalls() {
         })
         .catch(err => {
             console.error(err);
-            alert("Không thể tải danh sách lịch gọi.");
+            alert("Kh\u00F4ng th\u1EC3 t\u1EA3i danh s\u00E1ch l\u1ECBch g\u1ECDi.");
         });
 }
 
 function editCall(call) {
     closeUpcomingCallsModal();
-    document.getElementById('scheduleModalTitle').innerText = 'Sửa lịch gọi Video';
-    document.getElementById('scheduleSubmitBtn').innerText = 'Cập nhật';
+    document.getElementById('scheduleModalTitle').innerText = 'S\u1EEDa l\u1ECBch g\u1ECDi Video';
+    document.getElementById('scheduleSubmitBtn').innerText = 'C\u1EADp nh\u1EADt';
     document.getElementById('callId').value = call.callId;
     document.getElementById('callTitle').value = call.title;
     
@@ -348,7 +348,7 @@ function editCall(call) {
 }
 
 function cancelCall(callId) {
-    if (!confirm("Bạn có chắc chắn muốn hủy lịch gọi này?")) return;
+    if (!confirm("B\u1EA1n c\u00F3 ch\u1EAFc ch\u1EAFn mu\u1ED1n h\u1EE7y l\u1ECBch g\u1ECDi n\u00E0y?")) return;
     
     const formData = new URLSearchParams();
     formData.append('action', 'cancel');
@@ -358,16 +358,16 @@ function cancelCall(callId) {
     const ctx = window.location.pathname.substring(0, window.location.pathname.indexOf('/', 1));
     fetch(`${ctx}/customer/video-call`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
         body: formData.toString()
     })
     .then(async response => {
         const data = await response.json();
         if (response.ok) return data;
-        throw new Error(data.message || 'Lỗi khi hủy');
+        throw new Error(data.message || 'L\u1ED7i khi h\u1EE7y');
     })
     .then(data => {
-        alert("Đã hủy lịch gọi thành công.");
+        alert("\u0110\u00E3 h\u1EE7y l\u1ECBch g\u1ECDi th\u00E0nh c\u00F4ng.");
         showUpcomingCalls(); // refresh list
         
         // Trigger reload of conversation
@@ -393,12 +393,12 @@ function closeCreateGroupModal() {
 function submitCreateGroup() {
     const groupName = document.getElementById('groupName').value.trim();
     if (!groupName) {
-        alert('Vui lòng nhập tên nhóm!');
+        alert('Vui l\u00F2ng nh\u1EADp t\u00EAn nh\u00F3m!');
         return;
     }
     const checkboxes = document.querySelectorAll('input[name="participants"]:checked');
     if (checkboxes.length === 0) {
-        alert('Vui lòng chọn ít nhất 1 bạn bè để tạo nhóm!');
+        alert('Vui l\u00F2ng ch\u1ECDn \u00EDt nh\u1EA5t 1 b\u1EA1n b\u00E8 \u0111\u1EC3 t\u1EA1o nh\u00F3m!');
         return;
     }
     document.getElementById('createGroupForm').submit();

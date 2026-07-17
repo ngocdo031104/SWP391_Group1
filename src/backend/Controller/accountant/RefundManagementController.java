@@ -9,6 +9,7 @@ import Entities.CancellationRequest;
 import Entities.Notification;
 import Entities.Payment;
 import Entities.User;
+import Model.AuditLogDAO;
 import Model.BookingDAO;
 import Model.CancellationRequestDAO;
 import Model.NotificationDAO;
@@ -131,6 +132,11 @@ public class RefundManagementController extends HttpServlet {
                     refundPayment.setTransactionRef(transactionRef != null ? transactionRef : "REFUND-" + requestId);
                     refundPayment.setStatus("Refunded");
                     paymentDAO.createPayment(refundPayment);
+                    
+                    // Add to Financial Audit Log
+                    AuditLogDAO auditLogDAO = new AuditLogDAO();
+                    auditLogDAO.createFinancialAuditLog("Payment", refundPayment.getPaymentId(), "Refund", "", "Hoàn tiền cho khách hàng: " + String.format("%,.0f", refundAmount) + " VND", accountant.getUserId());
+                    auditLogDAO.close();
                     
                     // 4. Gui thong bao cho khach hang
                     Notification n = new Notification();
