@@ -1,4 +1,4 @@
-/* \u2500\u2500 Admin Dashboard Logic & Charts \u2500\u2500 */
+/* ── Admin Dashboard Logic & Charts ── */
 
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize Lucide Icons
@@ -11,15 +11,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const departuresTbody = document.getElementById('overview-departures-body');
     let overviewChartInstance = null;
 
-    /* \u2500\u2500 Fetch Tours from Server \u2500\u2500 */
+    /* ── Fetch Tours from Server ── */
     function fetchDashboardData() {
+        // Tách 2 endpoint riêng để tránh share schema giữa 2 consumer:
+        //   - /admin/dashboard?ajax=true -> chỉ trả {monthlyRevenue} (chart)
+        //   - /admin/tours?ajax=true     -> trả {tours, monthlyRevenue} (table quản lý)
+        // Dashboard dùng revenue endpoint (lightweight) + tours endpoint cho overview stats.
         Promise.all([
             fetch('dashboard?ajax=true').then(res => {
-                if (!res.ok) throw new Error('Kh\u00f4ng th\u1ec3 k\u1ebft n\u1ed1i \u0111\u1ebfn m\u00e1y ch\u1ee7 (revenue)');
+                if (!res.ok) throw new Error('Không thể kết nối đến máy chủ (revenue)');
                 return res.json();
             }),
             fetch('tours?ajax=true').then(res => {
-                if (!res.ok) throw new Error('Kh\u00f4ng th\u1ec3 k\u1ebft n\u1ed1i \u0111\u1ebfn m\u00e1y ch\u1ee7 (tours)');
+                if (!res.ok) throw new Error('Không thể kết nối đến máy chủ (tours)');
                 return res.json();
             })
         ])
@@ -39,30 +43,30 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
 
-    /* \u2500\u2500 Map Database JSON to local overview variables \u2500\u2500 */
+    /* ── Map Database JSON to local overview variables ── */
     function mapToursData(data) {
         return data.map(t => {
             let seatsTotal = t.totalSeats || t.maxParticipants || 20;
             let seatsLeft = (t.availableSeats !== undefined && t.availableSeats !== null) ? t.availableSeats : seatsTotal;
-            
+
             // Image mapping
             let image = '';
             const nameLower = t.tourName.toLowerCase();
-            if (nameLower.includes('\u0111\u00e0 n\u1eb5ng') || nameLower.includes('b\u00e0 n\u00e0')) {
+            if (nameLower.includes('đà nẵng') || nameLower.includes('bà nà')) {
                 image = '../assets/images/tour_danang.png';
-            } else if (nameLower.includes('ph\u00fa qu\u1ed1c')) {
+            } else if (nameLower.includes('phú quốc')) {
                 image = '../assets/images/tour_phuquoc.png';
-            } else if (nameLower.includes('h\u1ea1 long')) {
+            } else if (nameLower.includes('hạ long')) {
                 image = '../assets/images/tour_halong.png';
-            } else if (nameLower.includes('h\u1ed9i an')) {
+            } else if (nameLower.includes('hội an')) {
                 image = '../assets/images/tour_hoian.png';
-            } else if (nameLower.includes('\u0111\u00e0 l\u1ea1t')) {
+            } else if (nameLower.includes('đà lạt')) {
                 image = '../assets/images/tour_dalat.png';
             } else if (nameLower.includes('sa pa') || nameLower.includes('sapa')) {
                 image = '../assets/images/tour_sapa.png';
             } else if (nameLower.includes('nha trang')) {
                 image = '../assets/images/tour_nhatrang.png';
-            } else if (nameLower.includes('h\u00e0 giang')) {
+            } else if (nameLower.includes('hà giang')) {
                 image = '../assets/images/tour_hagiang.png';
             } else {
                 image = '../assets/images/tour_halong.png';
@@ -95,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let totalRevenue = 0;
         let seatsLeft = 0;
         let seatsTotal = 0;
-        
+
         tours.forEach(tour => {
             if (tour.status === 'active') {
                 seatsLeft += tour.seatsLeft;
@@ -104,13 +108,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 totalRevenue += booked * tour.priceVND;
             }
         });
-        
+
         const currentMonthRev = (monthlyRev && monthlyRev.length > 5) ? monthlyRev[5] : totalRevenue;
-        
+
         document.getElementById('stats-revenue').textContent = formatCurrency(currentMonthRev);
         document.getElementById('stats-tours-count').textContent = tours.length;
         document.getElementById('stats-seats-left').textContent = seatsLeft;
-        
+
         const fillRatePercent = seatsTotal > 0 ? (((seatsTotal - seatsLeft) / seatsTotal) * 100).toFixed(1) : 0;
         document.getElementById('stats-fill-rate').textContent = fillRatePercent + '%';
 
@@ -126,11 +130,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         '<i data-lucide="' + (isUp ? 'trending-up' : 'trending-down') + '"></i> ' +
                         (isUp ? '+' : '') + percentChange + '%' +
                     '</span>' +
-                    '<span>so v\u1edbi th\u00e1ng tr\u01b0\u1edbc</span>';
+                    '<span>so với tháng trước</span>';
             } else {
                 revFooter.innerHTML =
                     '<span class="stat-trend up"><i data-lucide="trending-up"></i> +0%</span>' +
-                    '<span>so v\u1edbi th\u00e1ng tr\u01b0\u1edbc</span>';
+                    '<span>so với tháng trước</span>';
             }
         }
 
@@ -140,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const newToursInMonth = tours.filter(t => t.createdAt && t.createdAt.startsWith(currentMonthPrefix)).length;
             toursFooter.innerHTML =
                 '<span class="stat-trend up"><i data-lucide="trending-up"></i> +' + newToursInMonth + ' tour</span>' +
-                '<span>m\u1edbi th\u00eam trong th\u00e1ng</span>';
+                '<span>mới thêm trong tháng</span>';
         }
 
         const seatsFooter = document.getElementById('stats-seats-footer');
@@ -149,14 +153,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const occupiedPercent = seatsTotal > 0 ? ((occupiedSeats / seatsTotal) * 100).toFixed(1) : 0;
             seatsFooter.innerHTML =
                 '<span class="stat-trend up"><i data-lucide="trending-up"></i> ' + occupiedPercent + '%</span>' +
-                '<span>gh\u1ebf \u0111\u00e3 \u0111\u01b0\u1ee3c \u0111\u1eb7t ch\u1ed7</span>';
+                '<span>ghế đã được đặt chỗ</span>';
         }
 
         const fillFooter = document.getElementById('stats-fill-footer');
         if (fillFooter) {
             fillFooter.innerHTML =
                 '<span class="stat-trend up"><i data-lucide="trending-up"></i> ' + fillRatePercent + '%</span>' +
-                '<span>t\u1ef7 l\u1ec7 l\u1ea5p \u0111\u1ea7y th\u1ef1c t\u1ebf</span>';
+                '<span>tỷ lệ lấp đầy thực tế</span>';
         }
 
         if (window.lucide) {
@@ -168,12 +172,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderOverviewTable(tours) {
         if (!recentToursTbody) return;
         recentToursTbody.innerHTML = '';
-        
+
         const topTours = [...tours].sort((a, b) => b.rating - a.rating).slice(0, 4);
-        
+
         topTours.forEach(tour => {
             const tr = document.createElement('tr');
-            const diffLabel = tour.difficulty === 'easy' ? 'D\u1ec5' : tour.difficulty === 'medium' ? 'V\u1eeba' : 'Kh\u00f3';
+            const diffLabel = tour.difficulty === 'easy' ? 'Dễ' : tour.difficulty === 'medium' ? 'Vừa' : 'Khó';
             const diffClass = tour.difficulty === 'easy' ? 'badge-active' : tour.difficulty === 'medium' ? 'badge-draft' : 'badge-disabled';
             const seatsUsedPct = ((tour.seatsTotal - tour.seatsLeft) / tour.seatsTotal * 100).toFixed(0);
             tr.innerHTML =
@@ -192,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 '<td>' +
                     '<div class="capacity-cell">' +
                         '<div class="capacity-text-row">' +
-                            '<span>C\u00f2n ' + tour.seatsLeft + '/' + tour.seatsTotal + ' ch\u1ed7</span>' +
+                            '<span>Còn ' + tour.seatsLeft + '/' + tour.seatsTotal + ' chỗ</span>' +
                         '</div>' +
                         '<div class="progress-bar">' +
                             '<div class="progress-fill ' + (tour.seatsLeft <= 5 ? 'danger' : '') + '" style="width: ' + seatsUsedPct + '%;"></div>' +
@@ -208,26 +212,26 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderOverviewDepartures(tours) {
         if (!departuresTbody) return;
         departuresTbody.innerHTML = '';
-        
+
         const toursWithDepartures = tours.filter(t => t.status === 'active' && t.nextDeparture);
         toursWithDepartures.sort((a, b) => new Date(a.nextDeparture) - new Date(b.nextDeparture));
-        
+
         const displayTours = toursWithDepartures.length > 0
             ? toursWithDepartures.slice(0, 3)
             : tours.filter(t => t.status === 'active').slice(0, 3);
-        
+
         displayTours.forEach(tour => {
             const tr = document.createElement('tr');
             const percent = ((tour.seatsTotal - tour.seatsLeft) / tour.seatsTotal * 100).toFixed(0);
-            
-            let dateStr = 'Ch\u01b0a c\u00f3 l\u1ecbch';
+
+            let dateStr = 'Chưa có lịch';
             if (tour.nextDeparture) {
                 const parts = tour.nextDeparture.split('-');
                 if (parts.length === 3) {
                     dateStr = parts[2] + '/' + parts[1] + '/' + parts[0];
                 }
             }
-            
+
             tr.innerHTML =
                 '<td>' +
                     '<div class="tour-cell">' +
@@ -239,7 +243,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 '<td style="font-size:0.8rem; font-weight:500; white-space: nowrap;">' + dateStr + '</td>' +
                 '<td>' +
                     '<div class="capacity-cell" style="width: 100px;">' +
-                        '<span style="font-size:0.7rem; font-weight:600; color:var(--text-muted);">' + percent + '% \u0110\u00e3 \u0111\u1eb7t</span>' +
+                        '<span style="font-size:0.7rem; font-weight:600; color:var(--text-muted);">' + percent + '% Đã đặt</span>' +
                         '<div class="progress-bar" style="height:4px;">' +
                             '<div class="progress-fill ' + (tour.seatsLeft <= 5 ? 'danger' : '') + '" style="width: ' + percent + '%;"></div>' +
                         '</div>' +
@@ -256,15 +260,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (overviewChartInstance) {
             overviewChartInstance.destroy();
         }
-        
+
         // Generate last 6 months labels dynamically
         const labels = [];
         const today = new Date();
         for (let i = 5; i >= 0; i--) {
             const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
-            labels.push('Th\u00e1ng ' + (d.getMonth() + 1));
+            labels.push('Tháng ' + (d.getMonth() + 1));
         }
-        
+
         overviewChartInstance = new Chart(ctx, {
             type: 'line',
             data: {

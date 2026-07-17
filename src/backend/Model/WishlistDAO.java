@@ -10,8 +10,7 @@ import Entities.Tour;
 import Entities.TourMedia;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import Entities.Tour;
-import Entities.TourMedia;
+
 
 public class WishlistDAO extends DBContext {
 

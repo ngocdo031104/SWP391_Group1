@@ -13,9 +13,9 @@
         var APP_CONTEXT = '${pageContext.request.contextPath}';
         window.contextPath = '${pageContext.request.contextPath}';
     </script>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/header.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/footer.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=3.0">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/header.css?v=3.0">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/footer.css?v=3.0">
     <% 
         String extraCss = (String) request.getAttribute("extraCss");
         if (extraCss != null && !extraCss.trim().isEmpty()) {
@@ -24,7 +24,7 @@
     <% 
         } else {
     %>
-    <link class="page-css" rel="stylesheet" href="${pageContext.request.contextPath}/css/homepage.css?v=2.1">
+    <link class="page-css" rel="stylesheet" href="${pageContext.request.contextPath}/css/homepage.css?v=3.0">
     <% 
         }
         String bodyClass = (String) request.getAttribute("bodyClass");

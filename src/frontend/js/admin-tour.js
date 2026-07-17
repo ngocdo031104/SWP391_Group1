@@ -248,9 +248,9 @@ document.addEventListener('DOMContentLoaded', () => {
             else if (tour.tourName.toLowerCase().includes('h\u00e0 giang')) previewImg = '../assets/images/tour_hagiang.png';
             else previewImg = '../assets/images/tour_halong.png'; // standard fallback
 
-            // Escape các trường do admin/người dùng nhập trước khi nhúng vào innerHTML
-            // để chặn stored XSS khi 1 admin khác (hoặc kẻ tấn công có session admin)
-            // cố tình nhập tourName/destination chứa <script> hoặc onerror handler.
+            // Escape c\u00E1c tr\u01B0\u1EDDng do admin/ng\u01B0\u1EDDi d\u00F9ng nh\u1EADp tr\u01B0\u1EDBc khi nh\u00FAng v\u00E0o innerHTML
+            // \u0111\u1EC3 ch\u1EB7n stored XSS khi 1 admin kh\u00E1c (ho\u1EB7c k\u1EBB t\u1EA5n c\u00F4ng c\u00F3 session admin)
+            // c\u1ED1 t\u00ECnh nh\u1EADp tourName/destination ch\u1EE9a <script> ho\u1EB7c onerror handler.
             const safeTourName = escapeHtml(tour.tourName);
             const safePreviewImg = escapeHtml(previewImg);
             const safeDepartureCity = escapeHtml(tour.departureCity);

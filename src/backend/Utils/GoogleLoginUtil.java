@@ -32,7 +32,7 @@ public class GoogleLoginUtil {
             os.write(urlParameters.getBytes(StandardCharsets.UTF_8));
         }
 
-        try (InputStreamReader reader = new InputStreamReader(conn.getInputStream())) {
+        try (InputStreamReader reader = new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8)) {
             JsonObject jsonObject = new Gson().fromJson(reader, JsonObject.class);
             return jsonObject.get("access_token").getAsString();
         }
@@ -45,7 +45,7 @@ public class GoogleLoginUtil {
         conn.setRequestMethod("GET");
         conn.setRequestProperty("Authorization", "Bearer " + accessToken);
         
-        try (InputStreamReader reader = new InputStreamReader(conn.getInputStream())) {
+        try (InputStreamReader reader = new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8)) {
             return new Gson().fromJson(reader, JsonObject.class);
         }
     }

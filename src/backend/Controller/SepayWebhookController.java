@@ -9,6 +9,7 @@ import Entities.Booking;
 import Entities.Invoice;
 import Entities.Notification;
 import Entities.Payment;
+import Model.AuditLogDAO;
 import Model.BookingDAO;
 import Model.CouponDAO;
 import Model.InvoiceDAO;
@@ -89,6 +90,11 @@ public class SepayWebhookController extends HttpServlet {
                 payment.setPaidAt(parsePaidAt(transactionDate));
                 payment.setGatewayResponse(payload);
                 paymentDAO.createPayment(payment);
+
+                // Add to Financial Audit Log
+                AuditLogDAO auditLogDAO = new AuditLogDAO();
+                auditLogDAO.createFinancialAuditLog("Payment", payment.getPaymentId(), "Process Payment", "", "Số tiền: " + String.format("%,.0f", payment.getAmount()) + " VND, Trạng thái: Success", null);
+                auditLogDAO.close();
 
                 // Dương làm phần này: tự động tạo hóa đơn ngay sau khi payment được ghi nhận.
                 // Kiểm tra trước xem hóa đơn đã tồn tại chưa để tránh tạo trùng nếu SePay
