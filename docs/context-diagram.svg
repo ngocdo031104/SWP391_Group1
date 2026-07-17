@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 900" width="1400" height="900" font-family="Arial, Helvetica, sans-serif">
+  <!-- ============== DEFINITIONS ============== -->
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="black"/>
+    </marker>
+    <style>
+      .entity-rect { fill: #ffffff; stroke: #000000; stroke-width: 2; }
+      .entity-text { font-size: 18px; font-weight: bold; text-anchor: middle; fill: #000000; }
+      .process-circle { fill: #fffbe6; stroke: #000000; stroke-width: 3; }
+      .process-text { font-size: 20px; font-weight: bold; text-anchor: middle; fill: #000000; }
+      .flow-line { stroke: #000000; stroke-width: 1.5; fill: none; }
+      .flow-label { font-size: 12px; font-style: italic; text-anchor: middle; fill: #000; background: #ffffff; }
+      .title { font-size: 24px; font-weight: bold; text-anchor: middle; }
+  </style>
+  </defs>
+
+  <!-- ============== TITLE ============== -->
+  <text class="title" x="700" y="35">Context Diagram - Tour Management System</text>
+
+  <!-- ============== CENTRAL PROCESS (0) ============== -->
+  <circle class="process-circle" cx="700" cy="450" r="110"/>
+  <text class="process-text" x="700" y="445">0</text>
+  <text class="process-text" x="700" y="470">TOUR MANAGEMENT</text>
+  <text class="process-text" x="700" y="492">SYSTEM</text>
+
+  <!-- ============== EXTERNAL ENTITIES ============== -->
+  <!-- GUEST (top-left) -->
+  <rect class="entity-rect" x="60" y="100" width="200" height="80"/>
+  <text class="entity-text" x="160" y="135">GUEST</text>
+  <text class="entity-text" x="160" y="158" font-size="13" font-weight="normal">(Kh�ch v�ng lai)</text>
+
+  <!-- ADMIN (top-right) -->
+  <rect class="entity-rect" x="1140" y="100" width="200" height="80"/>
+  <text class="entity-text" x="1240" y="135">ADMIN</text>
+  <text class="entity-text" x="1240" y="158" font-size="13" font-weight="normal">(Qu�n tr� h� th�ng)</text>
+
+  <!-- CUSTOMER (mid-left) -->
+  <rect class="entity-rect" x="60" y="380" width="200" height="80"/>
+  <text class="entity-text" x="160" y="415">CUSTOMER</text>
+  <text class="entity-text" x="160" y="438" font-size="13" font-weight="normal">(Kh�ch h�ng)</text>
+
+  <!-- STAFF (mid-right) -->
+  <rect class="entity-rect" x="1140" y="380" width="200" height="80"/>
+  <text class="entity-text" x="1240" y="415">STAFF</text>
+  <text class="entity-text" x="1240" y="438" font-size="13" font-weight="normal">(Nh�n vi�n)</text>
+
+  <!-- TOUR GUIDE (bottom-left) -->
+  <rect class="entity-rect" x="60" y="700" width="200" height="80"/>
+  <text class="entity-text" x="160" y="735">TOUR GUIDE</text>
+  <text class="entity-text" x="160" y="758" font-size="13" font-weight="normal">(H��ng d�n vi�n)</text>
+
+  <!-- ACCOUNTANT (bottom-right) -->
+  <rect class="entity-rect" x="1140" y="700" width="200" height="80"/>
+  <text class="entity-text" x="1240" y="735">ACCOUNTANT</text>
+  <text class="entity-text" x="1240" y="758" font-size="13" font-weight="normal">(K� to�n)</text>
+
+  <!-- ============== DATA FLOWS - GUEST ============== -->
+  <!-- Guest -> System (inputs) -->
+  <path class="flow-line" d="M 230 175 Q 380 290 595 405" marker-end="url(#arrow)"/>
+  <text class="flow-label" x="380" y="270">registration_info</text>
+
+  <path class="flow-line" d="M 240 200 Q 400 320 600 430" marker-end="url(#arrow)"/>
+  <text class="flow-label" x="400" y="305">login_credentials</text>
+
+  <path class="flow-line" d="M 235 188 Q 450 280 605 415" marker-end="url(#arrow)"/>
+  <text class="flow-label" x="455" y="245">password_reset_request</text>
+
+  <!-- System -> Guest (outputs) -->
+  <path class="flow-line" d="M 600 410 Q 380 240 230 155" marker-end="url(#arrow)"/>
+  <text class="flow-label" x="350" y="220">home_page_content</text>
+
+  <path class="flow-line" d="M 605 425 Q 400 280 240 175" marker-end="url(#arrow)"/>
+  <text class="flow-label" x="370" y="330">public_tour_list</text>
+
+  <!-- ============== DATA FLOWS - CUSTOMER ============== -->
+  <!-- Customer -> System (inputs) -->
+  <path class="flow-line" d="M 260 410 L 590 440" marker-end="url(#arrow)"/>
+  <text class="flow-label" x="400" y="405">login_credentials</text>
+
+  <path class="flow-line" d="M 260 425 L 590 450" marker-end="url(#arrow)"/>
+  <text class="flow-label" x="400" y="462">booking_request</text>
+
+  <path class="flow-line" d="M 260 440 L 590 460" marker-end="url(#arrow)"/>
+  <text class="flow-label" x="400" y="495">payment_info</text>
+
+  <path class="flow-line" d="M 260 455 L 590 470" marker-end="url(#arrow)"/>
+  <text class="flow-label" x="400" y="525">review_rating</text>
+
+  <!-- System -> Customer (outputs) -->
+  <path class="flow-line" d="M 590 462 L 260 432" marker-end="url(#arrow)"/>
+  <text class="flow-label" x="400" y="445">booking_confirmation</text>
+
+  <path class="flow-line" d="M 590 478 L 260 448" marker-end="url(#arrow)"/>
+  <text class="flow-label" x="400" y="478">invoice</text>
+
+  <path class="flow-line" d="M 590 485 L 260 465" marker-end="url(#arrow)"/>
+  <text class="flow-label" x="400" y="510">payment_status</text>
+
+  <!-- ============== DATA FLOWS - ADMIN ============== -->
+  <!-- Admin -> System (inputs) -->
+  <path class="flow-line" d="M 1140 175 Q 1000 290 810 405" marker-end="url(#arrow)"/>
+  <text class="flow-label" x="990" y="270">tour_data</text>
+
+  <path class="flow-line" d="M 1140 188 Q 1000 320 810 430" marker-end="url(#arrow)"/>
+  <text class="flow-label" x="985" y="305">user_account_data</text>
+
+  <path class="flow-line" d="M 1140 200 Q 1000 340 810 450" marker-end="url(#arrow)"/>
+  <text class="flow-label" x="990" y="245">role_permission_data</text>
+
+  <path class="flow-line" d="M 1140 210 Q 950 290 810 415" marker-end="url(#arrow)"/>
+  <text class="flow-label" x="965" y="335">guide_assignment</text>
+
+  <!-- System -> Admin (outputs) -->
+  <path class="flow-line" d="M 810 410 Q 1000 240 1140 155" marker-end="url(#arrow)"/>
+  <text class="flow-label" x="1015" y="220">analytics_dashboard</text>
+
+  <path class="flow-line" d="M 810 425 Q 1000 280 1140 175" marker-end="url(#arrow)"/>
+  <text class="flow-label" x="1020" y="330">revenue_report</text>
+
+  <!-- ============== DATA FLOWS - STAFF ============== -->
+  <!-- Staff -> System (inputs) -->
+  <path class="flow-line" d="M 1140 410 L 810 440" marker-end="url(#arrow)"/>
+  <text class="flow-label" x="970" y="405">booking_filter</text>
+
+  <path class="flow-line" d="M 1140 425 L 810 450" marker-end="url(#arrow)"/>
+  <text class="flow-label" x="970" y="462">cancellation_decision</text>
+
+  <path class="flow-line" d="M 1140 440 L 810 460" marker-end="url(#arrow)"/>
+  <text class="flow-label" x="970" y="495">notification_content</text>
+
+  <!-- System -> Staff (outputs) -->
+  <path class="flow-line" d="M 810 462 L 1140 432" marker-end="url(#arrow)"/>
+  <text class="flow-label" x="970" y="445">booking_report</text>
+
+  <path class="flow-line" d="M 810 478 L 1140 448" marker-end="url(#arrow)"/>
+  <text class="flow-label" x="970" y="478">participant_list</text>
+
+  <path class="flow-line" d="M 810 485 L 1140 465" marker-end="url(#arrow)"/>
+  <text class="flow-label" x="970" y="510">cancellation_status</text>
+
+  <!-- ============== DATA FLOWS - TOUR GUIDE ============== -->
+  <!-- Guide -> System (inputs) -->
+  <path class="flow-line" d="M 230 725 Q 400 600 595 495" marker-end="url(#arrow)"/>
+  <text class="flow-label" x="400" y="620">status_update</text>
+
+  <path class="flow-line" d="M 240 740 Q 400 620 600 480" marker-end="url(#arrow)"/>
+  <text class="flow-label" x="410" y="660">check_in_data</text>
+
+  <path class="flow-line" d="M 235 755 Q 400 640 605 485" marker-end="url(#arrow)"/>
+  <text class="flow-label" x="420" y="700">incident_report</text>
+
+  <!-- System -> Guide (outputs) -->
+  <path class="flow-line" d="M 600 480 Q 400 600 230 710" marker-end="url(#arrow)"/>
+  <text class="flow-label" x="400" y="595">assigned_schedule</text>
+
+  <path class="flow-line" d="M 605 490 Q 400 660 240 760" marker-end="url(#arrow)"/>
+  <text class="flow-label" x="400" y="640">participant_list</text>
+
+  <!-- ============== DATA FLOWS - ACCOUNTANT ============== -->
+  <!-- Accountant -> System (inputs) -->
+  <path class="flow-line" d="M 1140 725 Q 1000 600 810 495" marker-end="url(#arrow)"/>
+  <text class="flow-label" x="1000" y="620">payment_status_query</text>
+
+  <path class="flow-line" d="M 1140 740 Q 1000 620 810 480" marker-end="url(#arrow)"/>
+  <text class="flow-label" x="990" y="660">currency_settings</text>
+
+  <path class="flow-line" d="M 1140 755 Q 1000 640 810 485" marker-end="url(#arrow)"/>
+  <text class="flow-label" x="990" y="700">refund_request</text>
+
+  <!-- System -> Accountant (outputs) -->
+  <path class="flow-line" d="M 810 480 Q 1000 600 1140 710" marker-end="url(#arrow)"/>
+  <text class="flow-label" x="1000" y="595">revenue_report</text>
+
+  <path class="flow-line" d="M 810 490 Q 1000 660 1140 760" marker-end="url(#arrow)"/>
+  <text class="flow-label" x="1000" y="640">financial_audit_log</text>
+
+  <!-- ============== LEGEND ============== -->
+  <g transform="translate(50, 850)">
+    <text class="entity-text" x="0" y="0" font-size="13" font-weight="bold">Ch� th�ch:</text>
+    <rect class="entity-rect" x="80" y="-15" width="30" height="20"/>
+    <text x="120" y="0" font-size="13">External Entity (T�c nh�n ngo�i)</text>
+    <circle class="process-circle" cx="320" cy="-5" r="12"/>
+    <text x="340" y="0" font-size="13">Process (Ti�n tr�nh)</text>
+    <line x1="450" y1="-5" x2="510" y2="-5" stroke="black" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <text x="520" y="0" font-size="13">Data Flow (Lu�ng d� li�u)</text>
+  </g>
+</svg>

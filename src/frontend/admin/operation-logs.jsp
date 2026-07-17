@@ -153,6 +153,6 @@
         lucide.createIcons();
     }
 </script>
-<script src="${pageContext.request.contextPath}/js/admin-dashboard.js"></script>
+<script src="${pageContext.request.contextPath}/js/admin-dashboard.js?v=<%= System.currentTimeMillis() %>" charset="UTF-8"></script>
 </body>
 </html>

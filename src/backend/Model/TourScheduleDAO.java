@@ -248,6 +248,52 @@ public class TourScheduleDAO extends DBContext {
         );
 
         schedule.setTourStatus(rs.getString("TourStatus"));
+
+        // Load tour info if available
+        try {
+            TourDAO tourDAO = new TourDAO();
+            Tour tour = tourDAO.getTourById(rs.getInt("TourID"));
+            schedule.setTour(tour);
+        } catch (Exception e) {
+            // Ignore if tour loading fails
+        }
+
         return schedule;
+    }
+
+    // Lấy danh sách lịch khởi hành chưa có guide
+    public List<TourSchedule> getUnassignedSchedules() {
+        List<TourSchedule> list = new ArrayList<>();
+        String sql = SCHEDULE_SELECT
+                + "WHERE GuideID IS NULL AND TourStatus != 'Completed' AND TourStatus != 'Cancelled' "
+                + "ORDER BY DepartureDate ASC";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                list.add(mapSchedule(rs));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TourScheduleDAO.class.getName()).log(Level.SEVERE, "getUnassignedSchedules failed", ex);
+        }
+        return list;
+    }
+
+    // Lấy danh sách tất cả lịch khởi hành có guide
+    public List<TourSchedule> getAssignedSchedules() {
+        List<TourSchedule> list = new ArrayList<>();
+        String sql = SCHEDULE_SELECT
+                + "WHERE GuideID IS NOT NULL "
+                + "ORDER BY DepartureDate DESC";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                list.add(mapSchedule(rs));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TourScheduleDAO.class.getName()).log(Level.SEVERE, "getAssignedSchedules failed", ex);
+        }
+        return list;
     }
 }

@@ -240,7 +240,7 @@ CREATE TABLE TourSchedule (
     Transportation NVARCHAR(100) NULL,
     GuideID        INT           NULL REFERENCES [User](UserID),
     TourStatus     NVARCHAR(50)  NOT NULL DEFAULT 'Scheduled'
-                   CHECK (TourStatus IN ('Scheduled','InProgress','Completed','Cancelled')),
+                   CHECK (TourStatus IN ('Preparing','Scheduled','InProgress','Completed','Cancelled')),
     Status         NVARCHAR(20)  NOT NULL DEFAULT 'Open'
                    CHECK (Status IN ('Open','Full','Closed','Cancelled')),
     CreatedAt      DATETIME2     NOT NULL DEFAULT SYSDATETIME(),

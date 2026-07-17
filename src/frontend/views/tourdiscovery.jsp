@@ -6,7 +6,7 @@
 <%@ page import="Entities.TourSchedule" %>
 <%@ page import="Entities.TourMedia" %>
 <%
-    request.setAttribute("extraCss", "css/tourdiscovery.css?v=" + System.currentTimeMillis());
+    request.setAttribute("extraCss", "css/tourdiscovery.css");
     request.setAttribute("bodyClass", "explore-page");
 %>
 <jsp:include page="/common/header.jsp" />

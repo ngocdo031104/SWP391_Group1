@@ -529,7 +529,7 @@ public class TourDAO extends DBContext {
      */
     public List<TourInclusion> getInclusionsByTourId(int tourId) {
         List<TourInclusion> list = new ArrayList<>();
-        String sql = "SELECT InclusionID, TourID, InclusionType, ServiceName, Description, IconName, SortOrder, IsActive, CreatedAt "
+        String sql = "SELECT InclusionID, TourID, InclusionType, ServiceName, IconName, SortOrder, IsActive, CreatedAt "
                    + "FROM TourInclusion WHERE TourID = ? AND IsActive = 1 ORDER BY SortOrder ASC";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, tourId);
@@ -540,7 +540,7 @@ public class TourDAO extends DBContext {
                     item.setTourId(rs.getInt("TourID"));
                     item.setInclusionType(rs.getString("InclusionType"));
                     item.setServiceName(rs.getString("ServiceName"));
-                    item.setDescription(rs.getString("Description"));
+                    item.setDescription(null);
                     item.setIconName(rs.getString("IconName"));
                     item.setSortOrder(rs.getInt("SortOrder"));
                     item.setIsActive(rs.getBoolean("IsActive"));
