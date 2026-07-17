@@ -6,6 +6,7 @@ package Model;
 // Ý nghĩa: Cung cấp lịch khởi hành cho luồng booking Customer và các tác vụ CRUD của Admin.
 
 import Entities.TourSchedule;
+import Entities.Tour;
 import Entities.User;
 import Entities.UserProfile;
 import Utils.DBContext;

@@ -309,46 +309,46 @@
     if (toast) setTimeout(() => toast.style.display = 'none', 4000);
 
     function viewIncident(incidentId) {
-        const incidents = ${com.google.gson.Gson().toJson(incidents)};
+        const incidents = <%= new com.google.gson.Gson().toJson(request.getAttribute("incidents")) %>;
         const incident = incidents.find(i => i.incidentId == incidentId);
         if (!incident) return;
 
         const content = document.getElementById('incident-detail-content');
         content.innerHTML = `
             <div style="margin-bottom:20px;">
-                <h4 style="margin:0 0 8px;font-size:16px;color:var(--gray-900);">${incident.title}</h4>
-                <span class="badge severity-${incident.severity}" style="margin-bottom:12px;display:inline-flex;">${incident.severity}</span>
-                <p style="color:var(--gray-700);line-height:1.6;">${incident.description}</p>
+                <h4 style="margin:0 0 8px;font-size:16px;color:var(--gray-900);">\${incident.title}</h4>
+                <span class="badge severity-\${incident.severity}" style="margin-bottom:12px;display:inline-flex;">\${incident.severity}</span>
+                <p style="color:var(--gray-700);line-height:1.6;">\${incident.description}</p>
             </div>
 
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;background:var(--gray-50);padding:16px;border-radius:10px;">
                 <div>
                     <div style="font-size:12px;color:var(--gray-500);">Tour</div>
-                    <div style="font-weight:600;">${incident.tourName}</div>
+                    <div style="font-weight:600;">\${incident.tourName}</div>
                 </div>
                 <div>
                     <div style="font-size:12px;color:var(--gray-500);">Ngày khởi hành</div>
-                    <div style="font-weight:600;">${incident.departureDate ? new Date(incident.departureDate).toLocaleDateString('vi-VN') : 'N/A'}</div>
+                    <div style="font-weight:600;">\${incident.departureDate ? new Date(incident.departureDate).toLocaleDateString('vi-VN') : 'N/A'}</div>
                 </div>
                 <div>
                     <div style="font-size:12px;color:var(--gray-500);">Người báo cáo</div>
-                    <div style="font-weight:600;">${incident.reportedByName}</div>
+                    <div style="font-weight:600;">\${incident.reportedByName}</div>
                 </div>
                 <div>
                     <div style="font-size:12px;color:var(--gray-500);">Guide phụ trách</div>
-                    <div style="font-weight:600;">${incident.guideName || 'Chưa có'}</div>
+                    <div style="font-weight:600;">\${incident.guideName || 'Chưa có'}</div>
                 </div>
                 <div>
                     <div style="font-size:12px;color:var(--gray-500);">Ngày báo cáo</div>
-                    <div style="font-weight:600;">${incident.createdAt ? new Date(incident.createdAt).toLocaleString('vi-VN') : 'N/A'}</div>
+                    <div style="font-weight:600;">\${incident.createdAt ? new Date(incident.createdAt).toLocaleString('vi-VN') : 'N/A'}</div>
                 </div>
                 <div>
                     <div style="font-size:12px;color:var(--gray-500);">Trạng thái</div>
                     <div style="font-weight:600;">
-                        ${incident.status === 'Open' ? '<span style="color:var(--danger);">Mới báo cáo</span>' : ''}
-                        ${incident.status === 'Investigating' ? '<span style="color:var(--warning);">Đang xử lý</span>' : ''}
-                        ${incident.status === 'Resolved' ? '<span style="color:var(--success);">Đã xử lý</span>' : ''}
-                        ${incident.status === 'Dismissed' ? '<span style="color:var(--gray-500);">Đã bỏ qua</span>' : ''}
+                        \${incident.status === 'Open' ? '<span style="color:var(--danger);">Mới báo cáo</span>' : ''}
+                        \${incident.status === 'Investigating' ? '<span style="color:var(--warning);">Đang xử lý</span>' : ''}
+                        \${incident.status === 'Resolved' ? '<span style="color:var(--success);">Đã xử lý</span>' : ''}
+                        \${incident.status === 'Dismissed' ? '<span style="color:var(--gray-500);">Đã bỏ qua</span>' : ''}
                     </div>
                 </div>
             </div>

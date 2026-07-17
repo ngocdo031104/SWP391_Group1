@@ -4,6 +4,7 @@ import Entities.User;
 import Entities.TourAssignment;
 import Entities.TourSchedule;
 import Entities.Tour;
+import Entities.GuideProfile;
 import Model.GuideDAO;
 import Model.TourScheduleDAO;
 import Model.NotificationDAO;

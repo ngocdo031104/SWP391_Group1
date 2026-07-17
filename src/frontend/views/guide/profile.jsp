@@ -1,4 +1,4 @@
-﻿<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
+<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt"  prefix="fmt" %>
@@ -152,6 +152,22 @@
     .alert { padding: 12px 16px; border-radius: 6px; margin-bottom: 20px; font-size: 0.95rem; display: flex; align-items: center; gap: 10px; }
     .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
     .alert-error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    /* Guide Notification Bell */
+    .guide-notif-bell {
+        position: relative; color: var(--clr-muted); cursor: pointer;
+        transition: color 0.2s; display: inline-flex; align-items: center;
+        font-size: 1.1rem; text-decoration: none;
+    }
+    .guide-notif-bell:hover { color: var(--clr-primary); }
+    .guide-notif-bell .notif-badge {
+        position: absolute; top: -6px; right: -8px;
+        background: #ef4444; color: white;
+        font-size: 0.6rem; font-weight: 700;
+        min-width: 16px; height: 16px; border-radius: 50%;
+        display: none; align-items: center; justify-content: center;
+        padding: 0 3px; border: 2px solid #fff;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+    }
   </style>
 </head>
 <body>
@@ -162,9 +178,13 @@
     <div class="logo-icon" style="background:var(--clr-guide-accent);">T</div>
     <span>TourBuddy (Guide)</span>
   </a>
-  <div class="navbar-nav">
+  <div class="navbar-nav" style="display:flex;align-items:center;gap:20px;">
     <a href="${pageContext.request.contextPath}/guide/dashboard">Lịch Dẫn Đoàn</a>
     <a href="${pageContext.request.contextPath}/guide/profile" class="active">Hồ Sơ</a>
+    <a href="${pageContext.request.contextPath}/customer/notifications" class="guide-notif-bell" id="guide-notif-btn" title="Thông báo">
+      <i class="fa-regular fa-bell"></i>
+      <span class="notif-badge" id="guide-notif-count"></span>
+    </a>
     <a href="${pageContext.request.contextPath}/logout" style="color:var(--clr-error)">
       <i class="fa fa-right-from-bracket"></i> Đăng xuất
     </a>
@@ -385,6 +405,24 @@
         btnElement.classList.add('active');
         document.getElementById('tab-' + tabId).classList.add('active');
     }
+</script>
+
+<script>
+    (function() {
+        var badge = document.getElementById('guide-notif-count');
+        if (!badge) return;
+        var ctx = '${pageContext.request.contextPath}';
+        fetch(ctx + '/api/header-counts?t=' + Date.now())
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                var count = data.unreadNotifications || 0;
+                if (count > 0) {
+                    badge.textContent = count > 99 ? '99+' : count;
+                    badge.style.display = 'flex';
+                }
+            })
+            .catch(function(e) { console.error('Notification badge error', e); });
+    })();
 </script>
 
 </body>

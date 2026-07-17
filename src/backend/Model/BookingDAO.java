@@ -639,7 +639,6 @@ public class BookingDAO extends DBContext {
         }
         return false;
     }
-}
 
     // Lấy danh sách booking với thông tin schedule đầy đủ cho Staff xem guest list
     public List<Booking> getAllBookingsWithSchedules() {
