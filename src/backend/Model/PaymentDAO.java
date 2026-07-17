@@ -237,24 +237,223 @@ public class PaymentDAO extends DBContext {
     }
 
     public java.util.List<Entities.FraudTransactionDTO> getFraudulentTransactions(String dateFrom, String dateTo, String bookingId, String transactionRef, String gateway, String paymentStatus, String reviewStatus, int page, int pageSize) {
-        // Placeholder return to fix compilation error.
-        // Requires join query with Booking/User if actual data is needed.
-        return new java.util.ArrayList<>();
+        java.util.List<Entities.FraudTransactionDTO> list = new java.util.ArrayList<>();
+        StringBuilder sql = new StringBuilder(
+            "SELECT p.PaymentID, p.TransactionRef, p.BookingID, p.Amount, p.Currency, p.Status as PaymentStatus, p.PaidAt, p.GatewayResponse, " +
+            "b.TotalAmount as ExpectedAmount, u.FullName as CustomerName, " +
+            "COALESCE(fa.Status, 'Pending') as ReviewStatus, " +
+            "COALESCE(fa.Description, " +
+            "  CASE " +
+            "    WHEN p.Amount <> b.TotalAmount THEN N'Lệch số tiền thanh toán' " +
+            "    WHEN (SELECT COUNT(*) FROM Payment p2 WHERE p2.BookingID = p.BookingID AND p2.Status = 'Success') > 1 THEN N'Thanh toán trùng lặp cho đơn hàng' " +
+            "    ELSE N'Nghi vấn chung' " +
+            "  END" +
+            ") as FraudReason " +
+            "FROM Payment p " +
+            "JOIN Booking b ON p.BookingID = b.BookingID " +
+            "JOIN [User] u ON b.CustomerID = u.UserID " +
+            "LEFT JOIN FraudAlert fa ON p.PaymentID = fa.PaymentID " +
+            "WHERE (p.Amount <> b.TotalAmount OR (SELECT COUNT(*) FROM Payment p2 WHERE p2.BookingID = p.BookingID AND p2.Status = 'Success') > 1) "
+        );
+
+        if (dateFrom != null && !dateFrom.trim().isEmpty()) {
+            sql.append(" AND CAST(p.PaidAt AS DATE) >= ? ");
+        }
+        if (dateTo != null && !dateTo.trim().isEmpty()) {
+            sql.append(" AND CAST(p.PaidAt AS DATE) <= ? ");
+        }
+        if (bookingId != null && !bookingId.trim().isEmpty()) {
+            sql.append(" AND p.BookingID = ? ");
+        }
+        if (transactionRef != null && !transactionRef.trim().isEmpty()) {
+            sql.append(" AND p.TransactionRef LIKE ? ");
+        }
+        if (gateway != null && !gateway.trim().isEmpty()) {
+            sql.append(" AND p.PaymentMethod LIKE ? ");
+        }
+        if (paymentStatus != null && !paymentStatus.trim().isEmpty()) {
+            sql.append(" AND p.Status = ? ");
+        }
+        if (reviewStatus != null && !reviewStatus.trim().isEmpty()) {
+            if ("Pending".equals(reviewStatus)) {
+                sql.append(" AND (fa.Status IS NULL OR fa.Status = 'Pending') ");
+            } else {
+                sql.append(" AND fa.Status = ? ");
+            }
+        }
+
+        sql.append(" ORDER BY p.PaidAt DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            int paramIndex = 1;
+            if (dateFrom != null && !dateFrom.trim().isEmpty()) ps.setString(paramIndex++, dateFrom);
+            if (dateTo != null && !dateTo.trim().isEmpty()) ps.setString(paramIndex++, dateTo);
+            if (bookingId != null && !bookingId.trim().isEmpty()) ps.setInt(paramIndex++, Integer.parseInt(bookingId));
+            if (transactionRef != null && !transactionRef.trim().isEmpty()) ps.setString(paramIndex++, "%" + transactionRef + "%");
+            if (gateway != null && !gateway.trim().isEmpty()) ps.setString(paramIndex++, "%" + gateway + "%");
+            if (paymentStatus != null && !paymentStatus.trim().isEmpty()) ps.setString(paramIndex++, paymentStatus);
+            if (reviewStatus != null && !reviewStatus.trim().isEmpty() && !"Pending".equals(reviewStatus)) ps.setString(paramIndex++, reviewStatus);
+            
+            ps.setInt(paramIndex++, (page - 1) * pageSize);
+            ps.setInt(paramIndex++, pageSize);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Entities.FraudTransactionDTO dto = new Entities.FraudTransactionDTO();
+                    dto.setPaymentId(rs.getInt("PaymentID"));
+                    dto.setTransactionRef(rs.getString("TransactionRef"));
+                    dto.setBookingId(rs.getInt("BookingID"));
+                    dto.setAmount(rs.getBigDecimal("Amount"));
+                    dto.setExpectedAmount(rs.getBigDecimal("ExpectedAmount"));
+                    dto.setCustomerName(rs.getString("CustomerName"));
+                    dto.setCurrency(rs.getString("Currency"));
+                    dto.setPaymentStatus(rs.getString("PaymentStatus"));
+                    dto.setPaidAt(rs.getTimestamp("PaidAt"));
+                    dto.setGatewayResponse(rs.getString("GatewayResponse"));
+                    dto.setFraudReason(rs.getString("FraudReason"));
+                    dto.setReviewStatus(rs.getString("ReviewStatus"));
+                    list.add(dto);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(PaymentDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return list;
     }
 
     public int getTotalFraudulentTransactions(String dateFrom, String dateTo, String bookingId, String transactionRef, String gateway, String paymentStatus, String reviewStatus) {
+        StringBuilder sql = new StringBuilder(
+            "SELECT COUNT(*) FROM Payment p " +
+            "JOIN Booking b ON p.BookingID = b.BookingID " +
+            "LEFT JOIN FraudAlert fa ON p.PaymentID = fa.PaymentID " +
+            "WHERE (p.Amount <> b.TotalAmount OR (SELECT COUNT(*) FROM Payment p2 WHERE p2.BookingID = p.BookingID AND p2.Status = 'Success') > 1) "
+        );
+
+        if (dateFrom != null && !dateFrom.trim().isEmpty()) {
+            sql.append(" AND CAST(p.PaidAt AS DATE) >= ? ");
+        }
+        if (dateTo != null && !dateTo.trim().isEmpty()) {
+            sql.append(" AND CAST(p.PaidAt AS DATE) <= ? ");
+        }
+        if (bookingId != null && !bookingId.trim().isEmpty()) {
+            sql.append(" AND p.BookingID = ? ");
+        }
+        if (transactionRef != null && !transactionRef.trim().isEmpty()) {
+            sql.append(" AND p.TransactionRef LIKE ? ");
+        }
+        if (gateway != null && !gateway.trim().isEmpty()) {
+            sql.append(" AND p.PaymentMethod LIKE ? ");
+        }
+        if (paymentStatus != null && !paymentStatus.trim().isEmpty()) {
+            sql.append(" AND p.Status = ? ");
+        }
+        if (reviewStatus != null && !reviewStatus.trim().isEmpty()) {
+            if ("Pending".equals(reviewStatus)) {
+                sql.append(" AND (fa.Status IS NULL OR fa.Status = 'Pending') ");
+            } else {
+                sql.append(" AND fa.Status = ? ");
+            }
+        }
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            int paramIndex = 1;
+            if (dateFrom != null && !dateFrom.trim().isEmpty()) ps.setString(paramIndex++, dateFrom);
+            if (dateTo != null && !dateTo.trim().isEmpty()) ps.setString(paramIndex++, dateTo);
+            if (bookingId != null && !bookingId.trim().isEmpty()) ps.setInt(paramIndex++, Integer.parseInt(bookingId));
+            if (transactionRef != null && !transactionRef.trim().isEmpty()) ps.setString(paramIndex++, "%" + transactionRef + "%");
+            if (gateway != null && !gateway.trim().isEmpty()) ps.setString(paramIndex++, "%" + gateway + "%");
+            if (paymentStatus != null && !paymentStatus.trim().isEmpty()) ps.setString(paramIndex++, paymentStatus);
+            if (reviewStatus != null && !reviewStatus.trim().isEmpty() && !"Pending".equals(reviewStatus)) ps.setString(paramIndex++, reviewStatus);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(PaymentDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return 0;
     }
 
     public java.util.Map<String, Object> getFraudulentStats() {
-        return new java.util.HashMap<>();
+        java.util.Map<String, Object> stats = new java.util.HashMap<>();
+        stats.put("suspicious", 0);
+        stats.put("duplicate", 0);
+        stats.put("mismatch", 0);
+        stats.put("successCount", 0);
+        
+        String sql = "SELECT " +
+            "SUM(CASE WHEN (SELECT COUNT(*) FROM Payment p2 WHERE p2.BookingID = p.BookingID AND p2.Status = 'Success') > 1 THEN 1 ELSE 0 END) as DuplicateCount, " +
+            "SUM(CASE WHEN p.Amount <> b.TotalAmount THEN 1 ELSE 0 END) as MismatchCount, " +
+            "COUNT(*) as SuspiciousCount " +
+            "FROM Payment p " +
+            "JOIN Booking b ON p.BookingID = b.BookingID " +
+            "WHERE (p.Amount <> b.TotalAmount OR (SELECT COUNT(*) FROM Payment p2 WHERE p2.BookingID = p.BookingID AND p2.Status = 'Success') > 1)";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                stats.put("suspicious", rs.getInt("SuspiciousCount"));
+                stats.put("duplicate", rs.getInt("DuplicateCount"));
+                stats.put("mismatch", rs.getInt("MismatchCount"));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(PaymentDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        String sqlSuccess = "SELECT COUNT(*) FROM Payment WHERE Status = 'Success'";
+        try (PreparedStatement ps = connection.prepareStatement(sqlSuccess);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                stats.put("successCount", rs.getInt(1));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(PaymentDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return stats;
     }
 
     public String getReviewStatus(int paymentId) {
+        String sql = "SELECT Status FROM FraudAlert WHERE PaymentID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, paymentId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("Status");
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(PaymentDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return "Pending";
     }
 
     public boolean updateReviewStatus(int paymentId, String status) {
-        return true;
+        String checkSql = "SELECT AlertID FROM FraudAlert WHERE PaymentID = ?";
+        try (PreparedStatement checkPs = connection.prepareStatement(checkSql)) {
+            checkPs.setInt(1, paymentId);
+            try (ResultSet rs = checkPs.executeQuery()) {
+                if (rs.next()) {
+                    // Update existing
+                    String updateSql = "UPDATE FraudAlert SET Status = ?, ReviewedAt = SYSDATETIME() WHERE PaymentID = ?";
+                    try (PreparedStatement updatePs = connection.prepareStatement(updateSql)) {
+                        updatePs.setString(1, status);
+                        updatePs.setInt(2, paymentId);
+                        return updatePs.executeUpdate() > 0;
+                    }
+                } else {
+                    // Insert new
+                    String insertSql = "INSERT INTO FraudAlert (PaymentID, AlertType, Severity, Status, CreatedAt, ReviewedAt) VALUES (?, 'Manual Review', 'Medium', ?, SYSDATETIME(), SYSDATETIME())";
+                    try (PreparedStatement insertPs = connection.prepareStatement(insertSql)) {
+                        insertPs.setInt(1, paymentId);
+                        insertPs.setString(2, status);
+                        return insertPs.executeUpdate() > 0;
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(PaymentDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
     }
 }

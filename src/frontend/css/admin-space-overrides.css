@@ -17,7 +17,9 @@
 body.dashboard-body,
 html body.dashboard-body {
   background: linear-gradient(135deg, #0a0b18 0%, #0f1123 40%, #0a0e1f 70%, #0d0b1e 100%) !important;
-  font-family: 'Inter', 'Outfit', sans-serif !important;
+  font-family: 'Inter', 'Segoe UI', 'Helvetica Neue', 'Outfit', Arial, 'Liberation Sans', sans-serif !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
 }
 
 /* ==========================================================================
@@ -74,7 +76,7 @@ textarea,
   color: #f8fafc !important;
   border-radius: 8px !important;
   transition: all 0.2s !important;
-  font-family: 'Inter', sans-serif !important;
+  font-family: 'Inter', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif !important;
 }
 
 .search-input:focus,
@@ -382,7 +384,7 @@ a.page-link.disabled {
 }
 
 .modal-header h3,
-.modal-header h2 { color: #f8fafc !important; font-family: 'Outfit', sans-serif !important; }
+.modal-header h2 { color: #f8fafc !important; font-family: 'Outfit', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif !important; }
 
 .modal-footer {
   background: rgba(10, 11, 24, 0.5) !important;
