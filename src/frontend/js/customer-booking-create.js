@@ -1,13 +1,13 @@
-\uFEFF/*
- * Ng\u01B0\u1EDDi l\u00E0m: D\u01B0\u01A1ng
- * Th\u1EDDi gian t\u1EA1o: 04/06/2026
- * Ch\u1EE9c n\u0103ng: JavaScript cho m\u00E0n Customer t\u1EA1o booking.
- * \u00DD ngh\u0129a: Gi\u1EEF d\u1EEF li\u1EC7u ng\u01B0\u1EDDi tham gia khi t\u0103ng/gi\u1EA3m s\u1ED1 l\u01B0\u1EE3ng, b\u1EAFt ng\u01B0\u1EDDi \u0111\u1EA1i di\u1EC7n l\u00E0 ng\u01B0\u1EDDi l\u1EDBn, validate l\u1ED7i d\u01B0\u1EDBi t\u1EEBng \u00F4 v\u00E0 t\u00EDnh t\u1EA1m ti\u1EC1n tour theo nh\u00F3m tu\u1ED5i.
+/*
+ * Người làm: Dương
+ * Thời gian tạo: 04/06/2026
+ * Chức năng: JavaScript cho màn Customer tạo booking.
+ * Ý nghĩa: Giữ dữ liệu người tham gia khi tăng/giảm số lượng, bắt người đại diện là người lớn, validate lỗi dưới từng ô và tính tạm tiền tour theo nhóm tuổi.
  */
 (function () {
-    // createForm l\u00E0 form g\u1EEDi d\u1EEF li\u1EC7u t\u1EEB m\u00E0n t\u1EA1o booking sang BookingCreateController.doPost.
+    // createForm là form gửi dữ liệu từ màn tạo booking sang BookingCreateController.doPost.
     const createForm = document.getElementById('booking-create-form');
-    // countInput l\u01B0u s\u1ED1 ng\u01B0\u1EDDi tham gia hi\u1EC7n t\u1EA1i, \u0111\u01B0\u1EE3c g\u1EEDi l\u00EAn server b\u1EB1ng name participantCount.
+    // countInput lưu số người tham gia hiện tại, được gửi lên server bằng name participantCount.
     const countInput = document.getElementById('participant-count');
     // list l\u00E0 v\u00F9ng ch\u1EE9a c\u00E1c card nh\u1EADp th\u00F4ng tin participant \u0111\u01B0\u1EE3c sinh \u0111\u1ED9ng b\u1EB1ng JavaScript.
     const list = document.getElementById('participant-list');
