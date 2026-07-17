@@ -50,9 +50,9 @@
             <ul class="nav-menu" id="nav-menu">
                 <li><a href="${pageContext.request.contextPath}/home" class="nav-link active">Trang Chủ</a></li>
                 <li><a href="${pageContext.request.contextPath}/tourdiscovery" class="nav-link">Tours</a></li>
-                <li><a href="#destinations" class="nav-link">Điểm Đến</a></li>
-                <li><a href="#promotions" class="nav-link">Khuyến Mãi</a></li>
-                <li><a href="#testimonials" class="nav-link">Đánh Giá</a></li>
+                <li><a href="${pageContext.request.contextPath}/home#destinations" class="nav-link">Điểm Đến</a></li>
+                <li><a href="${pageContext.request.contextPath}/home#promotions" class="nav-link">Khuyến Mãi</a></li>
+                <li><a href="${pageContext.request.contextPath}/home#testimonials" class="nav-link">Đánh Giá</a></li>
             </ul>
 
             <div class="nav-actions">
