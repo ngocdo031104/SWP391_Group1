@@ -527,12 +527,60 @@ public class UserDAO extends DBContext {
     }
     public boolean updateUserRole(int userId, int roleId) {
         String sql = "UPDATE [User] SET RoleID = ?, UpdatedAt = SYSDATETIME() WHERE UserID = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, roleId);
-            ps.setInt(2, userId);
-            return ps.executeUpdate() > 0;
+        try {
+            connection.setAutoCommit(false);
+            try (PreparedStatement ps = connection.prepareStatement(sql)) {
+                ps.setInt(1, roleId);
+                ps.setInt(2, userId);
+                if (ps.executeUpdate() > 0) {
+                    if (roleId == 3) {
+                        // Nếu đổi thành Guide: đảm bảo có GuideProfile và IsActive = 1
+                        String checkProfileSql = "SELECT COUNT(*) FROM GuideProfile WHERE UserID = ?";
+                        try (PreparedStatement psCheck = connection.prepareStatement(checkProfileSql)) {
+                            psCheck.setInt(1, userId);
+                            try (ResultSet rs = psCheck.executeQuery()) {
+                                if (rs.next() && rs.getInt(1) > 0) {
+                                    // Đã có profile, cập nhật isActive = 1
+                                    String updateProfileSql = "UPDATE GuideProfile SET IsActive = 1 WHERE UserID = ?";
+                                    try (PreparedStatement psUp = connection.prepareStatement(updateProfileSql)) {
+                                        psUp.setInt(1, userId);
+                                        psUp.executeUpdate();
+                                    }
+                                } else {
+                                    // Chưa có profile, insert mới
+                                    String insertProfileSql = "INSERT INTO GuideProfile (UserID, IsActive, YearsOfExperience, TotalToursLed, Rating, Bio, Specialization, Languages, Certifications, EmergencyPhone) VALUES (?, 1, 0, 0, 5.0, N'', N'', N'Tiếng Việt', N'', N'')";
+                                    try (PreparedStatement psIn = connection.prepareStatement(insertProfileSql)) {
+                                        psIn.setInt(1, userId);
+                                        psIn.executeUpdate();
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        // Nếu đổi sang vai trò khác: set IsActive = 0 trong GuideProfile (nếu có)
+                        String updateProfileSql = "UPDATE GuideProfile SET IsActive = 0 WHERE UserID = ?";
+                        try (PreparedStatement psUp = connection.prepareStatement(updateProfileSql)) {
+                            psUp.setInt(1, userId);
+                            psUp.executeUpdate();
+                        }
+                    }
+                    connection.commit();
+                    return true;
+                }
+            }
         } catch (SQLException ex) {
+            try {
+                connection.rollback();
+            } catch (SQLException rollbackEx) {
+                Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, rollbackEx);
+            }
             Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException ex) {
+                Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         return false;
     }

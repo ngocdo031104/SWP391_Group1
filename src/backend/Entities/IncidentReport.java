@@ -14,6 +14,11 @@ public class IncidentReport {
     private Integer resolvedBy;
     private Timestamp resolvedAt;
     private Timestamp createdAt;
+    // Fields for display in staff dashboard
+    private String tourName;
+    private String destination;
+    private java.sql.Date departureDate;
+    private String guideName;
 
     public IncidentReport() {}
 
@@ -117,5 +122,38 @@ public class IncidentReport {
 
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
+    }
+
+    // Additional getters and setters for staff display
+    public String getTourName() {
+        return tourName;
+    }
+
+    public void setTourName(String tourName) {
+        this.tourName = tourName;
+    }
+
+    public String getDestination() {
+        return destination;
+    }
+
+    public void setDestination(String destination) {
+        this.destination = destination;
+    }
+
+    public java.sql.Date getDepartureDate() {
+        return departureDate;
+    }
+
+    public void setDepartureDate(java.sql.Date departureDate) {
+        this.departureDate = departureDate;
+    }
+
+    public String getGuideName() {
+        return guideName;
+    }
+
+    public void setGuideName(String guideName) {
+        this.guideName = guideName;
     }
 }
