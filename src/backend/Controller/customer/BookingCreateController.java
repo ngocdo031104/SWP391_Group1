@@ -138,9 +138,12 @@ public class BookingCreateController extends HttpServlet {
                 forwardCreateError(request, response, tour, "Không thể đặt tour có ngày khởi hành ở quá khứ.");
                 return;
             }
-            // Giới hạn 1-10 khách theo constraint NumParticipants trong bảng Booking.
-            if (participantCount < 1 || participantCount > 10) {
-                forwardCreateError(request, response, tour, "Số người tham gia phải từ 1 đến 10.");
+            int maxParticipants = tour.getMaxParticipants() > 0 ? tour.getMaxParticipants() : 10;
+            // Giới hạn số người đi theo tour.MaxParticipants (default fallback 10 khi DB chưa set).
+            // BR-x: chuẩn hoá từ fix cứng literal "10" trước đây sang đọc động theo từng tour.
+            if (participantCount < 1 || participantCount > maxParticipants) {
+                forwardCreateError(request, response, tour,
+                        "Số người tham gia phải từ 1 đến " + maxParticipants + ".");
                 return;
             }
             // Kiểm tra AvailableSeats để tránh khách đặt nhiều hơn số chỗ còn lại.
