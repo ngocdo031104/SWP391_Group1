@@ -1,7 +1,7 @@
-﻿<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
+&#65279;<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 <%-- 
     Document   : profile.jsp
-    Purpose    : Hiển thị và quản lý thông tin hồ sơ người dùng, lịch sử hoạt động, bảo mật và cài đặt thông báo.
+    Purpose    : Hi&#7875;n th&#7883; v&#224; qu&#7843;n l&#253; th&#244;ng tin h&#7891; s&#417; ng&#432;&#7901;i d&#249;ng, l&#7883;ch s&#7917; ho&#7841;t &#273;&#7897;ng, b&#7843;o m&#7853;t v&#224; c&#224;i &#273;&#7863;t th&#244;ng b&#225;o.
 --%>
 
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
@@ -127,13 +127,13 @@
           </c:otherwise>
         </c:choose>
         <button class="avatar-edit-btn" onclick="document.getElementById('avatarInput').click()"
-                title="Thay ảnh đại diện">
+                title="Thay &#7843;nh &#273;&#7841;i di&#7879;n">
           <i class="fa fa-camera"></i>
         </button>
       </div>
 
       <div class="profile-info">
-        <h2>${not empty sessionUser.fullName ? sessionUser.fullName : 'Người dùng TourBuddy'}</h2>
+        <h2>${not empty sessionUser.fullName ? sessionUser.fullName : 'Ng&#432;&#7901;i d&#249;ng TourBuddy'}</h2>
         <span class="role-badge">${sessionUser.role.roleName}</span>
         <div class="meta">
           <i class="fa fa-envelope" style="margin-right:6px;opacity:.6"></i>${sessionUser.email}
@@ -147,10 +147,10 @@
 
       <div class="profile-actions">
         <button class="btn btn-outline btn-sm" onclick="shareProfile()">
-          <i class="fa fa-share-nodes"></i> Chia sẻ
+          <i class="fa fa-share-nodes"></i> Chia s&#7867;
         </button>
         <a href="${pageContext.request.contextPath}/customer/booking/history" class="btn btn-primary btn-sm">
-          <i class="fa fa-suitcase"></i> Lịch sử Tour
+          <i class="fa fa-suitcase"></i> L&#7883;ch s&#7917; Tour
         </a>
       </div>
     </div>
@@ -159,21 +159,21 @@
     <div class="stats-row fade-up" style="animation-delay:.1s;margin-top:24px">
       <div class="stat-card">
         <div class="stat-value">${not empty totalBookings ? totalBookings : 0}</div>
-        <div class="stat-label">Tour đã đặt</div>
+        <div class="stat-label">Tour &#273;&#227; &#273;&#7863;t</div>
       </div>
       <div class="stat-card">
         <div class="stat-value">${not empty totalReviews ? totalReviews : 0}</div>
-        <div class="stat-label">Đánh giá</div>
+        <div class="stat-label">&#272;&#225;nh gi&#225;</div>
       </div>
       <div class="stat-card">
         <div class="stat-value">${not empty totalFavorites ? totalFavorites : 0}</div>
-        <div class="stat-label">Tour yêu thích</div>
+        <div class="stat-label">Tour y&#234;u th&#237;ch</div>
       </div>
     </div>
 
     <!-- Profile Completion -->
     <div class="profile-completion card fade-up" style="padding:16px 20px;margin-bottom:0">
-      <p>Độ hoàn thiện hồ sơ: <strong id="pct">0%</strong></p>
+      <p>&#272;&#7897; ho&#224;n thi&#7879;n h&#7891; s&#417;: <strong id="pct">0%</strong></p>
       <div class="progress-bar-wrap">
         <div class="progress-bar" id="progressBar" style="width:0%"></div>
       </div>
@@ -194,23 +194,23 @@
     <!-- Tabs -->
     <div class="profile-tabs fade-up" style="animation-delay:.15s">
       <button class="tab-btn active" onclick="switchTab('info',this)">
-        <i class="fa fa-user"></i> Thông tin cá nhân
+        <i class="fa fa-user"></i> Th&#244;ng tin c&#225; nh&#226;n
       </button>
       <button class="tab-btn" onclick="switchTab('security',this)">
-        <i class="fa fa-shield-halved"></i> Bảo mật
+        <i class="fa fa-shield-halved"></i> B&#7843;o m&#7853;t
       </button>
       <button class="tab-btn" onclick="switchTab('preferences',this)">
-        <i class="fa fa-sliders"></i> Sở thích du lịch
+        <i class="fa fa-sliders"></i> S&#7903; th&#237;ch du l&#7883;ch
       </button>
       <button class="tab-btn" onclick="switchTab('notifications',this)">
-        <i class="fa fa-bell"></i> Thông báo
+        <i class="fa fa-bell"></i> Th&#244;ng b&#225;o
       </button>
       <button class="tab-btn" onclick="switchTab('activity',this)">
-        <i class="fa fa-clock-rotate-left"></i> Hoạt động
+        <i class="fa fa-clock-rotate-left"></i> Ho&#7841;t &#273;&#7897;ng
       </button>
     </div>
 
-    <!-- ── TAB 1: Personal Info ── -->
+    <!-- &#9472;&#9472; TAB 1: Personal Info &#9472;&#9472; -->
     <div class="tab-content active fade-up" id="tab-info">
       <form action="${pageContext.request.contextPath}/profile/update"
             method="post" enctype="multipart/form-data" id="profileForm">
@@ -221,13 +221,13 @@
         <div class="card">
           <div class="card-header">
             <h3><i class="fa fa-id-card" style="margin-right:8px;color:var(--clr-primary)"></i>
-              Thông tin cơ bản</h3>
+              Th&#244;ng tin c&#417; b&#7843;n</h3>
           </div>
           <div class="card-body">
             <div class="form-grid">
 
               <div class="form-group">
-                <label class="form-label" for="fullName">Họ và tên *</label>
+                <label class="form-label" for="fullName">H&#7885; v&#224; t&#234;n *</label>
                 <div class="input-icon-wrap">
                   <i class="fa fa-user icon"></i>
                   <input type="text" id="fullName" name="fullName"
@@ -245,22 +245,22 @@
                          value="${sessionUser.email}" disabled
                          style="background:#f3f3f3;cursor:not-allowed">
                 </div>
-                <span class="form-hint">Email không thể thay đổi</span>
+                <span class="form-hint">Email kh&#244;ng th&#7875; thay &#273;&#7893;i</span>
               </div>
 
               <div class="form-group">
-                <label class="form-label" for="phone">Số điện thoại</label>
+                <label class="form-label" for="phone">S&#7889; &#273;i&#7879;n tho&#7841;i</label>
                 <div class="input-icon-wrap">
                   <i class="fa fa-phone icon"></i>
                   <input type="tel" id="phone" name="phone"
                          class="form-control"
                          value="${not empty sessionUser.phoneNumber ? sessionUser.phoneNumber : ''}"
-                         pattern="0[0-9]{9}" maxlength="10" title="Số điện thoại gồm 10 chữ số và bắt đầu bằng 0" oninput="calcCompletion()">
+                         pattern="0[0-9]{9}" maxlength="10" title="S&#7889; &#273;i&#7879;n tho&#7841;i g&#7891;m 10 ch&#7919; s&#7889; v&#224; b&#7855;t &#273;&#7847;u b&#7857;ng 0" oninput="calcCompletion()">
                 </div>
               </div>
 
               <div class="form-group">
-                <label class="form-label" for="dob">Ngày sinh</label>
+                <label class="form-label" for="dob">Ng&#224;y sinh</label>
                 <div class="input-icon-wrap">
                   <i class="fa fa-calendar icon"></i>
                   <input type="date" id="dob" name="dob"
@@ -271,45 +271,45 @@
               </div>
 
               <div class="form-group">
-                <label class="form-label" for="gender">Giới tính</label>
+                <label class="form-label" for="gender">Gi&#7899;i t&#237;nh</label>
                 <select id="gender" name="gender" class="form-control" oninput="calcCompletion()">
-                  <option value="">-- Chọn --</option>
+                  <option value="">-- Ch&#7885;n --</option>
                   <option value="Male"   ${sessionUser.profile.gender eq 'Male'   ? 'selected':''}>Nam</option>
-                  <option value="Female" ${sessionUser.profile.gender eq 'Female' ? 'selected':''}>Nữ</option>
-                  <option value="Other"  ${sessionUser.profile.gender eq 'Other'  ? 'selected':''}>Khác</option>
+                  <option value="Female" ${sessionUser.profile.gender eq 'Female' ? 'selected':''}>N&#7919;</option>
+                  <option value="Other"  ${sessionUser.profile.gender eq 'Other'  ? 'selected':''}>Kh&#225;c</option>
                 </select>
               </div>
 
               <div class="form-group full">
-                <label class="form-label" for="address">Địa chỉ</label>
+                <label class="form-label" for="address">&#272;&#7883;a ch&#7881;</label>
                 <div class="input-icon-wrap">
                   <i class="fa fa-location-dot icon"></i>
                   <input type="text" id="address" name="address"
                          class="form-control"
                          value="${not empty sessionUser.profile.address ? sessionUser.profile.address : ''}"
-                         placeholder="Số nhà, đường, quận, tỉnh/thành phố"
+                         placeholder="S&#7889; nh&#224;, &#273;&#432;&#7901;ng, qu&#7853;n, t&#7881;nh/th&#224;nh ph&#7889;"
                          maxlength="255" oninput="calcCompletion()">
                 </div>
               </div>
 
               <div class="form-group full">
-                <label class="form-label" for="bio">Tiểu sử</label>
+                <label class="form-label" for="bio">Ti&#7875;u s&#7917;</label>
                 <textarea id="bio" name="biography"
                           class="form-control" rows="4"
-                          placeholder="Giới thiệu bản thân, phong cách du lịch yêu thích..."
+                          placeholder="Gi&#7899;i thi&#7879;u b&#7843;n th&#226;n, phong c&#225;ch du l&#7883;ch y&#234;u th&#237;ch..."
                           maxlength="1000" oninput="calcCompletion()"
                           style="resize:vertical">${not empty sessionUser.profile.biography ? sessionUser.profile.biography : ''}</textarea>
-                <span class="form-hint" id="bioCount">0 / 1000 ký tự</span>
+                <span class="form-hint" id="bioCount">0 / 1000 k&#253; t&#7921;</span>
               </div>
 
             </div>
 
             <div class="save-bar">
               <button type="button" class="btn btn-ghost" onclick="resetForm()">
-                Hủy thay đổi
+                H&#7911;y thay &#273;&#7893;i
               </button>
               <button type="submit" class="btn btn-primary" id="saveInfoBtn">
-                <i class="fa fa-floppy-disk"></i> Lưu thông tin
+                <i class="fa fa-floppy-disk"></i> L&#432;u th&#244;ng tin
               </button>
             </div>
           </div>
@@ -317,12 +317,12 @@
       </form>
     </div>
 
-    <!-- ── TAB 2: Security ── -->
+    <!-- &#9472;&#9472; TAB 2: Security &#9472;&#9472; -->
     <div class="tab-content" id="tab-security">
       <div class="card">
         <div class="card-header">
           <h3><i class="fa fa-lock" style="margin-right:8px;color:var(--clr-primary)"></i>
-            Đổi mật khẩu</h3>
+            &#272;&#7893;i m&#7853;t kh&#7849;u</h3>
         </div>
         <div class="card-body">
           <form action="${pageContext.request.contextPath}/profile/update"
@@ -330,23 +330,23 @@
             <input type="hidden" name="action" value="changePassword">
 
             <div class="form-group" style="max-width:440px">
-              <label class="form-label" for="currentPwd">Mật khẩu hiện tại *</label>
+              <label class="form-label" for="currentPwd">M&#7853;t kh&#7849;u hi&#7879;n t&#7841;i *</label>
               <div class="input-icon-wrap">
                 <i class="fa fa-lock icon"></i>
                 <input type="password" id="currentPwd" name="currentPassword"
-                       class="form-control" required placeholder="••••••••">
+                       class="form-control" required placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;">
                 <button type="button" class="toggle-pwd"
                         onclick="togglePwd('currentPwd','tci')"><i id="tci" class="fa fa-eye"></i></button>
               </div>
             </div>
 
             <div class="form-group" style="max-width:440px">
-              <label class="form-label" for="newPwd">Mật khẩu mới *</label>
+              <label class="form-label" for="newPwd">M&#7853;t kh&#7849;u m&#7899;i *</label>
               <div class="input-icon-wrap">
                 <i class="fa fa-key icon"></i>
                 <input type="password" id="newPwd" name="newPassword"
                        class="form-control" required minlength="8"
-                       placeholder="Tối thiểu 8 ký tự"
+                       placeholder="T&#7889;i thi&#7875;u 8 k&#253; t&#7921;"
                        oninput="checkStrengthProfile(this.value)">
                 <button type="button" class="toggle-pwd"
                         onclick="togglePwd('newPwd','tni')"><i id="tni" class="fa fa-eye"></i></button>
@@ -360,135 +360,135 @@
             </div>
 
             <div class="form-group" style="max-width:440px">
-              <label class="form-label" for="confirmPwd">Xác nhận mật khẩu mới *</label>
+              <label class="form-label" for="confirmPwd">X&#225;c nh&#7853;n m&#7853;t kh&#7849;u m&#7899;i *</label>
               <div class="input-icon-wrap">
                 <i class="fa fa-key icon"></i>
                 <input type="password" id="confirmPwd" name="confirmNewPassword"
-                       class="form-control" required placeholder="••••••••">
+                       class="form-control" required placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;">
                 <button type="button" class="toggle-pwd"
                         onclick="togglePwd('confirmPwd','tci2')"><i id="tci2" class="fa fa-eye"></i></button>
               </div>
-              <span class="form-error" id="pwdMatchErr" style="display:none">Mật khẩu không khớp</span>
+              <span class="form-error" id="pwdMatchErr" style="display:none">M&#7853;t kh&#7849;u kh&#244;ng kh&#7899;p</span>
             </div>
 
             <button type="submit" class="btn btn-primary" id="savePwdBtn">
-              <i class="fa fa-shield-halved"></i> Cập nhật mật khẩu
+              <i class="fa fa-shield-halved"></i> C&#7853;p nh&#7853;t m&#7853;t kh&#7849;u
             </button>
           </form>
 
           <hr style="border:none;border-top:1px solid var(--clr-border);margin:28px 0">
 
           <div>
-            <h4 style="font-size:.95rem;font-weight:600;margin-bottom:4px">Phiên đăng nhập</h4>
+            <h4 style="font-size:.95rem;font-weight:600;margin-bottom:4px">Phi&#234;n &#273;&#259;ng nh&#7853;p</h4>
             <p style="font-size:.85rem;color:var(--clr-muted);margin-bottom:16px">
-              Đăng xuất khỏi tất cả thiết bị khác để bảo vệ tài khoản.
+              &#272;&#259;ng xu&#7845;t kh&#7887;i t&#7845;t c&#7843; thi&#7871;t b&#7883; kh&#225;c &#273;&#7875; b&#7843;o v&#7879; t&#224;i kho&#7843;n.
             </p>
             <a href="${pageContext.request.contextPath}/logout?all=true"
                class="btn btn-outline btn-sm" style="color:var(--clr-error);border-color:var(--clr-error)">
-              <i class="fa fa-right-from-bracket"></i> Đăng xuất mọi nơi
+              <i class="fa fa-right-from-bracket"></i> &#272;&#259;ng xu&#7845;t m&#7885;i n&#417;i
             </a>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ── TAB 3: Preferences ── -->
+    <!-- &#9472;&#9472; TAB 3: Preferences &#9472;&#9472; -->
     <div class="tab-content" id="tab-preferences">
         <form action="${pageContext.request.contextPath}/profile/update" method="post" id="prefForm" onsubmit="syncTagsBeforeSubmit()">
           <input type="hidden" name="action" value="updatePreferences">
           <div class="card">
             <div class="card-header">
               <h3><i class="fa fa-heart" style="margin-right:8px;color:var(--clr-accent)"></i>
-                Sở thích & Tìm bạn đồng hành</h3>
+                S&#7903; th&#237;ch & T&#236;m b&#7841;n &#273;&#7891;ng h&#224;nh</h3>
             </div>
             <div class="card-body">
               <div class="form-grid">
                 
                 <div class="form-group full">
-                  <label class="form-label">Điểm đến yêu thích (Tags)</label>
+                  <label class="form-label">&#272;i&#7875;m &#273;&#7871;n y&#234;u th&#237;ch (Tags)</label>
                   <input type="text" name="destination" class="form-control" value="${myPref.destination}" placeholder="VD: Vietnam, Thailand, Japan...">
                 </div>
 
                 <div class="form-group">
-                  <label class="form-label">Phong cách du lịch</label>
+                  <label class="form-label">Phong c&#225;ch du l&#7883;ch</label>
                   <select name="travelStyle" class="form-control">
-                    <option value="Explorer" ${myPref.travelStyle == 'Explorer' ? 'selected' : ''}>Khám phá (Explorer)</option>
-                    <option value="Relaxed" ${myPref.travelStyle == 'Relaxed' ? 'selected' : ''}>Nghỉ dưỡng (Relaxed)</option>
-                    <option value="Balanced" ${myPref.travelStyle == 'Balanced' ? 'selected' : ''}>Cân bằng (Balanced)</option>
-                    <option value="Luxury" ${myPref.travelStyle == 'Luxury' ? 'selected' : ''}>Sang trọng (Luxury)</option>
-                    <option value="Backpacking" ${myPref.travelStyle == 'Backpacking' ? 'selected' : ''}>Phượt (Backpacking)</option>
+                    <option value="Explorer" ${myPref.travelStyle == 'Explorer' ? 'selected' : ''}>Kh&#225;m ph&#225; (Explorer)</option>
+                    <option value="Relaxed" ${myPref.travelStyle == 'Relaxed' ? 'selected' : ''}>Ngh&#7881; d&#432;&#7905;ng (Relaxed)</option>
+                    <option value="Balanced" ${myPref.travelStyle == 'Balanced' ? 'selected' : ''}>C&#226;n b&#7857;ng (Balanced)</option>
+                    <option value="Luxury" ${myPref.travelStyle == 'Luxury' ? 'selected' : ''}>Sang tr&#7885;ng (Luxury)</option>
+                    <option value="Backpacking" ${myPref.travelStyle == 'Backpacking' ? 'selected' : ''}>Ph&#432;&#7907;t (Backpacking)</option>
                   </select>
                 </div>
                 
                 <div class="form-group">
-                  <label class="form-label">Tần suất du lịch</label>
+                  <label class="form-label">T&#7847;n su&#7845;t du l&#7883;ch</label>
                   <select name="travelFrequency" class="form-control">
-                    <option value="Rarely" ${myPref.travelFrequency == 'Rarely' ? 'selected' : ''}>Hiếm khi (1-2 lần/năm)</option>
-                    <option value="Occasionally" ${myPref.travelFrequency == 'Occasionally' ? 'selected' : ''}>Thỉnh thoảng (3-5 lần/năm)</option>
-                    <option value="Frequently" ${myPref.travelFrequency == 'Frequently' ? 'selected' : ''}>Thường xuyên (Mỗi tháng)</option>
+                    <option value="Rarely" ${myPref.travelFrequency == 'Rarely' ? 'selected' : ''}>Hi&#7871;m khi (1-2 l&#7847;n/n&#259;m)</option>
+                    <option value="Occasionally" ${myPref.travelFrequency == 'Occasionally' ? 'selected' : ''}>Th&#7881;nh tho&#7843;ng (3-5 l&#7847;n/n&#259;m)</option>
+                    <option value="Frequently" ${myPref.travelFrequency == 'Frequently' ? 'selected' : ''}>Th&#432;&#7901;ng xuy&#234;n (M&#7895;i th&#225;ng)</option>
                   </select>
                 </div>
 
                 <div class="form-group">
-                  <label class="form-label">Thời gian chuyến đi ưu tiên</label>
+                  <label class="form-label">Th&#7901;i gian chuy&#7871;n &#273;i &#432;u ti&#234;n</label>
                   <select name="tripDuration" class="form-control">
-                    <option value="1-3 days" ${myPref.tripDuration == '1-3 days' ? 'selected' : ''}>1-3 ngày (Ngắn ngày)</option>
-                    <option value="1 week" ${myPref.tripDuration == '1 week' ? 'selected' : ''}>1 tuần</option>
-                    <option value="2+ weeks" ${myPref.tripDuration == '2+ weeks' ? 'selected' : ''}>Hơn 2 tuần</option>
+                    <option value="1-3 days" ${myPref.tripDuration == '1-3 days' ? 'selected' : ''}>1-3 ng&#224;y (Ng&#7855;n ng&#224;y)</option>
+                    <option value="1 week" ${myPref.tripDuration == '1 week' ? 'selected' : ''}>1 tu&#7847;n</option>
+                    <option value="2+ weeks" ${myPref.tripDuration == '2+ weeks' ? 'selected' : ''}>H&#417;n 2 tu&#7847;n</option>
                   </select>
                 </div>
 
                 <div class="form-group">
-                  <label class="form-label">Ngôn ngữ</label>
+                  <label class="form-label">Ng&#244;n ng&#7919;</label>
                   <select name="languages" class="form-control">
-                    <option value="Tiếng Việt" ${myPref.languages == 'Tiếng Việt' ? 'selected' : ''}>Tiếng Việt</option>
-                    <option value="English" ${myPref.languages == 'English' ? 'selected' : ''}>Tiếng Anh</option>
-                    <option value="Bilingual" ${myPref.languages == 'Bilingual' ? 'selected' : ''}>Song ngữ (Anh-Việt)</option>
+                    <option value="Ti&#7871;ng Vi&#7879;t" ${myPref.languages == 'Ti&#7871;ng Vi&#7879;t' ? 'selected' : ''}>Ti&#7871;ng Vi&#7879;t</option>
+                    <option value="English" ${myPref.languages == 'English' ? 'selected' : ''}>Ti&#7871;ng Anh</option>
+                    <option value="Bilingual" ${myPref.languages == 'Bilingual' ? 'selected' : ''}>Song ng&#7919; (Anh-Vi&#7879;t)</option>
                   </select>
                 </div>
 
                 <div class="form-group">
-                  <label class="form-label">Thói quen hút thuốc</label>
+                  <label class="form-label">Th&#243;i quen h&#250;t thu&#7889;c</label>
                   <select name="smokingPreference" class="form-control">
-                    <option value="Non-smoker" ${myPref.smokingPreference == 'Non-smoker' ? 'selected' : ''}>Không hút thuốc</option>
-                    <option value="Smoker" ${myPref.smokingPreference == 'Smoker' ? 'selected' : ''}>Có hút thuốc</option>
-                    <option value="Don't care" ${myPref.smokingPreference == "Don't care" ? 'selected' : ''}>Không quan tâm</option>
+                    <option value="Non-smoker" ${myPref.smokingPreference == 'Non-smoker' ? 'selected' : ''}>Kh&#244;ng h&#250;t thu&#7889;c</option>
+                    <option value="Smoker" ${myPref.smokingPreference == 'Smoker' ? 'selected' : ''}>C&#243; h&#250;t thu&#7889;c</option>
+                    <option value="Don't care" ${myPref.smokingPreference == "Don't care" ? 'selected' : ''}>Kh&#244;ng quan t&#226;m</option>
                   </select>
                 </div>
 
                 <div class="form-group">
-                  <label class="form-label">Thói quen uống rượu bia</label>
+                  <label class="form-label">Th&#243;i quen u&#7889;ng r&#432;&#7907;u bia</label>
                   <select name="drinkingPreference" class="form-control">
-                    <option value="Non-drinker" ${myPref.drinkingPreference == 'Non-drinker' ? 'selected' : ''}>Không uống</option>
-                    <option value="Social drinker" ${myPref.drinkingPreference == 'Social drinker' ? 'selected' : ''}>Uống xã giao</option>
-                    <option value="Don't care" ${myPref.drinkingPreference == "Don't care" ? 'selected' : ''}>Không quan tâm</option>
+                    <option value="Non-drinker" ${myPref.drinkingPreference == 'Non-drinker' ? 'selected' : ''}>Kh&#244;ng u&#7889;ng</option>
+                    <option value="Social drinker" ${myPref.drinkingPreference == 'Social drinker' ? 'selected' : ''}>U&#7889;ng x&#227; giao</option>
+                    <option value="Don't care" ${myPref.drinkingPreference == "Don't care" ? 'selected' : ''}>Kh&#244;ng quan t&#226;m</option>
                   </select>
                 </div>
 
                 <div class="form-group">
-                  <label class="form-label">Độ tuổi bạn đồng hành ưu tiên</label>
+                  <label class="form-label">&#272;&#7897; tu&#7893;i b&#7841;n &#273;&#7891;ng h&#224;nh &#432;u ti&#234;n</label>
                   <select name="targetAgeMax" class="form-control">
-                    <option value="0" ${myPref.targetAgeMax == 0 ? 'selected' : ''}>Bất kỳ độ tuổi nào</option>
-                    <option value="25" ${myPref.targetAgeMax == 25 ? 'selected' : ''}>18 - 25 tuổi</option>
-                    <option value="35" ${myPref.targetAgeMax == 35 ? 'selected' : ''}>26 - 35 tuổi</option>
-                    <option value="50" ${myPref.targetAgeMax == 50 ? 'selected' : ''}>36 - 50 tuổi</option>
+                    <option value="0" ${myPref.targetAgeMax == 0 ? 'selected' : ''}>B&#7845;t k&#7923; &#273;&#7897; tu&#7893;i n&#224;o</option>
+                    <option value="25" ${myPref.targetAgeMax == 25 ? 'selected' : ''}>18 - 25 tu&#7893;i</option>
+                    <option value="35" ${myPref.targetAgeMax == 35 ? 'selected' : ''}>26 - 35 tu&#7893;i</option>
+                    <option value="50" ${myPref.targetAgeMax == 50 ? 'selected' : ''}>36 - 50 tu&#7893;i</option>
                   </select>
                 </div>
 
                 <div class="form-group">
-                  <label class="form-label">Giới tính bạn đồng hành</label>
+                  <label class="form-label">Gi&#7899;i t&#237;nh b&#7841;n &#273;&#7891;ng h&#224;nh</label>
                   <select name="gender" class="form-control">
-                    <option value="All" ${myPref.targetGender == 'All' ? 'selected' : ''}>Tất cả</option>
+                    <option value="All" ${myPref.targetGender == 'All' ? 'selected' : ''}>T&#7845;t c&#7843;</option>
                     <option value="Male" ${myPref.targetGender == 'Male' ? 'selected' : ''}>Nam</option>
-                    <option value="Female" ${myPref.targetGender == 'Female' ? 'selected' : ''}>Nữ</option>
+                    <option value="Female" ${myPref.targetGender == 'Female' ? 'selected' : ''}>N&#7919;</option>
                   </select>
                 </div>
 
                 <div class="form-group full">
-                  <label class="form-label">Sở thích du lịch (Chọn nhiều)</label>
+                  <label class="form-label">S&#7903; th&#237;ch du l&#7883;ch (Ch&#7885;n nhi&#7873;u)</label>
                   <input type="hidden" name="tags" id="travelTagsInput" value="${myPref.tags}">
                   <div class="tag-group">
-                    <c:set var="travelTagsMap" value="Beach:Biển,Mountains:Núi,Culture:Văn hóa,Food:Ẩm thực,Shopping:Mua sắm,Adventure:Phiêu lưu,Photography:Nhiếp ảnh,Nightlife:Đời sống về đêm,Nature:Thiên nhiên" />
+                    <c:set var="travelTagsMap" value="Beach:Bi&#7875;n,Mountains:N&#250;i,Culture:V&#259;n h&#243;a,Food:&#7848;m th&#7921;c,Shopping:Mua s&#7855;m,Adventure:Phi&#234;u l&#432;u,Photography:Nhi&#7871;p &#7843;nh,Nightlife:&#272;&#7901;i s&#7889;ng v&#7873; &#273;&#234;m,Nature:Thi&#234;n nhi&#234;n" />
                     <c:forEach var="pair" items="${travelTagsMap.split(',')}">
                       <c:set var="item" value="${pair.split(':')}" />
                       <span class="tag" data-input="travelTagsInput" data-val="${item[0]}" onclick="toggleMultiTag(this)"><i class="fa fa-check"></i>${item[1]}</span>
@@ -497,10 +497,10 @@
                 </div>
 
                 <div class="form-group full">
-                  <label class="form-label">Hoạt động ưa thích (Chọn nhiều)</label>
+                  <label class="form-label">Ho&#7841;t &#273;&#7897;ng &#432;a th&#237;ch (Ch&#7885;n nhi&#7873;u)</label>
                   <input type="hidden" name="activityPreferences" id="activityTagsInput" value="${myPref.activityPreferences}">
                   <div class="tag-group">
-                    <c:set var="actTagsMap" value="Hiking:Đi bộ đường dài,Camping:Cắm trại,Sightseeing:Ngắm cảnh,Local Experiences:Trải nghiệm địa phương,Water Sports:Thể thao dưới nước,Museums:Bảo tàng" />
+                    <c:set var="actTagsMap" value="Hiking:&#272;i b&#7897; &#273;&#432;&#7901;ng d&#224;i,Camping:C&#7855;m tr&#7841;i,Sightseeing:Ng&#7855;m c&#7843;nh,Local Experiences:Tr&#7843;i nghi&#7879;m &#273;&#7883;a ph&#432;&#417;ng,Water Sports:Th&#7875; thao d&#432;&#7899;i n&#432;&#7899;c,Museums:B&#7843;o t&#224;ng" />
                     <c:forEach var="pair" items="${actTagsMap.split(',')}">
                       <c:set var="item" value="${pair.split(':')}" />
                       <span class="tag" data-input="activityTagsInput" data-val="${item[0]}" onclick="toggleMultiTag(this)"><i class="fa fa-check"></i>${item[1]}</span>
@@ -512,10 +512,10 @@
               
               <div class="save-bar" style="margin-top: 24px;">
                 <button type="button" class="btn btn-ghost" onclick="resetForm()">
-                  Hủy thay đổi
+                  H&#7911;y thay &#273;&#7893;i
                 </button>
                 <button type="submit" class="btn btn-primary">
-                  <i class="fa fa-floppy-disk"></i> Lưu Sở Thích
+                  <i class="fa fa-floppy-disk"></i> L&#432;u S&#7903; Th&#237;ch
                 </button>
               </div>
 
@@ -524,7 +524,7 @@
         </form>
     </div>
 
-    <!-- ── TAB 4: Notifications ── -->
+    <!-- &#9472;&#9472; TAB 4: Notifications &#9472;&#9472; -->
     <div class="tab-content" id="tab-notifications">
       <form action="${pageContext.request.contextPath}/profile/update"
             method="post">
@@ -532,16 +532,16 @@
         <div class="card">
           <div class="card-header">
             <h3><i class="fa fa-bell" style="margin-right:8px;color:var(--clr-primary)"></i>
-              Cài đặt thông báo</h3>
+              C&#224;i &#273;&#7863;t th&#244;ng b&#225;o</h3>
           </div>
           <div class="card-body">
             <c:forEach var="notifType" items="${[
-              ['notif_booking',  'Cập nhật booking', 'Nhận thông báo khi booking được xác nhận, hủy hoặc thay đổi'],
-              ['notif_payment',  'Thanh toán',       'Nhận thông báo về giao dịch thanh toán'],
-              ['notif_review',   'Đánh giá tour',    'Nhận thông báo khi có phản hồi về đánh giá của bạn'],
-              ['notif_promo',    'Khuyến mãi',       'Nhận thông báo về tour ưu đãi và mã giảm giá'],
-              ['notif_buddy',    'Buddy & Chat',     'Nhận thông báo khi có lời mời kết bạn đồng hành'],
-              ['notif_system',   'Hệ thống',         'Thông báo bảo trì và cập nhật hệ thống']
+              ['notif_booking',  'C&#7853;p nh&#7853;t booking', 'Nh&#7853;n th&#244;ng b&#225;o khi booking &#273;&#432;&#7907;c x&#225;c nh&#7853;n, h&#7911;y ho&#7863;c thay &#273;&#7893;i'],
+              ['notif_payment',  'Thanh to&#225;n',       'Nh&#7853;n th&#244;ng b&#225;o v&#7873; giao d&#7883;ch thanh to&#225;n'],
+              ['notif_review',   '&#272;&#225;nh gi&#225; tour',    'Nh&#7853;n th&#244;ng b&#225;o khi c&#243; ph&#7843;n h&#7891;i v&#7873; &#273;&#225;nh gi&#225; c&#7911;a b&#7841;n'],
+              ['notif_promo',    'Khuy&#7871;n m&#227;i',       'Nh&#7853;n th&#244;ng b&#225;o v&#7873; tour &#432;u &#273;&#227;i v&#224; m&#227; gi&#7843;m gi&#225;'],
+              ['notif_buddy',    'Buddy & Chat',     'Nh&#7853;n th&#244;ng b&#225;o khi c&#243; l&#7901;i m&#7901;i k&#7871;t b&#7841;n &#273;&#7891;ng h&#224;nh'],
+              ['notif_system',   'H&#7879; th&#7889;ng',         'Th&#244;ng b&#225;o b&#7843;o tr&#236; v&#224; c&#7853;p nh&#7853;t h&#7879; th&#7889;ng']
             ]}">
               <div class="notification-row">
                 <div>
@@ -556,19 +556,19 @@
             </c:forEach>
 
             <button type="submit" class="btn btn-primary" style="margin-top:16px">
-              <i class="fa fa-floppy-disk"></i> Lưu cài đặt
+              <i class="fa fa-floppy-disk"></i> L&#432;u c&#224;i &#273;&#7863;t
             </button>
           </div>
         </div>
       </form>
     </div>
 
-    <!-- ── TAB 5: Activity ── -->
+    <!-- &#9472;&#9472; TAB 5: Activity &#9472;&#9472; -->
     <div class="tab-content" id="tab-activity">
       <div class="card">
         <div class="card-header">
           <h3><i class="fa fa-clock-rotate-left" style="margin-right:8px;color:var(--clr-primary)"></i>
-            Hoạt động gần đây</h3>
+            Ho&#7841;t &#273;&#7897;ng g&#7847;n &#273;&#226;y</h3>
         </div>
         <div class="card-body">
           <c:choose>
@@ -594,7 +594,7 @@
             <c:otherwise>
               <div class="empty-state" style="text-align:center; padding: 40px 20px;">
                 <i class="fa fa-ghost" style="font-size: 3rem; color: var(--clr-border); margin-bottom: 16px;"></i>
-                <p style="color: var(--clr-muted); font-size: 0.9rem;">Bạn chưa có hoạt động nào gần đây.</p>
+                <p style="color: var(--clr-muted); font-size: 0.9rem;">B&#7841;n ch&#432;a c&#243; ho&#7841;t &#273;&#7897;ng n&#224;o g&#7847;n &#273;&#226;y.</p>
               </div>
             </c:otherwise>
           </c:choose>
@@ -606,7 +606,7 @@
 </div><!-- /profile-wrapper -->
 
 <script>
-/* ── Tabs ── */
+/* \u2500\u2500 Tabs \u2500\u2500 */
 function switchTab(name, btn) {
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -621,7 +621,7 @@ if (serverActiveTab) {
   if (targetBtn) switchTab(serverActiveTab, targetBtn);
 }
 
-/* ── Avatar preview ── */
+/* \u2500\u2500 Avatar preview \u2500\u2500 */
 function previewAvatar(input) {
   if (!input.files[0]) return;
   const reader = new FileReader();
@@ -646,7 +646,7 @@ function previewAvatar(input) {
   form.submit();
 }
 
-/* ── Profile completion ── */
+/* \u2500\u2500 Profile completion \u2500\u2500 */
 const fields = ['fullName','phone','dob','gender','address','bio'];
 function calcCompletion() {
   const filled = fields.filter(id => {
@@ -659,11 +659,11 @@ function calcCompletion() {
 
   // Bio counter
   const bio = document.getElementById('bio');
-  if (bio) document.getElementById('bioCount').textContent = bio.value.length + ' / 1000 ký tự';
+  if (bio) document.getElementById('bioCount').textContent = bio.value.length + ' / 1000 k\u00fd t\u1ef1';
 }
 calcCompletion();
 
-/* ── Tags Initialization ── */
+/* \u2500\u2500 Tags Initialization \u2500\u2500 */
 var tagInputs = document.querySelectorAll('input[type="hidden"][id$="TagsInput"]');
 for (var i = 0; i < tagInputs.length; i++) {
   var input = tagInputs[i];
@@ -708,7 +708,7 @@ if (dobInputProfile) {
   dobInputProfile.max = new Date().toISOString().split("T")[0];
 }
 
-/* ── Password strength (profile) ── */
+/* \u2500\u2500 Password strength (profile) \u2500\u2500 */
 function checkStrengthProfile(pwd) {
   const segs = [1,2,3,4].map(i => document.getElementById('ps' + i));
   const colors = ['#C0392B','#E67E22','#F1C40F','#1E7D4B'];
@@ -722,7 +722,7 @@ function checkStrengthProfile(pwd) {
   });
 }
 
-/* ── Toggle password ── */
+/* \u2500\u2500 Toggle password \u2500\u2500 */
 function togglePwd(inputId, iconId) {
   const input = document.getElementById(inputId);
   const icon  = document.getElementById(iconId);
@@ -731,7 +731,7 @@ function togglePwd(inputId, iconId) {
   icon.classList.toggle('fa-eye-slash');
 }
 
-/* ── Password form submit ── */
+/* \u2500\u2500 Password form submit \u2500\u2500 */
 document.getElementById('pwdForm').addEventListener('submit', function(e) {
   const np = document.getElementById('newPwd').value;
   const cp = document.getElementById('confirmPwd').value;
@@ -743,14 +743,14 @@ document.getElementById('pwdForm').addEventListener('submit', function(e) {
   document.getElementById('pwdMatchErr').style.display = 'none';
   const btn = document.getElementById('savePwdBtn');
   btn.disabled = true;
-  btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Đang cập nhật...';
+  btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> \u0110ang c\u1eadp nh\u1eadt...';
 });
 
-/* ── Profile form submit ── */
+/* \u2500\u2500 Profile form submit \u2500\u2500 */
 document.getElementById('profileForm').addEventListener('submit', function() {
   const btn = document.getElementById('saveInfoBtn');
   btn.disabled = true;
-  btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Đang lưu...';
+  btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> \u0110ang l\u01b0u...';
 });
 
 function resetForm() {
@@ -763,7 +763,7 @@ function shareProfile() {
     navigator.share({ title: 'TourBuddy Profile', url: window.location.href });
   } else {
     navigator.clipboard.writeText(window.location.href);
-    alert('Đã sao chép link hồ sơ!');
+    alert('\u0110\u00e3 sao ch\u00e9p link h\u1ed3 s\u01a1!');
   }
 }
 </script>

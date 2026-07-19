@@ -1,4 +1,4 @@
-﻿<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
+<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt"  prefix="fmt" %>
 <c:if test="${empty sessionUser || (sessionUser.roleId ne 1 && userRole ne 'Admin')}">
@@ -9,18 +9,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dự Báo &amp; Xu Hướng — TourBuddy Enterprise</title>
+    <title>D&#7921; B&#225;o &amp; Xu H&#432;&#7899;ng &#151; TourBuddy Enterprise</title>
     <!-- Outfit & Inter Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
     <!-- Lucide Icons & FontAwesome CDNs -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-dashboard.css?v=2.1">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-dashboard.css?v=2.3">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* ── FORECAST PAGE — SPACE GLASSMORPHISM THEME ── */
+        /* -- FORECAST PAGE &#151; SPACE GLASSMORPHISM THEME -- */
         .forecast-grid {
             display: grid;
             grid-template-columns: 2fr 1fr;
@@ -119,18 +119,18 @@
     </style>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-space-overrides.css?v=1.0">
 </head>
-<body class="dashboard-body">
+<body class="dashboard-body tb-cosmic">
 
 <div class="dashboard-wrapper">
-    <!-- ── Left Sidebar ── -->
+    <!-- -- Left Sidebar -- -->
     <c:set var="activePage" value="forecast" scope="request" />
     <jsp:include page="sidebar.jsp" />
 
-    <!-- ── Main Content Area ── -->
-    <main class="main-content">
+    <!-- -- Main Content Area -- -->
+    <main class="main-content theme-light">
         <!-- Top Header -->
         <header class="top-header">
-            <h1>Dự Báo &amp; Phân Tích Xu Hướng</h1>
+            <h1>D&#7921; B&#225;o &amp; Ph&#226;n T&#237;ch Xu H&#432;&#7899;ng</h1>
             <jsp:include page="admin-header-right.jsp" />
         </header>
 
@@ -138,27 +138,27 @@
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-header">
-                    <span class="stat-title">Độ tin cậy mô hình</span>
+                    <span class="stat-title">&#272;&#7897; tin c&#7853;y m&#244; h&#236;nh</span>
                     <div class="stat-icon blue"><i data-lucide="shield-check"></i></div>
                 </div>
                 <span class="stat-value" id="kpi-confidence">85.0%</span>
-                <div class="stat-footer"><span>Dựa trên hệ số xác định R²</span></div>
+                <div class="stat-footer"><span>D&#7921;a tr&#234;n h&#7879; s&#7889; x&#225;c &#273;&#7883;nh R&#178;</span></div>
             </div>
             <div class="stat-card">
                 <div class="stat-header">
-                    <span class="stat-title">Dự báo doanh thu tháng tới</span>
+                    <span class="stat-title">D&#7921; b&#225;o doanh thu th&#225;ng t&#7899;i</span>
                     <div class="stat-icon green"><i data-lucide="line-chart"></i></div>
                 </div>
-                <span class="stat-value" id="kpi-revenue">Đang tính...</span>
-                <div class="stat-footer"><span>Hồi quy tuyến tính 6 tháng</span></div>
+                <span class="stat-value" id="kpi-revenue">&#272;&#259;ng t&#237;nh...</span>
+                <div class="stat-footer"><span>H&#7891;i quy tuy&#7871;n t&#237;nh 6 th&#225;ng</span></div>
             </div>
             <div class="stat-card">
                 <div class="stat-header">
-                    <span class="stat-title">Tour nhu cầu cao nhất</span>
+                    <span class="stat-title">Tour nhu c&#7847;u cao nh&#7845;t</span>
                     <div class="stat-icon orange"><i data-lucide="flame"></i></div>
                 </div>
-                <span class="stat-value" id="kpi-demand" style="font-size: 1.15rem; font-weight: 800; line-height: 2.2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;">Đang quét...</span>
-                <div class="stat-footer"><span>Quét lấp đầy &amp; lượt đặt chỗ</span></div>
+                <span class="stat-value" id="kpi-demand" style="font-size: 1.15rem; font-weight: 800; line-height: 2.2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;">&#272;&#259;ng qu&#233;t...</span>
+                <div class="stat-footer"><span>Qu&#233;t l&#7893;p &#273;&#7847;y &amp; l&#432;&#7907;t &#273;&#7863;t ch&#7895;</span></div>
             </div>
         </div>
 
@@ -169,18 +169,18 @@
             <div>
                 <!-- Control Panel -->
                 <div class="control-card">
-                    <h3><i data-lucide="sliders-horizontal" style="width:18px;height:18px;vertical-align:middle;margin-right:8px;"></i> Bộ Điều Khiển Dự Báo Thống Kê</h3>
+                    <h3><i data-lucide="sliders-horizontal" style="width:18px;height:18px;vertical-align:middle;margin-right:8px;"></i> B&#7899; &#272;i&#7873;u Khi&#7875;n D&#7921; B&#225;o Th&#7889;ng K&#234;</h3>
                     <form id="forecast-form">
                         <div class="form-group">
-                            <label for="forecast-type">Chọn Chỉ Số Cần Dự Báo</label>
+                            <label for="forecast-type">Ch&#7885;n Ch&#7881; S&#7889; C&#7847;n D&#7921; B&#225;o</label>
                             <select id="forecast-type" class="form-control">
-                                <option value="Revenue">Dự báo Doanh Thu (Hồi quy tuyến tính y=ax+b)</option>
-                                <option value="BookingTrend">Dự báo Lượt Đặt Tour (Hồi quy tuyến tính y=ax+b)</option>
-                                <option value="Demand">Dự báo Nhu Cầu Các Tour Hot (Moving Average)</option>
+                                <option value="Revenue">D&#7921; b&#225;o Doanh Thu (H&#7891;i quy tuy&#7871;n t&#237;nh y=ax+b)</option>
+                                <option value="BookingTrend">D&#7921; b&#225;o L&#432;&#7907;t &#272;&#7863;t Tour (H&#7891;i quy tuy&#7871;n t&#237;nh y=ax+b)</option>
+                                <option value="Demand">D&#7921; b&#225;o Nhu C&#7847;u C&#225;c Tour Hot (Moving Average)</option>
                             </select>
                         </div>
                         <button type="button" id="btn-run-forecast" class="btn-forecast">
-                            <i data-lucide="play-circle"></i> Chạy Mô hình Dự báo (Generate Forecast)
+                            <i data-lucide="play-circle"></i> Ch&#7841;y M&#244; h&#236;nh D&#7921; b&#225;o (Generate Forecast)
                         </button>
                     </form>
                 </div>
@@ -188,7 +188,7 @@
                 <!-- Chart Card -->
                 <div class="card" style="padding: 24px;">
                     <div class="card-header" style="padding: 0; margin-bottom: 20px;">
-                        <h3 id="chart-title">Biểu đồ Xu hướng &amp; Dự báo</h3>
+                        <h3 id="chart-title">Bi&#7875;u &#273;&#7891; Xu H&#432;&#7899;ng &amp; D&#7921; b&#225;o</h3>
                     </div>
                     <div class="card-body" style="padding: 0; position: relative; height: 350px;">
                         <canvas id="forecastChart"></canvas>
@@ -199,17 +199,17 @@
             <!-- Right Side: Log History -->
             <div class="card" style="padding: 24px; display: flex; flex-direction: column;">
                 <div class="card-header" style="padding: 0; margin-bottom: 20px;">
-                    <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.1rem;">Lịch sử chạy mô hình</h3>
+                    <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.1rem;">L&#7883;ch s&#7917; ch&#7841;y m&#244; h&#236;nh</h3>
                 </div>
                 <div style="overflow-x: auto; flex-grow: 1;">
                     <table class="booking-table" style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Loại</th>
-                                <th>Độ tin cậy</th>
-                                <th>Ngày chạy</th>
-                                <th>Hành động</th>
+                                <th>Lo&#7841;i</th>
+                                <th>&#272;&#7897; tin c&#7853;y</th>
+                                <th>Ng&#224;y ch&#7841;y</th>
+                                <th>H&#192;NH &#272;&#7896;NG</th>
                             </tr>
                         </thead>
                         <tbody id="history-tbody">
@@ -242,7 +242,7 @@
                                 <c:otherwise>
                                     <tr>
                                         <td colspan="5" class="empty-state">
-                                            Chưa có snapshot dự báo nào được lưu.
+                                            Ch&#432;a c&#243; snapshot d&#7921; b&#225;o n&#224;o &#273;&#432;&#7901;c l&#432;u.
                                         </td>
                                     </tr>
                                 </c:otherwise>
@@ -260,20 +260,20 @@
 <div class="modal" id="json-modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h3 id="modal-title">Chi tiết Snapshot Dự Báo</h3>
+            <h3 id="modal-title">Chi ti&#7871;t Snapshot D&#7921; B&#225;o</h3>
             <button class="modal-close" id="btn-close-modal">&times;</button>
         </div>
         <div class="modal-body">
             <div style="margin-bottom: 16px;">
-                <strong>Loại dự báo:</strong> <span id="modal-type" style="margin-right: 20px;">-</span>
-                <strong>Độ tin cậy:</strong> <span id="modal-confidence">-</span>
+                <strong>Lo&#7841;i d&#7921; b&#225;o:</strong> <span id="modal-type" style="margin-right: 20px;">-</span>
+                <strong>&#272;&#7897; tin c&#7853;y:</strong> <span id="modal-confidence">-</span>
             </div>
             <div style="margin-bottom: 12px;">
-                <strong style="display: block; margin-bottom: 6px; color: #9fa9cb;">Dữ liệu lịch sử đầu vào (InputData):</strong>
+                <strong style="display: block; margin-bottom: 6px; color: #9fa9cb;">D&#7919; li&#7879;u l&#7883;ch s&#7917; &#273;&#7847;u v&#224;o (InputData):</strong>
                 <pre class="json-block" id="modal-input-json"></pre>
             </div>
             <div>
-                <strong style="display: block; margin-bottom: 6px; color: #9fa9cb;">Kết quả dự đoán đầu ra (ResultData):</strong>
+                <strong style="display: block; margin-bottom: 6px; color: #9fa9cb;">K&#7871;t qu&#7843; d&#7921; &#273;o&#225;n &#273;&#7847;u ra (ResultData):</strong>
                 <pre class="json-block" id="modal-result-json"></pre>
             </div>
         </div>

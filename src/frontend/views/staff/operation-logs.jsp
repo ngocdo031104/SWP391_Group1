@@ -13,7 +13,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nhật Ký Vận Hành - Staff Dashboard</title>
+    <title>Nh&#7853;t K&#253; V&#7853;n H&#224;nh - Staff Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-dashboard.css?v=1.6">
@@ -53,7 +53,7 @@
         .stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .stat-icon.primary { background: var(--primary-light); color: var(--primary); }
         .stat-info h4 { margin: 0; font-size: 13px; color: var(--gray-500); font-weight: 500; }
-        .stat-info .stat-value { margin: 4px 0 0; font-size: 24px; font-weight: 700; color: var(--gray-900); }
+        .stat-info .stat-value { margin: 4px 0 0; font-size: 24px; font-weight: 700; color: #ffffff; }
 
         .pagination { display: flex; justify-content: center; align-items: center; gap: 8px; padding: 20px; }
         .page-btn { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--gray-200); background: #fff; color: var(--gray-700); cursor: pointer; font-size: 14px; font-weight: 500; text-decoration: none; transition: all .2s; }
@@ -76,8 +76,8 @@
 
             <div class="page-header">
                 <div>
-                    <h1>Nhật Ký Vận Hành</h1>
-                    <p>Xem toàn bộ nhật ký hoạt động của hệ thống tour</p>
+                    <h1>Nh&#7853;t K&#253; V&#7853;n H&#224;nh</h1>
+                    <p>Xem to&#224;n b&#7897; nh&#7853;t k&#253; ho&#7841;t &#273;&#7897;ng c&#7911;a h&#7879; th&#7889;ng tour</p>
                 </div>
             </div>
 
@@ -86,7 +86,7 @@
                 <div class="stat-card">
                     <div class="stat-icon primary"><i data-lucide="file-text"></i></div>
                     <div class="stat-info">
-                        <h4>Tổng Hoạt Động</h4>
+                        <h4>T&#7893;ng Ho&#7841;t &#272;&#7897;ng</h4>
                         <div class="stat-value">${totalLogs}</div>
                     </div>
                 </div>
@@ -95,25 +95,25 @@
             <!-- Table -->
             <div class="card">
                 <div class="card-header">
-                    <h3><i data-lucide="clock-rotate-left" style="color:var(--primary);"></i> Nhật Ký Hoạt Động</h3>
+                    <h3><i data-lucide="clock-rotate-left" style="color:var(--primary);"></i> Nh&#7853;t K&#253; Ho&#7841;t &#272;&#7897;ng</h3>
                 </div>
                 <div class="card-body" style="padding:0;">
                     <c:choose>
                         <c:when test="${empty logs}">
                             <div class="empty-state">
                                 <i data-lucide="file-text"></i>
-                                <p>Chưa có nhật ký hoạt động nào.</p>
+                                <p>Ch&#432;a c&#243; nh&#7853;t k&#253; ho&#7841;t &#273;&#7897;ng n&#224;o.</p>
                             </div>
                         </c:when>
                         <c:otherwise>
                             <table class="table-modern">
                                 <thead>
                                     <tr>
-                                        <th>Thời Gian</th>
+                                        <th>Th&#7901;i Gian</th>
                                         <th>Tour</th>
-                                        <th>Hoạt Động</th>
-                                        <th>Người Thực Hiện</th>
-                                        <th>Vai Trò</th>
+                                        <th>Ho&#7841;t &#272;&#7897;ng</th>
+                                        <th>Ng&#432;&#7901;i Th&#7921;c Hi&#7879;n</th>
+                                        <th>Vai Tr&#242;</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -142,7 +142,7 @@
                                                         ${log.operatorName}
                                                     </c:when>
                                                     <c:otherwise>
-                                                        <span style="color:var(--gray-500);font-style:italic;">Hệ thống</span>
+                                                        <span style="color:var(--gray-500);font-style:italic;">H&#7879; th&#7889;ng</span>
                                                     </c:otherwise>
                                                 </c:choose>
                                             </td>

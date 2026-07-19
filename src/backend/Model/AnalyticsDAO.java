@@ -26,7 +26,7 @@ public class AnalyticsDAO extends DBContext {
         // Query to aggregate monthly revenue, starting from N months ago
         String sql = "SELECT YEAR(CreatedAt) as YearVal, MONTH(CreatedAt) as MonthVal, SUM(TotalAmount) as Total "
                    + "FROM Booking "
-                   + "WHERE Status = 'Success' AND CreatedAt >= DATEADD(month, -?, GETDATE()) "
+                   + "WHERE Status NOT IN ('Cancelled', 'Failed', 'Refunded') AND CreatedAt >= DATEADD(month, -?, GETDATE()) "
                    + "GROUP BY YEAR(CreatedAt), MONTH(CreatedAt) "
                    + "ORDER BY YearVal ASC, MonthVal ASC";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -56,7 +56,7 @@ public class AnalyticsDAO extends DBContext {
                    + "JOIN TourSchedule ts ON b.ScheduleID = ts.ScheduleID "
                    + "JOIN Tour t ON ts.TourID = t.TourID "
                    + "JOIN TourCategory tc ON t.CategoryID = tc.CategoryID "
-                   + "WHERE b.Status = 'Success' "
+                   + "WHERE b.Status NOT IN ('Cancelled', 'Failed', 'Refunded') "
                    + "GROUP BY tc.CategoryName "
                    + "ORDER BY Total DESC";
         try (PreparedStatement ps = connection.prepareStatement(sql);
@@ -82,7 +82,7 @@ public class AnalyticsDAO extends DBContext {
                    + "FROM Booking b "
                    + "JOIN TourSchedule ts ON b.ScheduleID = ts.ScheduleID "
                    + "JOIN Tour t ON ts.TourID = t.TourID "
-                   + "WHERE b.Status = 'Success' "
+                   + "WHERE b.Status NOT IN ('Cancelled', 'Failed', 'Refunded') ";
                    + "GROUP BY t.TourID, t.TourName "
                    + "ORDER BY Total DESC";
         try (PreparedStatement ps = connection.prepareStatement(sql);
@@ -154,7 +154,7 @@ public class AnalyticsDAO extends DBContext {
         List<Map<String, Object>> list = new ArrayList<>();
         String sql = "SELECT t.TourID, t.TourName, "
                    + "(SELECT COUNT(b.BookingID) FROM Booking b JOIN TourSchedule ts ON b.ScheduleID = ts.ScheduleID WHERE ts.TourID = t.TourID) as TotalBookings, "
-                   + "(SELECT COALESCE(SUM(b.TotalAmount), 0) FROM Booking b JOIN TourSchedule ts ON b.ScheduleID = ts.ScheduleID WHERE ts.TourID = t.TourID AND b.Status IN ('Confirmed', 'Completed')) as TotalRevenue, "
+                   + "(SELECT COALESCE(SUM(b.TotalAmount), 0) FROM Booking b JOIN TourSchedule ts ON b.ScheduleID = ts.ScheduleID WHERE ts.TourID = t.TourID AND b.Status IN ('Confirmed', 'Completed', 'Success')) as TotalRevenue, "
                    + "(SELECT COALESCE(AVG(CAST(r.Rating AS DECIMAL(3,2))), 0.0) FROM Review r WHERE r.TourID = t.TourID AND r.IsVisible = 1) as AvgRating, "
                    + "(SELECT COALESCE(SUM(ts.TotalSeats - ts.AvailableSeats) * 100.0 / NULLIF(SUM(ts.TotalSeats), 0), 0.0) FROM TourSchedule ts WHERE ts.TourID = t.TourID) as AvgOccupancyRate "
                    + "FROM Tour t "

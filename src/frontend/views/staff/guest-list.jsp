@@ -14,7 +14,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Danh Sách Khách - Staff Dashboard</title>
+    <title>Danh S&#225;ch Kh&#225;ch - Staff Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-dashboard.css?v=1.6">
@@ -64,7 +64,7 @@
         .stat-icon.primary { background: var(--primary-light); color: var(--primary); }
         .stat-icon.warning { background: var(--warning-light); color: var(--warning); }
         .stat-info h4 { margin: 0; font-size: 13px; color: var(--gray-500); font-weight: 500; }
-        .stat-info .stat-value { margin: 4px 0 0; font-size: 24px; font-weight: 700; color: var(--gray-900); }
+        .stat-info .stat-value { margin: 4px 0 0; font-size: 24px; font-weight: 700; color: #ffffff; }
 
         .empty-state { text-align: center; padding: 40px 20px; color: var(--gray-500); }
         .empty-state i { width: 48px; height: 48px; color: var(--gray-300); margin-bottom: 12px; }
@@ -94,16 +94,16 @@
 
             <c:choose>
                 <c:when test="${not empty schedule}">
-                    <%-- Chi tiết guest list của một schedule --%>
+                    <%-- Chi ti&#7871;t guest list c&#7911;a m&#7897;t schedule --%>
                     <div class="breadcrumb">
                         <a href="${pageContext.request.contextPath}/staff/guests">
-                            <i data-lucide="arrow-left" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;"></i> Quay lại danh sách
+                            <i data-lucide="arrow-left" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;"></i> Quay l&#7841;i danh s&#225;ch
                         </a>
                     </div>
 
                     <div class="page-header">
                         <div>
-                            <h1>Danh Sách Khách</h1>
+                            <h1>Danh S&#225;ch Kh&#225;ch</h1>
                             <p>${schedule.tour.tourName} - <fmt:formatDate value="${schedule.departureDate}" pattern="dd/MM/yyyy"/></p>
                         </div>
                     </div>
@@ -112,21 +112,21 @@
                         <div class="stat-card">
                             <div class="stat-icon primary"><i data-lucide="users"></i></div>
                             <div class="stat-info">
-                                <h4>Tổng Khách</h4>
+                                <h4>T&#7893;ng Kh&#225;ch</h4>
                                 <div class="stat-value">${totalCount}</div>
                             </div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-icon success"><i data-lucide="check-circle"></i></div>
                             <div class="stat-info">
-                                <h4>Đã Check-in</h4>
+                                <h4>&#272;&#227; Check-in</h4>
                                 <div class="stat-value">${checkedInCount}</div>
                             </div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-icon warning"><i data-lucide="user-x"></i></div>
                             <div class="stat-info">
-                                <h4>Chưa Check-in</h4>
+                                <h4>Ch&#432;a Check-in</h4>
                                 <div class="stat-value">${totalCount - checkedInCount}</div>
                             </div>
                         </div>
@@ -134,14 +134,14 @@
 
                     <div class="card">
                         <div class="card-header">
-                            <h3><i data-lucide="list" style="color:var(--primary);"></i> Danh Sách Hành Khách</h3>
+                            <h3><i data-lucide="list" style="color:var(--primary);"></i> Danh S&#225;ch H&#224;nh Kh&#225;ch</h3>
                         </div>
                         <div class="card-body" style="padding:0;">
                             <c:choose>
                                 <c:when test="${empty participants}">
                                     <div class="empty-state">
                                         <i data-lucide="users"></i>
-                                        <p>Chưa có hành khách nào trong tour này.</p>
+                                        <p>Ch&#432;a c&#243; h&#224;nh kh&#225;ch n&#224;o trong tour n&#224;y.</p>
                                     </div>
                                 </c:when>
                                 <c:otherwise>
@@ -163,13 +163,13 @@
                                                     <c:when test="${p.checkedIn}">
                                                         <span class="badge badge-success">
                                                             <i data-lucide="check" style="width:12px;height:12px;"></i>
-                                                            Đã check-in
+                                                            &#272;&#227; check-in
                                                         </span>
                                                     </c:when>
                                                     <c:otherwise>
                                                         <span class="badge badge-warning">
                                                             <i data-lucide="clock" style="width:12px;height:12px;"></i>
-                                                            Chưa check-in
+                                                            Ch&#432;a check-in
                                                         </span>
                                                     </c:otherwise>
                                                 </c:choose>
@@ -183,37 +183,37 @@
 
                 </c:when>
                 <c:otherwise>
-                    <%-- Danh sách bookings để chọn --%>
+                    <%-- Danh s&#225;ch bookings &#273;&#7875; ch&#7885;n --%>
                     <div class="page-header">
                         <div>
-                            <h1>Danh Sách Khách</h1>
-                            <p>Xem danh sách hành khách theo từng tour</p>
+                            <h1>Danh S&#225;ch Kh&#225;ch</h1>
+                            <p>Xem danh s&#225;ch h&#224;nh kh&#225;ch theo t&#7915;ng tour</p>
                         </div>
                     </div>
 
                     <div class="card">
                         <div class="card-header">
-                            <h3><i data-lucide="clipboard-list" style="color:var(--primary);"></i> Danh Sách Booking</h3>
+                            <h3><i data-lucide="clipboard-list" style="color:var(--primary);"></i> Danh S&#225;ch Booking</h3>
                         </div>
                         <div class="card-body" style="padding:0;">
                             <c:choose>
                                 <c:when test="${empty bookings}">
                                     <div class="empty-state">
                                         <i data-lucide="inbox"></i>
-                                        <p>Chưa có booking nào.</p>
+                                        <p>Ch&#432;a c&#243; booking n&#224;o.</p>
                                     </div>
                                 </c:when>
                                 <c:otherwise>
                                     <table class="table-modern">
                                         <thead>
                                             <tr>
-                                                <th>Mã Booking</th>
-                                                <th>Khách Hàng</th>
+                                                <th>M&#227; Booking</th>
+                                                <th>Kh&#225;ch H&#224;ng</th>
                                                 <th>Tour</th>
-                                                <th>Ngày Khởi Hành</th>
-                                                <th>Số Khách</th>
-                                                <th>Trạng Thái</th>
-                                                <th style="text-align:center;">Hành Động</th>
+                                                <th>Ng&#224;y Kh&#7903;i H&#224;nh</th>
+                                                <th>S&#7889; Kh&#225;ch</th>
+                                                <th>Tr&#7841;ng Th&#225;i</th>
+                                                <th style="text-align:center;">H&#224;nh &#272;&#7897;ng</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -232,15 +232,15 @@
                                                     </td>
                                                     <td><fmt:formatDate value="${b.schedule.departureDate}" pattern="dd/MM/yyyy"/></td>
                                                     <td style="text-align:center;">
-                                                        <span class="badge badge-primary">${b.numParticipants} người</span>
+                                                        <span class="badge badge-primary">${b.numParticipants} ng&#432;&#7901;i</span>
                                                     </td>
                                                     <td>
-                                                        <span class="badge badge-success">Thành công</span>
+                                                        <span class="badge badge-success">Th&#224;nh c&#244;ng</span>
                                                     </td>
                                                     <td style="text-align:center;">
                                                         <a href="${pageContext.request.contextPath}/staff/guests?action=details&scheduleId=${b.schedule.scheduleId}"
                                                            class="btn btn-primary btn-sm">
-                                                            <i data-lucide="users" style="width:14px;height:14px;"></i> Xem Khách
+                                                            <i data-lucide="users" style="width:14px;height:14px;"></i> Xem Kh&#225;ch
                                                         </a>
                                                     </td>
                                                 </tr>

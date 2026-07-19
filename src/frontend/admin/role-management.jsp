@@ -1,4 +1,4 @@
-﻿<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
+<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
@@ -10,13 +10,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phân Quyền & Vai Trò — TourBuddy Enterprise</title>
+    <title>Ph&#226;n Quy&#7873;n &amp; Vai Tr&#242; &#151; TourBuddy Enterprise</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-dashboard.css?v=2.1">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-dashboard.css?v=2.3">
     <style>
-        /* ── ROLE MANAGEMENT — SPACE GLASSMORPHISM THEME ── */
+        /* -- ROLE MANAGEMENT &#151; SPACE GLASSMORPHISM THEME -- */
         .permission-badge {
             display: inline-block; background: rgba(99,102,241,0.15); padding: 4px 8px; margin: 3px;
             border-radius: 6px; font-size: 12px; color: #818cf8;
@@ -56,24 +56,24 @@
 
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-space-overrides.css?v=1.0">
 </head>
-<body class="dashboard-body">
+<body class="dashboard-body tb-cosmic">
 
 <div class="dashboard-wrapper">
     <c:set var="activePage" value="roles" scope="request" />
     <jsp:include page="sidebar.jsp" />
 
-    <main class="main-content">
+    <main class="main-content theme-light">
         <header class="top-header">
-            <h1>Phân Quyền Hệ Thống</h1>
+            <h1>Ph&#226;n Quy&#7873;n H&#7879; Th&#7889;ng</h1>
             <div class="header-right">
                 <div class="header-search">
                     <i data-lucide="search"></i>
-                    <input type="text" id="searchInput" placeholder="Tìm kiếm vai trò...">
+                    <input type="text" id="searchInput" placeholder="T&#236;m ki&#7871;m vai tr&#242;...">
                 </div>
                 <div class="profile-user dropdown-trigger" style="cursor: pointer; position: relative;">
                     <div class="profile-meta" style="text-align: right; margin-right: 5px;">
                         <span class="name">${not empty sessionUser.fullName ? sessionUser.fullName : 'Admin'}</span>
-                        <span class="role">Quản trị viên</span>
+                        <span class="role">Qu&#7843;n tr&#7883; vi&#234;n</span>
                     </div>
                     <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80" alt="Avatar">
                 </div>
@@ -88,33 +88,33 @@
                 
                 <!-- Left Panel -->
                 <div class="left-panel" style="width: 280px; background: rgba(22, 25, 50, 0.58); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-radius: 16px; padding: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); display: flex; flex-direction: column; border: 1px solid rgba(139, 92, 246, 0.2);">
-                    <h3 style="color: #f8fafc; margin-top: 0; margin-bottom: 20px; font-size: 18px; font-weight: 600;">Danh sách vai trò</h3>
+                    <h3 style="color: #f8fafc; margin-top: 0; margin-bottom: 20px; font-size: 18px; font-weight: 600;">Danh s&#225;ch vai tr&#242;</h3>
                     
                     <div style="position: relative; margin-bottom: 15px;">
                         <i data-lucide="search" style="position: absolute; left: 12px; top: 10px; width: 16px; color: #9ca3af;"></i>
-                        <input type="text" id="roleSearch" placeholder="Tìm kiếm vai trò..." class="form-control" style="width: 100%; padding: 10px 10px 10px 35px;" onkeyup="filterRoles()">
+                        <input type="text" id="roleSearch" placeholder="T&#236;m ki&#7871;m vai tr&#242;..." class="form-control" style="width: 100%; padding: 10px 10px 10px 35px;" onkeyup="filterRoles()">
                     </div>
 
                     <div id="roleList" style="display: flex; flex-direction: column; gap: 8px; flex: 1; overflow-y: auto; margin-bottom: 15px; padding-right: 5px;">
                         <c:forEach var="role" items="${roles}">
                             <div class="role-item" data-role-id="${role.roleId}" data-role-name="${role.roleName}" data-role-desc="${role.description}" onclick="selectRole(${role.roleId}, this)" style="padding: 12px 15px; border-radius: 8px; background: rgba(255,255,255,0.03); color: #9fa9cb; cursor: pointer; border: 1px solid transparent; transition: all 0.2s; position: relative;">
                                 <div style="font-weight: 600; font-size: 15px;">${role.roleName}</div>
-                                <div style="font-size: 12px; color: #64748b; margin-top: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${empty role.description ? 'Chưa có mô tả' : role.description}</div>
+                                <div style="font-size: 12px; color: #64748b; margin-top: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${empty role.description ? 'Ch&#432;a c&#243; m&#244; t&#7843;' : role.description}</div>
                                 <div style="font-size: 11px; color: #94a3b8; margin-top: 6px;"><i data-lucide="users" style="width: 12px; height: 12px; vertical-align: middle;"></i> ${role.userCount} Users</div>
                             </div>
                         </c:forEach>
                     </div>
 
-                    <!-- role-actions: Tạo / Sửa / Xóa vai trò (UC19) -->
+                    <!-- role-actions: T&#7841;o / S&#7917;a / X&#243;a vai tr&#242; (UC19) -->
                     <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(139,92,246,0.15); display: flex; flex-direction: column; gap: 8px;">
                         <button type="button" onclick="openCreateRoleModal()" class="btn-forecast" style="width: 100%; padding: 10px; border-radius: 8px; font-weight: 600; cursor: pointer;">
-                            <i data-lucide="plus-circle" style="width: 16px; vertical-align: text-bottom;"></i> Tạo vai trò
+                            <i data-lucide="plus-circle" style="width: 16px; vertical-align: text-bottom;"></i> T&#7841;o vai tr&#242;
                         </button>
                         <button type="button" id="editRoleBtn" onclick="openEditRoleModal()" class="btn-cancel" style="width: 100%; padding: 10px; border-radius: 8px; font-weight: 600; cursor: pointer; border: 1px solid rgba(139,92,246,0.3);">
-                            <i data-lucide="edit-3" style="width: 16px; vertical-align: text-bottom;"></i> Sửa vai trò
+                            <i data-lucide="edit-3" style="width: 16px; vertical-align: text-bottom;"></i> S&#7917;a vai tr&#242;
                         </button>
                         <button type="button" id="deleteRoleBtn" onclick="openDeleteRoleModal()" class="btn-cancel" style="width: 100%; padding: 10px; border-radius: 8px; font-weight: 600; cursor: pointer; background: transparent; color: #EF4444;">
-                            <i data-lucide="trash-2" style="width: 16px; vertical-align: text-bottom;"></i> Xóa vai trò
+                            <i data-lucide="trash-2" style="width: 16px; vertical-align: text-bottom;"></i> X&#243;a vai tr&#242;
                         </button>
                     </div>
                 </div>
@@ -123,11 +123,11 @@
                 <div class="right-panel" style="flex: 1; background: rgba(22, 25, 50, 0.58); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-radius: 16px; padding: 25px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); border: 1px solid rgba(139, 92, 246, 0.2); display: flex; flex-direction: column;">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px;">
                         <div>
-                            <h3 style="color: #f8fafc; margin-top: 0; margin-bottom: 5px; font-size: 20px; font-weight: 600;">Ma trận phân quyền</h3>
-                            <p style="color: #9fa9cb; margin: 0; font-size: 14px;">Thiết lập quyền truy cập cho vai trò được chọn</p>
+                            <h3 style="color: #f8fafc; margin-top: 0; margin-bottom: 5px; font-size: 20px; font-weight: 600;">Ma tr&#7877;n ph&#226;n quy&#7873;n</h3>
+                            <p style="color: #9fa9cb; margin: 0; font-size: 14px;">Thi&#7871;t l&#7853;p quy&#7873;n truy c&#7853;p cho vai tr&#242; &#273;&#432;&#7901;c ch&#7885;n</p>
                         </div>
                         <div id="unsavedBadge" style="display: none; background: #fef3c7; color: #d97706; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; align-items: center; gap: 6px;">
-                            <span style="font-size: 10px;">●</span> Chưa lưu
+                            <span style="font-size: 10px;">?</span> Ch&#432;a l&#432;u
                         </div>
                     </div>
                     
@@ -138,7 +138,7 @@
                             <table style="width: 100%; border-collapse: collapse;">
                                 <thead style="position: sticky; top: 0; background: rgba(15,17,35,0.98); z-index: 10; border-bottom: 2px solid rgba(139,92,246,0.25);">
                                     <tr>
-                                        <th style="padding: 15px; text-align: left; font-weight: 600; color: #9fa9cb;">Chức năng</th>
+                                        <th style="padding: 15px; text-align: left; font-weight: 600; color: #9fa9cb;">Ch&#7913;c n&#259;ng</th>
                                         <th style="padding: 15px; text-align: center; font-weight: 600; color: #9fa9cb;">
                                             <div style="display: flex; flex-direction: column; align-items: center; gap: 5px;">
                                                 Xem
@@ -147,25 +147,25 @@
                                         </th>
                                         <th style="padding: 15px; text-align: center; font-weight: 600; color: #9fa9cb;">
                                             <div style="display: flex; flex-direction: column; align-items: center; gap: 5px;">
-                                                Thêm
+                                                Th&#234;m
                                                 <input type="checkbox" class="custom-checkbox col-select" data-col="create" onchange="toggleColumn('create', this.checked)">
                                             </div>
                                         </th>
                                         <th style="padding: 15px; text-align: center; font-weight: 600; color: #9fa9cb;">
                                             <div style="display: flex; flex-direction: column; align-items: center; gap: 5px;">
-                                                Sửa
+                                                S?a
                                                 <input type="checkbox" class="custom-checkbox col-select" data-col="update" onchange="toggleColumn('update', this.checked)">
                                             </div>
                                         </th>
                                         <th style="padding: 15px; text-align: center; font-weight: 600; color: #9fa9cb;">
                                             <div style="display: flex; flex-direction: column; align-items: center; gap: 5px;">
-                                                Xóa
+                                                X&#243;a
                                                 <input type="checkbox" class="custom-checkbox col-select" data-col="delete" onchange="toggleColumn('delete', this.checked)">
                                             </div>
                                         </th>
                                         <th style="padding: 15px; text-align: center; font-weight: 600; color: #9fa9cb;">
                                             <div style="display: flex; flex-direction: column; align-items: center; gap: 5px;">
-                                                Khác
+                                                Kh&#225;c
                                                 <input type="checkbox" class="custom-checkbox col-select" data-col="other" onchange="toggleColumn('other', this.checked)">
                                             </div>
                                         </th>
@@ -179,16 +179,16 @@
 
                         <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(139,92,246,0.15); display: flex; justify-content: flex-end; gap: 12px; align-items: center;">
                             <span id="unsavedText" style="color: #F59E0B; font-weight: 500; font-size: 14px; display: none; margin-right: 10px;">
-                                <i data-lucide="alert-triangle" style="width: 16px; vertical-align: text-bottom;"></i> Bạn có thay đổi chưa được lưu
+                                <i data-lucide="alert-triangle" style="width: 16px; vertical-align: text-bottom;"></i> B&#7841;n c&#243; thay &#273;&#7893;i ch&#432;a &#273;&#432;&#7903;c l&#432;u
                             </span>
                             <button type="button" class="btn" id="cancelPermBtn" onclick="discardChanges()" style="background: transparent; color: #EF4444; border: 1px solid transparent; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background 0.2s;">
-                                Hủy thay đổi
+                                H&#7911;y thay &#273;&#7893;i
                             </button>
                             <button type="button" id="resetPermBtn" onclick="restoreDefaults()" class="btn-cancel" style="border: 1px solid rgba(139,92,246,0.3); padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer;">
-                                Khôi phục mặc định
+                                Kh&#244;i ph&#7909;c m&#7863;c &#273;&#7883;nh
                             </button>
                             <button type="submit" id="savePermBtn" class="btn btn-primary" style="width: auto; padding: 10px 25px;">
-                                Lưu thay đổi
+                                L&#432;u thay &#273;&#7893;i
                             </button>
                         </div>
                     </form>
@@ -201,25 +201,25 @@
 <!-- Modals -->
 <div id="roleModal" class="modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(15, 23, 42, 0.5); backdrop-filter: blur(4px);">
     <div class="modal-content" style="margin: 10% auto; padding: 30px; width: 400px;">
-        <h3 id="roleModalTitle" style="margin-top: 0; margin-bottom: 20px; color: #f8fafc; font-size: 20px; font-weight: 600;">Tạo Vai Trò</h3>
+        <h3 id="roleModalTitle" style="margin-top: 0; margin-bottom: 20px; color: #f8fafc; font-size: 20px; font-weight: 600;">T&#7841;o Vai Tr&#242;</h3>
         
         <form action="${pageContext.request.contextPath}/admin/roles" method="post">
             <input type="hidden" name="action" id="roleActionInput" value="createRole">
             <input type="hidden" id="roleIdInput" name="roleId" value="">
             
             <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #9fa9cb; font-size: 14px;">Tên Vai Trò *</label>
+                <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #9fa9cb; font-size: 14px;">T&#234;n Vai Tr&#242; *</label>
                 <input type="text" id="roleNameInput" name="roleName" required placeholder="VD: Content Manager" class="form-control" style="width: 100%;">
             </div>
             
             <div style="margin-bottom: 20px;">
-                <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #9fa9cb; font-size: 14px;">Mô Tả</label>
-                <textarea id="roleDescInput" name="description" rows="3" placeholder="Mô tả chức năng của vai trò..." class="form-control" style="width: 100%; resize: vertical;"></textarea>
+                <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #9fa9cb; font-size: 14px;">M&#244; T&#7843;</label>
+                <textarea id="roleDescInput" name="description" rows="3" placeholder="M&#244; t&#7843; ch&#7913;c n&#259;ng c&#7911;a vai tr&#242;..." class="form-control" style="width: 100%; resize: vertical;"></textarea>
             </div>
             
             <div style="display: flex; justify-content: flex-end; gap: 10px;">
-                <button type="button" onclick="closeModal('roleModal')" class="btn-cancel" style="padding: 10px 20px;">Hủy</button>
-                <button type="submit" class="btn-forecast" style="width: auto; padding: 10px 20px;">Lưu</button>
+                <button type="button" onclick="closeModal('roleModal')" class="btn-cancel" style="padding: 10px 20px;">H&#7911;y</button>
+                <button type="submit" class="btn-forecast" style="width: auto; padding: 10px 20px;">L&#432;u</button>
             </div>
         </form>
     </div>
@@ -230,15 +230,15 @@
         <div style="width: 50px; height: 50px; border-radius: 50%; background: #fee2e2; color: #ef4444; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
             <i data-lucide="alert-triangle" style="width: 24px; height: 24px;"></i>
         </div>
-        <h3 style="margin-top: 0; margin-bottom: 10px; color: #f8fafc; font-size: 20px; font-weight: 600;">Xóa vai trò?</h3>
-        <p style="color: #cbd5e1; margin-bottom: 25px; font-size: 15px;">Bạn có chắc chắn muốn xóa vai trò này? Hành động này không thể hoàn tác.</p>
+        <h3 style="margin-top: 0; margin-bottom: 10px; color: #f8fafc; font-size: 20px; font-weight: 600;">X&#243;a vai tr&#242;?</h3>
+        <p style="color: #cbd5e1; margin-bottom: 25px; font-size: 15px;">B&#7841;n c&#243; ch&#7855;c ch&#7855;n mu&#7889;n x&#243;a vai tr&#242; n&#224;y? H&#224;nh &#273;&#7897;ng n&#224;y kh&#244;ng th&#7875; ho&#224;n t&#225;c.</p>
         
         <form action="${pageContext.request.contextPath}/admin/roles" method="post" style="display: flex; justify-content: center; gap: 12px;">
             <input type="hidden" name="action" value="deleteRole">
             <input type="hidden" name="roleId" id="deleteRoleIdInput" value="">
             
-            <button type="button" onclick="closeModal('deleteModal')" class="btn-cancel" style="flex: 1; padding: 10px;">Hủy</button>
-            <button type="submit" class="btn-submit" style="flex: 1; padding: 10px;">Xóa</button>
+            <button type="button" onclick="closeModal('deleteModal')" class="btn-cancel" style="flex: 1; padding: 10px;">H&#7911;y</button>
+            <button type="submit" class="btn-submit" style="flex: 1; padding: 10px;">X&#243;a</button>
         </form>
     </div>
 </div>
@@ -311,16 +311,16 @@
     ];
 
     const moduleNames = {
-        'Tour Management': 'Quản lý Tour',
-        'Booking Management': 'Quản lý Booking',
-        'User Management': 'Quản lý Người dùng',
-        'Role Management': 'Quản lý Vai trò',
-        'Matching Management': 'Quản lý Ghép đôi bạn đồng hành',
-        'Request Management': 'Quản lý Yêu cầu kết nối',
-        'Review Management': 'Quản lý Đánh giá',
-        'Payment Management': 'Quản lý Thanh toán',
-        'System Settings': 'Báo cáo hệ thống',
-        'Content Management': 'Quản lý Nội dung'
+        'Tour Management': 'Qu\u1ea3n l\u00fd Tour',
+        'Booking Management': 'Qu\u1ea3n l\u00fd Booking',
+        'User Management': 'Qu\u1ea3n l\u00fd Ng\u01b0\u1eddi d\u00f9ng',
+        'Role Management': 'Qu\u1ea3n l\u00fd Vai tr\u00f2',
+        'Matching Management': 'Qu\u1ea3n l\u00fd Gh\u00e9p \u0111\u00f4i b\u1ea1n \u0111\u1ed3ng h\u00e0nh',
+        'Request Management': 'Qu\u1ea3n l\u00fd Y\u00eau c\u1ea7u k\u1ebft n\u1ed1i',
+        'Review Management': 'Qu\u1ea3n l\u00fd \u0110\u00e1nh gi\u00e1',
+        'Payment Management': 'Qu\u1ea3n l\u00fd Thanh to\u00e1n',
+        'System Settings': 'B\u00e1o c\u00e1o h\u1ec7 th\u1ed1ng',
+        'Content Management': 'Qu\u1ea3n l\u00fd N\u1ed9i dung'
     };
 
     const displayModules = Object.keys(moduleNames);
@@ -340,7 +340,7 @@
 
     // openCreateRoleModal — mở modal tạo vai trò, reset form về chế độ create.
     function openCreateRoleModal() {
-        document.getElementById('roleModalTitle').textContent = 'Tạo Vai Trò';
+        document.getElementById('roleModalTitle').textContent = 'T\u1ea1o Vai Tr\u00f2';
         document.getElementById('roleActionInput').value = 'createRole';
         document.getElementById('roleIdInput').value = '';
         document.getElementById('roleNameInput').value = '';
@@ -351,15 +351,15 @@
     // openEditRoleModal — mở modal sửa vai trò dựa trên vai trò đang được chọn trong sidebar.
     function openEditRoleModal() {
         if (!currentRoleId) {
-            showToast('warning', 'Vui lòng chọn một vai trò để sửa.');
+            showToast('warning', 'Vui l\u00f2ng ch\u1ecdn m\u1ed9t vai tr\u00f2 \u0111\u1ec3 s\u1eeda.');
             return;
         }
         const item = document.querySelector('.role-item.active');
         if (!item) {
-            showToast('warning', 'Không tìm thấy thông tin vai trò đang chọn.');
+            showToast('warning', 'Kh\u00f4ng t\u00ecm th\u1ea5y th\u00f4ng tin vai tr\u00f2 \u0111ang ch\u1ecdn.');
             return;
         }
-        document.getElementById('roleModalTitle').textContent = 'Sửa Vai Trò';
+        document.getElementById('roleModalTitle').textContent = 'S\u1eeda Vai Tr\u00f2';
         document.getElementById('roleActionInput').value = 'updateRole';
         document.getElementById('roleIdInput').value = item.dataset.roleId || '';
         document.getElementById('roleNameInput').value = item.dataset.roleName || '';
@@ -370,7 +370,7 @@
     // openDeleteRoleModal — mở modal xác nhận xóa vai trò đang chọn.
     function openDeleteRoleModal() {
         if (!currentRoleId) {
-            showToast('warning', 'Vui lòng chọn một vai trò để xóa.');
+            showToast('warning', 'Vui l\u00f2ng ch\u1ecdn m\u1ed9t vai tr\u00f2 \u0111\u1ec3 x\u00f3a.');
             return;
         }
         document.getElementById('deleteRoleIdInput').value = currentRoleId;
@@ -379,7 +379,7 @@
 
     function selectRole(roleId, el) {
         if (hasUnsavedChanges()) {
-            if (!confirm("Bạn có thay đổi chưa được lưu. Bạn có chắc muốn chuyển đổi vai trò?")) {
+            if (!confirm("B\u1ea1n c\u00f3 thay \u0111\u1ed5i ch\u01b0a \u0111\u01b0\u1ee3c l\u01b0u. B\u1ea1n c\u00f3 ch\u1eafc mu\u1ed1n chuy\u1ec3n \u0111\u1ed5i vai tr\u00f2?")) {
                 return;
             }
         }
@@ -485,7 +485,7 @@
     }
 
     function restoreDefaults() {
-        if (confirm("Khôi phục quyền mặc định cho vai trò này? Tất cả dữ liệu chưa lưu sẽ mất.")) {
+        if (confirm("Kh\u00f4i ph\u1ee5c quy\u1ec1n m\u1eb3c \u0111\u1ecbnh cho vai tr\u00f2 n\u00e0y? T\u1ea5t c\u1ea3 d\u1eef li\u1ec7u ch\u01b0a l\u01b0u s\u1ebd m\u1ea5t.")) {
             document.querySelectorAll('#matrixBody input[type="checkbox"]').forEach(cb => cb.checked = false);
             checkUnsaved();
         }
@@ -495,14 +495,14 @@
     function openRoleModal(mode) {
         const el = document.querySelector('.role-item.active');
         if (mode === 'create') {
-            document.getElementById('roleModalTitle').innerText = 'Tạo Vai Trò Mới';
+            document.getElementById('roleModalTitle').innerText = 'T\u1ea1o Vai Tr\u00f2 M\u1edbi';
             document.getElementById('roleActionInput').value = 'createRole';
             document.getElementById('roleIdInput').value = '';
             document.getElementById('roleNameInput').value = '';
             document.getElementById('roleDescInput').value = '';
         } else {
-            if (!el) return showToast('warning', 'Vui lòng chọn vai trò để sửa');
-            document.getElementById('roleModalTitle').innerText = 'Sửa Vai Trò';
+            if (!el) return showToast('warning', 'Vui l\u00f2ng ch\u1ecdn vai tr\u00f2 \u0111\u1ec3 s\u1eeda');
+            document.getElementById('roleModalTitle').innerText = 'S\u1eeda Vai Tr\u00f2';
             document.getElementById('roleActionInput').value = 'updateRole';
             document.getElementById('roleIdInput').value = el.dataset.roleId;
             document.getElementById('roleNameInput').value = el.dataset.roleName;
@@ -512,7 +512,7 @@
     }
 
     function confirmDeleteRole() {
-        if (!currentRoleId) return showToast('warning', 'Vui lòng chọn vai trò để xóa');
+        if (!currentRoleId) return showToast('warning', 'Vui l\u00f2ng ch\u1ecdn vai tr\u00f2 \u0111\u1ec3 x\u00f3a');
         document.getElementById('deleteRoleIdInput').value = currentRoleId;
         document.getElementById('deleteModal').style.display = 'block';
     }
@@ -532,7 +532,7 @@
         });
     }
 
-    // Toasts — tránh template literal có dollar-brace vì JSP EL parser sẽ cố parse và gây 500.
+    // Toasts \u0097 tr\u00e1nh template literal c\u00f3 dollar-brace v\u00ec JSP EL parser s? c? parse v\u00e0 g\u00e2y 500.
     function showToast(type, msg) {
         const container = document.getElementById('toast-container');
         const toast = document.createElement('div');
@@ -559,7 +559,7 @@
         
         const btn = document.getElementById('savePermBtn');
         btn.disabled = true;
-        btn.innerText = 'Đang lưu...';
+        btn.innerText = '\u00d2ang l\u01b0u...';
         
         const form = document.getElementById('permissionForm');
         const formData = new FormData(form);
@@ -573,22 +573,22 @@
         .then(response => response.json())
         .then(data => {
             if(data.success) {
-                showToast('success', 'Cập nhật phân quyền thành công');
+                showToast('success', 'C\u1eadp nh\u1eadt ph\u00e2n quy\u1ec1n th\u00e0nh c\u00f4ng');
                 const newPerms = [];
                 formData.getAll('permissions[]').forEach(val => newPerms.push(parseInt(val)));
                 rolePermissionsMap[currentRoleId] = newPerms;
                 initialPermissions = [...newPerms];
                 checkUnsaved();
             } else {
-                showToast('error', 'Không thể cập nhật phân quyền: ' + data.message);
+                showToast('error', 'Kh\u00f4ng th\u1ec3 c\u1eadp nh\u1eadt ph\u00e2n quy\u1ec1n: ' + data.message);
             }
         })
         .catch(err => {
-            showToast('error', 'Đã xảy ra lỗi mạng!');
+            showToast('error', '\u0110\u00e3 x\u1ea3y ra l\u1ed7i m\u1ea1ng!');
         })
         .finally(() => {
             btn.disabled = false;
-            btn.innerText = 'Lưu thay đổi';
+            btn.innerText = 'L\u01b0u thay \u0111\u1ed5i';
         });
     }
 

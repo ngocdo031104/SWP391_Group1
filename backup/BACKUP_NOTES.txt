@@ -1,0 +1,6 @@
+Frontend backup created before UI rebuild.
+Path: backup/frontend-20260720-042548
+Files: 139
+Source: src/frontend/*
+
+To restore: robocopy backup\frontend-20260720-042548 src\frontend /E /IS /IT

@@ -1,10 +1,10 @@
-﻿<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
+&#65279;<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
 <%
-    // Dương làm đoạn này
-    // Chức năng: Màn hình hiển thị chi tiết đơn đặt tour cho khách hàng.
+    // D&#432;&#417;ng l&#224;m &#273;o&#7841;n n&#224;y
+    // Ch&#7913;c n&#259;ng: M&#224;n h&#236;nh hi&#7875;n th&#7883; chi ti&#7871;t &#273;&#417;n &#273;&#7863;t tour cho kh&#225;ch h&#224;ng.
 %>
 <jsp:include page="/common/header.jsp"/>
 
@@ -247,17 +247,17 @@
 <main class="detail-container">
     <div class="detail-header">
         <div class="detail-title">
-            <h1>Chi Tiết Đơn Đặt: #${booking.bookingCode}</h1>
+            <h1>Chi Ti&#7871;t &#272;&#417;n &#272;&#7863;t: #${booking.bookingCode}</h1>
             <p>
                 <i data-lucide="clock" style="width: 16px; height: 16px;"></i>
-                Ngày đặt: <fmt:formatDate value="${booking.createdAt}" pattern="dd/MM/yyyy HH:mm" />
+                Ng&#224;y &#273;&#7863;t: <fmt:formatDate value="${booking.createdAt}" pattern="dd/MM/yyyy HH:mm" />
                 <span style="margin: 0 10px;">|</span>
                 <span class="status-badge status-${booking.status.toLowerCase()}">
                     <c:choose>
-                        <c:when test="${booking.status eq 'PendingPayment'}">Chờ thanh toán</c:when>
-                        <c:when test="${booking.status eq 'Success'}">Thanh toán thành công</c:when>
-                        <c:when test="${booking.status eq 'Cancelled'}">Đã hủy</c:when>
-                        <c:when test="${booking.status eq 'Completed'}">Đã hoàn thành</c:when>
+                        <c:when test="${booking.status eq 'PendingPayment'}">Ch&#7901; thanh to&#225;n</c:when>
+                        <c:when test="${booking.status eq 'Success'}">Thanh to&#225;n th&#224;nh c&#244;ng</c:when>
+                        <c:when test="${booking.status eq 'Cancelled'}">&#272;&#227; h&#7911;y</c:when>
+                        <c:when test="${booking.status eq 'Completed'}">&#272;&#227; ho&#224;n th&#224;nh</c:when>
                         <c:otherwise>${booking.status}</c:otherwise>
                     </c:choose>
                 </span>
@@ -265,15 +265,15 @@
         </div>
         <div class="header-actions">
             <a href="${pageContext.request.contextPath}/customer/booking/history" class="btn-action btn-outline">
-                <i data-lucide="arrow-left" style="width: 18px; height: 18px;"></i> Quay lại
+                <i data-lucide="arrow-left" style="width: 18px; height: 18px;"></i> Quay l&#7841;i
             </a>
             
-            <%-- Nút Yêu cầu Hủy --%>
+            <%-- N&#250;t Y&#234;u c&#7847;u H&#7911;y --%>
             <c:if test="${booking.status eq 'Success'}">
                 <c:choose>
                     <c:when test="${not empty pendingCancel}">
                         <span class="btn-action btn-outline" style="cursor: default; background: #f8fafc; color: #94a3b8; border-color: #e2e8f0;">
-                            <i data-lucide="clock" style="width: 18px; height: 18px;"></i> Đang xử lý yêu cầu hủy
+                            <i data-lucide="clock" style="width: 18px; height: 18px;"></i> &#272;ang x&#7917; l&#253; y&#234;u c&#7847;u h&#7911;y
                         </span>
                     </c:when>
                     <c:otherwise>
@@ -284,23 +284,23 @@
                         
                         <c:if test="${diffInDays > 7}">
                             <button type="button" class="btn-action btn-danger" onclick="openCancelModal()">
-                                <i data-lucide="x-circle" style="width: 18px; height: 18px;"></i> Yêu cầu hủy
+                                <i data-lucide="x-circle" style="width: 18px; height: 18px;"></i> Y&#234;u c&#7847;u h&#7911;y
                             </button>
                         </c:if>
                     </c:otherwise>
                 </c:choose>
             </c:if>
 
-            <%-- Liên kết sang hóa đơn: dựa vào CustomerInvoiceController --%>
+            <%-- Li&#234;n k&#7871;t sang h&#243;a &#273;&#417;n: d&#7921;a v&#224;o CustomerInvoiceController --%>
             <c:if test="${booking.status ne 'Cancelled'}">
                 <a href="${pageContext.request.contextPath}/customer/booking/invoice?code=${booking.bookingCode}" class="btn-action btn-primary">
-                    <i data-lucide="receipt" style="width: 18px; height: 18px;"></i> Xem hóa đơn
+                    <i data-lucide="receipt" style="width: 18px; height: 18px;"></i> Xem h&#243;a &#273;&#417;n
                 </a>
             </c:if>
         </div>
     </div>
 
-    <%-- Thông báo kết quả Hủy --%>
+    <%-- Th&#244;ng b&#225;o k&#7871;t qu&#7843; H&#7911;y --%>
     <c:if test="${not empty sessionScope.cancelSuccess}">
         <div style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #059669; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
             <i data-lucide="check-circle" style="vertical-align: middle; margin-right: 8px;"></i>
@@ -317,11 +317,11 @@
     </c:if>
 
     <div class="detail-grid">
-        <!-- Cột Trái: Thông tin Tour & Danh sách khách -->
+        <!-- C&#7897;t Tr&#225;i: Th&#244;ng tin Tour & Danh s&#225;ch kh&#225;ch -->
         <div class="main-details">
-            <!-- Thông tin Tour -->
+            <!-- Th&#244;ng tin Tour -->
             <div class="card">
-                <div class="card-header"><i data-lucide="map"></i> Thông tin Hành trình</div>
+                <div class="card-header"><i data-lucide="map"></i> Th&#244;ng tin H&#224;nh tr&#236;nh</div>
                 <div class="card-body">
                     <div class="tour-brief">
                         <a href="${pageContext.request.contextPath}/customer/tourdetail?id=${booking.schedule.tour.tourId}" style="text-decoration:none;">
@@ -329,25 +329,25 @@
                         </a>
                     </div>
                     <ul class="info-list">
-                        <li><span class="label">Điểm đến:</span> <span class="value">${booking.schedule.tour.destination}</span></li>
-                        <li><span class="label">Ngày đi:</span> <span class="value"><fmt:formatDate value="${booking.schedule.departureDate}" pattern="dd/MM/yyyy" /></span></li>
-                        <li><span class="label">Ngày về:</span> <span class="value"><fmt:formatDate value="${booking.schedule.returnDate}" pattern="dd/MM/yyyy" /></span></li>
-                        <li><span class="label">Phương tiện:</span> <span class="value">${booking.schedule.transportation}</span></li>
-                        <li><span class="label">Số lượng khách:</span> <span class="value">${booking.numParticipants} khách</span></li>
+                        <li><span class="label">&#272;i&#7875;m &#273;&#7871;n:</span> <span class="value">${booking.schedule.tour.destination}</span></li>
+                        <li><span class="label">Ng&#224;y &#273;i:</span> <span class="value"><fmt:formatDate value="${booking.schedule.departureDate}" pattern="dd/MM/yyyy" /></span></li>
+                        <li><span class="label">Ng&#224;y v&#7873;:</span> <span class="value"><fmt:formatDate value="${booking.schedule.returnDate}" pattern="dd/MM/yyyy" /></span></li>
+                        <li><span class="label">Ph&#432;&#417;ng ti&#7879;n:</span> <span class="value">${booking.schedule.transportation}</span></li>
+                        <li><span class="label">S&#7889; l&#432;&#7907;ng kh&#225;ch:</span> <span class="value">${booking.numParticipants} kh&#225;ch</span></li>
                     </ul>
                 </div>
             </div>
 
-            <!-- Danh sách hành khách -->
+            <!-- Danh s&#225;ch h&#224;nh kh&#225;ch -->
             <div class="card">
-                <div class="card-header"><i data-lucide="users"></i> Danh sách Khách hàng</div>
+                <div class="card-header"><i data-lucide="users"></i> Danh s&#225;ch Kh&#225;ch h&#224;ng</div>
                 <div class="card-body" style="padding: 0;">
                     <table class="participant-table">
                         <thead>
                             <tr>
-                                <th>Họ Tên</th>
-                                <th>Loại Khách</th>
-                                <th>Vai trò</th>
+                                <th>H&#7885; T&#234;n</th>
+                                <th>Lo&#7841;i Kh&#225;ch</th>
+                                <th>Vai tr&#242;</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -356,16 +356,16 @@
                                     <td style="font-weight: 500;">${p.fullName}</td>
                                     <td>
                                         <c:choose>
-                                            <c:when test="${p.ageType eq 'Adult'}">Người lớn</c:when>
-                                            <c:when test="${p.ageType eq 'Child'}">Trẻ em</c:when>
-                                            <c:when test="${p.ageType eq 'Infant'}">Em bé</c:when>
+                                            <c:when test="${p.ageType eq 'Adult'}">Ng&#432;&#7901;i l&#7899;n</c:when>
+                                            <c:when test="${p.ageType eq 'Child'}">Tr&#7867; em</c:when>
+                                            <c:when test="${p.ageType eq 'Infant'}">Em b&#233;</c:when>
                                             <c:otherwise>${p.ageType}</c:otherwise>
                                         </c:choose>
                                     </td>
                                     <td>
                                         <c:choose>
-                                            <c:when test="${p.isLeader}"><span style="color:#2563eb; font-weight: 600;"><i data-lucide="user-check" style="width:14px;height:14px;"></i> Trưởng đoàn</span></c:when>
-                                            <c:otherwise><span style="color:#64748b;">Thành viên</span></c:otherwise>
+                                            <c:when test="${p.isLeader}"><span style="color:#2563eb; font-weight: 600;"><i data-lucide="user-check" style="width:14px;height:14px;"></i> Tr&#432;&#7903;ng &#273;o&#224;n</span></c:when>
+                                            <c:otherwise><span style="color:#64748b;">Th&#224;nh vi&#234;n</span></c:otherwise>
                                         </c:choose>
                                     </td>
                                 </tr>
@@ -375,10 +375,10 @@
                 </div>
             </div>
             
-            <!-- Ghi chú -->
+            <!-- Ghi ch&#250; -->
             <c:if test="${not empty booking.notes}">
                 <div class="card">
-                    <div class="card-header"><i data-lucide="message-square-text"></i> Ghi chú của bạn</div>
+                    <div class="card-header"><i data-lucide="message-square-text"></i> Ghi ch&#250; c&#7911;a b&#7841;n</div>
                     <div class="card-body">
                         <p style="margin:0; color:#475569; line-height: 1.6;">${booking.notes}</p>
                     </div>
@@ -386,35 +386,35 @@
             </c:if>
         </div>
 
-        <!-- Cột Phải: Thanh toán & Tổng tiền -->
+        <!-- C&#7897;t Ph&#7843;i: Thanh to&#225;n & T&#7893;ng ti&#7873;n -->
         <div class="side-details">
             <div class="card">
-                <div class="card-header"><i data-lucide="credit-card"></i> Tóm tắt Thanh toán</div>
+                <div class="card-header"><i data-lucide="credit-card"></i> T&#243;m t&#7855;t Thanh to&#225;n</div>
                 <div class="card-body">
                     <ul class="payment-summary">
-                        <li><span>Tiền tour cơ bản:</span> <span><fmt:formatNumber value="${booking.baseAmount}" pattern="#,###" /> ₫</span></li>
+                        <li><span>Ti&#7873;n tour c&#417; b&#7843;n:</span> <span><fmt:formatNumber value="${booking.baseAmount}" pattern="#,###" /> &#8363;</span></li>
                         <c:if test="${booking.discountAmount > 0}">
-                            <li class="discount"><span>Giảm giá:</span> <span>-<fmt:formatNumber value="${booking.discountAmount}" pattern="#,###" /> ₫</span></li>
+                            <li class="discount"><span>Gi&#7843;m gi&#225;:</span> <span>-<fmt:formatNumber value="${booking.discountAmount}" pattern="#,###" /> &#8363;</span></li>
                         </c:if>
-                        <li><span>Thuế VAT:</span> <span><fmt:formatNumber value="${booking.vatAmount}" pattern="#,###" /> ₫</span></li>
-                        <li class="total"><span>Tổng thanh toán:</span> <span><fmt:formatNumber value="${booking.totalAmount}" pattern="#,###" /> ₫</span></li>
+                        <li><span>Thu&#7871; VAT:</span> <span><fmt:formatNumber value="${booking.vatAmount}" pattern="#,###" /> &#8363;</span></li>
+                        <li class="total"><span>T&#7893;ng thanh to&#225;n:</span> <span><fmt:formatNumber value="${booking.totalAmount}" pattern="#,###" /> &#8363;</span></li>
                     </ul>
 
                     <c:if test="${not empty payment}">
                         <div class="payment-status-box ${payment.status eq 'Success' ? 'success' : ''}">
-                            <div style="font-weight:600; margin-bottom:10px; color:#1e293b;">Thông tin giao dịch</div>
+                            <div style="font-weight:600; margin-bottom:10px; color:#1e293b;">Th&#244;ng tin giao d&#7883;ch</div>
                             <ul class="info-list" style="font-size: 0.9rem;">
-                                <li><span class="label" style="width:110px;">Phương thức:</span> <span class="value">${payment.paymentMethod}</span></li>
-                                <li><span class="label" style="width:110px;">Mã GD:</span> 
+                                <li><span class="label" style="width:110px;">Ph&#432;&#417;ng th&#7913;c:</span> <span class="value">${payment.paymentMethod}</span></li>
+                                <li><span class="label" style="width:110px;">M&#227; GD:</span> 
                                     <span class="value" style="display:flex;align-items:center;gap:6px;">
                                         ${payment.transactionRef}
-                                        <button onclick="navigator.clipboard.writeText('${payment.transactionRef}').then(()=>alert('Đã copy mã GD!'))" style="background:none;border:none;cursor:pointer;color:var(--primary);padding:0;" title="Copy mã GD">
+                                        <button onclick="navigator.clipboard.writeText('${payment.transactionRef}').then(()=>alert('&#272;&#227; copy m&#227; GD!'))" style="background:none;border:none;cursor:pointer;color:var(--primary);padding:0;" title="Copy m&#227; GD">
                                             <i data-lucide="copy" style="width:14px;height:14px;"></i>
                                         </button>
                                     </span>
                                 </li>
-                                <li><span class="label" style="width:110px;">Thời gian:</span> <span class="value"><fmt:formatDate value="${payment.paidAt}" pattern="dd/MM/yyyy HH:mm" /></span></li>
-                                <li><span class="label" style="width:110px;">Trạng thái:</span> <span class="value" style="${payment.status eq 'Success' ? 'color:#059669;' : 'color:#dc2626;'}">${payment.status}</span></li>
+                                <li><span class="label" style="width:110px;">Th&#7901;i gian:</span> <span class="value"><fmt:formatDate value="${payment.paidAt}" pattern="dd/MM/yyyy HH:mm" /></span></li>
+                                <li><span class="label" style="width:110px;">Tr&#7841;ng th&#225;i:</span> <span class="value" style="${payment.status eq 'Success' ? 'color:#059669;' : 'color:#dc2626;'}">${payment.status}</span></li>
                             </ul>
                         </div>
                     </c:if>
@@ -422,18 +422,18 @@
                     <c:if test="${empty payment && booking.status eq 'PendingPayment'}">
                         <div style="margin-top: 20px;">
                             <a href="${pageContext.request.contextPath}/customer/booking/payment?code=${booking.bookingCode}" class="btn-primary" style="display:block; text-align:center; padding:12px; border-radius:6px; text-decoration:none; font-weight:600;">
-                                Tiếp tục thanh toán
+                                Ti&#7871;p t&#7909;c thanh to&#225;n
                             </a>
                         </div>
                     </c:if>
                 </div>
             </div>
 
-            <!-- Yêu cầu hủy & Hoàn tiền (UC41) -->
+            <!-- Y&#234;u c&#7847;u h&#7911;y & Ho&#224;n ti&#7873;n (UC41) -->
             <c:if test="${not empty cancelHistory}">
                 <div class="card" style="margin-top: 24px; border-color: #fca5a5;">
                     <div class="card-header" style="background: #fef2f2; color: #b91c1c; border-bottom-color: #fecaca;">
-                        <i data-lucide="refresh-cw"></i> Yêu cầu hủy & Hoàn tiền
+                        <i data-lucide="refresh-cw"></i> Y&#234;u c&#7847;u h&#7911;y & Ho&#224;n ti&#7873;n
                     </div>
                     <div class="card-body">
                         <c:forEach var="req" items="${cancelHistory}" varStatus="status">
@@ -443,29 +443,29 @@
                                     
                                     <c:choose>
                                         <c:when test="${req.status eq 'Pending'}">
-                                            <span style="background:#fef3c7; color:#d97706; padding:4px 10px; border-radius:99px; font-size:12px; font-weight:600;"><i data-lucide="clock" style="width:12px;height:12px;vertical-align:middle;margin-right:4px;"></i>Đang chờ xử lý</span>
+                                            <span style="background:#fef3c7; color:#d97706; padding:4px 10px; border-radius:99px; font-size:12px; font-weight:600;"><i data-lucide="clock" style="width:12px;height:12px;vertical-align:middle;margin-right:4px;"></i>&#272;ang ch&#7901; x&#7917; l&#253;</span>
                                         </c:when>
                                         <c:when test="${req.status eq 'Approved'}">
-                                            <span style="background:#d1fae5; color:#059669; padding:4px 10px; border-radius:99px; font-size:12px; font-weight:600;"><i data-lucide="check-circle" style="width:12px;height:12px;vertical-align:middle;margin-right:4px;"></i>Đã hoàn tiền</span>
+                                            <span style="background:#d1fae5; color:#059669; padding:4px 10px; border-radius:99px; font-size:12px; font-weight:600;"><i data-lucide="check-circle" style="width:12px;height:12px;vertical-align:middle;margin-right:4px;"></i>&#272;&#227; ho&#224;n ti&#7873;n</span>
                                         </c:when>
                                         <c:when test="${req.status eq 'Rejected'}">
-                                            <span style="background:#fee2e2; color:#dc2626; padding:4px 10px; border-radius:99px; font-size:12px; font-weight:600;"><i data-lucide="x-circle" style="width:12px;height:12px;vertical-align:middle;margin-right:4px;"></i>Bị từ chối</span>
+                                            <span style="background:#fee2e2; color:#dc2626; padding:4px 10px; border-radius:99px; font-size:12px; font-weight:600;"><i data-lucide="x-circle" style="width:12px;height:12px;vertical-align:middle;margin-right:4px;"></i>B&#7883; t&#7915; ch&#7889;i</span>
                                         </c:when>
                                     </c:choose>
                                 </div>
                                 <div style="font-size: 14px; color: #334155; margin-bottom: 8px;">
-                                    <strong>Lý do hủy:</strong> ${req.reason}
+                                    <strong>L&#253; do h&#7911;y:</strong> ${req.reason}
                                 </div>
                                 
                                 <c:if test="${not empty req.notes}">
                                     <div style="background: #f8fafc; border-left: 3px solid ${req.status eq 'Approved' ? '#10b981' : '#ef4444'}; padding: 10px 12px; font-size: 13px; color: #475569;">
-                                        <strong>Ghi chú từ kế toán:</strong> ${req.notes}
+                                        <strong>Ghi ch&#250; t&#7915; k&#7871; to&#225;n:</strong> ${req.notes}
                                     </div>
                                 </c:if>
                                 
                                 <c:if test="${req.status eq 'Approved'}">
                                     <div style="margin-top: 10px; font-size: 13px; color: #059669; font-weight: 500;">
-                                        <i data-lucide="check" style="width:14px;height:14px;vertical-align:middle;margin-right:4px;"></i> Tiền đã được xử lý hoàn vào <fmt:formatDate value="${req.processedAt}" pattern="dd/MM/yyyy HH:mm" />
+                                        <i data-lucide="check" style="width:14px;height:14px;vertical-align:middle;margin-right:4px;"></i> Ti&#7873;n &#273;&#227; &#273;&#432;&#7907;c x&#7917; l&#253; ho&#224;n v&#224;o <fmt:formatDate value="${req.processedAt}" pattern="dd/MM/yyyy HH:mm" />
                                     </div>
                                 </c:if>
                             </div>
@@ -478,7 +478,7 @@
     </div>
 </main>
 
-<%-- Modal Yêu cầu Hủy --%>
+<%-- Modal Y&#234;u c&#7847;u H&#7911;y --%>
 <style>
     .modal-overlay {
         display: none;
@@ -545,11 +545,11 @@
 <div class="modal-overlay" id="cancelModal">
     <div class="modal-content">
         <button class="modal-close" onclick="closeCancelModal()"><i data-lucide="x"></i></button>
-        <h3 class="modal-title">Yêu cầu hủy & hoàn tiền</h3>
+        <h3 class="modal-title">Y&#234;u c&#7847;u h&#7911;y & ho&#224;n ti&#7873;n</h3>
         
         <div class="terms-box">
-            <strong>Điều kiện hoàn tiền:</strong><br/>
-            Bạn đang yêu cầu hủy trước ngày khởi hành <b>hơn 7 ngày</b>, đủ điều kiện xem xét hoàn tiền theo chính sách của TourBuddy. Xin lưu ý hệ thống sẽ tiếp nhận và phản hồi trong 2-3 ngày làm việc.
+            <strong>&#272;i&#7873;u ki&#7879;n ho&#224;n ti&#7873;n:</strong><br/>
+            B&#7841;n &#273;ang y&#234;u c&#7847;u h&#7911;y tr&#432;&#7899;c ng&#224;y kh&#7903;i h&#224;nh <b>h&#417;n 7 ng&#224;y</b>, &#273;&#7911; &#273;i&#7873;u ki&#7879;n xem x&#233;t ho&#224;n ti&#7873;n theo ch&#237;nh s&#225;ch c&#7911;a TourBuddy. Xin l&#432;u &#253; h&#7879; th&#7889;ng s&#7869; ti&#7871;p nh&#7853;n v&#224; ph&#7843;n h&#7891;i trong 2-3 ng&#224;y l&#224;m vi&#7879;c.
         </div>
 
         <c:set var="leaderName" value=""/>
@@ -567,29 +567,29 @@
             <input type="hidden" name="bookingCode" value="${booking.bookingCode}">
             
             <div class="form-group">
-                <label>Trưởng đoàn đại diện</label>
+                <label>Tr&#432;&#7903;ng &#273;o&#224;n &#273;&#7841;i di&#7879;n</label>
                 <input type="text" class="form-control" value="${leaderName}" readonly>
             </div>
             
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                 <div class="form-group">
-                    <label>Số điện thoại</label>
+                    <label>S&#7889; &#273;i&#7879;n tho&#7841;i</label>
                     <input type="text" class="form-control" value="${leaderPhone}" readonly>
                 </div>
                 <div class="form-group">
-                    <label>Email liên hệ</label>
+                    <label>Email li&#234;n h&#7879;</label>
                     <input type="text" class="form-control" value="${leaderEmail}" readonly>
                 </div>
             </div>
 
             <div class="form-group">
-                <label>Lý do hủy / Ghi chú bổ sung <span style="color:#dc2626;">*</span></label>
-                <textarea class="form-control" name="reason" rows="3" required placeholder="Vui lòng cho chúng tôi biết lý do bạn muốn hủy đơn này..."></textarea>
+                <label>L&#253; do h&#7911;y / Ghi ch&#250; b&#7893; sung <span style="color:#dc2626;">*</span></label>
+                <textarea class="form-control" name="reason" rows="3" required placeholder="Vui l&#242;ng cho ch&#250;ng t&#244;i bi&#7871;t l&#253; do b&#7841;n mu&#7889;n h&#7911;y &#273;&#417;n n&#224;y..."></textarea>
             </div>
 
             <div class="modal-actions">
-                <button type="button" class="btn-action btn-outline" onclick="closeCancelModal()">Không, quay lại</button>
-                <button type="submit" class="btn-action btn-danger" style="color: white; background: #dc2626;">Xác nhận Gửi yêu cầu</button>
+                <button type="button" class="btn-action btn-outline" onclick="closeCancelModal()">Kh&#244;ng, quay l&#7841;i</button>
+                <button type="submit" class="btn-action btn-danger" style="color: white; background: #dc2626;">X&#225;c nh&#7853;n G&#7917;i y&#234;u c&#7847;u</button>
             </div>
         </form>
     </div>
@@ -604,7 +604,7 @@
         document.getElementById('cancelModal').style.display = 'none';
         document.body.style.overflow = '';
     }
-    // Đóng modal khi click ra ngoài
+    // \u0110\u00f3ng modal khi click ra ngo\u00e0i
     document.getElementById('cancelModal').addEventListener('click', function(e) {
         if(e.target === this) {
             closeCancelModal();

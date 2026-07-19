@@ -1,0 +1,227 @@
+/* ================================================
+   customer-booking-invoice.css
+   Styling for the invoice view page
+   ================================================ */
+
+.invoice-container {
+    max-width: 820px;
+    margin: 2rem auto;
+    padding: 2.5rem;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    font-family: 'Inter', sans-serif;
+    color: #2d3748;
+}
+
+/* ---- HEADER ---- */
+.invoice-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.invoice-header h1 {
+    font-size: 1.6rem;
+    color: #1a202c;
+    margin: 0 0 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.invoice-header h1 svg {
+    width: 22px;
+    height: 22px;
+    color: #4f8ef7;
+}
+
+.invoice-header p {
+    margin: 0.2rem 0;
+    font-size: 0.9rem;
+    color: #4a5568;
+}
+
+.invoice-brand {
+    text-align: right;
+}
+
+.invoice-brand .brand-name {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #4f8ef7;
+    margin-bottom: 0.25rem;
+}
+
+/* ---- SECTIONS ---- */
+.invoice-section {
+    margin-bottom: 2rem;
+}
+
+.invoice-section-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #4a5568;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #edf2f7;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.invoice-section-title svg {
+    width: 16px;
+    height: 16px;
+    color: #4f8ef7;
+}
+
+/* ---- TOUR INFO GRID ---- */
+.invoice-tour-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 0.75rem 1.5rem;
+}
+
+.invoice-tour-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.invoice-tour-item .label {
+    font-size: 0.78rem;
+    color: #718096;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.invoice-tour-item .value {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #1a202c;
+}
+
+/* ---- TABLE ---- */
+.invoice-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.invoice-table thead tr {
+    background-color: #f7fafc;
+}
+
+.invoice-table th {
+    padding: 0.6rem 0.75rem;
+    font-weight: 600;
+    color: #4a5568;
+    text-align: left;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.invoice-table td {
+    padding: 0.65rem 0.75rem;
+    border-bottom: 1px solid #edf2f7;
+    color: #2d3748;
+    vertical-align: middle;
+}
+
+.invoice-table tfoot .total-row td {
+    border-top: 2px solid #e2e8f0;
+    border-bottom: none;
+    font-size: 1.05rem;
+    color: #1a202c;
+    padding-top: 0.9rem;
+}
+
+.discount-row td {
+    color: #e53e3e;
+}
+
+/* ---- BADGES ---- */
+.badge-leader {
+    display: inline-block;
+    background-color: #ebf8ff;
+    color: #2b6cb0;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    margin-left: 0.4rem;
+    vertical-align: middle;
+}
+
+/* ---- ACTIONS ---- */
+.invoice-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.btn-print {
+    padding: 0.55rem 1.2rem;
+    background-color: #4f8ef7;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: background 0.2s;
+}
+
+.btn-print:hover {
+    background-color: #3b7cf4;
+}
+
+.btn-print svg {
+    width: 15px;
+    height: 15px;
+}
+
+/* ---- ERROR ---- */
+.error-message {
+    text-align: center;
+    padding: 2rem;
+    color: #c53030;
+}
+
+/* ---- PRINT MEDIA ---- */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    .invoice-container,
+    .invoice-container * {
+        visibility: visible;
+    }
+    .invoice-container {
+        position: absolute;
+        left: 0;
+        top: 0;
+        box-shadow: none;
+        margin: 0;
+        padding: 1.5rem;
+        width: 100%;
+        max-width: 100%;
+    }
+    .invoice-actions,
+    .booking-back-btn,
+    header, footer {
+        display: none !important;
+    }
+}
