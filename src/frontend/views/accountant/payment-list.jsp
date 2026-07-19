@@ -13,7 +13,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Theo Dõi Dòng Tiền — TourBuddy</title>
+    <title>Theo D&#245;i D&#242;ng Ti&#7873;n &#8212; TourBuddy</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-dashboard.css?v=1.6">
@@ -36,7 +36,7 @@
         .stat-icon.danger  { background: var(--danger-light); color: var(--danger); }
         .stat-icon.primary { background: var(--primary-light); color: var(--primary); }
         .stat-info h4 { margin: 0; font-size: 14px; color: var(--gray-500); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
-        .stat-info .stat-value { margin: 6px 0 0; font-size: 26px; font-weight: 700; color: var(--gray-900); }
+        .stat-info .stat-value { margin: 6px 0 0; font-size: 26px; font-weight: 700; color: #ffffff; }
 
         /* Filter bar */
         .filter-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 16px; flex-wrap: wrap; background: #fff; padding: 16px 20px; border-radius: 12px; border: 1px solid var(--gray-100); box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
@@ -103,8 +103,8 @@
         <div class="content-area">
             <div class="page-header" style="margin-bottom:24px;">
                 <div>
-                    <h1 style="margin:0;font-size:24px;font-weight:700;color:var(--gray-900);">Theo Dõi Dòng Tiền</h1>
-                    <p style="margin:4px 0 0;color:var(--gray-500);font-size:14px;">Quản lý toàn bộ giao dịch Thu - Chi của hệ thống</p>
+                    <h1 style="margin:0;font-size:24px;font-weight:700;color:var(--gray-900);">Theo D&#245;i D&#242;ng Ti&#7873;n</h1>
+                    <p style="margin:4px 0 0;color:var(--gray-500);font-size:14px;">Qu&#7843;n l&#253; to&#224;n b&#7897; giao d&#7883;ch Thu - Chi c&#7911;a h&#7879; th&#7889;ng</p>
                 </div>
             </div>
 
@@ -113,22 +113,22 @@
                 <div class="stat-card">
                     <div class="stat-icon success"><i data-lucide="arrow-down-left"></i></div>
                     <div class="stat-info">
-                        <h4>Tổng Thu (Khách thanh toán)</h4>
-                        <div class="stat-value" style="color:var(--success);">+ <fmt:formatNumber value="${totalIn}" type="number"/> đ</div>
+                        <h4>T&#7893;ng Thu (Kh&#225;ch thanh to&#225;n)</h4>
+                        <div class="stat-value" style="color:var(--success);">+ <fmt:formatNumber value="${totalIn}" type="number"/> &#273;</div>
                     </div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon danger"><i data-lucide="arrow-up-right"></i></div>
                     <div class="stat-info">
-                        <h4>Tổng Chi (Hoàn tiền)</h4>
-                        <div class="stat-value" style="color:var(--danger);">- <fmt:formatNumber value="${totalOut}" type="number"/> đ</div>
+                        <h4>T&#7893;ng Chi (Ho&#224;n ti&#7873;n)</h4>
+                        <div class="stat-value" style="color:var(--danger);">- <fmt:formatNumber value="${totalOut}" type="number"/> &#273;</div>
                     </div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon primary"><i data-lucide="wallet"></i></div>
                     <div class="stat-info">
-                        <h4>Doanh Thu Ròng</h4>
-                        <div class="stat-value"><fmt:formatNumber value="${netRevenue}" type="number"/> đ</div>
+                        <h4>Doanh Thu R&#242;ng</h4>
+                        <div class="stat-value"><fmt:formatNumber value="${netRevenue}" type="number"/> &#273;</div>
                     </div>
                 </div>
             </div>
@@ -139,18 +139,18 @@
                 <div class="filter-bar">
                     <div class="search-box">
                         <i data-lucide="search"></i>
-                        <input type="text" name="keyword" value="${keyword}" placeholder="Tìm mã GD, mã booking, tên khách...">
+                        <input type="text" name="keyword" value="${keyword}" placeholder="T&#236;m m&#227; GD, m&#227; booking, t&#234;n kh&#225;ch...">
                     </div>
                     <div class="filter-group">
-                        <span style="font-size:14px;color:var(--gray-500);font-weight:500;">Từ:</span>
+                        <span style="font-size:14px;color:var(--gray-500);font-weight:500;">T&#7915;:</span>
                         <input type="date" name="dateFrom" value="${dateFrom}" class="date-input">
-                        <span style="font-size:14px;color:var(--gray-500);font-weight:500;">Đến:</span>
+                        <span style="font-size:14px;color:var(--gray-500);font-weight:500;">&#272;&#7871;n:</span>
                         <input type="date" name="dateTo" value="${dateTo}" class="date-input">
                         <button type="submit" class="btn-modern btn-primary">
-                            <i data-lucide="filter" style="width:16px;height:16px;"></i> Lọc
+                            <i data-lucide="filter" style="width:16px;height:16px;"></i> L&#7885;c
                         </button>
                         <c:if test="${not empty keyword || not empty dateFrom || not empty dateTo}">
-                            <a href="${pageContext.request.contextPath}/accountant/payments?tab=${activeTab}" class="btn-modern btn-outline">Xóa lọc</a>
+                            <a href="${pageContext.request.contextPath}/accountant/payments?tab=${activeTab}" class="btn-modern btn-outline">X&#243;a l&#7885;c</a>
                         </c:if>
                     </div>
                 </div>
@@ -159,10 +159,10 @@
             <%-- Tabs --%>
             <div class="tabs">
                 <a href="${pageContext.request.contextPath}/accountant/payments?tab=in" class="tab-btn in ${activeTab eq 'in' ? 'active' : ''}">
-                    <i data-lucide="trending-up"></i> Tiền Vào (Đã Thu)
+                    <i data-lucide="trending-up"></i> Ti&#7873;n V&#224;o (&#272;&#227; Thu)
                 </a>
                 <a href="${pageContext.request.contextPath}/accountant/payments?tab=out" class="tab-btn out ${activeTab eq 'out' ? 'active' : ''}">
-                    <i data-lucide="trending-down"></i> Tiền Ra (Đã Hoàn)
+                    <i data-lucide="trending-down"></i> Ti&#7873;n Ra (&#272;&#227; Ho&#224;n)
                 </a>
             </div>
 
@@ -172,20 +172,20 @@
                     <c:when test="${empty payments}">
                         <div class="empty-state">
                             <i data-lucide="search-x"></i>
-                            <h3>Không tìm thấy giao dịch nào</h3>
-                            <p>Hãy thử thay đổi bộ lọc hoặc từ khóa tìm kiếm.</p>
+                            <h3>Kh&#244;ng t&#236;m th&#7845;y giao d&#7883;ch n&#224;o</h3>
+                            <p>H&#227;y th&#7917; thay &#273;&#7893;i b&#7897; l&#7885;c ho&#7863;c t&#7915; kh&#243;a t&#236;m ki&#7871;m.</p>
                         </div>
                     </c:when>
                     <c:otherwise>
                         <table class="modern-table">
                             <thead>
                                 <tr>
-                                    <th>Mã Giao Dịch</th>
-                                    <th>Booking / Khách Hàng</th>
-                                    <th>Số Tiền (VNĐ)</th>
-                                    <th>Phương Thức</th>
-                                    <th>Trạng Thái</th>
-                                    <th>Thời Gian</th>
+                                    <th>M&#227; Giao D&#7883;ch</th>
+                                    <th>Booking / Kh&#225;ch H&#224;ng</th>
+                                    <th>S&#7889; Ti&#7873;n (VN&#272;)</th>
+                                    <th>Ph&#432;&#417;ng Th&#7913;c</th>
+                                    <th>Tr&#7841;ng Th&#225;i</th>
+                                    <th>Th&#7901;i Gian</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -204,10 +204,10 @@
                                         </td>
                                         <td>
                                             <c:if test="${activeTab eq 'in'}">
-                                                <span class="amount in">+ <fmt:formatNumber value="${p.amount}" type="number"/> đ</span>
+                                                <span class="amount in">+ <fmt:formatNumber value="${p.amount}" type="number"/> &#273;</span>
                                             </c:if>
                                             <c:if test="${activeTab eq 'out'}">
-                                                <span class="amount out">- <fmt:formatNumber value="${p.amount}" type="number"/> đ</span>
+                                                <span class="amount out">- <fmt:formatNumber value="${p.amount}" type="number"/> &#273;</span>
                                             </c:if>
                                         </td>
                                         <td>
@@ -215,10 +215,10 @@
                                         </td>
                                         <td>
                                             <c:if test="${p.status eq 'Success'}">
-                                                <span class="badge badge-success"><i data-lucide="check" style="width:12px;height:12px;"></i> Thành công</span>
+                                                <span class="badge badge-success"><i data-lucide="check" style="width:12px;height:12px;"></i> Th&#224;nh c&#244;ng</span>
                                             </c:if>
                                             <c:if test="${p.status eq 'Refunded'}">
-                                                <span class="badge badge-danger"><i data-lucide="corner-down-left" style="width:12px;height:12px;"></i> Đã hoàn trả</span>
+                                                <span class="badge badge-danger"><i data-lucide="corner-down-left" style="width:12px;height:12px;"></i> &#272;&#227; ho&#224;n tr&#7843;</span>
                                             </c:if>
                                         </td>
                                         <td>

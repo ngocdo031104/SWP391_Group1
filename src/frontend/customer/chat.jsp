@@ -1,4 +1,4 @@
-﻿<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
+&#65279;<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
@@ -353,14 +353,14 @@
     <!-- Sidebar -->
     <div class="chat-sidebar">
         <div class="chat-sidebar-header">
-            <h2>Tin nhắn</h2>
-            <button class="btn-icon" title="Tạo nhóm mới" onclick="openCreateGroupModal()">
+            <h2>Tin nh&#7855;n</h2>
+            <button class="btn-icon" title="T&#7841;o nh&#243;m m&#7899;i" onclick="openCreateGroupModal()">
                 <i data-lucide="users"></i>
             </button>
         </div>
         <div class="search-box" style="position: relative;">
             <i data-lucide="search" style="position: absolute; left: 35px; top: 25px; width: 18px; color: #9ca3af;"></i>
-            <input type="text" class="search-input" placeholder="Tìm kiếm cuộc trò chuyện...">
+            <input type="text" class="search-input" placeholder="T&#236;m ki&#7871;m cu&#7897;c tr&#242; chuy&#7879;n...">
         </div>
         <div class="conversation-list" id="conversationList">
             <c:forEach var="conv" items="${conversations}">
@@ -381,13 +381,13 @@
                         <img src="${convAvatarUrl}" alt="Avatar">
                     </div>
                     <div class="conversation-details">
-                        <div class="conversation-title">${conv.title != null ? conv.title : "Người dùng ẩn danh"}</div>
-                        <div class="conversation-preview">Nhấn để xem tin nhắn</div>
+                        <div class="conversation-title">${conv.title != null ? conv.title : "Ng&#432;&#7901;i d&#249;ng &#7849;n danh"}</div>
+                        <div class="conversation-preview">Nh&#7845;n &#273;&#7875; xem tin nh&#7855;n</div>
                     </div>
                 </div>
             </c:forEach>
             <c:if test="${empty conversations}">
-                <div style="padding: 20px; text-align: center; color: #6b7280;">Chưa có cuộc trò chuyện nào.</div>
+                <div style="padding: 20px; text-align: center; color: #6b7280;">Ch&#432;a c&#243; cu&#7897;c tr&#242; chuy&#7879;n n&#224;o.</div>
             </c:if>
         </div>
     </div>
@@ -396,8 +396,8 @@
     <div class="chat-main">
         <div id="emptyChat" class="empty-state">
             <i data-lucide="message-circle" style="width: 64px; height: 64px;"></i>
-            <h3>Chào mừng đến với hệ thống tin nhắn</h3>
-            <p>Chọn một cuộc trò chuyện để bắt đầu.</p>
+            <h3>Ch&#224;o m&#7915;ng &#273;&#7871;n v&#7899;i h&#7879; th&#7889;ng tin nh&#7855;n</h3>
+            <p>Ch&#7885;n m&#7897;t cu&#7897;c tr&#242; chuy&#7879;n &#273;&#7875; b&#7855;t &#273;&#7847;u.</p>
         </div>
 
         <div id="activeChat" style="display: none; flex-direction: column; height: 100%;">
@@ -406,8 +406,8 @@
                     <img id="chatHeaderAvatar" src="https://ui-avatars.com/api/?name=User&background=random" style="width: 100%; height: 100%; border-radius: 50%;" alt="Avatar">
                 </div>
                 <div class="info">
-                    <h3 id="chatHeaderName">Tên Người Nhận</h3>
-                    <p>Đang hoạt động</p>
+                    <h3 id="chatHeaderName">T&#234;n Ng&#432;&#7901;i Nh&#7853;n</h3>
+                    <p>&#272;ang ho&#7841;t &#273;&#7897;ng</p>
                 </div>
                 <div class="header-actions">
                     <button class="btn-icon" title="Upcoming Calls" onclick="showUpcomingCalls()">
@@ -427,7 +427,7 @@
                 <input type="file" id="chatFileInput" accept="image/*" style="display: none;">
                 <button class="btn-icon" onclick="document.getElementById('chatFileInput').click()"><i data-lucide="paperclip"></i></button>
                 <div class="chat-input-box">
-                    <input type="text" id="messageInput" placeholder="Nhập tin nhắn của bạn..." autocomplete="off">
+                    <input type="text" id="messageInput" placeholder="Nh&#7853;p tin nh&#7855;n c&#7911;a b&#7841;n..." autocomplete="off">
                     <button class="btn-icon"><i data-lucide="smile"></i></button>
                 </div>
                 <button class="btn-send" id="btnSend" onclick="sendMessage()"><i data-lucide="send" style="width: 20px; height: 20px; margin-left: 2px;"></i></button>
@@ -440,18 +440,18 @@
 <div class="modal-overlay" id="createGroupModal">
     <div class="modal-content">
         <div class="modal-header">
-            <h3>Tạo Nhóm Chat</h3>
+            <h3>T&#7841;o Nh&#243;m Chat</h3>
             <button class="btn-icon" onclick="closeCreateGroupModal()"><i data-lucide="x"></i></button>
         </div>
         <form action="${pageContext.request.contextPath}/customer/chat" method="post" id="createGroupForm">
             <input type="hidden" name="action" value="createGroup">
             <div class="modal-body" style="max-height: 400px; overflow-y: auto;">
                 <div class="form-group" style="margin-bottom: 20px;">
-                    <label style="display: block; margin-bottom: 8px; font-weight: 500;">Tên nhóm:</label>
-                    <input type="text" name="groupName" id="groupName" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;" placeholder="Nhập tên nhóm" required>
+                    <label style="display: block; margin-bottom: 8px; font-weight: 500;">T&#234;n nh&#243;m:</label>
+                    <input type="text" name="groupName" id="groupName" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;" placeholder="Nh&#7853;p t&#234;n nh&#243;m" required>
                 </div>
                 
-                <label style="display: block; margin-bottom: 8px; font-weight: 500;">Chọn bạn bè để thêm:</label>
+                <label style="display: block; margin-bottom: 8px; font-weight: 500;">Ch&#7885;n b&#7841;n b&#232; &#273;&#7875; th&#234;m:</label>
                 <div style="display: flex; flex-direction: column; gap: 10px;">
                     <c:forEach var="buddy" items="${buddies}">
                         <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 10px; border: 1px solid #f3f4f6; border-radius: 8px; background: #fafafa;">
@@ -462,13 +462,13 @@
                         </label>
                     </c:forEach>
                     <c:if test="${empty buddies}">
-                        <div style="color: #6b7280; font-size: 14px;">Bạn chưa có bạn bè nào để tạo nhóm.</div>
+                        <div style="color: #6b7280; font-size: 14px;">B&#7841;n ch&#432;a c&#243; b&#7841;n b&#232; n&#224;o &#273;&#7875; t&#7841;o nh&#243;m.</div>
                     </c:if>
                 </div>
             </div>
             <div class="modal-footer" style="padding: 20px; border-top: 1px solid #f3f4f6; display: flex; justify-content: flex-end; gap: 10px;">
-                <button type="button" class="btn-cancel" onclick="closeCreateGroupModal()" style="padding: 10px 20px; border: none; border-radius: 8px; background: #f3f4f6; color: #374151; cursor: pointer;">Hủy</button>
-                <button type="button" class="btn-primary" onclick="submitCreateGroup()" style="padding: 10px 20px; border: none; border-radius: 8px; background: #2563eb; color: white; cursor: pointer; font-weight: 500;">Tạo nhóm</button>
+                <button type="button" class="btn-cancel" onclick="closeCreateGroupModal()" style="padding: 10px 20px; border: none; border-radius: 8px; background: #f3f4f6; color: #374151; cursor: pointer;">H&#7911;y</button>
+                <button type="button" class="btn-primary" onclick="submitCreateGroup()" style="padding: 10px 20px; border: none; border-radius: 8px; background: #2563eb; color: white; cursor: pointer; font-weight: 500;">T&#7841;o nh&#243;m</button>
             </div>
         </form>
     </div>
@@ -478,28 +478,28 @@
 <div class="modal-overlay" id="scheduleModal">
     <div class="modal-content">
         <div class="modal-header">
-            <h3 id="scheduleModalTitle">Lên lịch gọi Video</h3>
+            <h3 id="scheduleModalTitle">L&#234;n l&#7883;ch g&#7885;i Video</h3>
             <button class="modal-close" onclick="closeScheduleModal()"><i data-lucide="x"></i></button>
         </div>
         <form id="scheduleForm" onsubmit="handleScheduleSubmit(event)">
             <input type="hidden" id="callId" value="">
             <div class="form-group">
-                <label>Chủ đề cuộc gọi</label>
-                <input type="text" id="callTitle" required placeholder="Ví dụ: Bàn kế hoạch đi Đà Lạt">
+                <label>Ch&#7911; &#273;&#7873; cu&#7897;c g&#7885;i</label>
+                <input type="text" id="callTitle" required placeholder="V&#237; d&#7909;: B&#224;n k&#7871; ho&#7841;ch &#273;i &#272;&#224; L&#7841;t">
             </div>
             <div class="form-group">
-                <label>Thời gian</label>
+                <label>Th&#7901;i gian</label>
                 <input type="datetime-local" id="callTime" required>
             </div>
             <div class="form-group">
-                <label>Thời lượng (phút)</label>
+                <label>Th&#7901;i l&#432;&#7907;ng (ph&#250;t)</label>
                 <input type="number" id="callDuration" value="30" min="5" required>
             </div>
             <div class="form-group">
-                <label>Link cuộc họp (Google Meet/Zoom)</label>
+                <label>Link cu&#7897;c h&#7885;p (Google Meet/Zoom)</label>
                 <input type="url" id="callUrl" required placeholder="https://meet.google.com/xxx-yyy-zzz">
             </div>
-            <button type="submit" class="btn-primary" id="scheduleSubmitBtn">Tạo lịch gọi</button>
+            <button type="submit" class="btn-primary" id="scheduleSubmitBtn">T&#7841;o l&#7883;ch g&#7885;i</button>
         </form>
     </div>
 </div>
@@ -508,7 +508,7 @@
 <div class="modal-overlay" id="upcomingCallsModal">
     <div class="modal-content" style="max-width: 600px;">
         <div class="modal-header">
-            <h3>Lịch gọi Video sắp tới</h3>
+            <h3>L&#7883;ch g&#7885;i Video s&#7855;p t&#7899;i</h3>
             <button class="modal-close" onclick="closeUpcomingCallsModal()"><i data-lucide="x"></i></button>
         </div>
         <div id="upcomingCallsList" style="max-height: 400px; overflow-y: auto;">

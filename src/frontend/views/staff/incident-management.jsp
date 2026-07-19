@@ -13,7 +13,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý Sự Cố - Staff Dashboard</title>
+    <title>Qu&#7843;n L&#253; S&#7921; C&#7889; - Staff Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-dashboard.css?v=1.6">
@@ -58,7 +58,7 @@
         .stat-icon.success { background: var(--success-light); color: var(--success); }
         .stat-icon.purple { background: var(--purple-light); color: var(--purple); }
         .stat-info h4 { margin: 0; font-size: 13px; color: var(--gray-500); font-weight: 500; }
-        .stat-info .stat-value { margin: 4px 0 0; font-size: 24px; font-weight: 700; color: var(--gray-900); }
+        .stat-info .stat-value { margin: 4px 0 0; font-size: 24px; font-weight: 700; color: #ffffff; }
 
         .table-modern { width: 100%; border-collapse: collapse; }
         .table-modern th { background: var(--gray-50); padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: .5px; border-bottom: 1px solid var(--gray-200); }
@@ -112,8 +112,8 @@
 
             <div class="page-header">
                 <div>
-                    <h1>Quản Lý Sự Cố</h1>
-                    <p>Xem và xử lý các sự cố trong quá trình vận hành tour</p>
+                    <h1>Qu&#7843;n L&#253; S&#7921; C&#7889;</h1>
+                    <p>Xem v&#224; x&#7917; l&#253; c&#225;c s&#7921; c&#7889; trong qu&#225; tr&#236;nh v&#7853;n h&#224;nh tour</p>
                 </div>
             </div>
 
@@ -128,28 +128,28 @@
                 <a href="?status=Open" class="stat-card ${statusFilter eq 'Open' ? 'active' : ''}">
                     <div class="stat-icon danger"><i data-lucide="alert-circle"></i></div>
                     <div class="stat-info">
-                        <h4>Mới Báo Cáo</h4>
+                        <h4>M&#7899;i B&#225;o C&#225;o</h4>
                         <div class="stat-value">${openCount}</div>
                     </div>
                 </a>
                 <a href="?status=Investigating" class="stat-card ${statusFilter eq 'Investigating' ? 'active' : ''}">
                     <div class="stat-icon warning"><i data-lucide="search"></i></div>
                     <div class="stat-info">
-                        <h4>Đang Xử Lý</h4>
+                        <h4>&#272;ang X&#7917; L&#253;</h4>
                         <div class="stat-value">${investigatingCount}</div>
                     </div>
                 </a>
                 <a href="?status=Resolved" class="stat-card ${statusFilter eq 'Resolved' ? 'active' : ''}">
                     <div class="stat-icon success"><i data-lucide="check-circle-2"></i></div>
                     <div class="stat-info">
-                        <h4>Đã Xử Lý</h4>
+                        <h4>&#272;&#227; X&#7917; L&#253;</h4>
                         <div class="stat-value">${resolvedCount}</div>
                     </div>
                 </a>
                 <a href="?status=All" class="stat-card ${statusFilter eq 'All' ? 'active' : ''}">
                     <div class="stat-icon purple"><i data-lucide="layers"></i></div>
                     <div class="stat-info">
-                        <h4>Tổng Cộng</h4>
+                        <h4>T&#7893;ng C&#7897;ng</h4>
                         <div class="stat-value">${openCount + investigatingCount + resolvedCount}</div>
                     </div>
                 </a>
@@ -158,25 +158,25 @@
             <!-- Filter -->
             <div class="filter-bar">
                 <select class="filter-select" onchange="location.href='?status=' + this.value">
-                    <option value="All" ${statusFilter eq 'All' ? 'selected' : ''}>Tất cả trạng thái</option>
-                    <option value="Open" ${statusFilter eq 'Open' ? 'selected' : ''}>Mới báo cáo</option>
-                    <option value="Investigating" ${statusFilter eq 'Investigating' ? 'selected' : ''}>Đang xử lý</option>
-                    <option value="Resolved" ${statusFilter eq 'Resolved' ? 'selected' : ''}>Đã xử lý</option>
-                    <option value="Dismissed" ${statusFilter eq 'Dismissed' ? 'selected' : ''}>Đã bỏ qua</option>
+                    <option value="All" ${statusFilter eq 'All' ? 'selected' : ''}>T&#7845;t c&#7843; tr&#7841;ng th&#225;i</option>
+                    <option value="Open" ${statusFilter eq 'Open' ? 'selected' : ''}>M&#7899;i b&#225;o c&#225;o</option>
+                    <option value="Investigating" ${statusFilter eq 'Investigating' ? 'selected' : ''}>&#272;ang x&#7917; l&#253;</option>
+                    <option value="Resolved" ${statusFilter eq 'Resolved' ? 'selected' : ''}>&#272;&#227; x&#7917; l&#253;</option>
+                    <option value="Dismissed" ${statusFilter eq 'Dismissed' ? 'selected' : ''}>&#272;&#227; b&#7887; qua</option>
                 </select>
             </div>
 
             <!-- Table -->
             <div class="card">
                 <div class="card-header">
-                    <h3><i data-lucide="alert-triangle" style="color:var(--warning);"></i> Danh Sách Sự Cố</h3>
+                    <h3><i data-lucide="alert-triangle" style="color:var(--warning);"></i> Danh S&#225;ch S&#7921; C&#7889;</h3>
                 </div>
                 <div class="card-body" style="padding:0;">
                     <c:choose>
                         <c:when test="${empty incidents}">
                             <div class="empty-state">
                                 <i data-lucide="check-circle-2"></i>
-                                <p>Không có sự cố nào được báo cáo.</p>
+                                <p>Kh&#244;ng c&#243; s&#7921; c&#7889; n&#224;o &#273;&#432;&#7907;c b&#225;o c&#225;o.</p>
                             </div>
                         </c:when>
                         <c:otherwise>
@@ -184,12 +184,12 @@
                                 <thead>
                                     <tr>
                                         <th>Tour</th>
-                                        <th>Tiêu Đề</th>
-                                        <th>Người Báo Cáo</th>
-                                        <th>Mức Độ</th>
-                                        <th>Trạng Thái</th>
-                                        <th>Ngày Báo Cáo</th>
-                                        <th style="text-align:center;">Hành Động</th>
+                                        <th>Ti&#234;u &#272;&#7873;</th>
+                                        <th>Ng&#432;&#7901;i B&#225;o C&#225;o</th>
+                                        <th>M&#7913;c &#272;&#7897;</th>
+                                        <th>Tr&#7841;ng Th&#225;i</th>
+                                        <th>Ng&#224;y B&#225;o C&#225;o</th>
+                                        <th style="text-align:center;">H&#224;nh &#272;&#7897;ng</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -217,16 +217,16 @@
                                             <td>
                                                 <c:choose>
                                                     <c:when test="${incident.status eq 'Open'}">
-                                                        <span class="badge badge-danger">Mới báo cáo</span>
+                                                        <span class="badge badge-danger">M&#7899;i b&#225;o c&#225;o</span>
                                                     </c:when>
                                                     <c:when test="${incident.status eq 'Investigating'}">
-                                                        <span class="badge badge-warning">Đang xử lý</span>
+                                                        <span class="badge badge-warning">&#272;ang x&#7917; l&#253;</span>
                                                     </c:when>
                                                     <c:when test="${incident.status eq 'Resolved'}">
-                                                        <span class="badge badge-success">Đã xử lý</span>
+                                                        <span class="badge badge-success">&#272;&#227; x&#7917; l&#253;</span>
                                                     </c:when>
                                                     <c:when test="${incident.status eq 'Dismissed'}">
-                                                        <span class="badge badge-secondary">Đã bỏ qua</span>
+                                                        <span class="badge badge-secondary">&#272;&#227; b&#7887; qua</span>
                                                     </c:when>
                                                     <c:otherwise>
                                                         <span class="badge badge-secondary">${incident.status}</span>
@@ -236,11 +236,11 @@
                                             <td><fmt:formatDate value="${incident.createdAt}" pattern="dd/MM/yyyy HH:mm"/></td>
                                             <td style="text-align:center;">
                                                 <button class="btn btn-primary btn-sm" onclick="viewIncident(${incident.incidentId})">
-                                                    <i data-lucide="eye" style="width:14px;height:14px;"></i> Chi tiết
+                                                    <i data-lucide="eye" style="width:14px;height:14px;"></i> Chi ti&#7871;t
                                                 </button>
                                                 <c:if test="${incident.status eq 'Open' || incident.status eq 'Investigating'}">
                                                     <button class="btn btn-outline btn-sm" onclick="openStatusModal(${incident.incidentId}, '${incident.status}')">
-                                                        <i data-lucide="edit" style="width:14px;height:14px;"></i> Cập nhật
+                                                        <i data-lucide="edit" style="width:14px;height:14px;"></i> C&#7853;p nh&#7853;t
                                                     </button>
                                                 </c:if>
                                             </td>
@@ -257,45 +257,45 @@
     </main>
 </div>
 
-<!-- Modal Chi Tiết -->
+<!-- Modal Chi Ti&#7871;t -->
 <div class="modal-overlay" id="detailModal">
     <div class="modal-box">
         <div class="modal-header">
-            <h3><i data-lucide="info" style="vertical-align:middle;margin-right:8px;"></i>Chi Tiết Sự Cố</h3>
+            <h3><i data-lucide="info" style="vertical-align:middle;margin-right:8px;"></i>Chi Ti&#7871;t S&#7921; C&#7889;</h3>
             <button class="modal-close" onclick="closeDetailModal()"><i data-lucide="x"></i></button>
         </div>
         <div class="modal-body" id="incident-detail-content">
-            <!-- Nội dung động -->
+            <!-- N&#7897;i dung &#273;&#7897;ng -->
         </div>
         <div class="modal-footer">
-            <button class="btn btn-outline" onclick="closeDetailModal()">Đóng</button>
+            <button class="btn btn-outline" onclick="closeDetailModal()">&#272;&#243;ng</button>
         </div>
     </div>
 </div>
 
-<!-- Modal Cập nhật trạng thái -->
+<!-- Modal C&#7853;p nh&#7853;t tr&#7841;ng th&#225;i -->
 <div class="modal-overlay" id="statusModal">
     <div class="modal-box">
         <div class="modal-header">
-            <h3><i data-lucide="edit" style="vertical-align:middle;margin-right:8px;"></i>Cập Nhật Trạng Thái Sự Cố</h3>
+            <h3><i data-lucide="edit" style="vertical-align:middle;margin-right:8px;"></i>C&#7853;p Nh&#7853;t Tr&#7841;ng Th&#225;i S&#7921; C&#7889;</h3>
             <button class="modal-close" onclick="closeStatusModal()"><i data-lucide="x"></i></button>
         </div>
         <div class="modal-body">
             <input type="hidden" id="modal-incident-id">
             <div class="form-group">
-                <label for="modal-status-select">Trạng Thái Mới</label>
+                <label for="modal-status-select">Tr&#7841;ng Th&#225;i M&#7899;i</label>
                 <select id="modal-status-select" class="form-control">
-                    <option value="Open">Mới báo cáo</option>
-                    <option value="Investigating">Đang xử lý</option>
-                    <option value="Resolved">Đã xử lý</option>
-                    <option value="Dismissed">Đã bỏ qua</option>
+                    <option value="Open">M&#7899;i b&#225;o c&#225;o</option>
+                    <option value="Investigating">&#272;ang x&#7917; l&#253;</option>
+                    <option value="Resolved">&#272;&#227; x&#7917; l&#253;</option>
+                    <option value="Dismissed">&#272;&#227; b&#7887; qua</option>
                 </select>
             </div>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-outline" onclick="closeStatusModal()">Hủy</button>
+            <button class="btn btn-outline" onclick="closeStatusModal()">H&#7911;y</button>
             <button class="btn btn-primary" onclick="submitStatusUpdate()">
-                <i data-lucide="check" style="width:14px;height:14px;"></i> Cập Nhật
+                <i data-lucide="check" style="width:14px;height:14px;"></i> C&#7853;p Nh&#7853;t
             </button>
         </div>
     </div>
@@ -327,28 +327,28 @@
                     <div style="font-weight:600;">\${incident.tourName}</div>
                 </div>
                 <div>
-                    <div style="font-size:12px;color:var(--gray-500);">Ngày khởi hành</div>
+                    <div style="font-size:12px;color:var(--gray-500);">Ng\u00e0y kh\u1edfi h\u00e0nh</div>
                     <div style="font-weight:600;">\${incident.departureDate ? new Date(incident.departureDate).toLocaleDateString('vi-VN') : 'N/A'}</div>
                 </div>
                 <div>
-                    <div style="font-size:12px;color:var(--gray-500);">Người báo cáo</div>
+                    <div style="font-size:12px;color:var(--gray-500);">Ng\u01b0\u1eddi b\u00e1o c\u00e1o</div>
                     <div style="font-weight:600;">\${incident.reportedByName}</div>
                 </div>
                 <div>
-                    <div style="font-size:12px;color:var(--gray-500);">Guide phụ trách</div>
-                    <div style="font-weight:600;">\${incident.guideName || 'Chưa có'}</div>
+                    <div style="font-size:12px;color:var(--gray-500);">Guide ph\u1ee5 tr\u00e1ch</div>
+                    <div style="font-weight:600;">\${incident.guideName || 'Ch\u01b0a c\u00f3'}</div>
                 </div>
                 <div>
-                    <div style="font-size:12px;color:var(--gray-500);">Ngày báo cáo</div>
+                    <div style="font-size:12px;color:var(--gray-500);">Ng\u00e0y b\u00e1o c\u00e1o</div>
                     <div style="font-weight:600;">\${incident.createdAt ? new Date(incident.createdAt).toLocaleString('vi-VN') : 'N/A'}</div>
                 </div>
                 <div>
-                    <div style="font-size:12px;color:var(--gray-500);">Trạng thái</div>
+                    <div style="font-size:12px;color:var(--gray-500);">Tr\u1ea1ng th\u00e1i</div>
                     <div style="font-weight:600;">
-                        \${incident.status === 'Open' ? '<span style="color:var(--danger);">Mới báo cáo</span>' : ''}
-                        \${incident.status === 'Investigating' ? '<span style="color:var(--warning);">Đang xử lý</span>' : ''}
-                        \${incident.status === 'Resolved' ? '<span style="color:var(--success);">Đã xử lý</span>' : ''}
-                        \${incident.status === 'Dismissed' ? '<span style="color:var(--gray-500);">Đã bỏ qua</span>' : ''}
+                        \${incident.status === 'Open' ? '<span style="color:var(--danger);">M\u1edbi b\u00e1o c\u00e1o</span>' : ''}
+                        \${incident.status === 'Investigating' ? '<span style="color:var(--warning);">\u0110ang x\u1eed l\u00fd</span>' : ''}
+                        \${incident.status === 'Resolved' ? '<span style="color:var(--success);">\u0110\u00e3 x\u1eed l\u00fd</span>' : ''}
+                        \${incident.status === 'Dismissed' ? '<span style="color:var(--gray-500);">\u0110\u00e3 b\u1ecf qua</span>' : ''}
                     </div>
                 </div>
             </div>
@@ -397,7 +397,7 @@
         })
         .catch(err => {
             console.error(err);
-            alert('Đã xảy ra lỗi!');
+            alert('\u0110\u00e3 x\u1ea3y ra l\u1ed7i!');
         });
     }
 

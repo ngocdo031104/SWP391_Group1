@@ -1179,4 +1179,918 @@
   font-size: 0.85rem !important;
 }
 
+/* ============================================================
+   PREMIUM UI UPGRADES — applied across admin pages
+   - Stat card: shimmer sweep, glow ring on hover, gradient border
+   - Chart card: animated gradient border on focus
+   - Sidebar items: subtle slide-in, active pulse
+   - Top header: glassmorphism blur
+   - Tables: row hover slide
+   - Buttons: ripple + lift
+   - Modals: smoother slide-up
+   ============================================================ */
+
+/* ── Glassmorphic top header ── */
+.top-header {
+  background: rgba(15, 17, 35, 0.55);
+  backdrop-filter: saturate(180%) blur(14px);
+  -webkit-backdrop-filter: saturate(180%) blur(14px);
+  border: 1px solid rgba(99, 102, 241, 0.12);
+  border-radius: 14px;
+  padding: 1rem 1.5rem;
+  margin-bottom: 0.25rem;
+  position: sticky;
+  top: 12px;
+  z-index: 40;
+}
+
+/* ── Sidebar menu item animation polish ── */
+.sidebar-menu a {
+  position: relative;
+  overflow: hidden;
+}
+.sidebar-menu a::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 0;
+  background: linear-gradient(90deg, rgba(99, 102, 241, 0.4), rgba(6, 182, 212, 0.3));
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: var(--radius-md);
+}
+.sidebar-menu a:hover::before { width: 100%; }
+.sidebar-menu a i,
+.sidebar-menu a svg { position: relative; z-index: 1; transition: transform 0.3s ease; }
+.sidebar-menu a:hover i,
+.sidebar-menu a:hover svg { transform: scale(1.15); }
+.sidebar-menu a span { position: relative; z-index: 1; }
+
+.sidebar-menu li.active a::before { width: 100%; opacity: 0.55; }
+
+/* ── Brand logo subtle pulse ── */
+.logo-icon {
+  animation: tb-glow 3s ease-in-out infinite;
+}
+
+/* ── Stat card premium ── */
+.stat-card {
+  position: relative;
+  background: linear-gradient(180deg, rgba(22, 25, 50, 0.95), rgba(15, 17, 35, 0.95)) !important;
+  border: 1px solid rgba(99, 102, 241, 0.18) !important;
+  overflow: hidden;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.4s ease,
+              border-color 0.3s ease !important;
+}
+.stat-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, transparent, rgba(99, 102, 241, 0.5), transparent);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+.stat-card::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 50%;
+  height: 200%;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(129, 140, 248, 0.15),
+    transparent);
+  transform: rotate(20deg) translateX(-100%);
+  transition: transform 0.9s ease;
+  pointer-events: none;
+}
+.stat-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 36px -10px rgba(99, 102, 241, 0.4),
+              0 0 0 1px rgba(129, 140, 248, 0.3);
+  border-color: rgba(129, 140, 248, 0.4) !important;
+}
+.stat-card:hover::before { opacity: 1; }
+.stat-card:hover::after { transform: rotate(20deg) translateX(200%); }
+
+/* Stat icon — color-aware float */
+.stat-icon {
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  position: relative;
+}
+.stat-card:hover .stat-icon {
+  transform: rotate(-8deg) scale(1.08);
+}
+
+/* ── Chart card animation ── */
+.chart-card,
+.card-style,
+.content-card {
+  background: linear-gradient(180deg, rgba(22, 25, 50, 0.7), rgba(15, 17, 35, 0.7)) !important;
+  border: 1px solid rgba(99, 102, 241, 0.15) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.3s ease,
+              box-shadow 0.3s ease;
+}
+.chart-card:hover,
+.card-style:hover,
+.content-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(129, 140, 248, 0.3) !important;
+  box-shadow: 0 14px 32px -8px rgba(99, 102, 241, 0.25);
+}
+
+/* ── Buttons premium ── */
+.btn,
+button.btn,
+.btn-primary,
+.btn-secondary {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.25s ease,
+              filter 0.2s ease !important;
+}
+.btn:hover,
+button.btn:hover,
+.btn-primary:hover,
+.btn-secondary:hover {
+  transform: translateY(-2px) !important;
+  filter: brightness(1.08);
+}
+.btn-primary:hover,
+.btn-secondary:hover {
+  box-shadow: 0 8px 20px -2px rgba(99, 102, 241, 0.5);
+}
+.btn:active,
+button.btn:active { transform: translateY(0) scale(0.98) !important; }
+
+/* ── Table rows slide ── */
+.table-modern tbody tr,
+.data-table tbody tr,
+.styled-table tbody tr {
+  transition: background-color 0.25s ease, transform 0.2s ease;
+}
+.table-modern tbody tr:hover,
+.data-table tbody tr:hover,
+.styled-table tbody tr:hover {
+  background-color: rgba(129, 140, 248, 0.08);
+  transform: translateX(4px);
+}
+
+/* ── Status badges polished ── */
+.badge,
+.status-badge,
+.role-badge {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.badge:hover,
+.status-badge:hover,
+.role-badge:hover {
+  transform: scale(1.05);
+}
+
+/* ── Modal premium ── */
+.modal-content,
+.modal-card {
+  animation: tb-modal-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes tb-modal-in {
+  from { opacity: 0; transform: translateY(20px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── Avatar floating ring ── */
+.avatar,
+.user-avatar {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.3s ease;
+}
+.avatar:hover,
+.user-avatar:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.18),
+              0 6px 16px -4px rgba(99, 102, 241, 0.4);
+}
+
+/* ── Notification dot ── */
+.notification-btn .badge,
+.notification-btn .dot {
+  animation: tb-pulse 2s ease-in-out infinite;
+}
+
+/* ── Search input glow on focus ── */
+.header-search input {
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+}
+.header-search input:focus {
+  border-color: rgba(129, 140, 248, 0.6) !important;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.18);
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+/* ── Loading spinner in button ── */
+.btn.is-loading::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: tb-spin 0.7s linear infinite;
+  margin-left: 8px;
+}
+
+/* ── Section reveal ── */
+.view-panel > * { animation: tb-fade-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.view-panel > *:nth-child(1) { animation-delay: 0.05s; }
+.view-panel > *:nth-child(2) { animation-delay: 0.12s; }
+.view-panel > *:nth-child(3) { animation-delay: 0.18s; }
+.view-panel > *:nth-child(4) { animation-delay: 0.24s; }
+.view-panel > *:nth-child(5) { animation-delay: 0.30s; }
+
+/* ── Progress bar default style ── */
+.progress,
+.progress-bar {
+  background: rgba(99, 102, 241, 0.18);
+  border-radius: 99px;
+  overflow: hidden;
+  height: 8px;
+}
+.progress-bar-fill,
+.progress-fill,
+.progress > span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary-indigo), var(--accent-cyan));
+  border-radius: 99px;
+  position: relative;
+  overflow: hidden;
+}
+.progress-bar-fill::after,
+.progress-fill::after,
+.progress > span::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  background-size: 200% 100%;
+  animation: tb-shimmer 1.6s linear infinite;
+}
+
+/* ── View panel transitions (admin tabs) ── */
+.view-panel {
+  opacity: 0;
+  display: none;
+  transition: opacity 0.3s ease;
+}
+.view-panel.active {
+  opacity: 1;
+  display: block;
+  animation: tb-fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ── Stat number counter treatment ── */
+.stat-value {
+  color: #f8fafc !important;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Floating action button ── */
+.fab,
+.btn-fab {
+  box-shadow: 0 10px 24px -4px rgba(99, 102, 241, 0.5);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.3s ease;
+}
+.fab:hover,
+.btn-fab:hover {
+  transform: translateY(-3px) rotate(-8deg) scale(1.05);
+  box-shadow: 0 14px 32px -4px rgba(99, 102, 241, 0.65);
+}
+
+/* ── Tabs (admin sub-nav) ── */
+.tab-btn,
+.nav-tab {
+  position: relative;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+.tab-btn::after,
+.nav-tab::after {
+  content: '';
+  position: absolute;
+  left: 50%; bottom: -2px;
+  width: 0; height: 2px;
+  background: linear-gradient(90deg, var(--primary-indigo), var(--accent-cyan));
+  border-radius: 99px;
+  transform: translateX(-50%);
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.tab-btn:hover::after,
+.nav-tab:hover::after { width: 70%; }
+.tab-btn.active::after,
+.nav-tab.active::after { width: 100%; }
+.tab-btn.active,
+.nav-tab.active { color: var(--accent-cyan); font-weight: 600; }
+
+/* ── KPI trend arrows ── */
+.stat-trend,
+.trend {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-weight: 600;
+  font-size: 0.78rem;
+}
+.stat-trend.up,
+.trend.up {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+}
+.stat-trend.down,
+.trend.down {
+  background: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+}
+
+/* ── Empty state ── */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+}
+.empty-state-icon {
+  width: 96px;
+  height: 96px;
+  margin: 0 auto 20px;
+  border-radius: 30px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(6, 182, 212, 0.15));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-cyan);
+  animation: tb-float 4s ease-in-out infinite;
+}
+
+/* ── Recent activity items ── */
+.activity-item,
+.recent-row {
+  transition: transform 0.25s ease, background-color 0.25s ease, padding-left 0.25s ease;
+}
+.activity-item:hover,
+.recent-row:hover {
+  transform: translateX(6px);
+  padding-left: 12px;
+}
+
+/* ── Scroll inside cards ── */
+.scrollable-list {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(129, 140, 248, 0.4) transparent;
+}
+
+/* ── Filter bar chips ── */
+.filter-chip,
+.tag-chip {
+  transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+.filter-chip:hover,
+.tag-chip:hover {
+  transform: translateY(-1px);
+}
+
+/* ── Date range picker header ── */
+.date-range-picker,
+.filter-bar {
+  background: rgba(15, 17, 35, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(99, 102, 241, 0.18);
+  border-radius: 14px;
+}
+
+/* ── Loading overlay ── */
+.tb-loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 17, 35, 0.65);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+.tb-loading-overlay.is-active { display: flex; animation: tb-fade-in 0.2s ease; }
+.tb-loading-overlay .tb-spinner { width: 48px; height: 48px; border-width: 4px; }
+
+
+/* ============================================================
+   COSMIC UNIVERSE BACKGROUND + CONTRAST POLISH (admin pages)
+   Scoped to body.tb-cosmic so light-theme pages (accountant) stay clean.
+   - Deep space gradient base
+   - Animated nebula clouds (3 colored)
+   - Twinkling stars (multiple layers)
+   - Shooting comet
+   - Aurora wave
+   - High-contrast text & cards
+   ============================================================ */
+
+/* ── Deep-space base replaces flat dark ── */
+body.tb-cosmic.dashboard-body {
+  background:
+    radial-gradient(ellipse 80% 50% at 20% 0%, rgba(99, 102, 241, 0.18) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 30%, rgba(6, 182, 212, 0.14) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 60% at 50% 100%, rgba(139, 92, 246, 0.16) 0%, transparent 60%),
+    linear-gradient(180deg, #050617 0%, #0a0c20 30%, #0f1123 70%, #080a1a 100%) !important;
+  background-attachment: fixed !important;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Stars layer (twinkling dots) */
+body.tb-cosmic.dashboard-body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    radial-gradient(1px 1px at 12% 18%, rgba(255,255,255,0.95), transparent),
+    radial-gradient(1px 1px at 28% 72%, rgba(255,255,255,0.85), transparent),
+    radial-gradient(1.5px 1.5px at 45% 35%, rgba(199,210,254,0.9), transparent),
+    radial-gradient(1px 1px at 67% 88%, rgba(255,255,255,0.7), transparent),
+    radial-gradient(1px 1px at 82% 12%, rgba(165,180,252,0.85), transparent),
+    radial-gradient(1.5px 1.5px at 92% 64%, rgba(255,255,255,0.9), transparent),
+    radial-gradient(1px 1px at 8% 92%, rgba(196,181,253,0.8), transparent),
+    radial-gradient(1px 1px at 55% 55%, rgba(255,255,255,0.6), transparent),
+    radial-gradient(1.5px 1.5px at 73% 22%, rgba(255,255,255,0.9), transparent),
+    radial-gradient(1px 1px at 38% 8%, rgba(165,180,252,0.85), transparent),
+    radial-gradient(1px 1px at 18% 48%, rgba(255,255,255,0.7), transparent),
+    radial-gradient(1px 1px at 95% 40%, rgba(255,255,255,0.85), transparent);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  animation: tb-stars-twinkle 6s ease-in-out infinite alternate;
+}
+
+/* Nebula clouds */
+body.tb-cosmic.dashboard-body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(circle 380px at 15% 20%, rgba(139, 92, 246, 0.28), transparent 70%),
+    radial-gradient(circle 420px at 85% 60%, rgba(6, 182, 212, 0.22), transparent 70%),
+    radial-gradient(circle 340px at 60% 90%, rgba(236, 72, 153, 0.16), transparent 70%);
+  filter: blur(20px);
+  animation: tb-nebula-drift 30s ease-in-out infinite alternate;
+}
+
+body.tb-cosmic .dashboard-wrapper {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Keyframes ── */
+@keyframes tb-stars-twinkle {
+  0%   { opacity: 0.55; }
+  50%  { opacity: 1; }
+  100% { opacity: 0.7; }
+}
+
+@keyframes tb-nebula-drift {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  50%  { transform: translate3d(-30px, 20px, 0) scale(1.08); }
+  100% { transform: translate3d(20px, -25px, 0) scale(1.04); }
+}
+
+@keyframes tb-shooting-star {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(35deg);
+    opacity: 0;
+  }
+  4% { opacity: 1; }
+  20% {
+    transform: translate3d(80vw, 50vh, 0) rotate(35deg);
+    opacity: 0;
+  }
+  100% {
+    transform: translate3d(80vw, 50vh, 0) rotate(35deg);
+    opacity: 0;
+  }
+}
+
+@keyframes tb-aurora-wave {
+  0%, 100% { transform: translateX(-5%) scaleY(1); opacity: 0.5; }
+  50%      { transform: translateX(5%) scaleY(1.15); opacity: 0.75; }
+}
+
+/* Shooting comet */
+body.tb-cosmic .dashboard-wrapper::before {
+  content: '';
+  position: fixed;
+  top: 10%;
+  left: -10%;
+  width: 180px;
+  height: 1.5px;
+  background: linear-gradient(90deg, transparent, #fff 50%, rgba(129, 140, 248, 0.85));
+  border-radius: 99px;
+  box-shadow:
+    0 0 6px 1px rgba(255,255,255,0.7),
+    0 0 18px 3px rgba(129, 140, 248, 0.45);
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
+  animation: tb-shooting-star 9s ease-out infinite;
+  animation-delay: 3s;
+}
+
+/* Aurora band */
+body.tb-cosmic .dashboard-wrapper::after {
+  content: '';
+  position: fixed;
+  top: 35%;
+  left: -20%;
+  width: 140%;
+  height: 240px;
+  background:
+    radial-gradient(ellipse 60% 100% at 30% 50%, rgba(99, 102, 241, 0.18), transparent 70%),
+    radial-gradient(ellipse 50% 100% at 70% 50%, rgba(6, 182, 212, 0.14), transparent 70%);
+  filter: blur(40px);
+  pointer-events: none;
+  z-index: 0;
+  animation: tb-aurora-wave 14s ease-in-out infinite;
+}
+
+/* ============================================================
+   HIGH CONTRAST POLISH (scoped to tb-cosmic only)
+   ============================================================ */
+
+body.tb-cosmic.dashboard-body { color: #e8ebff !important; }
+
+body.tb-cosmic .sidebar {
+  background: linear-gradient(180deg,
+    rgba(10, 11, 24, 0.85) 0%,
+    rgba(15, 17, 35, 0.78) 100%) !important;
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border-right: 1px solid rgba(129, 140, 248, 0.18) !important;
+  box-shadow: 4px 0 32px -4px rgba(0, 0, 0, 0.4);
+}
+
+body.tb-cosmic .main-content { background: transparent !important; }
+
+body.tb-cosmic .card-style,
+body.tb-cosmic .content-card,
+body.tb-cosmic .chart-card {
+  background: linear-gradient(180deg,
+    rgba(22, 25, 50, 0.78) 0%,
+    rgba(15, 17, 35, 0.82) 100%) !important;
+  border: 1px solid rgba(129, 140, 248, 0.22) !important;
+  color: #e8ebff !important;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.3),
+    0 8px 24px -8px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+}
+
+body.tb-cosmic .card-style:hover,
+body.tb-cosmic .content-card:hover,
+body.tb-cosmic .chart-card:hover {
+  border-color: rgba(165, 180, 252, 0.45) !important;
+  box-shadow:
+    0 18px 40px -10px rgba(99, 102, 241, 0.4),
+    0 0 0 1px rgba(129, 140, 248, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+}
+
+body.tb-cosmic .card-style h3,
+body.tb-cosmic .card-style h4,
+body.tb-cosmic .content-card h3,
+body.tb-cosmic .content-card h4,
+body.tb-cosmic .card-title,
+body.tb-cosmic .card-header h3 {
+  color: #f1f5ff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+/* Tables */
+body.tb-cosmic .admin-table,
+body.tb-cosmic .table-modern,
+body.tb-cosmic .data-table,
+body.tb-cosmic .styled-table {
+  background: transparent !important;
+  color: #e8ebff !important;
+}
+body.tb-cosmic .admin-table thead th,
+body.tb-cosmic .table-modern thead th,
+body.tb-cosmic .data-table thead th,
+body.tb-cosmic .styled-table thead th {
+  background: linear-gradient(180deg,
+    rgba(99, 102, 241, 0.15) 0%,
+    rgba(99, 102, 241, 0.08) 100%) !important;
+  color: #c7d2fe !important;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid rgba(129, 140, 248, 0.25) !important;
+}
+body.tb-cosmic .admin-table tbody tr,
+body.tb-cosmic .table-modern tbody tr,
+body.tb-cosmic .data-table tbody tr,
+body.tb-cosmic .styled-table tbody tr {
+  border-bottom: 1px solid rgba(129, 140, 248, 0.08) !important;
+  color: #e8ebff !important;
+}
+body.tb-cosmic .admin-table tbody tr:hover,
+body.tb-cosmic .table-modern tbody tr:hover,
+body.tb-cosmic .data-table tbody tr:hover,
+body.tb-cosmic .styled-table tbody tr:hover {
+  background: rgba(129, 140, 248, 0.12) !important;
+  box-shadow: -3px 0 0 0 #818cf8, inset 0 0 30px rgba(99, 102, 241, 0.06);
+}
+
+/* Stat value */
+body.tb-cosmic .stat-value {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.02em;
+  text-shadow: 0 0 12px rgba(199, 210, 254, 0.3);
+}
+
+/* Stat icon glow */
+body.tb-cosmic .stat-icon.blue   { box-shadow: 0 4px 14px -2px rgba(59, 130, 246, 0.4); }
+body.tb-cosmic .stat-icon.green  { box-shadow: 0 4px 14px -2px rgba(16, 185, 129, 0.4); }
+body.tb-cosmic .stat-icon.orange { box-shadow: 0 4px 14px -2px rgba(245, 158, 11, 0.4); }
+body.tb-cosmic .stat-icon.purple { box-shadow: 0 4px 14px -2px rgba(139, 92, 246, 0.4); }
+body.tb-cosmic .stat-icon.red    { box-shadow: 0 4px 14px -2px rgba(239, 68, 68, 0.4); }
+body.tb-cosmic .stat-icon.cyan   { box-shadow: 0 4px 14px -2px rgba(6, 182, 212, 0.4); }
+
+/* Top header */
+body.tb-cosmic .top-header {
+  background: linear-gradient(180deg,
+    rgba(15, 17, 35, 0.7) 0%,
+    rgba(22, 25, 50, 0.6) 100%) !important;
+  backdrop-filter: blur(16px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+  border: 1px solid rgba(129, 140, 248, 0.25) !important;
+  box-shadow: 0 6px 18px -6px rgba(0, 0, 0, 0.4) !important;
+}
+body.tb-cosmic .top-header h1 {
+  color: #f8fafc !important;
+  font-weight: 800 !important;
+  text-shadow: 0 0 16px rgba(199, 210, 254, 0.4);
+}
+
+/* Brand logo */
+body.tb-cosmic .sidebar-brand .logo-icon,
+body.tb-cosmic .logo-icon {
+  background: linear-gradient(135deg, #a78bfa 0%, #06b6d4 50%, #f472b6 100%) !important;
+  box-shadow:
+    0 0 16px rgba(139, 92, 246, 0.5),
+    0 0 32px rgba(6, 182, 212, 0.3) !important;
+}
+
+/* Filter bar */
+body.tb-cosmic .date-range-picker,
+body.tb-cosmic .filter-bar {
+  background: linear-gradient(180deg,
+    rgba(22, 25, 50, 0.7) 0%,
+    rgba(15, 17, 35, 0.65) 100%) !important;
+  backdrop-filter: blur(14px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(160%) !important;
+  border: 1px solid rgba(129, 140, 248, 0.22) !important;
+}
+
+/* Badges */
+body.tb-cosmic .badge,
+body.tb-cosmic .status-badge {
+  font-weight: 600 !important;
+  padding: 5px 12px !important;
+  letter-spacing: 0.01em;
+}
+body.tb-cosmic .badge-success,
+body.tb-cosmic .status-badge.success {
+  background: rgba(16, 185, 129, 0.18) !important;
+  color: #6ee7b7 !important;
+  border: 1px solid rgba(16, 185, 129, 0.35) !important;
+}
+body.tb-cosmic .badge-danger,
+body.tb-cosmic .status-badge.danger {
+  background: rgba(239, 68, 68, 0.18) !important;
+  color: #fca5a5 !important;
+  border: 1px solid rgba(239, 68, 68, 0.35) !important;
+}
+body.tb-cosmic .badge-warning,
+body.tb-cosmic .status-badge.warning {
+  background: rgba(245, 158, 11, 0.18) !important;
+  color: #fcd34d !important;
+  border: 1px solid rgba(245, 158, 11, 0.35) !important;
+}
+body.tb-cosmic .badge-info,
+body.tb-cosmic .status-badge.info {
+  background: rgba(6, 182, 212, 0.18) !important;
+  color: #67e8f9 !important;
+  border: 1px solid rgba(6, 182, 212, 0.35) !important;
+}
+
+/* Inputs */
+body.tb-cosmic .header-search input,
+body.tb-cosmic .filter-bar input,
+body.tb-cosmic input.form-control,
+body.tb-cosmic select.form-control,
+body.tb-cosmic textarea.form-control {
+  background: rgba(15, 17, 35, 0.6) !important;
+  border: 1px solid rgba(129, 140, 248, 0.25) !important;
+  color: #e8ebff !important;
+}
+body.tb-cosmic .header-search input::placeholder,
+body.tb-cosmic .filter-bar input::placeholder,
+body.tb-cosmic input.form-control::placeholder {
+  color: rgba(199, 210, 254, 0.45) !important;
+}
+body.tb-cosmic .header-search input:focus,
+body.tb-cosmic .filter-bar input:focus,
+body.tb-cosmic input.form-control:focus,
+body.tb-cosmic select.form-control:focus {
+  border-color: rgba(129, 140, 248, 0.7) !important;
+  background: rgba(15, 17, 35, 0.8) !important;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2) !important;
+  color: #ffffff !important;
+}
+
+/* Scrollbar */
+body.tb-cosmic .sidebar-menu::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(129, 140, 248, 0.45), rgba(6, 182, 212, 0.4)) !important;
+}
+body.tb-cosmic .sidebar-menu::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(165, 180, 252, 0.7), rgba(34, 211, 238, 0.6)) !important;
+}
+
+/* Sidebar active */
+body.tb-cosmic .sidebar-menu li.active a {
+  background: linear-gradient(90deg,
+    rgba(129, 140, 248, 0.25) 0%,
+    rgba(6, 182, 212, 0.15) 100%) !important;
+  border-left-color: #818cf8 !important;
+  color: #ffffff !important;
+  text-shadow: 0 0 12px rgba(165, 180, 252, 0.5);
+}
+body.tb-cosmic .sidebar-menu li.active a i,
+body.tb-cosmic .sidebar-menu li.active a svg {
+  color: #a5f3fc !important;
+  filter: drop-shadow(0 0 6px rgba(165, 243, 252, 0.6));
+}
+
+/* Empty state */
+body.tb-cosmic .empty-state {
+  background: rgba(22, 25, 50, 0.5) !important;
+  border: 1px dashed rgba(129, 140, 248, 0.3) !important;
+  border-radius: 16px;
+  color: #c7d2fe !important;
+}
+body.tb-cosmic .empty-state-icon {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(6, 182, 212, 0.25)) !important;
+  border: 1px solid rgba(129, 140, 248, 0.3) !important;
+  color: #a5f3fc !important;
+}
+
+body.tb-cosmic .avatar,
+body.tb-cosmic .user-avatar {
+  border: 2px solid rgba(129, 140, 248, 0.4);
+}
+
+body.tb-cosmic .notification-btn .badge,
+body.tb-cosmic .notification-btn .dot {
+  background: #f472b6 !important;
+  box-shadow: 0 0 0 2px rgba(15, 17, 35, 1), 0 0 12px rgba(244, 114, 182, 0.6) !important;
+}
+
+/* Mobile perf */
+@media (max-width: 768px) {
+  body.tb-cosmic.dashboard-body::before { opacity: 0.5; }
+  body.tb-cosmic.dashboard-body::after { opacity: 0.6; }
+  body.tb-cosmic .dashboard-wrapper::before { display: none; }
+}
+
+@media print {
+  body.tb-cosmic.dashboard-body::before,
+  body.tb-cosmic.dashboard-body::after,
+  body.tb-cosmic .dashboard-wrapper::before,
+  body.tb-cosmic .dashboard-wrapper::after { display: none !important; }
+}
+
+/* ── GLOBAL TEXT CONTRAST FIX (áp dụng cho mọi trang admin) ── */
+.sidebar-menu a {
+  color: #cbd5e1 !important;
+  opacity: 1 !important;
+}
+.sidebar-menu a:hover {
+  color: #ffffff !important;
+  background-color: rgba(255,255,255,0.05) !important;
+}
+.sidebar-menu li.active a {
+  color: #38bdf8 !important;
+}
+.sidebar-brand {
+  color: #f8fafc !important;
+}
+
+/* Body & content text — đảm bảo không bị đen trên nền tối */
+body.dashboard-body,
+body.analytics-body,
+body.users-body {
+  color: #e2e8f0 !important;
+}
+
+/* users-body — giữ theme sáng cho card và bảng */
+body.users-body main.main-content {
+  background: transparent;
+  color: #0f172a;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-left: 260px !important;
+  min-height: calc(100vh - 2rem);
+}
+body.users-body main.main-content h1,
+body.users-body main.main-content h2,
+body.users-body main.main-content h3,
+body.users-body main.main-content h4 {
+  color: #0f172a !important;
+}
+body.users-body main.main-content .text-muted { color: #64748b !important; }
+body.users-body main.main-content .card { background: #ffffff; color: #0f172a; }
+body.dashboard-body h1, body.dashboard-body h2,
+body.dashboard-body h3, body.dashboard-body h4,
+body.analytics-body h1, body.analytics-body h2,
+body.analytics-body h3, body.analytics-body h4 {
+  color: #f8fafc !important;
+}
+
+/* Main content padding (nếu chưa có) */
+.main-content { color: #e2e8f0; }
+
+/* ── LIGHT-THEME OVERRIDE cho các trang dùng Bootstrap light (cards trắng, text-muted) ── */
+/* Áp dụng cho: financial-audit, fraud-monitor, operation-logs, role-management,
+   admin-history, coupon-management, media, schedules-pricing, tourmanagement,
+   assignments, moderation, user-details, forecast */
+main.main-content.theme-light,
+body.dashboard-body main.theme-light {
+  background: #f8fafc;
+  color: #0f172a;
+  border-radius: 12px;
+  padding: 1.5rem;
+  min-height: calc(100vh - 4rem);
+}
+main.theme-light h1, main.theme-light h2,
+main.theme-light h3, main.theme-light h4 {
+  color: #0f172a !important;
+}
+main.theme-light .text-muted { color: #64748b !important; }
+main.theme-light .card { background: #ffffff; color: #0f172a; }
+main.theme-light .card-header { background: #f1f5f9; color: #0f172a; }
+main.theme-light .table { color: #0f172a; }
+main.theme-light .table thead th { color: #475569; background: #f8fafc; }
+main.theme-light .table tbody td { color: #1e293b; border-color: #e2e8f0; }
+main.theme-light .form-control,
+main.theme-light .form-select { color: #0f172a; background: #ffffff; }
+main.theme-light .btn-outline-secondary { color: #475569; border-color: #cbd5e1; }
+main.theme-light .btn-outline-success { color: #16a34a; border-color: #86efac; }
+main.theme-light .btn-outline-danger { color: #dc2626; border-color: #fca5a5; }
+main.theme-light .btn-outline-primary { color: #2563eb; border-color: #93c5fd; }
+
+/* Loại trừ analytics (đã có theme tối riêng) — main content vẫn tối */
+body.analytics-body main.main-content {
+  background: transparent;
+  color: #f8fafc;
+  padding: 0;
+  margin-left: 260px !important;
+}
+body.analytics-body main.main-content h1,
+body.analytics-body main.main-content h2,
+body.analytics-body main.main-content h3,
+body.analytics-body main.main-content h4 {
+  color: #f8fafc !important;
+}
+
+
+
 

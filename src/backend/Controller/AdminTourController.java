@@ -127,6 +127,7 @@ public class AdminTourController extends HttpServlet {
 
                 JsonObject root = new JsonObject();
                 root.add("monthlyRevenue", new Gson().toJsonTree(revenueLongs));
+                root.addProperty("totalRevenue", tourDAO.getTotalRevenue());
 
                 if ("/admin/dashboard".equals(path)) {
                     // Endpoint dashboard: chỉ trả doanh thu, không gửi kèm danh sách tour.

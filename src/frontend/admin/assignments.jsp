@@ -1,4 +1,4 @@
-﻿<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
+<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt"  prefix="fmt" %>
 <c:if test="${empty sessionUser}">
@@ -9,16 +9,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nhật Ký Phân Công HDV — TourBuddy Enterprise</title>
+    <title>Nh&#7853;t K&#253; Ph&#226;n C&#244;ng HDV &#151; TourBuddy Enterprise</title>
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
     <!-- Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-dashboard.css?v=2.1">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-dashboard.css?v=2.3">
     <style>
-        /* ── ASSIGNMENTS PAGE — SPACE GLASSMORPHISM THEME ── */
+        /* -- ASSIGNMENTS PAGE &#151; SPACE GLASSMORPHISM THEME -- */
         .filter-section {
             background: rgba(22, 25, 50, 0.55);
             backdrop-filter: blur(14px);
@@ -86,20 +86,20 @@
     <script>window.contextPath = '${pageContext.request.contextPath}';</script>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-space-overrides.css?v=1.0">
 </head>
-<body class="dashboard-body">
+<body class="dashboard-body tb-cosmic">
 
 <div class="dashboard-wrapper">
-    <!-- ── Left Sidebar ── -->
+    <!-- -- Left Sidebar -- -->
     <c:set var="activePage" value="assignments" scope="request" />
     <jsp:include page="sidebar.jsp" />
 
-    <!-- ── Main Content Area ── -->
-    <main class="main-content">
+    <!-- -- Main Content Area -- -->
+    <main class="main-content theme-light">
         <!-- Top Header -->
         <header class="top-header">
             <div>
-                <h1>Nhật Ký Phân Công HDV</h1>
-                <p style="color: #9fa9cb; font-size: 0.9rem; margin-top: 4px;">Xem lịch sử và chỉ dẫn điều phối hướng dẫn viên cho các lịch khởi hành</p>
+                <h1>Nh&#7853;t K&#253; Ph&#226;n C&#244;ng HDV</h1>
+                <p style="color: #9fa9cb; font-size: 0.9rem; margin-top: 4px;">Xem l&#7883;ch s&#7917; v&#224; ch&#7881; d&#7851;n &#273;i&#7873;u ph&#7889;i h&#432;&#7899;ng d&#7851;n vi&#234;n cho c&#225;c l&#7883;ch kh&#7903;i h&#224;nh</p>
             </div>
             <jsp:include page="admin-header-right.jsp" />
         </header>
@@ -108,10 +108,10 @@
         <div class="filter-section">
             <div class="search-container">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="search-input" class="search-input" value="${search}" placeholder="Tìm theo tên tour hoặc hướng dẫn viên...">
+                <input type="text" id="search-input" class="search-input" value="${search}" placeholder="T&#236;m theo t&#234;n tour ho&#7863;c h&#432;&#7899;ng d&#7851;n vi&#234;n...">
             </div>
             <div style="color: #9fa9cb; font-size: 0.85rem; font-weight: 500;">
-                Tổng số bản ghi: <span style="font-weight: 700; color: #f8fafc;">${totalCount}</span>
+                T&#7893;ng s&#7889; b&#7843;n ghi: <span style="font-weight: 700; color: #f8fafc;">${totalCount}</span>
             </div>
         </div>
 
@@ -122,13 +122,13 @@
                     <thead>
                         <tr>
                             <th style="width: 80px;">ID</th>
-                            <th>Tên Tour</th>
-                            <th style="width: 130px;">Ngày Khởi Hành</th>
-                            <th>Hướng Dẫn Viên</th>
-                            <th>Người Phân Công</th>
-                            <th>Chỉ dẫn / Ghi chú</th>
-                            <th style="width: 150px;">Thời Gian Phân Công</th>
-                            <th style="width: 140px; text-align: center;">Hành động</th>
+                            <th>T&#234;n Tour</th>
+                            <th style="width: 130px;">Ng&#224;y Kh&#7903;i H&#224;nh</th>
+                            <th>H&#432;&#7899;ng D&#7851;n Vi&#234;n</th>
+                            <th>Ng&#432;&#7901;i Ph&#226;n C&#244;ng</th>
+                            <th>Ch&#7881; d&#7851;n / Ghi ch&#250;</th>
+                            <th style="width: 150px;">Th&#7901;i Gian Ph&#226;n C&#244;ng</th>
+                            <th style="width: 140px; text-align: center;">H&#192;NH &#272;&#7896;NG</th>
                         </tr>
                     </thead>
                     <tbody id="assignments-tbody">
@@ -144,12 +144,12 @@
                                         <td>
                                             <span class="badge-operation"><i class="fa-solid fa-user-tie"></i> <c:out value="${a.guide.fullName}"/></span>
                                         </td>
-                                        <td><c:out value="${not empty a.assignedByName ? a.assignedByName : 'Hệ thống'}"/></td>
+                                        <td><c:out value="${not empty a.assignedByName ? a.assignedByName : 'H&#7879; th&#7889;ng'}"/></td>
                                         <td>
                                             <div class="notes-text" title="<c:out value='${a.notes}'/>">
                                                 <c:choose>
                                                     <c:when test="${not empty a.notes}"><c:out value="${a.notes}"/></c:when>
-                                                    <c:otherwise><span style="color:#4a5578;">Không có ghi chú</span></c:otherwise>
+                                                    <c:otherwise><span style="color:#4a5578;">Kh&#244;ng c&#243; ghi ch&#250;</span></c:otherwise>
                                                 </c:choose>
                                             </div>
                                         </td>
@@ -162,7 +162,7 @@
                                                     data-guide-id="<c:out value='${a.guideId}'/>"
                                                     data-tour-name="<c:out value='${a.schedule.tour.tourName}'/>"
                                                     data-guide-name="<c:out value='${a.guide.fullName}'/>">
-                                                <i class="fa-solid fa-user-xmark"></i> Hủy phân công
+                                                <i class="fa-solid fa-user-xmark"></i> H&#7911;y ph&#226;n c&#244;ng
                                             </button>
                                         </td>
                                     </tr>
@@ -172,7 +172,7 @@
                                 <tr>
                                     <td colspan="8" class="empty-state">
                                         <i class="fa-solid fa-clipboard-list" style="font-size: 2rem; margin-bottom: 8px; display: block;"></i>
-                                        Chưa có lịch sử phân công hướng dẫn viên nào.
+                                        Ch&#432;a c&#243; l&#7883;ch s&#7917; ph&#226;n c&#244;ng h&#432;&#7899;ng d&#7851;n vi&#234;n n&#224;o.
                                     </td>
                                 </tr>
                             </c:otherwise>
@@ -190,7 +190,7 @@
                     <div class="pagination-buttons">
                         <a href="?page=${currentPage - 1}&size=${pageSize}&search=${search}"
                            class="page-link ${currentPage == 1 ? 'disabled' : ''}">
-                            <i class="fa-solid fa-angle-left"></i> Trước
+                            <i class="fa-solid fa-angle-left"></i> Tr&#432;&#7899;c
                         </a>
                         <c:forEach var="p" begin="1" end="${totalPages}">
                             <a href="?page=${p}&size=${pageSize}&search=${search}"

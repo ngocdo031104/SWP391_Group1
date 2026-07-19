@@ -1,13 +1,13 @@
 /*
- * Người làm: Dương
- * Thời gian tạo: 04/06/2026
- * Chức năng: JavaScript cho màn Customer tạo booking.
- * Ý nghĩa: Giữ dữ liệu người tham gia khi tăng/giảm số lượng, bắt người đại diện là người lớn, validate lỗi dưới từng ô và tính tạm tiền tour theo nhóm tuổi.
+ * Ng\u01b0\u1eddi l\u00e0m: D\u01b0\u01a1ng
+ * Th\u1eddi gian t\u1ea1o: 04/06/2026
+ * Ch\u1ee9c n\u0103ng: JavaScript cho m\u00e0n Customer t\u1ea1o booking.
+ * \u00dd ngh\u0129a: Gi\u1eef d\u1eef li\u1ec7u ng\u01b0\u1eddi tham gia khi t\u0103ng/gi\u1ea3m s\u1ed1 l\u01b0\u1ee3ng, b\u1eaft ng\u01b0\u1eddi \u0111\u1ea1i di\u1ec7n l\u00e0 ng\u01b0\u1eddi l\u1edbn, validate l\u1ed7i d\u01b0\u1edbi t\u1eebng \u00f4 v\u00e0 t\u00ednh t\u1ea1m ti\u1ec1n tour theo nh\u00f3m tu\u1ed5i.
  */
 (function () {
-    // createForm là form gửi dữ liệu từ màn tạo booking sang BookingCreateController.doPost.
+    // createForm l\u00e0 form g\u1eedi d\u1eef li\u1ec7u t\u1eeb m\u00e0n t\u1ea1o booking sang BookingCreateController.doPost.
     const createForm = document.getElementById('booking-create-form');
-    // countInput lưu số người tham gia hiện tại, được gửi lên server bằng name participantCount.
+    // countInput l\u01b0u s\u1ed1 ng\u01b0\u1eddi tham gia hi\u1ec7n t\u1ea1i, \u0111\u01b0\u1ee3c g\u1eedi l\u00ean server b\u1eb1ng name participantCount.
     const countInput = document.getElementById('participant-count');
     // list l\u00E0 v\u00F9ng ch\u1EE9a c\u00E1c card nh\u1EADp th\u00F4ng tin participant \u0111\u01B0\u1EE3c sinh \u0111\u1ED9ng b\u1EB1ng JavaScript.
     const list = document.getElementById('participant-list');
@@ -23,8 +23,10 @@
     // getSelectedSchedulePrice l\u1EA5y gi\u00E1 Adult/Child/Infant t\u1EEB radio l\u1ECBch kh\u1EDFi h\u00E0nh \u0111ang \u0111\u01B0\u1EE3c ch\u1ECDn.
     function getSelectedSchedulePrice() {
         const checkedSchedule = document.querySelector('[name="scheduleId"]:checked');
+        const form = document.getElementById('booking-create-form');
+        const fallbackBase = form ? Number(form.dataset.basePrice || 0) : 0;
         return {
-            adult: checkedSchedule ? Number(checkedSchedule.dataset.priceAdult || 0) : 0,
+            adult: checkedSchedule ? Number(checkedSchedule.dataset.priceAdult || fallbackBase) : fallbackBase,
             child: checkedSchedule ? Number(checkedSchedule.dataset.priceChild || 0) : 0,
             infant: checkedSchedule ? Number(checkedSchedule.dataset.priceInfant || 0) : 0
         };

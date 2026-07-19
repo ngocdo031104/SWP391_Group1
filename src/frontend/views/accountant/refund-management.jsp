@@ -13,7 +13,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xử Lý Hoàn Tiền — TourBuddy</title>
+    <title>X&#7917; L&#253; Ho&#224;n Ti&#7873;n &#8212; TourBuddy</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-dashboard.css?v=1.6">
@@ -97,8 +97,8 @@
         <div class="content-area" style="padding: 28px 36px;">
             <div class="page-header" style="margin-bottom:24px;">
                 <div>
-                    <h1 style="margin:0;font-size:24px;font-weight:700;color:var(--gray-900);">Xử Lý Hoàn Tiền</h1>
-                    <p style="margin:4px 0 0;color:var(--gray-500);font-size:14px;">Duyệt hoặc từ chối các yêu cầu hủy tour từ khách hàng</p>
+                    <h1 style="margin:0;font-size:24px;font-weight:700;color:var(--gray-900);">X&#7917; L&#253; Ho&#224;n Ti&#7873;n</h1>
+                    <p style="margin:4px 0 0;color:var(--gray-500);font-size:14px;">Duy&#7879;t ho&#7863;c t&#7915; ch&#7889;i c&#225;c y&#234;u c&#7847;u h&#7911;y tour t&#7915; kh&#225;ch h&#224;ng</p>
                 </div>
             </div>
 
@@ -112,10 +112,10 @@
             <div class="filter-container">
                 <div class="tabs">
                     <a href="${pageContext.request.contextPath}/accountant/refunds?tab=pending" class="tab-btn ${activeTab eq 'pending' ? 'active' : ''}">
-                        <i data-lucide="clock"></i> Chờ Xử Lý
+                        <i data-lucide="clock"></i> Ch&#7901; X&#7917; L&#253;
                     </a>
                     <a href="${pageContext.request.contextPath}/accountant/refunds?tab=history" class="tab-btn ${activeTab eq 'history' ? 'active' : ''}">
-                        <i data-lucide="archive"></i> Đã Xử Lý
+                        <i data-lucide="archive"></i> &#272;&#227; X&#7917; L&#253;
                     </a>
                 </div>
 
@@ -123,24 +123,24 @@
                     <input type="hidden" name="tab" value="${activeTab}">
                     
                     <div style="display: flex; align-items: center; gap: 8px;">
-                        <label style="font-size: 13px; font-weight: 500; color: var(--gray-700);">Tên KH:</label>
-                        <input type="text" name="customerName" value="${param.customerName}" class="form-control" placeholder="Tìm theo tên khách hàng..." style="padding: 8px 12px; width: 200px; font-size: 13px;">
+                        <label style="font-size: 13px; font-weight: 500; color: var(--gray-700);">T&#234;n KH:</label>
+                        <input type="text" name="customerName" value="${param.customerName}" class="form-control" placeholder="T&#236;m theo t&#234;n kh&#225;ch h&#224;ng..." style="padding: 8px 12px; width: 200px; font-size: 13px;">
                     </div>
 
                     <div style="display: flex; align-items: center; gap: 8px;">
-                        <label style="font-size: 13px; font-weight: 500; color: var(--gray-700);">Từ ngày:</label>
+                        <label style="font-size: 13px; font-weight: 500; color: var(--gray-700);">T&#7915; ng&#224;y:</label>
                         <input type="date" name="startDate" value="${param.startDate}" class="form-control" style="padding: 8px 12px; width: auto; font-size: 13px;">
                     </div>
                     
                     <div style="display: flex; align-items: center; gap: 8px;">
-                        <label style="font-size: 13px; font-weight: 500; color: var(--gray-700);">Đến ngày:</label>
+                        <label style="font-size: 13px; font-weight: 500; color: var(--gray-700);">&#272;&#7871;n ng&#224;y:</label>
                         <input type="date" name="endDate" value="${param.endDate}" class="form-control" style="padding: 8px 12px; width: auto; font-size: 13px;">
                     </div>
                     
-                    <button type="submit" class="btn-modern btn-outline" style="padding: 8px 16px; background: white;"><i data-lucide="filter" style="width: 15px; height: 15px;"></i> Lọc</button>
+                    <button type="submit" class="btn-modern btn-outline" style="padding: 8px 16px; background: white;"><i data-lucide="filter" style="width: 15px; height: 15px;"></i> L&#7885;c</button>
                     
                     <c:if test="${not empty param.startDate or not empty param.endDate}">
-                        <a href="${pageContext.request.contextPath}/accountant/refunds?tab=${activeTab}" class="btn-modern btn-outline" style="padding: 8px 12px; color: var(--danger); border-color: var(--danger-light); background: var(--danger-light);" title="Xóa bộ lọc">
+                        <a href="${pageContext.request.contextPath}/accountant/refunds?tab=${activeTab}" class="btn-modern btn-outline" style="padding: 8px 12px; color: var(--danger); border-color: var(--danger-light); background: var(--danger-light);" title="X&#243;a b&#7897; l&#7885;c">
                             <i data-lucide="x" style="width: 15px; height: 15px;"></i>
                         </a>
                     </c:if>
@@ -152,26 +152,26 @@
                     <c:when test="${empty requests}">
                         <div class="empty-state">
                             <i data-lucide="check-circle-2"></i>
-                            <h3>Không có dữ liệu</h3>
-                            <p>Không có yêu cầu hoàn tiền nào trong mục này.</p>
+                            <h3>Kh&#244;ng c&#243; d&#7919; li&#7879;u</h3>
+                            <p>Kh&#244;ng c&#243; y&#234;u c&#7847;u ho&#224;n ti&#7873;n n&#224;o trong m&#7909;c n&#224;y.</p>
                         </div>
                     </c:when>
                     <c:otherwise>
                         <table class="modern-table">
                             <thead>
                                 <tr>
-                                    <th>Mã Booking</th>
-                                    <th>Khách Hàng</th>
-                                    <th>Tour / Ngày KH</th>
-                                    <th>Ngày Yêu Cầu</th>
-                                    <th>Số Tiền (VNĐ)</th>
-                                    <th>Lý Do Hủy</th>
+                                    <th>M&#227; Booking</th>
+                                    <th>Kh&#225;ch H&#224;ng</th>
+                                    <th>Tour / Ng&#224;y KH</th>
+                                    <th>Ng&#224;y Y&#234;u C&#7847;u</th>
+                                    <th>S&#7889; Ti&#7873;n (VN&#272;)</th>
+                                    <th>L&#253; Do H&#7911;y</th>
                                     <c:if test="${activeTab eq 'history'}">
-                                        <th>Trạng Thái</th>
-                                        <th>Ghi Chú KT</th>
+                                        <th>Tr&#7841;ng Th&#225;i</th>
+                                        <th>Ghi Ch&#250; KT</th>
                                     </c:if>
                                     <c:if test="${activeTab eq 'pending'}">
-                                        <th style="text-align:right;">Thao Tác</th>
+                                        <th style="text-align:right;">Thao T&#225;c</th>
                                     </c:if>
                                 </tr>
                             </thead>
@@ -190,13 +190,13 @@
                                             </div>
                                         </td>
                                         <td><fmt:formatDate value="${r.createdAt}" pattern="dd/MM/yyyy HH:mm"/></td>
-                                        <td class="amount"><fmt:formatNumber value="${r.totalAmount}" type="number"/> đ</td>
+                                        <td class="amount"><fmt:formatNumber value="${r.totalAmount}" type="number"/> &#273;</td>
                                         <td><span style="font-size:13px;" title="${r.reason}">${r.reason}</span></td>
                                         
                                         <c:if test="${activeTab eq 'history'}">
                                             <td>
-                                                <c:if test="${r.status eq 'Approved'}"><span class="badge badge-approved">Đã Duyệt</span></c:if>
-                                                <c:if test="${r.status eq 'Rejected'}"><span class="badge badge-rejected">Từ Chối</span></c:if>
+                                                <c:if test="${r.status eq 'Approved'}"><span class="badge badge-approved">&#272;&#227; Duy&#7879;t</span></c:if>
+                                                <c:if test="${r.status eq 'Rejected'}"><span class="badge badge-rejected">T&#7915; Ch&#7889;i</span></c:if>
                                             </td>
                                             <td style="font-size:12px; color:var(--gray-500); max-width:150px;">${r.notes}</td>
                                         </c:if>
@@ -205,11 +205,11 @@
                                             <td style="text-align:right;">
                                                 <button type="button" class="btn-modern btn-success" 
                                                     onclick="openApproveModal(${r.requestId}, ${r.bookingId}, '${r.bookingCode}', ${r.requestedBy}, ${r.totalAmount})">
-                                                    <i data-lucide="check" style="width:14px;height:14px;"></i> Duyệt
+                                                    <i data-lucide="check" style="width:14px;height:14px;"></i> Duy&#7879;t
                                                 </button>
                                                 <button type="button" class="btn-modern btn-danger"
                                                     onclick="openRejectModal(${r.requestId}, ${r.bookingId}, '${r.bookingCode}', ${r.requestedBy})">
-                                                    <i data-lucide="x" style="width:14px;height:14px;"></i> Từ chối
+                                                    <i data-lucide="x" style="width:14px;height:14px;"></i> T&#7915; ch&#7889;i
                                                 </button>
                                             </td>
                                         </c:if>
@@ -228,7 +228,7 @@
 <div class="modal-overlay" id="approveModal">
     <div class="modal-box">
         <div class="modal-header success">
-            <h3 style="margin:0;"><i data-lucide="check-circle" style="vertical-align:middle;margin-right:6px;"></i> Duyệt Hoàn Tiền</h3>
+            <h3 style="margin:0;"><i data-lucide="check-circle" style="vertical-align:middle;margin-right:6px;"></i> Duy&#7879;t Ho&#224;n Ti&#7873;n</h3>
             <button class="btn-outline" style="border:none;padding:4px;cursor:pointer;" onclick="closeModal('approveModal')"><i data-lucide="x"></i></button>
         </div>
         <form method="post" action="${pageContext.request.contextPath}/accountant/refunds">
@@ -241,21 +241,21 @@
             
             <div class="modal-body">
                 <div class="form-group">
-                    <label>Số Tiền Cần Hoàn Trả</label>
+                    <label>S&#7889; Ti&#7873;n C&#7847;n Ho&#224;n Tr&#7843;</label>
                     <div class="readonly-value" id="appRefundAmountText" style="color:var(--danger);"></div>
                 </div>
                 <div class="form-group">
-                    <label>Mã Giao Dịch Hoàn Tiền (Transaction Ref) *</label>
-                    <input type="text" name="transactionRef" class="form-control" placeholder="Ví dụ: MB-123456789" required>
+                    <label>M&#227; Giao D&#7883;ch Ho&#224;n Ti&#7873;n (Transaction Ref) *</label>
+                    <input type="text" name="transactionRef" class="form-control" placeholder="V&#237; d&#7909;: MB-123456789" required>
                 </div>
                 <div class="form-group">
-                    <label>Ghi Chú Kế Toán</label>
-                    <textarea name="notes" class="form-control" rows="3" placeholder="Ghi chú nội bộ cho giao dịch hoàn tiền này..."></textarea>
+                    <label>Ghi Ch&#250; K&#7871; To&#225;n</label>
+                    <textarea name="notes" class="form-control" rows="3" placeholder="Ghi ch&#250; n&#7897;i b&#7897; cho giao d&#7883;ch ho&#224;n ti&#7873;n n&#224;y..."></textarea>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn-modern btn-outline" onclick="closeModal('approveModal')">Hủy</button>
-                <button type="submit" class="btn-modern btn-success">Xác Nhận Đã Hoàn Tiền</button>
+                <button type="button" class="btn-modern btn-outline" onclick="closeModal('approveModal')">H&#7911;y</button>
+                <button type="submit" class="btn-modern btn-success">X&#225;c Nh&#7853;n &#272;&#227; Ho&#224;n Ti&#7873;n</button>
             </div>
         </form>
     </div>
@@ -265,7 +265,7 @@
 <div class="modal-overlay" id="rejectModal">
     <div class="modal-box">
         <div class="modal-header danger">
-            <h3 style="margin:0;"><i data-lucide="x-circle" style="vertical-align:middle;margin-right:6px;"></i> Từ Chối Hoàn Tiền</h3>
+            <h3 style="margin:0;"><i data-lucide="x-circle" style="vertical-align:middle;margin-right:6px;"></i> T&#7915; Ch&#7889;i Ho&#224;n Ti&#7873;n</h3>
             <button class="btn-outline" style="border:none;padding:4px;cursor:pointer;" onclick="closeModal('rejectModal')"><i data-lucide="x"></i></button>
         </div>
         <form method="post" action="${pageContext.request.contextPath}/accountant/refunds">
@@ -276,15 +276,15 @@
             <input type="hidden" name="bookingCode" id="rejBookingCode">
             
             <div class="modal-body">
-                <p style="font-size:14px;color:var(--gray-700);margin-top:0;">Hành động này sẽ hủy yêu cầu hoàn tiền và giữ nguyên trạng thái Booking. Khách hàng sẽ nhận được thông báo.</p>
+                <p style="font-size:14px;color:var(--gray-700);margin-top:0;">H&#224;nh &#273;&#7897;ng n&#224;y s&#7869; h&#7911;y y&#234;u c&#7847;u ho&#224;n ti&#7873;n v&#224; gi&#7919; nguy&#234;n tr&#7841;ng th&#225;i Booking. Kh&#225;ch h&#224;ng s&#7869; nh&#7853;n &#273;&#432;&#7907;c th&#244;ng b&#225;o.</p>
                 <div class="form-group">
-                    <label>Lý Do Từ Chối (Sẽ gửi cho khách hàng) *</label>
-                    <textarea name="notes" class="form-control" rows="4" placeholder="Ví dụ: Đã quá hạn hủy tour theo chính sách..." required></textarea>
+                    <label>L&#253; Do T&#7915; Ch&#7889;i (S&#7869; g&#7917;i cho kh&#225;ch h&#224;ng) *</label>
+                    <textarea name="notes" class="form-control" rows="4" placeholder="V&#237; d&#7909;: &#272;&#227; qu&#225; h&#7841;n h&#7911;y tour theo ch&#237;nh s&#225;ch..." required></textarea>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn-modern btn-outline" onclick="closeModal('rejectModal')">Hủy</button>
-                <button type="submit" class="btn-modern btn-danger">Xác Nhận Từ Chối</button>
+                <button type="button" class="btn-modern btn-outline" onclick="closeModal('rejectModal')">H&#7911;y</button>
+                <button type="submit" class="btn-modern btn-danger">X&#225;c Nh&#7853;n T&#7915; Ch&#7889;i</button>
             </div>
         </form>
     </div>
@@ -301,7 +301,7 @@
         document.getElementById('appBookingCode').value = bCode;
         document.getElementById('appCustomerId').value = cId;
         document.getElementById('appRefundAmountVal').value = amount;
-        document.getElementById('appRefundAmountText').textContent = new Intl.NumberFormat('vi-VN').format(amount) + ' đ';
+        document.getElementById('appRefundAmountText').textContent = new Intl.NumberFormat('vi-VN').format(amount) + ' \u0111';
         document.getElementById('approveModal').classList.add('open');
     }
 

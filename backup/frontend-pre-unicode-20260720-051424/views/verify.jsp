@@ -1,0 +1,175 @@
+﻿<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
+
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xác thực tài khoản | TourBuddy</title>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --clr-primary: #1E7D4B;
+            --clr-primary-dark: #155c36;
+            --clr-accent: #E67E22;
+            --clr-bg: #f8f9fa;
+            --clr-card: #ffffff;
+            --clr-text: #333333;
+            --clr-muted: #6c757d;
+            --clr-border: #e0e0e0;
+            --clr-error: #dc3545;
+            --clr-success: #28a745;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, rgba(30,125,75,0.1) 0%, rgba(230,126,34,0.1) 100%), var(--clr-bg);
+            color: var(--clr-text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 450px;
+            padding: 20px;
+        }
+
+        .auth-card {
+            background-color: var(--clr-card);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .auth-logo {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--clr-primary);
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .auth-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .auth-desc {
+            color: var(--clr-muted);
+            font-size: 0.95rem;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--clr-border);
+            border-radius: 8px;
+            font-size: 1.2rem;
+            text-align: center;
+            letter-spacing: 5px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--clr-primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(30,125,75,0.2);
+        }
+
+        .btn {
+            display: inline-block;
+            width: 100%;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background-color: var(--clr-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--clr-primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .alert {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            text-align: left;
+        }
+
+        .alert-error {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--clr-error);
+            border: 1px solid rgba(220, 53, 69, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <a href="${pageContext.request.contextPath}/home" class="auth-logo">TourBuddy.</a>
+            <h1 class="auth-title">Xác thực Email</h1>
+            <p class="auth-desc">
+                Chúng tôi đã gửi một mã xác nhận gồm 6 chữ số đến email <strong>${sessionScope.verify_email}</strong>. 
+                Vui lòng kiểm tra hộp thư đến (hoặc thư mục Spam) và nhập mã vào bên dưới.
+            </p>
+
+            <c:if test="${not empty errorMessage}">
+                <div class="alert alert-error">
+                    <i class="fa fa-exclamation-circle"></i> ${errorMessage}
+                </div>
+            </c:if>
+
+            <c:if test="${not empty sessionScope.emailError}">
+                <div class="alert alert-error">
+                    <i class="fa fa-exclamation-triangle"></i> Lỗi hệ thống gửi mail: ${sessionScope.emailError}
+                    <br><small>(Vui lòng chụp lại thông báo này gửi cho tôi để tôi khắc phục!)</small>
+                </div>
+            </c:if>
+
+            <form action="${pageContext.request.contextPath}/verify" method="POST">
+                <div class="form-group">
+                    <label class="form-label" for="otp">Mã xác nhận (OTP)</label>
+                    <input type="text" id="otp" name="otp" class="form-control" placeholder="123456" maxlength="6" required pattern="[0-9]{6}">
+                </div>
+                <button type="submit" class="btn btn-primary">Xác thực tài khoản</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

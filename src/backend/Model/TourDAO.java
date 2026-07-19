@@ -360,12 +360,38 @@ public class TourDAO extends DBContext {
         
         // Dương làm đoạn này: Không map TotalSeats, AvailableSeats và NextDeparture vào Tour vì các dữ liệu này thuộc bảng TourSchedule.
         // Khi cần số ghế hoặc ngày khởi hành, màn hình sẽ lấy từ danh sách TourSchedule của tour để tránh sai mô hình dữ liệu.
+        // NOTE: getAllToursAdmin() trả về các cột TotalSeats, AvailableSeats, NextDeparture qua subquery (đã SELECT ở trên),
+        // nên nếu KHÔNG map ở đây thì JS dashboard sẽ thấy seatsLeft=0 → hiển thị sai "0/N chỗ".
+        // → Map đầy đủ để dashboard/management hiển thị đúng, đồng thời fallback về MaxParticipants khi tour chưa có schedule.
+        if (columnExists(rs, "TotalSeats")) {
+            tour.setTotalSeats(rs.getInt("TotalSeats"));
+        }
+        if (columnExists(rs, "AvailableSeats")) {
+            tour.setAvailableSeats(rs.getInt("AvailableSeats"));
+        }
+        if (columnExists(rs, "NextDeparture")) {
+            java.sql.Date nextDep = rs.getDate("NextDeparture");
+            tour.setNextDeparture(nextDep != null ? nextDep.toString() : "");
+        }
 
         
         tour.setCreatedBy(rs.getObject("CreatedBy") != null ? rs.getInt("CreatedBy") : null);
         tour.setCreatedAt(rs.getTimestamp("CreatedAt"));
         tour.setUpdatedAt(rs.getTimestamp("UpdatedAt"));
         return tour;
+    }
+
+    /**
+     * Kiểm tra một cột có tồn tại trong ResultSet hay không (dùng cho việc map linh hoạt).
+     * Tránh lỗi SQLException khi truy vấn không SELECT cột đó.
+     */
+    private boolean columnExists(ResultSet rs, String columnName) {
+        try {
+            rs.findColumn(columnName);
+            return true;
+        } catch (SQLException e) {
+            return false;
+        }
     }
 
     /**
@@ -1065,7 +1091,7 @@ public class TourDAO extends DBContext {
         
         String sql = "SELECT MONTH(CreatedAt) as MonthVal, YEAR(CreatedAt) as YearVal, SUM(TotalAmount) as Total "
                    + "FROM Booking "
-                   + "WHERE Status = 'Success' AND CreatedAt >= DATEADD(month, -5, GETDATE()) "
+                   + "WHERE Status NOT IN ('Cancelled', 'Failed', 'Refunded') AND CreatedAt >= DATEADD(month, -5, GETDATE()) "
                    + "GROUP BY YEAR(CreatedAt), MONTH(CreatedAt)";
                    
         try (PreparedStatement ps = connection.prepareStatement(sql);
@@ -1084,6 +1110,25 @@ public class TourDAO extends DBContext {
             Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, "getMonthlyRevenueLast6Months failed", ex);
         }
         return revenue;
+    }
+
+    /**
+     * Get total all-time revenue from all non-cancelled bookings.
+     * Includes PendingPayment (holds), Success, Confirmed, Completed.
+     * Excludes only Cancelled, Failed, Refunded.
+     */
+    public long getTotalRevenue() {
+        String sql = "SELECT ISNULL(SUM(TotalAmount), 0) as Total FROM Booking "
+                   + "WHERE Status NOT IN ('Cancelled', 'Failed', 'Refunded')";
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getLong("Total");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, "getTotalRevenue failed", ex);
+        }
+        return 0L;
     }
 
     /**

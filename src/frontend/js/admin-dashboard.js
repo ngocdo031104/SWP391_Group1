@@ -30,10 +30,12 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(([revenueData, toursData]) => {
                 const tours = Array.isArray(toursData) ? toursData : (toursData.tours || []);
                 const monthlyRev = revenueData.monthlyRevenue || toursData.monthlyRevenue || [0, 0, 0, 0, 0, 0];
+                // Tổng doanh thu thực từ DB (tổng tất cả booking không bị huỷ)
+                const dbTotalRevenue = revenueData.totalRevenue || toursData.totalRevenue || 0;
                 allToursRaw = tours;
                 const enrichedTours = mapToursData(tours);
 
-                renderOverviewStats(enrichedTours, monthlyRev);
+                renderOverviewStats(enrichedTours, monthlyRev, dbTotalRevenue);
                 renderOverviewTable(enrichedTours);
                 renderOverviewDepartures(enrichedTours);
                 initOverviewRevenueChart(monthlyRev);
@@ -78,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return {
                 id: t.tourId,
                 title: t.tourName,
-                location: t.departureCity + ' \u2192 ' + t.destination,
+                location: (t.departureCity || 'N/A') + ' → ' + (t.destination || 'N/A'),
                 category: t.categoryId,
                 categoryName: t.categoryName,
                 difficulty: t.difficultyLevel ? t.difficultyLevel.toLowerCase() : 'easy',
@@ -95,8 +97,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 1. Calculate and display KPI metrics on stats cards
-    function renderOverviewStats(tours, monthlyRev) {
-        let totalRevenue = 0;
+    // dbTotalRevenue: tổng doanh thu thực lấy từ DB (không tự tính theo BasePrice × seats)
+    function renderOverviewStats(tours, monthlyRev, dbTotalRevenue) {
         let seatsLeft = 0;
         let seatsTotal = 0;
 
@@ -104,12 +106,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (tour.status === 'active') {
                 seatsLeft += tour.seatsLeft;
                 seatsTotal += tour.seatsTotal;
-                const booked = tour.seatsTotal - tour.seatsLeft;
-                totalRevenue += booked * tour.priceVND;
             }
         });
 
-        const currentMonthRev = (monthlyRev && monthlyRev.length > 5) ? monthlyRev[5] : totalRevenue;
+        // Ưu tiên: tháng hiện tại (monthlyRev[5]) > tổng DB > 0
+        const currentMonthRev = (monthlyRev && monthlyRev.length > 5 && monthlyRev[5] > 0)
+            ? monthlyRev[5]
+            : (dbTotalRevenue || 0);
 
         document.getElementById('stats-revenue').textContent = formatCurrency(currentMonthRev);
         document.getElementById('stats-tours-count').textContent = tours.length;
