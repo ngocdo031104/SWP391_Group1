@@ -112,10 +112,10 @@
                     <div class="section-title"><span>2</span><strong>Số lượng người tham gia</strong></div>
                     <div class="participant-counter">
                         <button type="button" id="minus-participant" aria-label="Giảm số người">-</button>
-                        <input type="number" name="participantCount" id="participant-count" min="1" max="10" value="1" readonly>
+                        <input type="number" name="participantCount" id="participant-count" min="1" max="<%= tour != null && tour.getMaxParticipants() > 0 ? tour.getMaxParticipants() : 10 %>" value="1" readonly>
                         <button type="button" id="plus-participant" aria-label="Tăng số người">+</button>
                     </div>
-                    <p class="booking-note">Tour giới hạn tối đa 10 người cho mỗi đơn để đảm bảo chất lượng phục vụ.</p>
+                    <p class="booking-note">Tour giới hạn tối đa <%= tour != null && tour.getMaxParticipants() > 0 ? tour.getMaxParticipants() : 10 %> người cho mỗi đơn để đảm bảo chất lượng phục vụ.</p>
                     <%-- participant-list là vùng JS customer-booking-create.js sinh form người tham gia theo participantCount. --%>
                     <div id="participant-list" class="participant-list"></div>
                 </div>

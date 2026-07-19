@@ -353,13 +353,15 @@
                 else if (t.getCategoryId() == 5) catStr = "luxury";
                 
                 // Get seats and departure city
-                int seatsLeft = 10;
-                int seatsTotal = 20;
+                // Dương: fallback dùng Tour.MaxParticipants để đồng bộ với trang booking-create.
+                int tourMaxParts = t.getMaxParticipants() > 0 ? t.getMaxParticipants() : 10;
+                int seatsLeft = tourMaxParts;
+                int seatsTotal = tourMaxParts;
                 String departureCity = t.getDepartureCity();
                 if (departureCity == null || departureCity.trim().isEmpty()) {
                     departureCity = "Hà Nội";
                 }
-                
+
                 if (t.getSchedules() != null && !t.getSchedules().isEmpty()) {
                     seatsLeft = t.getSchedules().get(0).getAvailableSeats();
                     seatsTotal = t.getSchedules().get(0).getTotalSeats();
@@ -403,6 +405,7 @@
             category: "<%= catStr %>",
             seatsLeft: <%= seatsLeft %>,
             seatsTotal: <%= seatsTotal %>,
+            maxParticipants: <%= t.getMaxParticipants() %>,
             photos: [
                 <%
                 if (t.getMediaList() != null && !t.getMediaList().isEmpty()) {

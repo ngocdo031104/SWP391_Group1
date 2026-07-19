@@ -41,10 +41,24 @@
         }
     }
     
-    int activeSeatsLeft = 10;
-    if (activeTour != null && activeTour.getSchedules() != null && !activeTour.getSchedules().isEmpty()) {
-        activeSeatsLeft = activeTour.getSchedules().get(0).getAvailableSeats();
+    int activeSeatsLeft = 0;
+    int totalSeatsAll = 0;
+    if (activeTour != null) {
+        // Dương: Tổng chỗ trống & tổng chỗ lấy từ TẤT CẢ schedule tương lai
+        // (Tour có thể có nhiều lịch — chỉ lấy lịch đầu tiên là sai cho hiển thị)
+        if (activeTour.getSchedules() != null) {
+            for (TourSchedule s : activeTour.getSchedules()) {
+                if ("Open".equalsIgnoreCase(s.getStatus())) {
+                    activeSeatsLeft += s.getAvailableSeats();
+                    totalSeatsAll += s.getTotalSeats();
+                }
+            }
+        }
     }
+    // Dương: Giới hạn số người tối đa của mỗi đoàn lấy từ Tour.MaxParticipants (do admin cấu hình khi tạo tour).
+    // Fallback 10 khi DB chưa set để khớp với constraint cũ và tránh hiển thị rỗng.
+    int maxParticipantsPerDeparture = (activeTour != null && activeTour.getMaxParticipants() > 0)
+            ? activeTour.getMaxParticipants() : 10;
 %>
 <!-- Nhúng header dùng chung cho toàn bộ website, nằm trong thư mục web/common/ -->
 <jsp:include page="/common/header.jsp" />
@@ -187,8 +201,15 @@
                     <div class="highlight-item">
                         <div class="icon-wrapper"><i data-lucide="users"></i></div>
                         <div class="item-text">
-                            <span class="label">Số slot còn lại</span>
-                            <strong id="hl-group-size"><%= activeSeatsLeft %> Chỗ</strong>
+                            <span class="label">Giới hạn đoàn</span>
+                            <strong id="hl-group-size" title="Số người tối đa cho mỗi đoàn khởi hành — do Admin cấu hình khi tạo tour">Tối đa <%= maxParticipantsPerDeparture %> khách/đoàn</strong>
+                        </div>
+                    </div>
+                    <div class="highlight-item">
+                        <div class="icon-wrapper"><i data-lucide="ticket"></i></div>
+                        <div class="item-text">
+                            <span class="label">Chỗ trống (tất cả lịch)</span>
+                            <strong id="hl-seats-left"><%= activeSeatsLeft %> Chỗ</strong>
                         </div>
                     </div>
                     <div class="highlight-item">
@@ -647,13 +668,15 @@
                 else if (t.getCategoryId() == 5) catStr = "luxury";
                 
                 // Get seats and departure city
-                int seatsLeft = 10;
-                int seatsTotal = 20;
+                // Dương: fallback dùng Tour.MaxParticipants để đồng bộ với trang booking-create.
+                int tourMaxParts = t.getMaxParticipants() > 0 ? t.getMaxParticipants() : 10;
+                int seatsLeft = tourMaxParts;
+                int seatsTotal = tourMaxParts;
                 String departureCity = t.getDepartureCity();
                 if (departureCity == null || departureCity.trim().isEmpty()) {
                     departureCity = "Hà Nội";
                 }
-                
+
                 if (t.getSchedules() != null && !t.getSchedules().isEmpty()) {
                     seatsLeft = t.getSchedules().get(0).getAvailableSeats();
                     seatsTotal = t.getSchedules().get(0).getTotalSeats();
@@ -724,6 +747,7 @@
             category: "<%= catStr %>",
             seatsLeft: <%= seatsLeft %>,
             seatsTotal: <%= seatsTotal %>,
+            maxParticipants: <%= t.getMaxParticipants() %>,
             languages: "<%= t.getLanguages() != null && !t.getLanguages().trim().isEmpty() ? t.getLanguages().replace("\"", "\\\"") : "Tiếng Việt" %>",
             photos: [
                 <%

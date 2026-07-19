@@ -86,7 +86,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (hlDuration) hlDuration.textContent = `${activeTour.duration} Ng\u00e0y`;
     
     const hlGroupSize = document.getElementById('hl-group-size');
-    if (hlGroupSize) hlGroupSize.textContent = `${activeTour.seatsLeft} Ch\u1ed7`;
+    if (hlGroupSize) {
+        // Dương: Hiển thị giới hạn đoàn (MaxParticipants do admin cấu hình) thay vì "X Chỗ".
+        // activeTour.maxParticipants có thể undefined khi data thiếu → fallback 10.
+        const maxPerDeparture = (typeof activeTour.maxParticipants === 'number' && activeTour.maxParticipants > 0)
+            ? activeTour.maxParticipants : 10;
+        hlGroupSize.textContent = `T\u1ed1i \u0111a ${maxPerDeparture} kh\u00e1ch/\u0111o\u00e0n`;
+    }
+    const hlSeatsLeft = document.getElementById('hl-seats-left');
+    if (hlSeatsLeft) {
+        hlSeatsLeft.textContent = `${activeTour.seatsLeft || 0} Ch\u1ed7`;
+    }
     const hlLang = document.getElementById('hl-languages');
     if (hlLang && activeTour.languages) {
         hlLang.textContent = activeTour.languages;
