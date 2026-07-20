@@ -82,7 +82,7 @@ public class AnalyticsDAO extends DBContext {
                    + "FROM Booking b "
                    + "JOIN TourSchedule ts ON b.ScheduleID = ts.ScheduleID "
                    + "JOIN Tour t ON ts.TourID = t.TourID "
-                   + "WHERE b.Status NOT IN ('Cancelled', 'Failed', 'Refunded') ";
+                   + "WHERE b.Status NOT IN ('Cancelled', 'Failed', 'Refunded') "
                    + "GROUP BY t.TourID, t.TourName "
                    + "ORDER BY Total DESC";
         try (PreparedStatement ps = connection.prepareStatement(sql);

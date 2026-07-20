@@ -96,8 +96,8 @@
                 <c:when test="${not empty schedule}">
                     <%-- Chi ti&#7871;t guest list c&#7911;a m&#7897;t schedule --%>
                     <div class="breadcrumb">
-                        <a href="${pageContext.request.contextPath}/staff/guests">
-                            <i data-lucide="arrow-left" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;"></i> Quay l&#7841;i danh s&#225;ch
+                        <a href="${pageContext.request.contextPath}/staff/bookings">
+                            <i data-lucide="arrow-left" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;"></i> Quay l&#7841;i Qu&#7843;n l&#253; Booking
                         </a>
                     </div>
 

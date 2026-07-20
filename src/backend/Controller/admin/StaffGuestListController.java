@@ -45,6 +45,18 @@ public class StaffGuestListController extends HttpServlet {
                     List<Map<String, Object>> participants = attendanceDAO.getAttendanceByScheduleId(scheduleId);
                     var schedule = scheduleDAO.getScheduleById(scheduleId);
 
+                    String bookingIdStr = request.getParameter("bookingId");
+                    if (bookingIdStr != null && !bookingIdStr.isEmpty()) {
+                        int bookingId = Integer.parseInt(bookingIdStr);
+                        participants.removeIf(p -> {
+                            Object bIdObj = p.get("bookingId");
+                            if (bIdObj instanceof Integer) {
+                                return (Integer) bIdObj != bookingId;
+                            }
+                            return false;
+                        });
+                    }
+
                     int totalCount = participants.size();
                     int checkedInCount = 0;
                     for (Map<String, Object> p : participants) {

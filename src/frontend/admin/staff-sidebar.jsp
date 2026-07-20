@@ -26,12 +26,7 @@
                 <span>Ph&#226;n C&#244;ng Guide</span>
             </a>
         </li>
-        <li class="${activePage eq 'staff-guests' ? 'active' : ''}">
-            <a href="${pageContext.request.contextPath}/staff/guests">
-                <i data-lucide="users"></i>
-                <span>Danh S&#225;ch Kh&#225;ch</span>
-            </a>
-        </li>
+
         <li class="${activePage eq 'staff-incidents' ? 'active' : ''}">
             <a href="${pageContext.request.contextPath}/staff/incidents">
                 <i data-lucide="alert-triangle"></i>

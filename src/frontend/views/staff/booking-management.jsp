@@ -263,9 +263,14 @@
                                             </c:choose>
                                         </td>
                                         <td style="text-align:center;">
-                                            <button class="action-btn note" onclick="openNotifModal(${b.customer.userId}, '${fn:escapeXml(b.customer.fullName)}')" title="G&#7917;i th&#244;ng b&#225;o cho kh&#225;ch h&#224;ng n&#224;y">
-                                                <i data-lucide="bell" style="width:12px;height:12px;"></i> G&#7917;i TB
-                                            </button>
+                                            <div class="row-actions" style="justify-content:center;">
+                                                <a href="${pageContext.request.contextPath}/staff/guests?action=details&scheduleId=${b.scheduleId}&bookingId=${b.bookingId}" class="action-btn" style="background:var(--primary-light); color:var(--primary); text-decoration:none;" title="Xem danh s&#225;ch h&#224;nh kh&#225;ch">
+                                                    <i data-lucide="users" style="width:12px;height:12px;"></i> Xem Kh&#225;ch
+                                                </a>
+                                                <button class="action-btn note" onclick="openNotifModal(${b.customer.userId}, '${fn:escapeXml(b.customer.fullName)}')" title="G&#7917;i th&#244;ng b&#225;o cho kh&#225;ch h&#224;ng n&#224;y">
+                                                    <i data-lucide="bell" style="width:12px;height:12px;"></i> G&#7917;i TB
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 </c:forEach>
