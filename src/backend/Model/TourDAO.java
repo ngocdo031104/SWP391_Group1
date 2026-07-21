@@ -358,8 +358,8 @@ public class TourDAO extends DBContext {
         tour.setRating(reviewCount > 0 ? avgRating : 0.0);
         tour.setReviewsCount(reviewCount);
         
-        // Dương làm đoạn này:
-
+        // Người làm đoạn này: Dương
+        // Lấy thông tin bổ sung về số ghế và ngày khởi hành tiếp theo (nếu có trong ResultSet).
         if (columnExists(rs, "TotalSeats")) {
             tour.setTotalSeats(rs.getInt("TotalSeats"));
         }

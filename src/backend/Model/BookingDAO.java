@@ -130,8 +130,9 @@ public class BookingDAO extends DBContext {
     }
 
 
-    // Dương làm đoạn này: nhả các slot đã bị giữ quá thời gian thanh toán cho booking PendingPayment.
-    // Hàm này tìm booking chưa thanh toán quá holdMinutes, cộng lại NumParticipants vào TourSchedule.AvailableSeats và chuyển booking sang Cancelled.
+    // Người làm đoạn này: Dương
+    // Hàm này nhả các slot đã bị giữ quá thời gian thanh toán cho booking PendingPayment.
+    // Tìm booking chưa thanh toán quá holdMinutes, cộng lại số lượng ghế vào TourSchedule.AvailableSeats và chuyển trạng thái booking sang Cancelled.
     public int releaseExpiredPendingPaymentBookings(int holdMinutes) {
         String selectExpiredSql = "SELECT BookingID, ScheduleID, NumParticipants FROM Booking "
                 + "WHERE Status = 'PendingPayment' AND CreatedAt <= DATEADD(MINUTE, ?, SYSDATETIME())";
@@ -219,7 +220,9 @@ public class BookingDAO extends DBContext {
         return list;
     }
 
-    // Dương làm phần này: lấy danh sách booking kèm thông tin Tour để hiển thị Lịch sử Tour
+    // Người làm đoạn này: Dương
+    // Hàm này lấy danh sách booking của một khách hàng cụ thể kèm theo thông tin Tour.
+    // Được sử dụng để hiển thị Lịch sử đặt Tour của khách hàng (gồm lịch trình, điểm đến, ngày đi).
     public List<Booking> getBookingsWithTourByCustomerId(int customerId) {
         List<Booking> list = new ArrayList<>();
         String sql = "SELECT b.BookingID, b.BookingCode, b.ScheduleID, b.CustomerID, b.NumParticipants, "
@@ -280,9 +283,9 @@ public class BookingDAO extends DBContext {
         return null;
     }
 
-    // Dương làm phần này: lấy thông tin booking kèm thông tin Tour và TourSchedule bằng cách JOIN 3 bảng.
-    // Mục đích là phục vụ trang hóa đơn, nơi cần hiển thị tên tour, điểm đến, ngày đi, ngày về
-    // và phương tiện di chuyển. Dùng hàm này thay cho getBookingByCode khi cần render hóa đơn.
+    // Người làm đoạn này: Dương
+    // Lấy chi tiết một booking kèm thông tin Tour và TourSchedule bằng cách JOIN 3 bảng.
+    // Phục vụ hiển thị trên trang hóa đơn điện tử (Invoice), nơi cần hiển thị đầy đủ tên tour, điểm đến, ngày đi, ngày về và phương tiện.
     public Booking getBookingWithTourByCode(String bookingCode) {
         // SQL JOIN Booking -> TourSchedule -> Tour để lấy hết thông tin cần thiết trong một lần truy vấn
         String sql = "SELECT b.BookingID, b.BookingCode, b.ScheduleID, b.CustomerID, b.NumParticipants, "
@@ -424,8 +427,9 @@ public class BookingDAO extends DBContext {
         return b;
     }
 
-    // Dương làm đoạn này: cập nhật lại phần tiền của booking sau khi khách nhập coupon ở màn hình thanh toán.
-    // Method này chỉ thay đổi các cột tài chính, không đụng tới lịch khởi hành hay danh sách người tham gia.
+    // Người làm đoạn này: Dương
+    // Cập nhật lại số tiền tài chính của booking sau khi áp dụng mã giảm giá (coupon) ở bước thanh toán.
+    // Chỉ cập nhật các cột liên quan đến tiền bạc, không thay đổi người tham gia hay lịch khởi hành.
     public boolean updateBookingFinancials(int bookingId, double discountAmount, double vatAmount, double totalAmount, Integer couponId) {
         String sql = "UPDATE Booking SET DiscountAmount = ?, VATAmount = ?, TotalAmount = ?, CouponID = ?, UpdatedAt = SYSDATETIME() WHERE BookingID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -449,11 +453,13 @@ public class BookingDAO extends DBContext {
      * Cancels a booking, releases seats in TourSchedule, and logs the change in BookingHistory.
      * Usually called by staff when approving a cancellation request, or by system/customer for unpaid bookings.
      */
-    // UC11: Lấy toàn bộ booking của hệ thống cho Staff quản lý.
-    // JOIN TourSchedule + Tour để hiển thị tên tour, ngày khởi hành.
-    // JOIN [User] để hiển thị tên khách hàng.
-    // statusFilter = "All" để lấy tất cả, hoặc tên status cụ thể.
-    // keyword tìm theo BookingCode hoặc FullName khách.
+    /**
+     * Người làm đoạn này: Dương
+     * Lấy toàn bộ danh sách booking của hệ thống phục vụ cho Staff quản lý đơn.
+     * JOIN với TourSchedule và Tour để lấy thông tin chuyến đi.
+     * JOIN với User để lấy thông tin khách hàng đặt.
+     * Hỗ trợ lọc theo trạng thái (statusFilter), tìm kiếm theo từ khóa (keyword) và phân trang (offset, pageSize).
+     */
     public List<Booking> getAllBookingsForStaff(String statusFilter, String keyword, int offset, int pageSize) {
         List<Booking> list = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
@@ -513,7 +519,8 @@ public class BookingDAO extends DBContext {
         return list;
     }
 
-    // UC11: \u0110\u1ebfm t\u1ed5ng s\u1ed1 booking \u0111\u1ec3 t\u00ednh ph\u00e2n trang cho Staff.
+    // Người làm đoạn này: Dương
+    // Đếm tổng số lượng booking thỏa mãn điều kiện lọc và tìm kiếm, phục vụ tính toán số trang (Pagination) cho Staff.
     public int countAllBookingsForStaff(String statusFilter, String keyword) {
         StringBuilder sql = new StringBuilder(
             "SELECT COUNT(*) FROM Booking b " +
@@ -545,8 +552,9 @@ public class BookingDAO extends DBContext {
         return 0;
     }
 
-    // UC11: Staff c\u1eadp nh\u1eadt ghi ch\u00fa v\u1eadn h\u00e0nh n\u1ed9i b\u1ed9 v\u00e0o booking.
-    // Notes \u0111\u01b0\u1ee3c gi\u1edbi h\u1ea1n 500 k\u00fd t\u1ef1 \u0111\u1ec3 ph\u00f9 h\u1ee3p v\u1edbi constraint c\u1ee7a DB.
+    // Người làm đoạn này: Dương
+    // Cập nhật ghi chú vận hành nội bộ cho một booking.
+    // Giới hạn ghi chú không quá 500 ký tự để phù hợp với độ dài cột trong CSDL.
     public boolean updateOperationalNotes(int bookingId, String notes) {
         String sql = "UPDATE Booking SET Notes = ?, UpdatedAt = SYSDATETIME() WHERE BookingID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -640,7 +648,9 @@ public class BookingDAO extends DBContext {
         return false;
     }
 
-    // Lấy danh sách booking với thông tin schedule đầy đủ cho Staff xem guest list
+    // Người làm đoạn này: Dương
+    // Lấy danh sách toàn bộ các booking đã thanh toán thành công ('Success') kèm theo lịch trình.
+    // Hỗ trợ Staff xem danh sách khách mời (guest list) chuẩn bị khởi hành.
     public List<Booking> getAllBookingsWithSchedules() {
         List<Booking> list = new ArrayList<>();
         String sql = "SELECT b.BookingID, b.BookingCode, b.ScheduleID, b.CustomerID, b.NumParticipants, " +

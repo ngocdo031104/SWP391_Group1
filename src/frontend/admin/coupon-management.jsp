@@ -2,10 +2,11 @@
 
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
-<%-- Duong l&#224;m do?n n&#224;y
-     Th?i gian t?o: 25/06/2026
-     Ch?c nang: Giao di?n qu?n l&#253; m&#227; gi?m gi&#225; cho Admin.
-     &#221; nghia: Hi?n th? danh s&#225;ch coupon b?ng Datatables, c&#243; n&#250;t th&#234;m m?i, s?a, v&#224; b?t/t?t (toggle) t?ng coupon.
+<%--
+    Người làm: Dương
+    Thời gian tạo: 25/06/2026
+    Chức năng: Giao diện quản lý mã giảm giá cho Admin.
+    Ý nghĩa: Hiển thị danh sách coupon bằng Datatables, có nút thêm mới, sửa, và bật/tắt (toggle) từng coupon.
 --%>
 <c:if test="${empty sessionUser || (sessionUser.roleId ne 1 && userRole ne 'Admin')}">
     <c:redirect url="/login" />

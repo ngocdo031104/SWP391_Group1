@@ -9,12 +9,13 @@
 <%@ page import="Entities.TourSchedule" %>
 <%@ page import="Controller.customer.BookingFlowSupport.BookingDraft" %>
 <%@ page import="Utils.SepayConfig" %>
+<%--
+    Người làm: Dương
+    Thời gian tạo: 04/06/2026
+    Chức năng: Màn Customer thanh toán booking.
+    Ý nghĩa: Hiển thị VietQR theo số tiền booking, cho nhập coupon nếu có và chờ webhook SePay xác nhận chuyển khoản.
+--%>
 <%
-    // Ng&#432;&#7901;i l&#224;m: D&#432;&#417;ng
-    // Th&#7901;i gian t&#7841;o: 04/06/2026
-    // Ch&#7913;c n&#259;ng: M&#224;n Customer thanh to&#225;n booking.
-    // &#221; ngh&#297;a: Hi&#7875;n th&#7883; VietQR theo s&#7889; ti&#7873;n booking, cho nh&#7853;p coupon n&#7871;u c&#243; v&#224; ch&#7901; webhook SePay x&#225;c nh&#7853;n chuy&#7875;n kho&#7843;n.
-
     // N&#7841;p CSS v&#224; JS ri&#234;ng c&#7911;a payment &#273;&#7875; x&#7917; l&#253; coupon v&#224; polling tr&#7841;ng th&#225;i thanh to&#225;n SePay.
     request.setAttribute("extraCss", "css/customer-booking-payment.css");
     request.setAttribute("extraScript", "js/customer-booking-payment.js");

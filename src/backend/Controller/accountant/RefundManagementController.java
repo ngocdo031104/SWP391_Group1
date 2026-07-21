@@ -1,9 +1,10 @@
 package Controller.accountant;
 
-// UC40: Xu ly hoan tien (Accountant).
-// - Xem danh sach CancellationRequest (Pending hoac Approved/Rejected).
-// - Duyet: cancel booking + tao Payment(Refunded) + gui Notification.
-// - Tu choi: doi status Rejected + gui Notification.
+// Người làm: Dương
+// Ngày tạo file: 14/07/2026
+// Chức năng: Xử lý quản lý hoàn tiền (Refund Management) dành cho Kế toán.
+// Ý nghĩa: Cho phép xem danh sách yêu cầu hủy tour (Cancellation Request),
+// duyệt (Approve) và tạo giao dịch hoàn tiền, hoặc từ chối (Reject) yêu cầu.
 
 import Entities.CancellationRequest;
 import Entities.Notification;
@@ -27,17 +28,21 @@ import java.util.List;
 @WebServlet(name = "RefundManagementController", urlPatterns = {"/accountant/refunds"})
 public class RefundManagementController extends HttpServlet {
 
+    // Phương thức doGet xử lý việc lấy và hiển thị danh sách yêu cầu hủy tour.
+    // Hỗ trợ hai tab: 'pending' (yêu cầu đang chờ xử lý) và 'history' (yêu cầu đã xử lý).
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
 
+        // Kiểm tra quyền hạn của người dùng.
         HttpSession session = request.getSession(false);
         if (!isAuthorized(session)) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
 
+        // Lấy tab hiện tại (mặc định là 'pending').
         String tab = request.getParameter("tab");
         if (tab == null || tab.isEmpty()) tab = "pending";
 
@@ -45,21 +50,19 @@ public class RefundManagementController extends HttpServlet {
         try {
             cancelDAO = new CancellationRequestDAO();
             if ("history".equals(tab)) {
-                // Hien thi yeu cau da xu ly (Approved/Rejected)
+                // Hiển thị lịch sử các yêu cầu đã xử lý (Bao gồm Approved và Rejected).
                 List<CancellationRequest> approved = cancelDAO.getRequestsByStatusForAccountant("Approved");
                 List<CancellationRequest> rejected = cancelDAO.getRequestsByStatusForAccountant("Rejected");
                 approved.addAll(rejected);
-                // Sort by ProcessedAt descending can be done in Java or DB,
-                // here we just pass the combined list. For simplicity in UI, we can pass them separately or together.
                 request.setAttribute("requests", approved); 
             } else {
-                // Pending
+                // Hiển thị các yêu cầu hủy đang chờ Kế toán duyệt (Pending).
                 List<CancellationRequest> pending = cancelDAO.getRequestsByStatusForAccountant("Pending");
                 request.setAttribute("requests", pending);
             }
             request.setAttribute("activeTab", tab);
 
-            // Flash messages
+            // Kiểm tra và hiển thị các thông báo từ session (ví dụ: thông báo duyệt thành công hoặc lỗi).
             String successMsg = (String) session.getAttribute("refundSuccess");
             String errorMsg   = (String) session.getAttribute("refundError");
             if (successMsg != null) {
@@ -71,17 +74,20 @@ public class RefundManagementController extends HttpServlet {
                 session.removeAttribute("refundError");
             }
 
+            // Điều hướng sang trang hiển thị quản lý hoàn tiền.
             request.getRequestDispatcher("/views/accountant/refund-management.jsp").forward(request, response);
         } finally {
             if (cancelDAO != null) cancelDAO.close();
         }
     }
 
+    // Phương thức doPost xử lý khi Kế toán thực hiện duyệt (Approve) hoặc từ chối (Reject) yêu cầu.
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
 
+        // Kiểm tra quyền hạn của người dùng.
         HttpSession session = request.getSession(false);
         if (!isAuthorized(session)) {
             response.sendRedirect(request.getContextPath() + "/login");
@@ -100,6 +106,7 @@ public class RefundManagementController extends HttpServlet {
         int bookingId = parseInt(bookingIdStr, 0);
         int customerId = parseInt(customerIdStr, 0);
 
+        // Validate cơ bản id request và booking.
         if (requestId <= 0 || bookingId <= 0) {
             session.setAttribute("refundError", "Dữ liệu không hợp lệ.");
             response.sendRedirect(request.getContextPath() + "/accountant/refunds");
@@ -113,32 +120,33 @@ public class RefundManagementController extends HttpServlet {
 
         try {
             if ("approve".equals(action)) {
+                // Xử lý nhánh duyệt yêu cầu hoàn tiền.
                 String amountStr = request.getParameter("refundAmount");
                 double refundAmount = parseDouble(amountStr, 0);
-                String transactionRef = request.getParameter("transactionRef"); // Ma giao dich hoan tien tu ngan hang
+                String transactionRef = request.getParameter("transactionRef"); // Mã giao dịch hoàn tiền từ ngân hàng
                 
-                // 1. Cap nhat CancellationRequest -> Approved
+                // 1. Cập nhật trạng thái CancellationRequest thành Approved.
                 boolean ok1 = cancelDAO.processRequest(requestId, accountant.getUserId(), "Approved", notes);
                 
                 if (ok1) {
-                    // 2. Cancel booking (neu chua cancel)
+                    // 2. Hủy booking tương ứng và nhả số lượng chỗ trống lại cho tour.
                     bookingDAO.cancelBookingAndReleaseSeats(bookingId, accountant.getUserId(), "Hoan tien thanh cong: " + notes);
                     
-                    // 3. Tao record Payment (Refunded)
+                    // 3. Tạo bản ghi giao dịch (Payment) với trạng thái Refunded.
                     Payment refundPayment = new Payment();
                     refundPayment.setBookingId(bookingId);
                     refundPayment.setAmount(refundAmount);
-                    refundPayment.setPaymentMethod("Bank Transfer"); // Thong thuong hoan tien qua chuyen khoan
+                    refundPayment.setPaymentMethod("Bank Transfer"); // Thông thường hoàn tiền qua chuyển khoản
                     refundPayment.setTransactionRef(transactionRef != null ? transactionRef : "REFUND-" + requestId);
                     refundPayment.setStatus("Refunded");
                     paymentDAO.createPayment(refundPayment);
                     
-                    // Add to Financial Audit Log
+                    // Thêm bản ghi vào nhật ký tài chính (Financial Audit Log) để theo dõi kiểm toán.
                     AuditLogDAO auditLogDAO = new AuditLogDAO();
                     auditLogDAO.createFinancialAuditLog("Payment", refundPayment.getPaymentId(), "Refund", "", "Hoàn tiền cho khách hàng: " + String.format("%,.0f", refundAmount) + " VND", accountant.getUserId());
                     auditLogDAO.close();
                     
-                    // 4. Gui thong bao cho khach hang
+                    // 4. Gửi thông báo trong hệ thống cho Khách hàng biết tiền đã được hoàn.
                     Notification n = new Notification();
                     n.setUserId(customerId);
                     n.setTitle("Hoàn tiền thành công - " + bookingCode);
@@ -153,10 +161,12 @@ public class RefundManagementController extends HttpServlet {
                 }
 
             } else if ("reject".equals(action)) {
-                // 1. Cap nhat CancellationRequest -> Rejected
+                // Xử lý nhánh từ chối yêu cầu hoàn tiền.
+                
+                // 1. Cập nhật trạng thái CancellationRequest thành Rejected.
                 boolean ok = cancelDAO.processRequest(requestId, accountant.getUserId(), "Rejected", notes);
                 if (ok) {
-                    // 2. Gui thong bao tu choi
+                    // 2. Gửi thông báo từ chối cho Khách hàng kèm theo lý do từ chối.
                     Notification n = new Notification();
                     n.setUserId(customerId);
                     n.setTitle("Yêu cầu hủy tour bị từ chối - " + bookingCode);
@@ -180,6 +190,7 @@ public class RefundManagementController extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/accountant/refunds");
     }
 
+    // Hàm kiểm tra quyền hạn của người dùng.
     private boolean isAuthorized(HttpSession session) {
         if (session == null) return false;
         User user = (User) session.getAttribute("sessionUser");
@@ -188,11 +199,13 @@ public class RefundManagementController extends HttpServlet {
         return "Accountant".equals(role) || "Admin".equals(role);
     }
 
+    // Helper parser để xử lý lỗi ngoại lệ khi parse số nguyên
     private int parseInt(String val, int defaultVal) {
         try { return val != null ? Integer.parseInt(val) : defaultVal; }
         catch (NumberFormatException e) { return defaultVal; }
     }
 
+    // Helper parser để xử lý lỗi ngoại lệ khi parse số thực
     private double parseDouble(String val, double defaultVal) {
         try { return val != null ? Double.parseDouble(val) : defaultVal; }
         catch (NumberFormatException e) { return defaultVal; }

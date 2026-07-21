@@ -2,14 +2,15 @@
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%--
+    Người làm: Dương
+    Thời gian tạo: 25/06/2026
+    Chức năng: Giao diện hiển thị hóa đơn thanh toán của khách hàng sau khi đặt tour thành công.
+    Ý nghĩa: Trang này nhận dữ liệu từ CustomerInvoiceController (booking + invoice),
+            hiển thị 3 phần: thông tin tour, danh sách hành khách, và chi tiết số tiền.
+            Hỗ trợ in hóa đơn qua nút "In hóa đơn" sử dụng CSS @media print.
+--%>
 <%
-    // Ng&#432;&#7901;i l&#224;m: D&#432;&#417;ng
-    // Th&#7901;i gian t&#7841;o: 25/06/2026
-    // Ch&#7913;c n&#259;ng: Giao di&#7879;n hi&#7875;n th&#7883; h&#243;a &#273;&#417;n thanh to&#225;n c&#7911;a kh&#225;ch h&#224;ng sau khi &#273;&#7863;t tour th&#224;nh c&#244;ng.
-    // &#221; ngh&#297;a: Trang n&#224;y nh&#7853;n d&#7919; li&#7879;u t&#7915; CustomerInvoiceController (booking + invoice),
-    //           hi&#7875;n th&#7883; 3 ph&#7847;n: th&#244;ng tin tour, danh s&#225;ch h&#224;nh kh&#225;ch, v&#224; chi ti&#7871;t s&#7889; ti&#7873;n.
-    //           H&#7895; tr&#7907; in h&#243;a &#273;&#417;n qua n&#250;t "In h&#243;a &#273;&#417;n" s&#7917; d&#7909;ng CSS @media print.
-
     request.setAttribute("extraCss", "css/customer-booking-invoice.css");
     request.setAttribute("bodyClass", "booking-page");
 %>
