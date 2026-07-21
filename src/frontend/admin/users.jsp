@@ -1,5 +1,5 @@
 ﻿<%-- 
-    Liên quan đến UCs: Manage User Accounts
+    Liên quan đến UCs: Admin Management
     Tác giả: Đỗ Vũ Minh Ngọc
     MSSV: HE182479
 --%>
@@ -45,7 +45,7 @@
         .btn-outline { background: white; color: var(--gray-700); border: 1px solid var(--gray-200); }
         .btn-outline:hover { background: var(--gray-50); border-color: var(--gray-500); }
 
-        /* Sidebar override (users.jsp) â€” Ä‘áº£m báº£o chá»¯ menu luĂ´n Ä‘á»c Ä‘Æ°á»£c */
+        /* Sidebar override (users.jsp) — đảm bảo chữ menu luôn đọc được */
         .sidebar-menu a { color: #cbd5e1 !important; opacity: 1 !important; }
         .sidebar-menu a:hover { color: #ffffff !important; background-color: rgba(255,255,255,0.05) !important; }
         .sidebar-menu li.active a { color: #38bdf8 !important; }
@@ -143,7 +143,7 @@
 <body class="users-body tb-cosmic">
 
 <div class="dashboard-wrapper">
-    <!-- Menu điều hướng bên trái -->
+    <!-- Left Sidebar -->
     <c:set var="activePage" value="users" scope="request" />
     <jsp:include page="sidebar.jsp" />
 
@@ -173,36 +173,36 @@
             <div class="stat-card">
                 <div class="stat-icon primary"><i data-lucide="users"></i></div>
                 <div class="stat-info">
-                    <h4>T&#7893;ng ng&#432;&#7901;i d&#249;ng</h4>
-                    <div class="stat-value" style="color: #38bdf8 !important;">${totalUsers}</div>
+                    <h4 style="color: #9fa9cb !important;">T&#7893;ng ng&#432;&#7901;i d&#249;ng</h4>
+                    <div class="stat-value" style="color: #ffffff !important; font-weight: 800;">${totalUsers}</div>
                 </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon success"><i data-lucide="user-check"></i></div>
                 <div class="stat-info">
-                    <h4>&#272;&#259;ng ho&#7841;t &#273;&#7897;ng</h4>
-                    <div class="stat-value" style="color: #34d399 !important;">${activeUsers}</div>
+                    <h4 style="color: #9fa9cb !important;">&#272;&#259;ng ho&#7841;t &#273;&#7897;ng</h4>
+                    <div class="stat-value" style="color: #ffffff !important; font-weight: 800;">${activeUsers}</div>
                 </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon danger"><i data-lucide="lock"></i></div>
                 <div class="stat-info">
-                    <h4>&#272;&#227; kh&#243;a</h4>
-                    <div class="stat-value" style="color: #f87171 !important;">${lockedUsers}</div>
+                    <h4 style="color: #9fa9cb !important;">&#272;&#227; kh&#243;a</h4>
+                    <div class="stat-value" style="color: #ffffff !important; font-weight: 800;">${lockedUsers}</div>
                 </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon warning"><i data-lucide="briefcase"></i></div>
                 <div class="stat-info">
-                    <h4>H&#432;&#7899;ng d&#7851;n vi&#234;n</h4>
-                    <div class="stat-value" style="color: #fbbf24 !important;">${guideUsers}</div>
+                    <h4 style="color: #9fa9cb !important;">H&#432;&#7899;ng d&#7851;n vi&#234;n</h4>
+                    <div class="stat-value" style="color: #ffffff !important; font-weight: 800;">${guideUsers}</div>
                 </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon purple"><i data-lucide="star"></i></div>
                 <div class="stat-info">
-                    <h4>Premium Members</h4>
-                    <div class="stat-value" style="color: #c084fc !important;">${premiumUsers}</div>
+                    <h4 style="color: #9fa9cb !important;">Premium Members</h4>
+                    <div class="stat-value" style="color: #ffffff !important; font-weight: 800;">${premiumUsers}</div>
                 </div>
             </div>
         </div>
@@ -704,4 +704,3 @@
 </style>
 </body>
 </html>
-

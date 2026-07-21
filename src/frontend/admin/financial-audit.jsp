@@ -1,5 +1,5 @@
 ﻿<%-- 
-    Liên quan đến UCs: Review Financial Audit Logs
+    Liên quan đến UCs: Admin Management
     Tác giả: Đỗ Vũ Minh Ngọc
     MSSV: HE182479
 --%>
@@ -55,26 +55,26 @@
                 <div class="row mb-4">
                     <div class="col-md-3">
                         <div class="card shadow-sm text-center py-3" style="border-radius: 12px; border-left: 4px solid var(--gray-500);">
-                            <div class="text-muted small text-uppercase fw-bold mb-1">T&#7893;ng giao d&#7883;ch</div>
-                            <h3 class="mb-0 text-light"><fmt:formatNumber value="${stats.total}" pattern="#,###"/></h3>
+                            <div class="small text-uppercase fw-bold mb-1" style="color: #9fa9cb !important;">T&#7893;ng giao d&#7883;ch</div>
+                            <h3 class="mb-0" style="color: #ffffff !important; font-weight: 700;"><fmt:formatNumber value="${stats.total}" pattern="#,###"/></h3>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="card shadow-sm text-center py-3" style="border-radius: 12px; border-left: 4px solid var(--success);">
-                            <div class="text-muted small text-uppercase fw-bold mb-1">Th&#224;nh c&#244;ng</div>
-                            <h3 class="mb-0 text-success"><fmt:formatNumber value="${stats.success}" pattern="#,###"/></h3>
+                            <div class="small text-uppercase fw-bold mb-1" style="color: #9fa9cb !important;">Th&#224;nh c&#244;ng</div>
+                            <h3 class="mb-0" style="color: #ffffff !important; font-weight: 700;"><fmt:formatNumber value="${stats.success}" pattern="#,###"/></h3>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="card shadow-sm text-center py-3" style="border-radius: 12px; border-left: 4px solid var(--danger);">
-                            <div class="text-muted small text-uppercase fw-bold mb-1">Th&#7845;t b&#7841;i</div>
-                            <h3 class="mb-0 text-danger"><fmt:formatNumber value="${stats.failed}" pattern="#,###"/></h3>
+                            <div class="small text-uppercase fw-bold mb-1" style="color: #9fa9cb !important;">Th&#7845;t b&#7841;i</div>
+                            <h3 class="mb-0" style="color: #ffffff !important; font-weight: 700;"><fmt:formatNumber value="${stats.failed}" pattern="#,###"/></h3>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="card shadow-sm text-center py-3" style="border-radius: 12px; border-left: 4px solid var(--primary);">
-                            <div class="text-muted small text-uppercase fw-bold mb-1">T&#7893;ng doanh thu</div>
-                            <h3 class="mb-0 text-primary"><fmt:formatNumber value="${stats.totalAmount}" pattern="#,###"/> <small class="text-muted fs-6">VND</small></h3>
+                            <div class="small text-uppercase fw-bold mb-1" style="color: #9fa9cb !important;">T&#7893;ng doanh thu</div>
+                            <h3 class="mb-0" style="color: #ffffff !important; font-weight: 700;"><fmt:formatNumber value="${stats.totalAmount}" pattern="#,###"/> <small class="fs-6" style="color: #cbd5e1 !important;">VND</small></h3>
                         </div>
                     </div>
                 </div>
@@ -386,4 +386,3 @@
     <script>if (window.lucide) { lucide.createIcons(); }</script>
 </body>
 </html>
-
