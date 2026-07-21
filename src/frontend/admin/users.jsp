@@ -1,3 +1,8 @@
+﻿<%-- 
+    Liên quan đến UCs: Manage User Accounts
+    Tác giả: Đỗ Vũ Minh Ngọc
+    MSSV: HE182479
+--%>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
@@ -40,7 +45,7 @@
         .btn-outline { background: white; color: var(--gray-700); border: 1px solid var(--gray-200); }
         .btn-outline:hover { background: var(--gray-50); border-color: var(--gray-500); }
 
-        /* Sidebar override (users.jsp) — đảm bảo chữ menu luôn đọc được */
+        /* Sidebar override (users.jsp) â€” Ä‘áº£m báº£o chá»¯ menu luĂ´n Ä‘á»c Ä‘Æ°á»£c */
         .sidebar-menu a { color: #cbd5e1 !important; opacity: 1 !important; }
         .sidebar-menu a:hover { color: #ffffff !important; background-color: rgba(255,255,255,0.05) !important; }
         .sidebar-menu li.active a { color: #38bdf8 !important; }
@@ -138,13 +143,13 @@
 <body class="users-body tb-cosmic">
 
 <div class="dashboard-wrapper">
-    <!-- Left Sidebar -->
+    <!-- Menu điều hướng bên trái -->
     <c:set var="activePage" value="users" scope="request" />
     <jsp:include page="sidebar.jsp" />
 
-    <!-- Main Content Area -->
+    <!-- Vùng nội dung chính -->
     <main class="main-content">
-        <!-- Top Header -->
+        <!-- Tiêu đề trên cùng -->
         <header class="top-header" style="margin-bottom: 24px;">
             <div>
                 <h1 style="font-size: 26px; font-weight: 800; color: #c084fc; text-shadow: 0 0 16px rgba(192, 132, 252, 0.4); margin: 0 0 8px 0;">Danh s&#225;ch ng&#432;&#7901;i d&#249;ng</h1>
@@ -163,7 +168,7 @@
             </div>
         </header>
 
-        <!-- Stats Grid -->
+        <!-- Lưới thống kê tổng quan -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-icon primary"><i data-lucide="users"></i></div>
@@ -202,7 +207,7 @@
             </div>
         </div>
 
-        <!-- Filters & Table Card -->
+        <!-- Bộ lọc và Bảng dữ liệu -->
         <div class="modern-card">
             <!-- Filter Bar -->
             <div style="padding: 20px 24px; border-bottom: 1px solid var(--gray-200);">
@@ -248,7 +253,7 @@
                 </div>
             </div>
 
-            <!-- Table -->
+            <!-- Bảng dữ liệu chính -->
             <div style="overflow-x: auto;">
                 <table class="modern-table" id="usersTable">
                     <thead>
@@ -699,3 +704,4 @@
 </style>
 </body>
 </html>
+

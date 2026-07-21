@@ -1,3 +1,8 @@
+﻿<%-- 
+    Liên quan đến UCs: Manage Roles and Permissions
+    Tác giả: Đỗ Vũ Minh Ngọc
+    MSSV: HE182479
+--%>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
@@ -86,7 +91,7 @@
 
             <div class="role-management-container" style="display: flex; gap: 30px; margin-top: 20px; align-items: stretch; height: calc(100vh - 120px);">
                 
-                <!-- Left Panel -->
+                <!-- Khung bên trái -->
                 <div class="left-panel" style="width: 280px; background: rgba(22, 25, 50, 0.58); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-radius: 16px; padding: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); display: flex; flex-direction: column; border: 1px solid rgba(139, 92, 246, 0.2);">
                     <h3 style="color: #f8fafc; margin-top: 0; margin-bottom: 20px; font-size: 18px; font-weight: 600;">Danh s&#225;ch vai tr&#242;</h3>
                     
@@ -119,7 +124,7 @@
                     </div>
                 </div>
 
-                <!-- Right Panel -->
+                <!-- Khung bên phải -->
                 <div class="right-panel" style="flex: 1; background: rgba(22, 25, 50, 0.58); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-radius: 16px; padding: 25px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); border: 1px solid rgba(139, 92, 246, 0.2); display: flex; flex-direction: column;">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px;">
                         <div>
@@ -198,7 +203,7 @@
     </main>
 </div>
 
-<!-- Modals -->
+<!-- Các hộp thoại popup -->
 <div id="roleModal" class="modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(15, 23, 42, 0.5); backdrop-filter: blur(4px);">
     <div class="modal-content" style="margin: 10% auto; padding: 30px; width: 400px;">
         <h3 id="roleModalTitle" style="margin-top: 0; margin-bottom: 20px; color: #f8fafc; font-size: 20px; font-weight: 600;">T&#7841;o Vai Tr&#242;</h3>
@@ -338,7 +343,7 @@
     let currentRoleId = null;
     let initialPermissions = [];
 
-    // openCreateRoleModal — mở modal tạo vai trò, reset form về chế độ create.
+    // openCreateRoleModal â€” má»Ÿ modal táº¡o vai trĂ², reset form vá» cháº¿ Ä‘á»™ create.
     function openCreateRoleModal() {
         document.getElementById('roleModalTitle').textContent = 'T\u1ea1o Vai Tr\u00f2';
         document.getElementById('roleActionInput').value = 'createRole';
@@ -348,7 +353,7 @@
         document.getElementById('roleModal').style.display = 'block';
     }
 
-    // openEditRoleModal — mở modal sửa vai trò dựa trên vai trò đang được chọn trong sidebar.
+    // openEditRoleModal â€” má»Ÿ modal sá»­a vai trĂ² dá»±a trĂªn vai trĂ² Ä‘ang Ä‘Æ°á»£c chá»n trong sidebar.
     function openEditRoleModal() {
         if (!currentRoleId) {
             showToast('warning', 'Vui l\u00f2ng ch\u1ecdn m\u1ed9t vai tr\u00f2 \u0111\u1ec3 s\u1eeda.');
@@ -367,7 +372,7 @@
         document.getElementById('roleModal').style.display = 'block';
     }
 
-    // openDeleteRoleModal — mở modal xác nhận xóa vai trò đang chọn.
+    // openDeleteRoleModal â€” má»Ÿ modal xĂ¡c nháº­n xĂ³a vai trĂ² Ä‘ang chá»n.
     function openDeleteRoleModal() {
         if (!currentRoleId) {
             showToast('warning', 'Vui l\u00f2ng ch\u1ecdn m\u1ed9t vai tr\u00f2 \u0111\u1ec3 x\u00f3a.');

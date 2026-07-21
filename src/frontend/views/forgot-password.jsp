@@ -1,3 +1,8 @@
+﻿<%-- 
+    Liên quan đến UCs: Recover Password
+    Tác giả: Đỗ Vũ Minh Ngọc
+    MSSV: HE182479
+--%>
 &#65279;<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
@@ -12,7 +17,7 @@
 </head>
 <body>
 
-<!-- Navbar -->
+<!-- Thanh điều hướng (Navbar) -->
 <nav class="navbar">
   <a href="${pageContext.request.contextPath}/home" class="logo" id="nav-logo">
     <div class="logo-icon">T</div>
@@ -24,10 +29,10 @@
   </div>
 </nav>
 
-<!-- Auth Layout -->
+<!-- Bố cục trang xác thực -->
 <div class="auth-wrapper" style="padding-top:68px">
 
-  <!-- Left Hero -->
+  <!-- Cột trái: Hình ảnh giới thiệu -->
   <div class="auth-hero">
     <div class="auth-hero-content">
       <h1>Kh&#244;i ph&#7909;c<br><em>T&#224;i kho&#7843;n</em></h1>
@@ -35,7 +40,7 @@
     </div>
   </div>
 
-  <!-- Right Form Panel -->
+  <!-- Cột phải: Khung nhập liệu -->
   <div class="auth-panel">
     <div class="auth-form-wrap fade-up">
 
@@ -44,7 +49,7 @@
         Vui l&#242;ng nh&#7853;p &#273;&#7883;a ch&#7881; email &#273;&#227; &#273;&#259;ng k&#253; c&#7911;a b&#7841;n. Ch&#250;ng t&#244;i s&#7869; g&#7917;i m&#7897;t li&#234;n k&#7871;t &#273;&#7875; &#273;&#7863;t l&#7841;i m&#7853;t kh&#7849;u.
       </p>
 
-      <!-- Server messages -->
+      <!-- Hiển thị thông báo lỗi từ Server -->
       <c:if test="${not empty errorMessage}">
         <div class="alert alert-error fade-up">
           <i class="fa fa-circle-exclamation"></i> ${errorMessage}
@@ -115,3 +120,4 @@ document.getElementById('email').addEventListener('input', function() {
 </script>
 </body>
 </html>
+

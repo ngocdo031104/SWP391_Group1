@@ -1,3 +1,8 @@
+﻿/*
+ * Liên quan đến UCs: Register Account
+ * Tác giả: Đỗ Vũ Minh Ngọc
+ * MSSV: HE182479
+ */
 package Controller;
 
 import Model.UserDAO;
@@ -40,17 +45,18 @@ public class VerifyController extends HttpServlet {
                     session.removeAttribute("verify_email");
                     session.removeAttribute("verify_otp");
                     
-                    request.setAttribute("successMessage", "Xác thực thành công! Vui lòng đăng nhập.");
+                    request.setAttribute("successMessage", "XĂ¡c thá»±c thĂ nh cĂ´ng! Vui lĂ²ng Ä‘Äƒng nháº­p.");
                     request.getRequestDispatcher("/views/login.jsp").forward(request, response);
                     return;
                 } else {
-                    request.setAttribute("errorMessage", "Mã xác thực không đúng. Vui lòng thử lại.");
+                    request.setAttribute("errorMessage", "MĂ£ xĂ¡c thá»±c khĂ´ng Ä‘Ăºng. Vui lĂ²ng thá»­ láº¡i.");
                 }
             } else {
-                request.setAttribute("errorMessage", "Phiên xác thực đã hết hạn. Vui lòng đăng ký lại.");
+                request.setAttribute("errorMessage", "PhiĂªn xĂ¡c thá»±c Ä‘Ă£ háº¿t háº¡n. Vui lĂ²ng Ä‘Äƒng kĂ½ láº¡i.");
             }
         }
         
         request.getRequestDispatcher("/views/verify.jsp").forward(request, response);
     }
 }
+
