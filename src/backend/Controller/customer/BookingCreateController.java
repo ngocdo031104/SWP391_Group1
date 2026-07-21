@@ -58,7 +58,8 @@ public class BookingCreateController extends HttpServlet {
 
             // Dương làm đoạn này: màn booking dùng TourScheduleDAO để lấy trực tiếp các dòng TourSchedule theo TourID.
             // Mục đích là lấy DepartureDate từ đúng bảng lịch khởi hành, không phụ thuộc vào danh sách schedule nạp kèm trong TourDAO.
-            List<TourSchedule> bookingSchedules = tourScheduleDAO.getSchedulesByTourId(tourId);
+            // BR-19 / BR-20: lọc bỏ các lịch có DepartureDate ở quá khứ để tránh khách chọn phải ngày đã qua.
+            List<TourSchedule> bookingSchedules = tourScheduleDAO.getSchedulesByTourId(tourId, true);
             tour.setSchedules(bookingSchedules);
 
             // tour dùng để hiển thị tên tour, điểm đến và thông tin tổng quan.
@@ -113,7 +114,8 @@ public class BookingCreateController extends HttpServlet {
             if (tour != null) {
                 // Dương làm đoạn này: đồng bộ danh sách lịch khi submit với danh sách đã hiển thị ở GET.
                 // Nhờ vậy khi form lỗi, JSP vẫn render lại đúng các lịch của tour đang đặt.
-                tour.setSchedules(tourScheduleDAO.getSchedulesByTourId(tourId));
+                // BR-19 / BR-20: chỉ nạp lịch có DepartureDate >= hôm nay.
+                tour.setSchedules(tourScheduleDAO.getSchedulesByTourId(tourId, true));
             }
             // selectedSchedule được lấy bằng ScheduleID + TourID để chắc chắn lịch khách chọn thuộc đúng tour hiện tại.
             TourSchedule selectedSchedule = tourScheduleDAO.getScheduleByIdForTour(scheduleId, tourId);
@@ -123,9 +125,25 @@ public class BookingCreateController extends HttpServlet {
                 forwardCreateError(request, response, tour, "Vui lòng chọn lịch khởi hành hợp lệ.");
                 return;
             }
-            // Giới hạn 1-10 khách theo constraint NumParticipants trong bảng Booking.
-            if (participantCount < 1 || participantCount > 10) {
-                forwardCreateError(request, response, tour, "Số người tham gia phải từ 1 đến 10.");
+            // BR-19 / BR-20: server-side guard chặn đặt tour có ngày khởi hành ở quá khứ
+            // (dù DAO ở GET/POST đã lọc bỏ, khách vẫn có thể gửi scheduleId cũ qua DevTools).
+            java.sql.Date departureDate = selectedSchedule.getDepartureDate();
+            java.util.Calendar calNow = java.util.Calendar.getInstance();
+            calNow.set(java.util.Calendar.HOUR_OF_DAY, 0);
+            calNow.set(java.util.Calendar.MINUTE, 0);
+            calNow.set(java.util.Calendar.SECOND, 0);
+            calNow.set(java.util.Calendar.MILLISECOND, 0);
+            java.sql.Date today = new java.sql.Date(calNow.getTimeInMillis());
+            if (departureDate != null && departureDate.before(today)) {
+                forwardCreateError(request, response, tour, "Không thể đặt tour có ngày khởi hành ở quá khứ.");
+                return;
+            }
+            int maxParticipants = tour.getMaxParticipants() > 0 ? tour.getMaxParticipants() : 10;
+            // Giới hạn số người đi theo tour.MaxParticipants (default fallback 10 khi DB chưa set).
+            // BR-x: chuẩn hoá từ fix cứng literal "10" trước đây sang đọc động theo từng tour.
+            if (participantCount < 1 || participantCount > maxParticipants) {
+                forwardCreateError(request, response, tour,
+                        "Số người tham gia phải từ 1 đến " + maxParticipants + ".");
                 return;
             }
             // Kiểm tra AvailableSeats để tránh khách đặt nhiều hơn số chỗ còn lại.
@@ -138,6 +156,23 @@ public class BookingCreateController extends HttpServlet {
             List<BookingParticipant> participants = BookingFlowSupport.readParticipants(request, participantCount);
             if (participants.size() != participantCount) {
                 forwardCreateError(request, response, tour, "Vui lòng nhập đầy đủ thông tin bắt buộc của tất cả người tham gia.");
+                return;
+            }
+
+            // BR-19 / BR-20: tour mạo hiểm (category 1 = Biển & Đảo, 2 = Núi & Rừng) không cho phép trẻ sơ sinh.
+            // Lưu ý: priceInfant > 0 đã bị chặn phía admin (AdminSchedulePricingController),
+            // nhưng đây là tầng bảo vệ cuối cùng phòng trường hợp admin bypass validation frontend.
+            int tourCategoryId = tour.getCategoryId();
+            boolean hasInfant = false;
+            for (BookingParticipant p : participants) {
+                if ("Infant".equalsIgnoreCase(p.getAgeType())) {
+                    hasInfant = true;
+                    break;
+                }
+            }
+            if (hasInfant && (tourCategoryId == 1 || tourCategoryId == 2)) {
+                forwardCreateError(request, response, tour,
+                        "Tour thuộc danh mục mạo hiểm không cho phép trẻ sơ sinh tham gia.");
                 return;
             }
 

@@ -21,8 +21,9 @@ public class StaticPagesController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
+        request.setCharacterEncoding("UTF-8");
+
         String path = request.getServletPath();
         
         if ("/help".equals(path)) {
@@ -48,6 +49,10 @@ public class StaticPagesController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        request.setCharacterEncoding("UTF-8");
+
         String path = request.getServletPath();
         if ("/contact".equals(path)) {
             // Chặn gửi tin nếu chưa đăng nhập

@@ -1,0 +1,45 @@
+@startuml RecruiterVerificationSequence
+title 1.2.2 Recruiter Verification Flow - Sequence Diagram
+
+actor "Recruiter" as R
+participant "System" as S
+actor "Moderator" as M
+
+R -> S: Step 1: Register recruiter account
+activate S
+S --> R: Account created, email verification sent
+deactivate S
+
+R -> S: Step 2: Complete company profile (fields, documents)
+activate S
+S -> S: Step 3: Calculate profile completeness (%)
+
+alt Profile < 97%
+  S --> R: Step 4 (If profile < 97%): List of missing fields
+  R -> S: Update profile fields
+  S -> S: Step 3: Recalculate completeness (loop)
+end
+
+S -> S: Profile >= 97% -> Create verification request\n(status = PENDING)
+S -> M: Send verification request
+
+M -> S: Step 5: Open verification request
+activate M
+
+alt Approve
+  M -> S: Step 6 (If approved): Approve + issue verified badge
+  S -> S: company.status = VERIFIED
+else Reject
+  M -> S: Step 6 (If rejected): Reject with reason
+  S -> S: company.status = REJECTED
+end
+
+S --> R: Step 7: Notify verification result
+deactivate M
+
+note over R, S
+  BR-RV-05: Rejected profile can be updated
+  and resubmitted -> loop back to Step 2
+end note
+
+@enduml

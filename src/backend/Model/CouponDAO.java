@@ -17,8 +17,7 @@ public class CouponDAO extends DBContext {
      */
     public Coupon getCouponByCode(String couponCode) {
         String sql = "SELECT CouponID, CouponCode, DiscountType, DiscountValue, MinOrderAmount, MaxDiscountAmount, MaxUses, UsedCount, StartDate, EndDate, IsActive, CreatedBy, CreatedAt "
-                   + "FROM Coupon WHERE CouponCode = ? AND IsActive = 1 AND CAST(GETDATE() AS DATE) BETWEEN StartDate AND EndDate";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+                   + "FROM Coupon WHERE CouponCode = ? AND IsActive = 1 AND CAST(GETDATE() AS DATE) BETWEEN StartDate AND EndDate";        try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, couponCode);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -203,6 +202,39 @@ public class CouponDAO extends DBContext {
             Logger.getLogger(CouponDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
+    }
+
+    /**
+     * Lấy coupon theo ID (dùng cho form edit — không filter trạng thái).
+     */
+    public Coupon getCouponById(int couponId) {
+        String sql = "SELECT CouponID, CouponCode, DiscountType, DiscountValue, MinOrderAmount, MaxDiscountAmount, MaxUses, UsedCount, StartDate, EndDate, IsActive, CreatedBy, CreatedAt "
+                   + "FROM Coupon WHERE CouponID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, couponId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new Coupon(
+                        rs.getInt("CouponID"),
+                        rs.getString("CouponCode"),
+                        rs.getString("DiscountType"),
+                        rs.getDouble("DiscountValue"),
+                        rs.getDouble("MinOrderAmount"),
+                        rs.getObject("MaxDiscountAmount") != null ? rs.getDouble("MaxDiscountAmount") : null,
+                        rs.getObject("MaxUses") != null ? rs.getInt("MaxUses") : null,
+                        rs.getInt("UsedCount"),
+                        rs.getDate("StartDate"),
+                        rs.getDate("EndDate"),
+                        rs.getBoolean("IsActive"),
+                        rs.getObject("CreatedBy") != null ? rs.getInt("CreatedBy") : null,
+                        rs.getTimestamp("CreatedAt")
+                    );
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(CouponDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 }
 

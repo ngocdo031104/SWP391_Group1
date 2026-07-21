@@ -45,6 +45,27 @@ public class BuddyRequestDAO extends DBContext {
         return false;
     }
 
+    public BuddyRequest getRequestById(int requestId) {
+        String sql = "SELECT * FROM BuddyRequest WHERE RequestId = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, requestId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return new BuddyRequest(
+                    rs.getInt("RequestId"),
+                    rs.getInt("SenderId"),
+                    rs.getInt("ReceiverId"),
+                    rs.getString("Status"),
+                    rs.getTimestamp("CreatedAt"),
+                    rs.getTimestamp("UpdatedAt")
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public List<BuddyRequest> getPendingRequests(int receiverId) {
         return getReceivedRequests(receiverId).stream().filter(r -> "Pending".equals(r.getStatus())).toList();
     }
@@ -124,6 +145,20 @@ public class BuddyRequestDAO extends DBContext {
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, requestId);
             ps.setInt(2, senderId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean unfriendBuddy(int user1, int user2) {
+        String sql = "DELETE FROM BuddyRequest WHERE ((SenderId = ? AND ReceiverId = ?) OR (SenderId = ? AND ReceiverId = ?)) AND Status = 'Accepted'";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, user1);
+            ps.setInt(2, user2);
+            ps.setInt(3, user2);
+            ps.setInt(4, user1);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();

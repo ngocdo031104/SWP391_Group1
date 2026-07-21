@@ -538,7 +538,7 @@ public class GuideDAO extends DBContext {
      * Cập nhật trạng thái vận hành của Tour (Transaction-based).
      */
     public boolean updateTourStatus(int scheduleId, String newStatus, String notes, int guideId) {
-        String updateScheduleSql = "UPDATE TourSchedule SET Status = ? WHERE ScheduleID = ?";
+        String updateScheduleSql = "UPDATE TourSchedule SET TourStatus = ? WHERE ScheduleID = ?";
         String insertStatusSql = "INSERT INTO TourStatus (ScheduleID, Status, Notes, UpdatedBy, UpdatedAt) VALUES (?, ?, ?, ?, SYSDATETIME())";
         String insertLogSql = "INSERT INTO TourOperationLog (ScheduleID, Activity, OperatedBy, CreatedAt) VALUES (?, ?, ?, SYSDATETIME())";
 
@@ -607,5 +607,61 @@ public class GuideDAO extends DBContext {
             LOGGER.log(Level.SEVERE, "Lỗi khi lấy lịch sử trạng thái của scheduleId: " + scheduleId, ex);
         }
         return history;
+    }
+
+    /**
+     * Lấy danh sách phân công theo ScheduleID.
+     */
+    public List<TourAssignment> getAssignmentsByScheduleId(int scheduleId) {
+        List<TourAssignment> list = new ArrayList<>();
+        String sql = "SELECT ta.AssignmentID, ta.ScheduleID, ta.GuideID, ta.AssignedBy, ta.AssignedAt, ta.Notes, "
+                   + "g.FullName as GuideName, g.Email as GuideEmail, "
+                   + "c.FullName as CoordinatorName, "
+                   + "ts.DepartureDate, ts.ReturnDate, "
+                   + "t.TourName "
+                   + "FROM TourAssignment ta "
+                   + "JOIN [User] g ON ta.GuideID = g.UserID "
+                   + "LEFT JOIN [User] c ON ta.AssignedBy = c.UserID "
+                   + "JOIN TourSchedule ts ON ta.ScheduleID = ts.ScheduleID "
+                   + "JOIN Tour t ON ts.TourID = t.TourID "
+                   + "WHERE ta.ScheduleID = ? "
+                   + "ORDER BY ta.AssignedAt DESC";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, scheduleId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    TourAssignment ta = new TourAssignment();
+                    ta.setAssignmentId(rs.getInt("AssignmentID"));
+                    ta.setScheduleId(rs.getInt("ScheduleID"));
+                    ta.setGuideId(rs.getInt("GuideID"));
+                    ta.setAssignedBy(rs.getObject("AssignedBy") != null ? rs.getInt("AssignedBy") : null);
+                    ta.setAssignedAt(rs.getTimestamp("AssignedAt"));
+                    ta.setNotes(rs.getString("Notes"));
+                    ta.setAssignedByName(rs.getString("CoordinatorName"));
+
+                    User guide = new User();
+                    guide.setUserId(rs.getInt("GuideID"));
+                    guide.setFullName(rs.getString("GuideName"));
+                    guide.setEmail(rs.getString("GuideEmail"));
+                    ta.setGuide(guide);
+
+                    TourSchedule sched = new TourSchedule();
+                    sched.setScheduleId(rs.getInt("ScheduleID"));
+                    sched.setDepartureDate(rs.getDate("DepartureDate"));
+                    sched.setReturnDate(rs.getDate("ReturnDate"));
+
+                    Tour tour = new Tour();
+                    tour.setTourName(rs.getString("TourName"));
+                    sched.setTour(tour);
+
+                    ta.setSchedule(sched);
+                    list.add(ta);
+                }
+            }
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Lỗi khi lấy phân công theo scheduleId: " + scheduleId, ex);
+        }
+        return list;
     }
 }

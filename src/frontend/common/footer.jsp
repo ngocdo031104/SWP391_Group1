@@ -7,7 +7,7 @@
                     <div class="logo-icon">T</div>
                     <span>TourBuddy</span>
                 </a>
-                <p class="footer-desc">Kiến tạo hành trình du lịch cao cấp và lịch trình nghỉ dưỡng đặt riêng tại những điểm đến tuyệt đẹp khắp Việt Nam từ năm 2021.</p>
+                <p class="footer-desc">Ki&#7871;n t&#7841;o h&#224;nh tr&#236;nh du l&#7883;ch cao c&#7845;p v&#224; l&#7883;ch tr&#236;nh ngh&#7881; d&#432;&#7905;ng &#273;&#7863;t ri&#234;ng t&#7841;i nh&#7919;ng &#273;i&#7875;m &#273;&#7871;n tuy&#7879;t &#273;&#7865;p kh&#7855;p Vi&#7879;t Nam t&#7915; n&#259;m 2021.</p>
                 <div class="social-links">
                     <a href="https://facebook.com/TourBuddyVN" class="btn-icon" aria-label="Facebook"><i data-lucide="facebook"></i></a>
                     <a href="https://instagram.com/tourbuddy.vn" class="btn-icon" aria-label="Instagram"><i data-lucide="instagram"></i></a>
@@ -17,52 +17,52 @@
             </div>
 
             <div class="footer-col">
-                <h3>Khám Phá</h3>
+                <h3>Kh&#225;m Ph&#225;</h3>
                 <ul class="footer-links">
-                    <li><a href="${pageContext.request.contextPath}/tourdiscovery">Gói Tour Cao Cấp</a></li>
-                    <li><a href="${pageContext.request.contextPath}/tourdiscovery">Điểm Đến Hot</a></li>
-                    <li><a href="${pageContext.request.contextPath}/home#promotions">Ưu Đãi Đặc Biệt</a></li>
-                    <li><a href="${pageContext.request.contextPath}/tourdiscovery?category=adventure">Tour Mạo Hiểm</a></li>
+                    <li><a href="${pageContext.request.contextPath}/tourdiscovery">G&#243;i Tour Cao C&#7845;p</a></li>
+                    <li><a href="${pageContext.request.contextPath}/tourdiscovery">&#272;i&#7875;m &#272;&#7871;n Hot</a></li>
+                    <li><a href="${pageContext.request.contextPath}/home#promotions">&#431;u &#272;&#227;i &#272;&#7863;c Bi&#7879;t</a></li>
+                    <li><a href="${pageContext.request.contextPath}/tourdiscovery?category=adventure">Tour M&#7841;o Hi&#7875;m</a></li>
                 </ul>
             </div>
 
             <div class="footer-col">
-                <h3>Hỗ Trợ</h3>
+                <h3>H&#7895; Tr&#7907;</h3>
                 <ul class="footer-links">
-                    <li><a href="${pageContext.request.contextPath}/help">Trung Tâm Trợ Giúp</a></li>
-                    <li><a href="${pageContext.request.contextPath}/guide-booking">Hướng Dẫn Đặt Tour</a></li>
-                    <li><a href="${pageContext.request.contextPath}/policy/cancel">Chính Sách Hủy</a></li>
-                    <li><a href="${pageContext.request.contextPath}/contact">Liên Hệ Hỗ Trợ</a></li>
+                    <li><a href="${pageContext.request.contextPath}/help">Trung T&#226;m Tr&#7907; Gi&#250;p</a></li>
+                    <li><a href="${pageContext.request.contextPath}/guide-booking">H&#432;&#7899;ng D&#7851;n &#272;&#7863;t Tour</a></li>
+                    <li><a href="${pageContext.request.contextPath}/policy/cancel">Ch&#237;nh S&#225;ch H&#7911;y</a></li>
+                    <li><a href="${pageContext.request.contextPath}/contact">Li&#234;n H&#7879; H&#7895; Tr&#7907;</a></li>
                 </ul>
             </div>
 
             <div class="footer-col footer-newsletter">
-                <h3>Đăng Ký Nhận Tin</h3>
-                <p>Cập nhật mã giảm giá, flash sale và hành trình mới nhất từ TourBuddy.</p>
+                <h3>&#272;&#259;ng K&#253; Nh&#7853;n Tin</h3>
+                <p>C&#7853;p nh&#7853;t m&#227; gi&#7843;m gi&#225;, flash sale v&#224; h&#224;nh tr&#236;nh m&#7899;i nh&#7845;t t&#7915; TourBuddy.</p>
                 <form class="newsletter-form" id="newsletter-subscription-form">
-                    <input type="email" placeholder="Email của bạn" id="newsletter-email" required>
-                    <button type="submit" id="newsletter-submit-btn">Đăng Ký</button>
+                    <input type="email" placeholder="Email c&#7911;a b&#7841;n" id="newsletter-email" required>
+                    <button type="submit" id="newsletter-submit-btn">&#272;&#259;ng K&#253;</button>
                 </form>
             </div>
         </div>
 
         <div class="container footer-bottom">
-            <p>&copy; 2026 TourBuddy Ltd. Bảo lưu mọi quyền. Thiết kế theo tiêu chuẩn du lịch cao cấp.</p>
+            <p>&copy; 2026 TourBuddy Ltd. B&#7843;o l&#432;u m&#7885;i quy&#7873;n. Thi&#7871;t k&#7871; theo ti&#234;u chu&#7849;n du l&#7883;ch cao c&#7845;p.</p>
             <div class="footer-selectors">
                 <div class="selector-wrapper">
-                    <select id="lang-select" aria-label="Chọn ngôn ngữ">
-                        <option value="vi" selected>Tiếng Việt</option>
+                    <select id="lang-select" aria-label="Ch&#7885;n ng&#244;n ng&#7919;">
+                        <option value="vi" selected>Ti&#7871;ng Vi&#7879;t</option>
                         <option value="en">English (US)</option>
-                        <option value="jp">日本語</option>
-                        <option value="fr">Français</option>
+                        <option value="jp">&#26085;&#26412;&#35486;</option>
+                        <option value="fr">Fran&#231;ais</option>
                     </select>
                 </div>
                 <div class="selector-wrapper">
-                    <select id="curr-select" aria-label="Chọn tiền tệ">
-                        <option value="vnd" selected>VND (₫)</option>
+                    <select id="curr-select" aria-label="Ch&#7885;n ti&#7873;n t&#7879;">
+                        <option value="vnd" selected>VND (&#8363;)</option>
                         <option value="usd">USD ($)</option>
-                        <option value="eur">EUR (€)</option>
-                        <option value="jpy">JPY (¥)</option>
+                        <option value="eur">EUR (&#8364;)</option>
+                        <option value="jpy">JPY (&#165;)</option>
                     </select>
                 </div>
             </div>
@@ -94,7 +94,7 @@
                     })
                     .catch(err => {
                         console.error(err);
-                        alert('Có lỗi hệ thống xảy ra. Vui lòng thử lại sau.');
+                        alert('C\u00f3 l\u1ed7i h\u1ec7 th\u1ed1ng x\u1ea3y ra. Vui l\u00f2ng th\u1eed l\u1ea1i sau.');
                     });
                 });
             }
@@ -110,7 +110,8 @@
     %>
     <div id="toastContainer" class="toast-container"></div>
     <script>
-        window.showToast = function(message, type = 'success') {
+        window.showToast = function(message, type) {
+            type = type || 'success';
             let container = document.getElementById('toastContainer');
             if (!container) {
                 container = document.createElement('div');
@@ -119,24 +120,29 @@
                 document.body.appendChild(container);
             }
             const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
+            toast.className = 'toast ' + type;
             
             let icon = 'check-circle';
             if (type === 'error') icon = 'alert-triangle';
             else if (type === 'warning') icon = 'alert-circle';
             
-            toast.innerHTML = `<i data-lucide="${icon}"></i> <span>${message}</span>`;
+            toast.innerHTML = '<i data-lucide="' + icon + '"></i> <span>' + (message || '') + '</span>';
             container.appendChild(toast);
             
             if (window.lucide) {
-                window.lucide.createIcons();
+                try {
+                    window.lucide.createIcons();
+                } catch (e) {
+                    console.error(e);
+                }
             }
             
             setTimeout(() => {
-                toast.style.animation = 'slideOut 0.3s ease forwards';
-                setTimeout(() => toast.remove(), 300);
+                toast.style.animation = 'toastExit 0.35s cubic-bezier(.16,1,.3,1) forwards';
+                setTimeout(() => toast.remove(), 350);
             }, 3000);
         }
     </script>
+    <script src="${pageContext.request.contextPath}/js/tb-ui.js?v=1.0"></script>
 </body>
 </html>

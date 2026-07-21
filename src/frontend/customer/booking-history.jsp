@@ -1,10 +1,10 @@
-<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
+&#65279;<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
 <%
-    // Dương làm đoạn này
-    // Chức năng: Màn hình hiển thị lịch sử đặt tour của khách hàng.
+    // D&#432;&#417;ng l&#224;m &#273;o&#7841;n n&#224;y
+    // Ch&#7913;c n&#259;ng: M&#224;n h&#236;nh hi&#7875;n th&#7883; l&#7883;ch s&#7917; &#273;&#7863;t tour c&#7911;a kh&#225;ch h&#224;ng.
 %>
 <jsp:include page="/common/header.jsp"/>
 
@@ -268,42 +268,42 @@
 
 <main class="history-container">
     <div class="history-header">
-        <h1>Lịch Sử Đặt Tour</h1>
-        <p>Quản lý và theo dõi các chuyến đi của bạn</p>
+        <h1>L&#7883;ch S&#7917; &#272;&#7863;t Tour</h1>
+        <p>Qu&#7843;n l&#253; v&#224; theo d&#245;i c&#225;c chuy&#7871;n &#273;i c&#7911;a b&#7841;n</p>
     </div>
 
     <div class="filter-container">
         <form action="${pageContext.request.contextPath}/customer/booking/history" method="get" class="filter-form" id="historyFilterForm">
             <div class="filter-group" style="flex: 2;">
-                <label for="searchName">Tên Tour</label>
+                <label for="searchName">T&#234;n Tour</label>
                 <div class="autocomplete-wrapper">
-                    <input type="text" id="searchName" name="searchName" placeholder="Nhập tên tour..." value="${searchName}" autocomplete="off">
+                    <input type="text" id="searchName" name="searchName" placeholder="Nh&#7853;p t&#234;n tour..." value="${searchName}" autocomplete="off">
                     <div id="autocomplete-list" class="autocomplete-list"></div>
                 </div>
             </div>
             <div class="filter-group">
-                <label for="fromDate">Từ ngày (Ngày đặt)</label>
+                <label for="fromDate">T&#7915; ng&#224;y (Ng&#224;y &#273;&#7863;t)</label>
                 <input type="date" id="fromDate" name="fromDate" value="${fromDate}">
             </div>
             <div class="filter-group">
-                <label for="toDate">Đến ngày</label>
+                <label for="toDate">&#272;&#7871;n ng&#224;y</label>
                 <input type="date" id="toDate" name="toDate" value="${toDate}">
             </div>
             <div class="filter-group">
-                <label for="status">Trạng thái</label>
+                <label for="status">Tr&#7841;ng th&#225;i</label>
                 <select id="status" name="status">
-                    <option value="All" ${empty status or status eq 'All' ? 'selected' : ''}>Tất cả</option>
-                    <option value="Success" ${status eq 'Success' ? 'selected' : ''}>Thanh toán thành công</option>
-                    <option value="Completed" ${status eq 'Completed' ? 'selected' : ''}>Đã hoàn thành</option>
-                    <option value="Cancelled" ${status eq 'Cancelled' ? 'selected' : ''}>Đã hủy</option>
+                    <option value="All" ${empty status or status eq 'All' ? 'selected' : ''}>T&#7845;t c&#7843;</option>
+                    <option value="Success" ${status eq 'Success' ? 'selected' : ''}>Thanh to&#225;n th&#224;nh c&#244;ng</option>
+                    <option value="Completed" ${status eq 'Completed' ? 'selected' : ''}>&#272;&#227; ho&#224;n th&#224;nh</option>
+                    <option value="Cancelled" ${status eq 'Cancelled' ? 'selected' : ''}>&#272;&#227; h&#7911;y</option>
                 </select>
             </div>
             <div class="filter-actions">
                 <button type="submit" class="btn-filter">
-                    <i data-lucide="search" style="width: 16px; height: 16px;"></i> Lọc
+                    <i data-lucide="search" style="width: 16px; height: 16px;"></i> L&#7885;c
                 </button>
                 <a href="${pageContext.request.contextPath}/customer/booking/history" class="btn-clear">
-                    Xóa lọc
+                    X&#243;a l&#7885;c
                 </a>
             </div>
         </form>
@@ -313,9 +313,9 @@
         <c:when test="${empty bookings}">
             <div class="empty-state">
                 <i data-lucide="calendar-x" style="width: 48px; height: 48px;"></i>
-                <h3>Bạn chưa có chuyến đi nào</h3>
-                <p>Khám phá các điểm đến tuyệt vời và bắt đầu hành trình của bạn cùng TourBuddy ngay hôm nay.</p>
-                <a href="${pageContext.request.contextPath}/tourdiscovery" class="btn btn-view-detail">Khám phá Tour</a>
+                <h3>B&#7841;n ch&#432;a c&#243; chuy&#7871;n &#273;i n&#224;o</h3>
+                <p>Kh&#225;m ph&#225; c&#225;c &#273;i&#7875;m &#273;&#7871;n tuy&#7879;t v&#7901;i v&#224; b&#7855;t &#273;&#7847;u h&#224;nh tr&#236;nh c&#7911;a b&#7841;n c&#249;ng TourBuddy ngay h&#244;m nay.</p>
+                <a href="${pageContext.request.contextPath}/tourdiscovery" class="btn btn-view-detail">Kh&#225;m ph&#225; Tour</a>
             </div>
         </c:when>
         <c:otherwise>
@@ -323,12 +323,12 @@
                 <table class="booking-table">
                     <thead>
                         <tr>
-                            <th>Mã đơn</th>
-                            <th>Tên Tour</th>
-                            <th>Ngày đặt</th>
-                            <th>Giờ đặt</th>
-                            <th>Trạng thái</th>
-                            <th style="text-align: right;">Thao tác</th>
+                            <th>M&#227; &#273;&#417;n</th>
+                            <th>T&#234;n Tour</th>
+                            <th>Ng&#224;y &#273;&#7863;t</th>
+                            <th>Gi&#7901; &#273;&#7863;t</th>
+                            <th>Tr&#7841;ng th&#225;i</th>
+                            <th style="text-align: right;">Thao t&#225;c</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -351,17 +351,17 @@
                                 <td>
                                     <span class="booking-status status-${booking.status.toLowerCase()}">
                                         <c:choose>
-                                            <c:when test="${booking.status eq 'PendingPayment'}">Chờ thanh toán</c:when>
-                                            <c:when test="${booking.status eq 'Success'}">Thanh toán thành công</c:when>
-                                            <c:when test="${booking.status eq 'Cancelled'}">Đã hủy</c:when>
-                                            <c:when test="${booking.status eq 'Completed'}">Đã hoàn thành</c:when>
+                                            <c:when test="${booking.status eq 'PendingPayment'}">Ch&#7901; thanh to&#225;n</c:when>
+                                            <c:when test="${booking.status eq 'Success'}">Thanh to&#225;n th&#224;nh c&#244;ng</c:when>
+                                            <c:when test="${booking.status eq 'Cancelled'}">&#272;&#227; h&#7911;y</c:when>
+                                            <c:when test="${booking.status eq 'Completed'}">&#272;&#227; ho&#224;n th&#224;nh</c:when>
                                             <c:otherwise>${booking.status}</c:otherwise>
                                         </c:choose>
                                     </span>
                                 </td>
                                 <td style="text-align: right;">
                                     <a href="${pageContext.request.contextPath}/customer/booking/detail?code=${booking.bookingCode}" class="btn-view-detail">
-                                        Xem chi tiết <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i>
+                                        Xem chi ti&#7871;t <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i>
                                     </a>
                                 </td>
                             </tr>
@@ -382,7 +382,7 @@
         const toDateStr = document.getElementById('toDate').value;
         if (fromDateStr && toDateStr) {
             if (new Date(fromDateStr) > new Date(toDateStr)) {
-                alert('Từ ngày không thể lớn hơn Đến ngày. Vui lòng chọn lại!');
+                alert('T\u1eeb ng\u00e0y kh\u00f4ng th\u1ec3 l\u1edbn h\u01a1n \u0110\u1ebfn ng\u00e0y. Vui l\u00f2ng ch\u1ecdn l\u1ea1i!');
                 e.preventDefault();
                 return;
             }
@@ -393,9 +393,9 @@
     const searchInput = document.getElementById('searchName');
     const tableBody = document.querySelector('.booking-table tbody');
 
-    // Bỏ dấu tiếng Việt để tìm kiếm không phân biệt dấu
+    // B\u1ecf d\u1ea5u ti\u1ebfng Vi\u1ec7t \u0111\u1ec3 t\u00ecm ki\u1ebfm kh\u00f4ng ph\u00e2n bi\u1ec7t d\u1ea5u
     function removeDiacritics(str) {
-        return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D');
+        return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\u0111/g, 'd').replace(/\u0110/g, 'D');
     }
 
     function filterTableByTourName(keyword) {

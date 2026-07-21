@@ -285,7 +285,7 @@ public class AuditLogDAO extends DBContext {
         return stats;
     }
 
-    public boolean createFinancialAuditLog(String entityType, int entityId, String action, String oldValues, String newValues, int performedBy) {
+    public boolean createFinancialAuditLog(String entityType, int entityId, String action, String oldValues, String newValues, Integer performedBy) {
         String sql = "INSERT INTO FinancialAuditLog (EntityType, EntityID, Action, OldValues, NewValues, PerformedBy, CreatedAt) VALUES (?, ?, ?, ?, ?, ?, SYSDATETIME())";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, entityType);
@@ -293,7 +293,11 @@ public class AuditLogDAO extends DBContext {
             ps.setString(3, action);
             ps.setString(4, oldValues);
             ps.setString(5, newValues);
-            ps.setInt(6, performedBy);
+            if (performedBy != null && performedBy > 0) {
+                ps.setInt(6, performedBy);
+            } else {
+                ps.setNull(6, java.sql.Types.INTEGER);
+            }
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();

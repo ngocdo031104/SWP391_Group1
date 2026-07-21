@@ -14,14 +14,10 @@ import java.io.IOException;
 @WebServlet(name = "HeaderDataController", urlPatterns = {"/api/header-counts"})
 public class HeaderDataController extends HttpServlet {
 
-    private final ChatDAO chatDAO = new ChatDAO();
-    private final NotificationDAO notificationDAO = new NotificationDAO();
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json;charset=UTF-8");
-        request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
 
         HttpSession session = request.getSession(false);
@@ -33,10 +29,25 @@ public class HeaderDataController extends HttpServlet {
         User currentUser = (User) session.getAttribute("sessionUser");
         int userId = currentUser.getUserId();
 
-        int unreadMessages = chatDAO.getUnreadMessageCount(userId);
-        int unreadNotifications = notificationDAO.getUnreadCount(userId);
+        int unreadMessages = 0;
+        int unreadNotifications = 0;
 
-        String json = String.format("{\"unreadMessages\": %d, \"unreadNotifications\": %d}", unreadMessages, unreadNotifications);
+        ChatDAO chatDAO = new ChatDAO();
+        try {
+            unreadMessages = chatDAO.getUnreadMessageCount(userId);
+        } finally {
+            chatDAO.close();
+        }
+
+        NotificationDAO notifDAO = new NotificationDAO();
+        try {
+            unreadNotifications = notifDAO.getUnreadCount(userId);
+        } finally {
+            notifDAO.close();
+        }
+
+        String json = String.format("{\"unreadMessages\": %d, \"unreadNotifications\": %d}",
+                unreadMessages, unreadNotifications);
         response.getWriter().write(json);
     }
 }

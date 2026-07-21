@@ -9,19 +9,19 @@
     const couponBtn = document.getElementById('coupon-preview-btn');
     // couponInput l\u00e0 \u00f4 nh\u1eadp m\u00e3 coupon, thu\u1ed9c payment-form th\u00f4ng qua thu\u1ed9c t\u00ednh form="payment-form".
     const couponInput = document.getElementById('payment-coupon-code');
-    // couponError l\u00e0 v\u00f9ng th\u00f4ng b\u00e1o ngay d\u01b0\u1edbi \u00f4 coupon.
+    // couponError l\u00E0 v\u00F9ng th\u00F4ng b\u00E1o ngay d\u01B0\u1EDBi \u00F4 coupon.
     const couponError = document.getElementById('coupon-error');
 
     if (couponBtn && couponInput && couponError) {
         couponBtn.addEventListener('click', function () {
             couponError.textContent = couponInput.value.trim()
-                ? 'B\u1ea5m c\u1eadp nh\u1eadt coupon v\u00e0 m\u00e3 QR \u0111\u1ec3 h\u1ec7 th\u1ed1ng t\u00ednh l\u1ea1i s\u1ed1 ti\u1ec1n chuy\u1ec3n kho\u1ea3n.'
-                : 'Vui l\u00f2ng nh\u1eadp m\u00e3 coupon tr\u01b0\u1edbc khi \u00e1p d\u1ee5ng.';
+                ? 'B\u1EA5m c\u1EADp nh\u1EADt coupon v\u00E0 m\u00E3 QR \u0111\u1EC3 h\u1EC7 th\u1ED1ng t\u00EDnh l\u1EA1i s\u1ED1 ti\u1EC1n chuy\u1EC3n kho\u1EA3n.'
+                : 'Vui l\u00F2ng nh\u1EADp m\u00E3 coupon tr\u01B0\u1EDBc khi \u00E1p d\u1EE5ng.';
         });
     }
 
-    // D\u01b0\u01a1ng l\u00e0m \u0111o\u1ea1n n\u00e0y: expiryCard \u0111\u1ecdc m\u1ed1c h\u1ebft h\u1ea1n gi\u1eef slot do server l\u01b0u trong BookingDraft.
-    // B\u1ed9 \u0111\u1ebfm gi\u00fap kh\u00e1ch bi\u1ebft c\u00f2n bao l\u00e2u tr\u01b0\u1edbc khi booking PendingPayment b\u1ecb h\u1ee7y v\u00e0 tr\u1ea3 l\u1ea1i s\u1ed1 gh\u1ebf.
+    // D\u01B0\u01A1ng l\u00E0m \u0111o\u1EA1n n\u00E0y: expiryCard \u0111\u1ECDc m\u1ED1c h\u1EBFt h\u1EA1n gi\u1EEF slot do server l\u01B0u trong BookingDraft.
+    // B\u1ED9 \u0111\u1EBFm gi\u00FAp kh\u00E1ch bi\u1EBFt c\u00F2n bao l\u00E2u tr\u01B0\u1EDBc khi booking PendingPayment b\u1ECB h\u1EE7y v\u00E0 tr\u1EA3 l\u1EA1i s\u1ED1 gh\u1EBF.
     const expiryCard = document.getElementById('payment-expiry-card');
     const countdownInline = document.getElementById('payment-countdown-inline');
     const paymentForm = document.getElementById('payment-form');
@@ -49,7 +49,7 @@
                 expiryCard.classList.remove('is-warning');
                 expiryCard.classList.add('is-expired');
                 countdownInline.textContent = '00:00';
-                expiryCard.querySelector('span').textContent = 'Th\u00f4ng b\u00e1o \u0111\u00e3 h\u1ebft h\u1ea1n. H\u1ec7 th\u1ed1ng s\u1ebd nh\u1ea3 slot n\u1ebfu booking v\u1eabn ch\u01b0a \u0111\u01b0\u1ee3c thanh to\u00e1n.';
+                expiryCard.querySelector('span').textContent = 'Th\u00F4ng b\u00E1o \u0111\u00E3 h\u1EBFt h\u1EA1n. H\u1EC7 th\u1ED1ng s\u1EBD nh\u1EA3 slot n\u1EBFu booking v\u1EABn ch\u01B0a \u0111\u01B0\u1EE3c thanh to\u00E1n.';
                 if (paymentForm) {
                     paymentForm.querySelectorAll('button, input').forEach(function (element) {
                         element.disabled = true;
@@ -63,8 +63,8 @@
         countdownTimer = window.setInterval(updateCountdown, 1000);
     }
 
-    // D\u01b0\u01a1ng l\u00e0m \u0111o\u1ea1n n\u00e0y: sepayStatusBox ch\u1ee9a bookingCode v\u00e0 c\u00e1c URL c\u1ea7n d\u00f9ng \u0111\u1ec3 polling tr\u1ea1ng th\u00e1i thanh to\u00e1n.
-    // Khi Booking.Status \u0111\u00e3 \u0111\u01b0\u1ee3c webhook \u0111\u1ed5i sang Success, tr\u00ecnh duy\u1ec7t t\u1ef1 chuy\u1ec3n sang m\u00e0n success.
+    // D\u01B0\u01A1ng l\u00E0m \u0111o\u1EA1n n\u00E0y: sepayStatusBox ch\u1EE9a bookingCode v\u00E0 c\u00E1c URL c\u1EA7n d\u00F9ng \u0111\u1EC3 polling tr\u1EA1ng th\u00E1i thanh to\u00E1n.
+    // Khi Booking.Status \u0111\u00E3 \u0111\u01B0\u1EE3c webhook \u0111\u1ED5i sang Success, tr\u00ECnh duy\u1EC7t t\u1EF1 chuy\u1EC3n sang m\u00E0n success.
     const sepayStatusBox = document.getElementById('sepay-status-box');
     if (sepayStatusBox) {
         const bookingCode = sepayStatusBox.dataset.bookingCode;
@@ -85,21 +85,21 @@
                 if (data.expired) {
                     sepayStatusBox.classList.remove('paid');
                     sepayStatusBox.classList.add('expired');
-                    sepayStatusBox.querySelector('strong').textContent = '\u0110\u01a1n gi\u1eef ch\u1ed7 \u0111\u00e3 h\u1ebft h\u1ea1n';
-                    sepayStatusBox.querySelector('span').textContent = 'Qu\u00e1 10 ph\u00fat ch\u01b0a thanh to\u00e1n, h\u1ec7 th\u1ed1ng \u0111\u00e3 nh\u1ea3 slot. Vui l\u00f2ng quay l\u1ea1i t\u1ea1o booking m\u1edbi.';
+                    sepayStatusBox.querySelector('strong').textContent = '\u0110\u01A1n gi\u1EEF ch\u1ED7 \u0111\u00E3 h\u1EBFt h\u1EA1n';
+                    sepayStatusBox.querySelector('span').textContent = 'Qu\u00E1 10 ph\u00FAt ch\u01B0a thanh to\u00E1n, h\u1EC7 th\u1ED1ng \u0111\u00E3 nh\u1EA3 slot. Vui l\u00F2ng quay l\u1EA1i t\u1EA1o booking m\u1EDBi.';
                     return;
                 }
 
                 if (data.paid) {
                     sepayStatusBox.classList.add('paid');
-                    sepayStatusBox.querySelector('strong').textContent = 'SePay \u0111\u00e3 ghi nh\u1eadn chuy\u1ec3n kho\u1ea3n';
-                    sepayStatusBox.querySelector('span').textContent = '\u0110ang chuy\u1ec3n sang m\u00e0n ho\u00e0n t\u1ea5t \u0111\u01a1n \u0111\u1eb7t tour.';
+                    sepayStatusBox.querySelector('strong').textContent = 'SePay \u0111\u00E3 ghi nh\u1EADn chuy\u1EC3n kho\u1EA3n';
+                    sepayStatusBox.querySelector('span').textContent = '\u0110ang chuy\u1EC3n sang m\u00E0n ho\u00E0n t\u1EA5t \u0111\u01A1n \u0111\u1EB7t tour.';
                     window.location.href = successUrl;
                 } else if (data.status) {
-                    sepayStatusBox.querySelector('span').textContent = 'Tr\u1ea1ng th\u00e1i hi\u1ec7n t\u1ea1i: ' + data.status + '. H\u1ec7 th\u1ed1ng s\u1ebd ki\u1ec3m tra l\u1ea1i sau v\u00e0i gi\u00e2y.';
+                    sepayStatusBox.querySelector('span').textContent = 'Tr\u1EA1ng th\u00E1i hi\u1EC7n t\u1EA1i: ' + data.status + '. H\u1EC7 th\u1ED1ng s\u1EBD ki\u1EC3m tra l\u1EA1i sau v\u00E0i gi\u00E2y.';
                 }
             } catch (error) {
-                sepayStatusBox.querySelector('span').textContent = 'Ch\u01b0a k\u1ebft n\u1ed1i \u0111\u01b0\u1ee3c tr\u1ea1ng th\u00e1i thanh to\u00e1n, h\u1ec7 th\u1ed1ng s\u1ebd th\u1eed l\u1ea1i.';
+                sepayStatusBox.querySelector('span').textContent = 'Ch\u01B0a k\u1EBFt n\u1ED1i \u0111\u01B0\u1EE3c tr\u1EA1ng th\u00E1i thanh to\u00E1n, h\u1EC7 th\u1ED1ng s\u1EBD th\u1EED l\u1EA1i.';
             }
         };
 

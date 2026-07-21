@@ -1,3 +1,9 @@
+/*
+ * Màn hình 23: View Analytics Dashboard - Dashboard thống kê & phân tích
+ * Tác giả: Dương Quang Sơn
+ * MSSV: HE186525
+ * Ngày tạo: 2026-07-21
+ */
 package Controller;
 
 import Entities.AnalyticsReport;
@@ -106,6 +112,17 @@ public class AdminAnalyticsController extends HttpServlet {
         }
 
         // Standard GET request, forward to JSP page
+        if (sessionUser.getRoleId() == 5) {
+            Model.CancellationRequestDAO cancelDAO = null;
+            try {
+                cancelDAO = new Model.CancellationRequestDAO();
+                int pendingRefunds = cancelDAO.getRequestsByStatusForAccountant("Pending").size();
+                request.setAttribute("pendingRefunds", pendingRefunds);
+            } finally {
+                if (cancelDAO != null) cancelDAO.close();
+            }
+        }
+        
         request.getRequestDispatcher("/admin/analytics.jsp").forward(request, response);
     }
 

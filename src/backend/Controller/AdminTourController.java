@@ -1,3 +1,9 @@
+/*
+ * Màn hình 7: Manage Tours - Quản lý tour (tạo, sửa, vô hiệu hóa)
+ * Tác giả: Dương Quang Sơn
+ * MSSV: HE186525
+ * Ngày tạo: 2026-07-21
+ */
 package Controller;
 
 import Entities.Tour;
@@ -110,41 +116,46 @@ public class AdminTourController extends HttpServlet {
                 return;
             }
 
-            // TH3: Mặc định khi gọi AJAX true không truyền action -> Trả về danh sách tất cả Tour Admin + Doanh thu 6 tháng gần nhất
+            // TH3: Mặc định khi gọi AJAX true không truyền action.
+            // Phân nhánh theo servlet path để tách endpoint dữ liệu:
+            //   - /admin/dashboard?ajax=true -> chỉ trả {monthlyRevenue} (tiết kiệm payload, tránh over-fetch)
+            //   - /admin/tours?ajax=true     -> trả {tours, monthlyRevenue} (admin-tour.js dùng để render bảng)
+            String path = request.getServletPath();
             response.setContentType("application/json;charset=UTF-8");
             TourDAO tourDAO = null;
             try {
                 tourDAO = new TourDAO();
-                // Query toàn bộ tours (kể cả Active, Draft, Disabled) để quản lý
-                List<Tour> tours = tourDAO.getAllToursAdmin();
-                
-                // Lấy mảng doanh thu 6 tháng gần nhất để vẽ biểu đồ line chart ở Dashboard admin
                 double[] monthlyRevenue = tourDAO.getMonthlyRevenueLast6Months();
-                
-                Gson gson = new Gson();
-                JsonArray toursArray = new JsonArray();
-                for (Tour t : tours) {
-                    JsonObject tourJson = gson.toJsonTree(t).getAsJsonObject();
-                    tourJson.addProperty("categoryName", t.getCategory() != null ? t.getCategory().getCategoryName() : "Khác");
-                    if (t.getCreatedAt() != null) {
-                        tourJson.addProperty("createdAt", t.getCreatedAt().toString().split(" ")[0]);
-                    } else {
-                        tourJson.addProperty("createdAt", "2026-05-20");
-                    }
-                    toursArray.add(tourJson);
-                }
-                
                 long[] revenueLongs = new long[monthlyRevenue.length];// Chuyển đổi từ double sang long để tránh lỗi JSON khi gửi về client (vì JS sẽ đọc số quá lớn có thể bị mất độ chính xác)
                 for (int i = 0; i < monthlyRevenue.length; i++) {
                     revenueLongs[i] = (long) monthlyRevenue[i];
                 }
-                
+
                 JsonObject root = new JsonObject();
-                root.add("tours", toursArray);
-                root.add("monthlyRevenue", gson.toJsonTree(revenueLongs));
-                
+                root.add("monthlyRevenue", new Gson().toJsonTree(revenueLongs));
+                root.addProperty("totalRevenue", tourDAO.getTotalRevenue());
+
+                if ("/admin/dashboard".equals(path)) {
+                    // Endpoint dashboard: chỉ trả doanh thu, không gửi kèm danh sách tour.
+                } else {
+                    // Endpoint tours: trả thêm danh sách tour để render bảng quản lý.
+                    List<Tour> tours = tourDAO.getAllToursAdmin();
+                    JsonArray toursArray = new JsonArray();
+                    for (Tour t : tours) {
+                        JsonObject tourJson = new Gson().toJsonTree(t).getAsJsonObject();
+                        tourJson.addProperty("categoryName", t.getCategory() != null ? t.getCategory().getCategoryName() : "Khác");
+                        if (t.getCreatedAt() != null) {
+                            tourJson.addProperty("createdAt", t.getCreatedAt().toString().split(" ")[0]);
+                        } else {
+                            tourJson.addProperty("createdAt", "2026-05-20");
+                        }
+                        toursArray.add(tourJson);
+                    }
+                    root.add("tours", toursArray);
+                }
+
                 try (PrintWriter out = response.getWriter()) {
-                    out.print(gson.toJson(root));
+                    out.print(new Gson().toJson(root));
                 }
             } catch (Exception e) {// Nếu có lỗi xảy ra trong quá trình lấy dữ liệu từ DB hoặc xử lý, trả về lỗi 500 và log lỗi chi tiết để dễ dàng debug.
                 e.printStackTrace();

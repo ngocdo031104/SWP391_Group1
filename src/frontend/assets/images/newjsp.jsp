@@ -1,10 +1,10 @@
-<%-- 
+&#65279;<%-- 
     Document   : newjsp
     Created on : May 31, 2026, 10:56:55 AM
     Author     : ngocd
 --%>
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html>
     <head>

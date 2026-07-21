@@ -157,6 +157,13 @@ public class ManageUserController extends HttpServlet {
             User currentAdmin = (User) request.getSession().getAttribute("sessionUser");
             boolean isMaster = isMasterAdmin(currentAdmin);
             
+            // Self-protection: admin không được tự khóa chính mình, kể cả Master Admin.
+            if (currentAdmin != null && userId == currentAdmin.getUserId()) {
+                request.getSession().setAttribute("errorMsg", "Bạn không thể tự thay đổi trạng thái tài khoản của chính mình.");
+                response.sendRedirect(request.getContextPath() + "/admin/users");
+                return;
+            }
+
             User targetUser = userDAO.getUserById(userId);
             if (targetUser != null && "Admin".equalsIgnoreCase(targetUser.getRole().getRoleName()) && !isMaster) {
                 request.getSession().setAttribute("errorMsg", "Bạn không có quyền thao tác với tài khoản Admin khác!");
@@ -228,18 +235,18 @@ public class ManageUserController extends HttpServlet {
                 if (adminSkipCount > 0) {
                     msgBuilder.append("Không thể đổi vai trò của ").append(adminSkipCount).append(" tài khoản Admin.");
                 }
-                
-                if (count > 0 && adminSkipCount == 0) {
+
+                if (msgBuilder.length() == 0) {
+                    request.getSession().setAttribute("errorMsg", "Không có thay đổi nào được áp dụng.");
+                } else if (count > 0) {
                     request.getSession().setAttribute("successMsg", msgBuilder.toString().trim());
-                } else if (count > 0 && adminSkipCount > 0) {
-                    request.getSession().setAttribute("successMsg", msgBuilder.toString().trim());
-                } else if (count == 0 && adminSkipCount > 0) {
+                } else {
                     request.getSession().setAttribute("errorMsg", msgBuilder.toString().trim());
                 }
-                
+
                 // Log action
                 if (currentAdmin != null && count > 0) {
-                    String details = "Admin " + currentAdmin.getEmail() + " assigned role ID: " 
+                    String details = "Admin " + currentAdmin.getEmail() + " assigned role ID: "
                                      + roleId + " to " + count + " users";
                     auditLogDAO.insertLog(currentAdmin.getUserId(), "BULK_ASSIGN_ROLE", null, details);
                 }
@@ -267,18 +274,32 @@ public class ManageUserController extends HttpServlet {
                 
                 User currentAdmin = (User) request.getSession().getAttribute("sessionUser");
                 boolean isMaster = isMasterAdmin(currentAdmin);
-                
+
+                int selfSkipCount = 0;
+
                 for (String idStr : userIds) {
                     int userId = Integer.parseInt(idStr);
-                    
-                    User userToDelete = userDAO.getUserById(userId);
-                    if (userToDelete != null && "Admin".equalsIgnoreCase(userToDelete.getRole().getRoleName())) {
-                        if (!isMaster) {
-                            adminSkipCount++;
-                            continue;
-                        }
+
+                    // Self-protection #1: không admin nào được xóa chính mình,
+                    // kể cả Master Admin — tránh khóa hệ thống vĩnh viễn.
+                    if (currentAdmin != null && userId == currentAdmin.getUserId()) {
+                        selfSkipCount++;
+                        continue;
                     }
-                    
+
+                    User userToDelete = userDAO.getUserById(userId);
+                    if (userToDelete == null) {
+                        otherErrorCount++;
+                        continue;
+                    }
+                    boolean targetIsAdmin = "Admin".equalsIgnoreCase(userToDelete.getRole().getRoleName());
+                    // Self-protection #2: chặn admin thường xóa các admin khác để tránh
+                    // chỉ còn lại 1 admin duy nhất. Master Admin thì được phép.
+                    if (targetIsAdmin && !isMaster) {
+                        adminSkipCount++;
+                        continue;
+                    }
+
                     String status = userDAO.deleteUserWithCheck(userId);
                     if ("success".equals(status)) {
                         successCount++;
@@ -298,6 +319,9 @@ public class ManageUserController extends HttpServlet {
                 }
                 
                 StringBuilder errorMsgBuilder = new StringBuilder();
+                if (selfSkipCount > 0) {
+                    errorMsgBuilder.append("Không thể tự xóa chính tài khoản đang đăng nhập. ");
+                }
                 if (adminSkipCount > 0) {
                     errorMsgBuilder.append("Không thể xóa ").append(adminSkipCount).append(" tài khoản vì là Admin. ");
                 }
@@ -334,7 +358,13 @@ public class ManageUserController extends HttpServlet {
                 
                 for (String idStr : userIds) {
                     int userId = Integer.parseInt(idStr);
-                    
+
+                    // Self-protection: không admin nào được tự khóa chính mình trong bulk action.
+                    if (currentAdmin != null && userId == currentAdmin.getUserId()) {
+                        adminSkipCount++;
+                        continue;
+                    }
+
                     User targetUser = userDAO.getUserById(userId);
                     if (targetUser != null && "Admin".equalsIgnoreCase(targetUser.getRole().getRoleName()) && !isMaster) {
                         adminSkipCount++;

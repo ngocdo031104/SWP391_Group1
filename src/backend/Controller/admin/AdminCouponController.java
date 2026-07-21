@@ -57,6 +57,25 @@ public class AdminCouponController extends HttpServlet {
             return;
         }
 
+        // AJAX endpoint: trả về JSON của 1 coupon (dùng cho form edit)
+        if ("getCoupon".equals(request.getParameter("action"))) {
+            response.setContentType("application/json;charset=UTF-8");
+            String idStr = request.getParameter("id");
+            try {
+                int couponId = Integer.parseInt(idStr);
+                CouponDAO couponDAO = new CouponDAO();
+                Coupon coupon = couponDAO.getCouponById(couponId);
+                if (coupon == null) {
+                    response.getWriter().write("{\"status\":\"error\",\"message\":\"Không tìm thấy coupon.\"}");
+                    return;
+                }
+                response.getWriter().write(buildCouponJson(coupon));
+            } catch (NumberFormatException ex) {
+                response.getWriter().write("{\"status\":\"error\",\"message\":\"ID không hợp lệ.\"}");
+            }
+            return;
+        }
+
         CouponDAO couponDAO = new CouponDAO();
         List<Coupon> coupons = couponDAO.getAllCoupons();
         request.setAttribute("coupons", coupons);
@@ -87,10 +106,18 @@ public class AdminCouponController extends HttpServlet {
             Double maxDiscountAmount = (maxDiscountStr != null && !maxDiscountStr.trim().isEmpty()) ? Double.parseDouble(maxDiscountStr) : null;
             
             // Validate: Nếu là Percentage thì bắt buộc phải nhập số tiền giảm tối đa
-            if ("Percentage".equals(discountType) && maxDiscountAmount == null) {
-                session.setAttribute("errorMessage", "Vui lòng nhập số tiền Giảm Tối Đa khi tạo mã giảm giá theo Phần Trăm.");
-                response.sendRedirect(request.getContextPath() + "/admin/coupons");
-                return;
+            if ("Percentage".equals(discountType)) {
+                if (maxDiscountAmount == null) {
+                    session.setAttribute("errorMessage", "Vui lòng nhập số tiền Giảm Tối Đa khi tạo mã giảm giá theo Phần Trăm.");
+                    response.sendRedirect(request.getContextPath() + "/admin/coupons");
+                    return;
+                }
+                // BR: Percentage coupon không được vượt quá 100% để tránh discount âm / total > 100%.
+                if (discountValue > 100) {
+                    session.setAttribute("errorMessage", "Giá trị giảm theo phần trăm không được vượt quá 100%.");
+                    response.sendRedirect(request.getContextPath() + "/admin/coupons");
+                    return;
+                }
             }
 
             String maxUsesStr = request.getParameter("maxUses");
@@ -114,7 +141,7 @@ public class AdminCouponController extends HttpServlet {
                 if (couponIdStr == null || couponIdStr.trim().isEmpty()) {
                 // Create — kiểm tra trùng mã, excludeId = -1 (không loại trừ ai)
                 if (couponDAO.isCouponCodeExists(couponCode, -1)) {
-                    session.setAttribute("errorMessage", "Mã coupon \"" + couponCode + "\" đã tồn tại. Vui lòng dùng mã khác.");
+                    session.setAttribute("errorMessage", "Mã coupon \"" + sanitize(couponCode) + "\" đã tồn tại. Vui lòng dùng mã khác.");
                     response.sendRedirect(request.getContextPath() + "/admin/coupons");
                     return;
                 }
@@ -132,7 +159,7 @@ public class AdminCouponController extends HttpServlet {
                 // Update — kiểm tra trùng mã, bỏ qua chính coupon đang chỉnh sửa
                 int couponId = Integer.parseInt(couponIdStr);
                 if (couponDAO.isCouponCodeExists(couponCode, couponId)) {
-                    session.setAttribute("errorMessage", "Mã coupon \"" + couponCode + "\" đã tồn tại. Vui lòng dùng mã khác.");
+                    session.setAttribute("errorMessage", "Mã coupon \"" + sanitize(couponCode) + "\" đã tồn tại. Vui lòng dùng mã khác.");
                     response.sendRedirect(request.getContextPath() + "/admin/coupons");
                     return;
                 }
@@ -150,5 +177,73 @@ public class AdminCouponController extends HttpServlet {
         }
 
         response.sendRedirect(request.getContextPath() + "/admin/coupons");
+    }
+
+    /**
+     * Build JSON cho coupon (escape ký tự đặc biệt để chống XSS khi nhúng vào HTML/JS).
+     */
+    private String buildCouponJson(Coupon c) {
+        StringBuilder sb = new StringBuilder(256);
+        sb.append("{\"status\":\"success\",\"coupon\":{");
+        sb.append("\"couponId\":").append(c.getCouponId()).append(',');
+        sb.append("\"couponCode\":").append(jsonString(c.getCouponCode())).append(',');
+        sb.append("\"discountType\":").append(jsonString(c.getDiscountType())).append(',');
+        sb.append("\"discountValue\":").append(c.getDiscountValue()).append(',');
+        sb.append("\"minOrderAmount\":").append(c.getMinOrderAmount()).append(',');
+        sb.append("\"maxDiscountAmount\":")
+          .append(c.getMaxDiscountAmount() == null ? "null" : String.valueOf(c.getMaxDiscountAmount())).append(',');
+        sb.append("\"maxUses\":")
+          .append(c.getMaxUses() == null ? "null" : String.valueOf(c.getMaxUses())).append(',');
+        sb.append("\"startDate\":\"")
+          .append(c.getStartDate() == null ? "" : c.getStartDate().toString()).append("\",");
+        sb.append("\"endDate\":\"")
+          .append(c.getEndDate() == null ? "" : c.getEndDate().toString()).append("\",");
+        sb.append("\"isActive\":").append(c.isIsActive());
+        sb.append("}}");
+        return sb.toString();
+    }
+
+    private String jsonString(String s) {
+        if (s == null) return "null";
+        StringBuilder sb = new StringBuilder(s.length() + 2);
+        sb.append('"');
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            switch (ch) {
+                case '"': sb.append("\\\""); break;
+                case '\\': sb.append("\\\\"); break;
+                case '\b': sb.append("\\b"); break;
+                case '\f': sb.append("\\f"); break;
+                case '\n': sb.append("\\n"); break;
+                case '\r': sb.append("\\r"); break;
+                case '\t': sb.append("\\t"); break;
+                default:
+                    if (ch < 0x20) {
+                        sb.append(String.format("\\u%04x", (int) ch));
+                    } else {
+                        sb.append(ch);
+                    }
+            }
+        }
+        sb.append('"');
+        return sb.toString();
+    }
+
+    /**
+     * Loại bỏ ký tự đặc biệt / control trước khi nối vào chuỗi thông báo sẽ render ra HTML.
+     * Đây chỉ là defense-in-depth — phía JSP cũng nên escape khi hiển thị.
+     */
+    private String sanitize(String s) {
+        if (s == null) return "";
+        StringBuilder sb = new StringBuilder(s.length());
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            if (ch == '<' || ch == '>' || ch == '"' || ch == '\'' || ch == '&' || ch < 0x20) {
+                sb.append('?');
+            } else {
+                sb.append(ch);
+            }
+        }
+        return sb.toString();
     }
 }

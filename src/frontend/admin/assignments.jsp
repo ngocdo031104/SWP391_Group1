@@ -1,4 +1,10 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%-- 
+    Màn hình 28: Assign Tour Guide - Phân công hướng dẫn viên cho lịch khởi hành
+    Tác giả: Dương Quang Sơn
+    MSSV: HE186525
+    Ngày tạo: 2026-07-21
+--%>
+<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt"  prefix="fmt" %>
 <c:if test="${empty sessionUser}">
@@ -9,170 +15,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nhật Ký Phân Công HDV — TourBuddy Enterprise</title>
-    <!-- Outfit & Inter Fonts -->
+    <title>Nh&#7853;t K&#253; Ph&#226;n C&#244;ng HDV &#151; TourBuddy Enterprise</title>
+    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Lucide Icons & FontAwesome CDNs -->
+    <!-- Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-dashboard.css?v=1.6">
-    
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-dashboard.css?v=2.3">
     <style>
+        /* -- ASSIGNMENTS PAGE &#151; SPACE GLASSMORPHISM THEME -- */
         .filter-section {
-            background: #ffffff;
+            background: rgba(22, 25, 50, 0.55);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(139, 92, 246, 0.2);
             padding: 16px 24px;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border-radius: 14px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
             margin-bottom: 24px;
-            display: flex;
-            align-items: center;
+            display: flex; align-items: center;
             justify-content: space-between;
-            gap: 16px;
-            flex-wrap: wrap;
+            gap: 16px; flex-wrap: wrap;
         }
-        
-        .search-container {
-            position: relative;
-            flex: 1;
-            max-width: 400px;
-        }
-        
+        .search-container { position: relative; flex: 1; max-width: 400px; }
         .search-container i {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #94a3b8;
-            font-size: 1rem;
+            position: absolute; left: 12px; top: 50%;
+            transform: translateY(-50%); color: #707ea8; font-size: 1rem;
         }
-        
         .search-input {
-            width: 100%;
-            padding: 10px 12px 10px 38px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            outline: none;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.9rem;
-            transition: all 0.2s;
+            width: 100%; padding: 10px 12px 10px 38px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(139,92,246,0.25);
+            border-radius: 8px; outline: none;
+            font-family: 'Inter', sans-serif; font-size: 0.9rem;
+            transition: all 0.2s; color: #f8fafc;
         }
-        
-        .search-input:focus {
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-        
-        .badge-operation {
-            background: #e0f2fe;
-            color: #0369a1;
-            font-weight: 600;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            display: inline-block;
-        }
+        .search-input:focus { border-color: #8b5cf6; box-shadow: 0 0 0 3px rgba(139,92,246,0.2); }
+        .search-input::placeholder { color: #707ea8; }
 
-        .notes-text {
-            max-width: 250px;
-            word-wrap: break-word;
-            font-style: italic;
-            color: #475569;
+        .badge-operation {
+            background: rgba(34,211,238,0.15); color: #22d3ee;
+            border: 1px solid rgba(34,211,238,0.25);
+            font-weight: 600; padding: 4px 8px;
+            border-radius: 6px; font-size: 0.75rem; display: inline-block;
         }
+        .notes-text { max-width: 250px; word-wrap: break-word; font-style: italic; color: #9fa9cb; }
 
         .btn-unassign-guide {
-            background: #fee2e2;
-            color: #ef4444;
-            border: 1px solid #fecaca;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            font-family: 'Outfit', sans-serif;
-            font-size: 0.8rem;
+            background: rgba(239,68,68,0.12); color: #f87171;
+            border: 1px solid rgba(239,68,68,0.3);
+            padding: 6px 12px; border-radius: 6px; font-weight: 600;
+            cursor: pointer; transition: all 0.2s;
+            display: inline-flex; align-items: center; gap: 4px;
+            font-family: 'Outfit', sans-serif; font-size: 0.8rem;
         }
+        .btn-unassign-guide:hover { background: rgba(239,68,68,0.25); color: #fca5a5; }
 
-        .btn-unassign-guide:hover {
-            background: #ef4444;
-            color: #ffffff;
-            border-color: #ef4444;
-        }
-
-        /* Pagination Styles */
         .pagination-container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-top: 24px;
-            padding-top: 16px;
-            border-top: 1px solid #e2e8f0;
-            flex-wrap: wrap;
-            gap: 16px;
+            display: flex; align-items: center; justify-content: space-between;
+            margin-top: 24px; padding-top: 16px;
+            border-top: 1px solid rgba(139,92,246,0.15);
+            flex-wrap: wrap; gap: 16px;
         }
-
-        .pagination-info {
-            color: #64748b;
-            font-size: 0.85rem;
-        }
-
-        .pagination-buttons {
-            display: flex;
-            gap: 6px;
-        }
-
+        .pagination-info { color: #9fa9cb; font-size: 0.85rem; }
+        .pagination-buttons { display: flex; gap: 6px; }
         .page-link {
-            padding: 8px 14px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            color: #475569;
-            font-weight: 600;
-            font-size: 0.85rem;
-            text-decoration: none;
-            background: #ffffff;
-            transition: all 0.2s;
+            padding: 8px 14px; border: 1px solid rgba(139,92,246,0.2);
+            border-radius: 6px; color: #9fa9cb; font-weight: 600; font-size: 0.85rem;
+            text-decoration: none; background: rgba(255,255,255,0.03); transition: all 0.2s;
         }
-
-        .page-link:hover {
-            border-color: #2563eb;
-            color: #2563eb;
-            background: #f8fafc;
-        }
-
-        .page-link.active {
-            background: #2563eb;
-            color: #ffffff;
-            border-color: #2563eb;
-        }
-
-        .page-link.disabled {
-            pointer-events: none;
-            color: #94a3b8;
-            background: #f1f5f9;
-            border-color: #e2e8f0;
-        }
+        .page-link:hover { border-color: rgba(95,59,246,0.5); color: #f8fafc; background: rgba(95,59,246,0.15); }
+        .page-link.active { background: linear-gradient(135deg,#5f3bf6,#8b5cf6); color: #fff; border-color: transparent; box-shadow: 0 4px 12px rgba(95,59,246,0.4); }
+        .page-link.disabled { pointer-events: none; color: #4a5578; background: rgba(255,255,255,0.02); border-color: rgba(139,92,246,0.1); }
     </style>
-    <script>
-        window.contextPath = '${pageContext.request.contextPath}';
-    </script>
+    <script>window.contextPath = '${pageContext.request.contextPath}';</script>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-space-overrides.css?v=1.0">
 </head>
-<body class="dashboard-body">
+<body class="dashboard-body tb-cosmic">
 
 <div class="dashboard-wrapper">
-    <!-- ── Left Sidebar ── -->
+    <!-- -- Left Sidebar -- -->
     <c:set var="activePage" value="assignments" scope="request" />
     <jsp:include page="sidebar.jsp" />
 
-    <!-- ── Main Content Area ── -->
-    <main class="main-content">
+    <!-- -- Main Content Area -- -->
+    <main class="main-content theme-light">
         <!-- Top Header -->
         <header class="top-header">
             <div>
-                <h1>Nhật Ký Phân Công HDV</h1>
-                <p style="color: #64748b; font-size: 0.9rem; margin-top: 4px;">Xem lịch sử và chỉ dẫn điều phối hướng dẫn viên cho các lịch khởi hành</p>
+                <h1>Nh&#7853;t K&#253; Ph&#226;n C&#244;ng HDV</h1>
+                <p style="color: #9fa9cb; font-size: 0.9rem; margin-top: 4px;">Xem l&#7883;ch s&#7917; v&#224; ch&#7881; d&#7851;n &#273;i&#7873;u ph&#7889;i h&#432;&#7899;ng d&#7851;n vi&#234;n cho c&#225;c l&#7883;ch kh&#7903;i h&#224;nh</p>
             </div>
             <jsp:include page="admin-header-right.jsp" />
         </header>
@@ -181,10 +114,10 @@
         <div class="filter-section">
             <div class="search-container">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="search-input" class="search-input" value="${search}" placeholder="Tìm theo tên tour hoặc hướng dẫn viên...">
+                <input type="text" id="search-input" class="search-input" value="${search}" placeholder="T&#236;m theo t&#234;n tour ho&#7863;c h&#432;&#7899;ng d&#7851;n vi&#234;n...">
             </div>
-            <div style="color: #64748b; font-size: 0.85rem; font-weight: 500;">
-                Tổng số bản ghi: <span style="font-weight: 700; color: #1e293b;">${totalCount}</span>
+            <div style="color: #9fa9cb; font-size: 0.85rem; font-weight: 500;">
+                T&#7893;ng s&#7889; b&#7843;n ghi: <span style="font-weight: 700; color: #f8fafc;">${totalCount}</span>
             </div>
         </div>
 
@@ -193,52 +126,49 @@
             <div style="overflow-x: auto;">
                 <table class="booking-table" style="width: 100%; border-collapse: collapse;">
                     <thead>
-                        <tr style="border-bottom: 2px solid #e2e8f0; background: #f8fafc; text-align: left;">
-                            <th style="padding: 12px; width: 80px;">ID</th>
-                            <th style="padding: 12px;">Tên Tour</th>
-                            <th style="padding: 12px; width: 130px;">Ngày Khởi Hành</th>
-                            <th style="padding: 12px;">Hướng Dẫn Viên</th>
-                            <th style="padding: 12px;">Người Phân Công</th>
-                            <th style="padding: 12px;">Chỉ dẫn / Ghi chú</th>
-                            <th style="padding: 12px; width: 150px;">Thời Gian Phân Công</th>
-                            <th style="padding: 12px; width: 140px; text-align: center;">Hành động</th>
+                        <tr>
+                            <th style="width: 80px;">ID</th>
+                            <th>T&#234;n Tour</th>
+                            <th style="width: 130px;">Ng&#224;y Kh&#7903;i H&#224;nh</th>
+                            <th>H&#432;&#7899;ng D&#7851;n Vi&#234;n</th>
+                            <th>Ng&#432;&#7901;i Ph&#226;n C&#244;ng</th>
+                            <th>Ch&#7881; d&#7851;n / Ghi ch&#250;</th>
+                            <th style="width: 150px;">Th&#7901;i Gian Ph&#226;n C&#244;ng</th>
+                            <th style="width: 140px; text-align: center;">H&#192;NH &#272;&#7896;NG</th>
                         </tr>
                     </thead>
                     <tbody id="assignments-tbody">
                         <c:choose>
                             <c:when test="${not empty assignments}">
                                 <c:forEach var="a" items="${assignments}">
-                                    <tr style="border-bottom: 1px solid #e2e8f0;" 
-                                        data-tour="${a.schedule.tour.tourName}" 
-                                        data-guide="${a.guide.fullName}">
-                                        <td style="padding: 12px; font-weight: 600;">#${a.assignmentId}</td>
-                                        <td style="padding: 12px; font-weight: 500; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${a.schedule.tour.tourName}">
-                                            ${a.schedule.tour.tourName}
+                                    <tr data-tour="<c:out value='${a.schedule.tour.tourName}'/>" data-guide="<c:out value='${a.guide.fullName}'/>">
+                                        <td style="font-weight: 600;">#${a.assignmentId}</td>
+                                        <td style="font-weight: 500; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="<c:out value='${a.schedule.tour.tourName}'/>">
+                                            <c:out value="${a.schedule.tour.tourName}"/>
                                         </td>
-                                        <td style="padding: 12px; color: #334155;">
-                                            <fmt:formatDate value="${a.schedule.departureDate}" pattern="dd/MM/yyyy" />
+                                        <td><fmt:formatDate value="${a.schedule.departureDate}" pattern="dd/MM/yyyy" /></td>
+                                        <td>
+                                            <span class="badge-operation"><i class="fa-solid fa-user-tie"></i> <c:out value="${a.guide.fullName}"/></span>
                                         </td>
-                                        <td style="padding: 12px;">
-                                            <span class="badge-operation"><i class="fa-solid fa-user-tie"></i> ${a.guide.fullName}</span>
-                                        </td>
-                                        <td style="padding: 12px; font-weight: 500; color: #475569;">
-                                            ${not empty a.assignedByName ? a.assignedByName : 'Hệ thống'}
-                                        </td>
-                                        <td style="padding: 12px;">
-                                            <div class="notes-text" title="${a.notes}">
-                                                ${not empty a.notes ? a.notes : '<span style="color:#cbd5e1;">Không có ghi chú</span>'}
+                                        <td><c:out value="${not empty a.assignedByName ? a.assignedByName : 'H&#7879; th&#7889;ng'}"/></td>
+                                        <td>
+                                            <div class="notes-text" title="<c:out value='${a.notes}'/>">
+                                                <c:choose>
+                                                    <c:when test="${not empty a.notes}"><c:out value="${a.notes}"/></c:when>
+                                                    <c:otherwise><span style="color:#4a5578;">Kh&#244;ng c&#243; ghi ch&#250;</span></c:otherwise>
+                                                </c:choose>
                                             </div>
                                         </td>
-                                        <td style="padding: 12px; color: #64748b; font-size: 0.85rem;">
+                                        <td style="font-size: 0.85rem;">
                                             <fmt:formatDate value="${a.assignedAt}" pattern="dd/MM/yyyy HH:mm" />
                                         </td>
-                                        <td style="padding: 12px; text-align: center;">
-                                            <button class="btn-unassign-guide" 
-                                                    data-schedule-id="${a.scheduleId}" 
-                                                    data-guide-id="${a.guideId}"
-                                                    data-tour-name="${a.schedule.tour.tourName}"
-                                                    data-guide-name="${a.guide.fullName}">
-                                                <i class="fa-solid fa-user-xmark"></i> Hủy phân công
+                                        <td style="text-align: center;">
+                                            <button class="btn-unassign-guide"
+                                                    data-schedule-id="<c:out value='${a.scheduleId}'/>"
+                                                    data-guide-id="<c:out value='${a.guideId}'/>"
+                                                    data-tour-name="<c:out value='${a.schedule.tour.tourName}'/>"
+                                                    data-guide-name="<c:out value='${a.guide.fullName}'/>">
+                                                <i class="fa-solid fa-user-xmark"></i> H&#7911;y ph&#226;n c&#244;ng
                                             </button>
                                         </td>
                                     </tr>
@@ -246,9 +176,9 @@
                             </c:when>
                             <c:otherwise>
                                 <tr>
-                                    <td colspan="8" style="text-align: center; padding: 40px; color: #94a3b8;">
+                                    <td colspan="8" class="empty-state">
                                         <i class="fa-solid fa-clipboard-list" style="font-size: 2rem; margin-bottom: 8px; display: block;"></i>
-                                        Chưa có lịch sử phân công hướng dẫn viên nào.
+                                        Ch&#432;a c&#243; l&#7883;ch s&#7917; ph&#226;n c&#244;ng h&#432;&#7899;ng d&#7851;n vi&#234;n n&#224;o.
                                     </td>
                                 </tr>
                             </c:otherwise>
@@ -257,29 +187,22 @@
                 </table>
             </div>
 
-            <!-- Server-side Pagination Control -->
+            <!-- Server-side Pagination -->
             <c:if test="${totalPages > 1}">
                 <div class="pagination-container">
                     <div class="pagination-info">
-                        Hiển thị trang <span style="font-weight: 600; color: #1e293b;">${currentPage}</span> trên tổng số <span style="font-weight: 600; color: #1e293b;">${totalPages}</span> trang
+                        Trang <span style="font-weight: 700; color: #f8fafc;">${currentPage}</span> / <span style="font-weight: 700; color: #f8fafc;">${totalPages}</span>
                     </div>
                     <div class="pagination-buttons">
-                        <!-- Nút trang trước -->
-                        <a href="?page=${currentPage - 1}&size=${pageSize}&search=${search}" 
+                        <a href="?page=${currentPage - 1}&size=${pageSize}&search=${search}"
                            class="page-link ${currentPage == 1 ? 'disabled' : ''}">
-                            <i class="fa-solid fa-angle-left"></i> Trước
+                            <i class="fa-solid fa-angle-left"></i> Tr&#432;&#7899;c
                         </a>
-                        
-                        <!-- Danh sách các trang -->
                         <c:forEach var="p" begin="1" end="${totalPages}">
-                            <a href="?page=${p}&size=${pageSize}&search=${search}" 
-                               class="page-link ${p == currentPage ? 'active' : ''}">
-                                ${p}
-                            </a>
+                            <a href="?page=${p}&size=${pageSize}&search=${search}"
+                               class="page-link ${p == currentPage ? 'active' : ''}">${p}</a>
                         </c:forEach>
-                        
-                        <!-- Nút trang sau -->
-                        <a href="?page=${currentPage + 1}&size=${pageSize}&search=${search}" 
+                        <a href="?page=${currentPage + 1}&size=${pageSize}&search=${search}"
                            class="page-link ${currentPage == totalPages ? 'disabled' : ''}">
                             Sau <i class="fa-solid fa-angle-right"></i>
                         </a>
@@ -290,7 +213,7 @@
     </main>
 </div>
 
-<!-- Nhúng Javascript chuyên biệt xử lý AJAX & Tìm kiếm ở server -->
 <script src="${pageContext.request.contextPath}/js/admin-assignment.js?v=1.3"></script>
+<script>if (window.lucide) { window.lucide.createIcons(); }</script>
 </body>
 </html>

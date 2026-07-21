@@ -9,29 +9,31 @@
     const createForm = document.getElementById('booking-create-form');
     // countInput l\u01b0u s\u1ed1 ng\u01b0\u1eddi tham gia hi\u1ec7n t\u1ea1i, \u0111\u01b0\u1ee3c g\u1eedi l\u00ean server b\u1eb1ng name participantCount.
     const countInput = document.getElementById('participant-count');
-    // list l\u00e0 v\u00f9ng ch\u1ee9a c\u00e1c card nh\u1eadp th\u00f4ng tin participant \u0111\u01b0\u1ee3c sinh \u0111\u1ed9ng b\u1eb1ng JavaScript.
+    // list l\u00E0 v\u00F9ng ch\u1EE9a c\u00E1c card nh\u1EADp th\u00F4ng tin participant \u0111\u01B0\u1EE3c sinh \u0111\u1ED9ng b\u1EB1ng JavaScript.
     const list = document.getElementById('participant-list');
-    // minusBtn v\u00e0 plusBtn \u0111i\u1ec1u ch\u1ec9nh s\u1ed1 ng\u01b0\u1eddi nh\u01b0ng kh\u00f4ng reload trang.
+    // minusBtn v\u00E0 plusBtn \u0111i\u1EC1u ch\u1EC9nh s\u1ED1 ng\u01B0\u1EDDi nh\u01B0ng kh\u00F4ng reload trang.
     const minusBtn = document.getElementById('minus-participant');
     const plusBtn = document.getElementById('plus-participant');
 
-    // formatMoney \u0111\u1ecbnh d\u1ea1ng s\u1ed1 ti\u1ec1n theo chu\u1ea9n Vi\u1ec7t Nam \u0111\u1ec3 b\u1ea3ng t\u1ed5ng quan d\u1ec5 \u0111\u1ecdc.
+    // formatMoney \u0111\u1ECBnh d\u1EA1ng s\u1ED1 ti\u1EC1n theo chu\u1EA9n Vi\u1EC7t Nam \u0111\u1EC3 b\u1EA3ng t\u1ED5ng quan d\u1EC5 \u0111\u1ECDc.
     function formatMoney(value) {
         return new Intl.NumberFormat('vi-VN').format(Math.round(Number(value) || 0));
     }
 
-    // getSelectedSchedulePrice l\u1ea5y gi\u00e1 Adult/Child/Infant t\u1eeb radio l\u1ecbch kh\u1edfi h\u00e0nh \u0111ang \u0111\u01b0\u1ee3c ch\u1ecdn.
+    // getSelectedSchedulePrice l\u1EA5y gi\u00E1 Adult/Child/Infant t\u1EEB radio l\u1ECBch kh\u1EDFi h\u00E0nh \u0111ang \u0111\u01B0\u1EE3c ch\u1ECDn.
     function getSelectedSchedulePrice() {
         const checkedSchedule = document.querySelector('[name="scheduleId"]:checked');
+        const form = document.getElementById('booking-create-form');
+        const fallbackBase = form ? Number(form.dataset.basePrice || 0) : 0;
         return {
-            adult: checkedSchedule ? Number(checkedSchedule.dataset.priceAdult || 0) : 0,
+            adult: checkedSchedule ? Number(checkedSchedule.dataset.priceAdult || fallbackBase) : fallbackBase,
             child: checkedSchedule ? Number(checkedSchedule.dataset.priceChild || 0) : 0,
             infant: checkedSchedule ? Number(checkedSchedule.dataset.priceInfant || 0) : 0
         };
     }
 
-    // collectParticipants \u0111\u1ecdc d\u1eef li\u1ec7u hi\u1ec7n c\u00f3 tr\u01b0\u1edbc khi render l\u1ea1i danh s\u00e1ch card.
-    // M\u1ee5c \u0111\u00edch l\u00e0 khi kh\u00e1ch b\u1ea5m t\u0103ng/gi\u1ea3m s\u1ed1 ng\u01b0\u1eddi, th\u00f4ng tin \u0111\u00e3 nh\u1eadp \u1edf c\u00e1c card c\u0169 kh\u00f4ng b\u1ecb m\u1ea5t.
+    // collectParticipants \u0111\u1ECDc d\u1EEF li\u1EC7u hi\u1EC7n c\u00F3 tr\u01B0\u1EDBc khi render l\u1EA1i danh s\u00E1ch card.
+    // M\u1EE5c \u0111\u00EDch l\u00E0 khi kh\u00E1ch b\u1EA5m t\u0103ng/gi\u1EA3m s\u1ED1 ng\u01B0\u1EDDi, th\u00F4ng tin \u0111\u00E3 nh\u1EADp \u1EDF c\u00E1c card c\u0169 kh\u00F4ng b\u1ECB m\u1EA5t.
     function collectParticipants() {
         if (!list) return [];
         const cards = list.querySelectorAll('.participant-card');
@@ -47,33 +49,33 @@
         return data;
     }
 
-    // escapeHtml b\u1ea3o v\u1ec7 chu\u1ed7i nh\u1eadp t\u1eeb ng\u01b0\u1eddi d\u00f9ng tr\u01b0\u1edbc khi \u0111\u01b0a l\u1ea1i v\u00e0o innerHTML.
-    // H\u00e0m n\u00e0y tr\u00e1nh l\u1ed7i v\u1ee1 HTML khi t\u00ean/email ch\u1ee9a k\u00fd t\u1ef1 \u0111\u1eb7c bi\u1ec7t nh\u01b0 ", <, > ho\u1eb7c &.
+    // escapeHtml b\u1EA3o v\u1EC7 chu\u1ED7i nh\u1EADp t\u1EEB ng\u01B0\u1EDDi d\u00F9ng tr\u01B0\u1EDBc khi \u0111\u01B0a l\u1EA1i v\u00E0o innerHTML.
+    // H\u00E0m n\u00E0y tr\u00E1nh l\u1ED7i v\u1EE1 HTML khi t\u00EAn/email ch\u1EE9a k\u00FD t\u1EF1 \u0111\u1EB7c bi\u1EC7t nh\u01B0 ", <, > ho\u1EB7c &.
     function escapeHtml(value) {
         return String(value || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
-    // field t\u1ea1o m\u1ed9t label g\u1ed3m input/select v\u00e0 v\u00f9ng hi\u1ec3n th\u1ecb l\u1ed7i ngay d\u01b0\u1edbi \u00f4 nh\u1eadp.
-    // C\u00e1ch n\u00e0y gi\u00fap m\u1ecdi \u00f4 \u0111\u1ec1u c\u00f3 ch\u1ed7 in validate error ri\u00eang.
+    // field t\u1EA1o m\u1ED9t label g\u1ED3m input/select v\u00E0 v\u00F9ng hi\u1EC3n th\u1ECB l\u1ED7i ngay d\u01B0\u1EDBi \u00F4 nh\u1EADp.
+    // C\u00E1ch n\u00E0y gi\u00FAp m\u1ECDi \u00F4 \u0111\u1EC1u c\u00F3 ch\u1ED7 in validate error ri\u00EAng.
     function field(labelText, html) {
         return '<label>' + labelText + html + '<span class="field-error"></span></label>';
     }
 
-    // buildAgeTypeSelect t\u1ea1o select nh\u00f3m tu\u1ed5i.
-    // Ng\u01b0\u1eddi \u0111\u1ea1i di\u1ec7n ch\u1ec9 c\u00f3 Adult \u0111\u1ec3 \u0111\u1ea3m b\u1ea3o tr\u01b0\u1edfng \u0111o\u00e0n l\u00e0 ng\u01b0\u1eddi l\u1edbn; th\u00e0nh vi\u00ean c\u00f2n l\u1ea1i \u0111\u01b0\u1ee3c ch\u1ecdn \u0111\u1ee7 3 nh\u00f3m gi\u00e1.
+    // buildAgeTypeSelect t\u1EA1o select nh\u00F3m tu\u1ED5i.
+    // Ng\u01B0\u1EDDi \u0111\u1EA1i di\u1EC7n ch\u1EC9 c\u00F3 Adult \u0111\u1EC3 \u0111\u1EA3m b\u1EA3o tr\u01B0\u1EDFng \u0111o\u00E0n l\u00E0 ng\u01B0\u1EDDi l\u1EDBn; th\u00E0nh vi\u00EAn c\u00F2n l\u1EA1i \u0111\u01B0\u1EE3c ch\u1ECDn \u0111\u1EE7 3 nh\u00F3m gi\u00E1.
     function buildAgeTypeSelect(index, currentAgeType) {
         if (index === 0) {
-            return '<input type="hidden" name="participantAgeType" value="Adult"><div class="leader-age-fixed">Ng\u01b0\u1eddi l\u1edbn (12 tu\u1ed5i tr\u1edf l\u00ean)</div>';
+            return '<input type="hidden" name="participantAgeType" value="Adult"><div class="leader-age-fixed">Ng\u01B0\u1EDDi l\u1EDBn (12 tu\u1ED5i tr\u1EDF l\u00EAn)</div>';
         }
         const value = currentAgeType || 'Adult';
-        return '<select name="participantAgeType" aria-label="\u0110\u1ed9 tu\u1ed5i ng\u01b0\u1eddi tham gia">' +
-            '<option value="Adult"' + (value === 'Adult' ? ' selected' : '') + '>Ng\u01b0\u1eddi l\u1edbn (12 tu\u1ed5i tr\u1edf l\u00ean)</option>' +
-            '<option value="Child"' + (value === 'Child' ? ' selected' : '') + '>Tr\u1ebb em (2 - d\u01b0\u1edbi 12 tu\u1ed5i)</option>' +
-            '<option value="Infant"' + (value === 'Infant' ? ' selected' : '') + '>Tr\u1ebb s\u01a1 sinh (d\u01b0\u1edbi 2 tu\u1ed5i)</option>' +
+        return '<select name="participantAgeType" aria-label="\u0110\u1ED9 tu\u1ED5i ng\u01B0\u1EDDi tham gia">' +
+            '<option value="Adult"' + (value === 'Adult' ? ' selected' : '') + '>Ng\u01B0\u1EDDi l\u1EDBn (12 tu\u1ED5i tr\u1EDF l\u00EAn)</option>' +
+            '<option value="Child"' + (value === 'Child' ? ' selected' : '') + '>Tr\u1EBB em (2 - d\u01B0\u1EDBi 12 tu\u1ED5i)</option>' +
+            '<option value="Infant"' + (value === 'Infant' ? ' selected' : '') + '>Tr\u1EBB s\u01A1 sinh (d\u01B0\u1EDBi 2 tu\u1ED5i)</option>' +
             '</select>';
     }
 
-    // updateBookingSummary \u0111\u1ebfm s\u1ed1 Adult/Child/Infant hi\u1ec7n t\u1ea1i v\u00e0 t\u00ednh l\u1ea1i t\u1ed5ng ti\u1ec1n tour theo l\u1ecbch \u0111ang ch\u1ecdn.
+    // updateBookingSummary \u0111\u1EBFm s\u1ED1 Adult/Child/Infant hi\u1EC7n t\u1EA1i v\u00E0 t\u00EDnh l\u1EA1i t\u1ED5ng ti\u1EC1n tour theo l\u1ECBch \u0111ang ch\u1ECDn.
     function updateBookingSummary() {
         const price = getSelectedSchedulePrice();
         let adultCount = 0;
@@ -109,8 +111,8 @@
         });
     }
 
-    // renderParticipants d\u1ef1ng l\u1ea1i to\u00e0n b\u1ed9 form ng\u01b0\u1eddi tham gia theo s\u1ed1 l\u01b0\u1ee3ng hi\u1ec7n t\u1ea1i.
-    // previousData l\u00e0 d\u1eef li\u1ec7u c\u0169 \u0111\u00e3 collect tr\u01b0\u1edbc \u0111\u00f3 \u0111\u1ec3 \u0111\u1ed5 l\u1ea1i v\u00e0o c\u00e1c input sau khi render.
+    // renderParticipants d\u1EF1ng l\u1EA1i to\u00E0n b\u1ED9 form ng\u01B0\u1EDDi tham gia theo s\u1ED1 l\u01B0\u1EE3ng hi\u1EC7n t\u1EA1i.
+    // previousData l\u00E0 d\u1EEF li\u1EC7u c\u0169 \u0111\u00E3 collect tr\u01B0\u1EDBc \u0111\u00F3 \u0111\u1EC3 \u0111\u1ED5 l\u1EA1i v\u00E0o c\u00E1c input sau khi render.
     function renderParticipants(previousData) {
         if (!countInput || !list) return;
         const count = parseInt(countInput.value, 10);
@@ -121,20 +123,20 @@
             const current = data[i] || { name: '', ageType: 'Adult', phone: '', email: '' };
             const card = document.createElement('div');
             card.className = 'participant-card';
-            const titleText = i === 0 ? 'Th\u00f4ng tin tr\u01b0\u1edfng \u0111o\u00e0n' : 'Th\u00f4ng tin ng\u01b0\u1eddi \u0111i c\u00f9ng #' + (i + 1);
-            const roleText = i === 0 ? 'Ng\u01b0\u1eddi \u0111\u1ea1i di\u1ec7n li\u00ean h\u1ec7' : 'Th\u00e0nh vi\u00ean';
-            const removeButton = i === 0 ? '' : '<button type="button" class="remove-participant-btn" data-remove-index="' + i + '" aria-label="X\u00f3a ng\u01b0\u1eddi \u0111i c\u00f9ng #' + (i + 1) + '" title="X\u00f3a ng\u01b0\u1eddi \u0111i c\u00f9ng"><i data-lucide="trash-2"></i></button>';
+            const titleText = i === 0 ? 'Th\u00F4ng tin tr\u01B0\u1EDFng \u0111o\u00E0n' : 'Th\u00F4ng tin ng\u01B0\u1EDDi \u0111i c\u00F9ng #' + (i + 1);
+            const roleText = i === 0 ? 'Ng\u01B0\u1EDDi \u0111\u1EA1i di\u1EC7n li\u00EAn h\u1EC7' : 'Th\u00E0nh vi\u00EAn';
+            const removeButton = i === 0 ? '' : '<button type="button" class="remove-participant-btn" data-remove-index="' + i + '" aria-label="X\u00F3a ng\u01B0\u1EDDi \u0111i c\u00F9ng #' + (i + 1) + '" title="X\u00F3a ng\u01B0\u1EDDi \u0111i c\u00F9ng"><i data-lucide="trash-2"></i></button>';
             const phoneRequired = i === 0 ? ' data-required="true"' : '';
             const emailRequired = i === 0 ? ' data-required="true"' : '';
 
-            // M\u1ed7i card c\u00f3 4 tr\u01b0\u1eddng: h\u1ecd t\u00ean, \u0111\u1ed9 tu\u1ed5i, s\u1ed1 \u0111i\u1ec7n tho\u1ea1i, email.
-            // H\u1ecd t\u00ean b\u1eaft bu\u1ed9c cho t\u1ea5t c\u1ea3; phone/email ch\u1ec9 b\u1eaft bu\u1ed9c v\u1edbi tr\u01b0\u1edfng \u0111o\u00e0n.
+            // M\u1ED7i card c\u00F3 4 tr\u01B0\u1EDDng: h\u1ECD t\u00EAn, \u0111\u1ED9 tu\u1ED5i, s\u1ED1 \u0111i\u1EC7n tho\u1EA1i, email.
+            // H\u1ECD t\u00EAn b\u1EAFt bu\u1ED9c cho t\u1EA5t c\u1EA3; phone/email ch\u1EC9 b\u1EAFt bu\u1ED9c v\u1EDBi tr\u01B0\u1EDFng \u0111o\u00E0n.
             card.innerHTML =
                 '<div class="participant-card-head"><strong>' + titleText + '</strong><span>' + roleText + '</span>' + removeButton + '</div>' +
                 '<div class="participant-fields">' +
-                    field('H\u1ecd v\u00e0 t\u00ean', '<input name="participantName" data-required="true" value="' + escapeHtml(current.name) + '" placeholder="Nh\u1eadp h\u1ecd t\u00ean">') +
-                    field('\u0110\u1ed9 tu\u1ed5i', buildAgeTypeSelect(i, current.ageType)) +
-                    field('S\u1ed1 \u0111i\u1ec7n tho\u1ea1i', '<input name="participantPhone"' + phoneRequired + ' value="' + escapeHtml(current.phone) + '" placeholder="09xxxxxxxx">') +
+                    field('H\u1ECD v\u00E0 t\u00EAn', '<input name="participantName" data-required="true" value="' + escapeHtml(current.name) + '" placeholder="Nh\u1EADp h\u1ECD t\u00EAn">') +
+                    field('\u0110\u1ED9 tu\u1ED5i', buildAgeTypeSelect(i, current.ageType)) +
+                    field('S\u1ED1 \u0111i\u1EC7n tho\u1EA1i', '<input name="participantPhone"' + phoneRequired + ' value="' + escapeHtml(current.phone) + '" placeholder="09xxxxxxxx">') +
                     field('Email', '<input name="participantEmail" type="email"' + emailRequired + ' value="' + escapeHtml(current.email) + '" placeholder="email@example.com">') +
                 '</div>';
             list.appendChild(card);
@@ -142,39 +144,48 @@
         updateBookingSummary();
     }
 
-    // setError in l\u1ed7i d\u01b0\u1edbi \u00f4 input v\u00e0 b\u1eadt class input-invalid \u0111\u1ec3 vi\u1ec1n \u00f4 chuy\u1ec3n sang tr\u1ea1ng th\u00e1i l\u1ed7i.
+    // setError in l\u1ED7i d\u01B0\u1EDBi \u00F4 input v\u00E0 b\u1EADt class input-invalid \u0111\u1EC3 vi\u1EC1n \u00F4 chuy\u1EC3n sang tr\u1EA1ng th\u00E1i l\u1ED7i.
     function setError(input, message) {
         const error = input.closest('label').querySelector('.field-error');
         if (error) error.textContent = message;
         input.classList.toggle('input-invalid', Boolean(message));
     }
 
-    // validateCreateForm ki\u1ec3m tra d\u1eef li\u1ec7u client-side tr\u01b0\u1edbc khi submit.
-    // Server v\u1eabn validate l\u1ea1i trong BookingCreateController \u0111\u1ec3 tr\u00e1nh d\u1eef li\u1ec7u s\u1eeda b\u1eb1ng devtool/request th\u1ee7 c\u00f4ng.
+    // validateCreateForm ki\u1EC3m tra d\u1EEF li\u1EC7u client-side tr\u01B0\u1EDBc khi submit.
+    // Server v\u1EABn validate l\u1EA1i trong BookingCreateController \u0111\u1EC3 tr\u00E1nh d\u1EEF li\u1EC7u s\u1EEDa b\u1EB1ng devtool/request th\u1EE7 c\u00F4ng.
     function validateCreateForm() {
         let valid = true;
         const scheduleError = document.getElementById('schedule-error');
         const checkedSchedule = document.querySelector('[name="scheduleId"]:checked');
         if (scheduleError) scheduleError.textContent = '';
         if (!checkedSchedule) {
-            if (scheduleError) scheduleError.textContent = 'Vui l\u00f2ng ch\u1ecdn m\u1ed9t l\u1ecbch kh\u1edfi h\u00e0nh.';
+            if (scheduleError) scheduleError.textContent = 'Vui l\u00F2ng ch\u1ECDn m\u1ED9t l\u1ECBch kh\u1EDFi h\u00E0nh.';
             valid = false;
+        } else {
+            // BR-19 / BR-20: server-side DAO \u0111\u00e3 l\u1ecdc past-date nh\u01b0ng t\u1ea7ng b\u1ea3o v\u1ec7 cu\u1ed1i \u1edf client v\u1eabn ch\u1eb7n.
+            const todayMidnight = new Date();
+            todayMidnight.setHours(0, 0, 0, 0);
+            const departureMs = parseInt(checkedSchedule.dataset.departureMs || '0', 10);
+            if (departureMs && departureMs < todayMidnight.getTime()) {
+                if (scheduleError) scheduleError.textContent = 'L\u1ecbch kh\u1edfi h\u00e0nh \u0111\u00e3 \u1edf trong qu\u00e1 kh\u1ee9. Vui l\u00f2ng ch\u1ecdn l\u1ecbch kh\u00e1c.';
+                valid = false;
+            }
         }
 
         list.querySelectorAll('input, select').forEach(function (input) {
             setError(input, '');
             if (input.dataset.required === 'true' && !input.value.trim()) {
-                setError(input, 'Vui l\u00f2ng nh\u1eadp th\u00f4ng tin n\u00e0y.');
+                setError(input, 'Vui l\u00F2ng nh\u1EADp th\u00F4ng tin n\u00E0y.');
                 valid = false;
             } else if (input.type === 'email' && input.value.trim() && !input.value.includes('@')) {
-                setError(input, 'Email ch\u01b0a \u0111\u00fang \u0111\u1ecbnh d\u1ea1ng.');
+                setError(input, 'Email ch\u01B0a \u0111\u00FAng \u0111\u1ECBnh d\u1EA1ng.');
                 valid = false;
             }
         });
         return valid;
     }
 
-    // Khi gi\u1ea3m s\u1ed1 ng\u01b0\u1eddi, d\u1eef li\u1ec7u hi\u1ec7n t\u1ea1i \u0111\u01b0\u1ee3c collect tr\u01b0\u1edbc r\u1ed3i render l\u1ea1i theo s\u1ed1 l\u01b0\u1ee3ng m\u1edbi.
+    // Khi gi\u1EA3m s\u1ED1 ng\u01B0\u1EDDi, d\u1EEF li\u1EC7u hi\u1EC7n t\u1EA1i \u0111\u01B0\u1EE3c collect tr\u01B0\u1EDBc r\u1ED3i render l\u1EA1i theo s\u1ED1 l\u01B0\u1EE3ng m\u1EDBi.
     if (minusBtn) {
         minusBtn.addEventListener('click', function () {
             const data = collectParticipants();
@@ -183,7 +194,7 @@
         });
     }
 
-    // Khi t\u0103ng s\u1ed1 ng\u01b0\u1eddi, gi\u1eef d\u1eef li\u1ec7u c\u0169 v\u00e0 th\u00eam m\u1ed9t card m\u1edbi r\u1ed7ng \u1edf cu\u1ed1i danh s\u00e1ch.
+    // Khi t\u0103ng s\u1ED1 ng\u01B0\u1EDDi, gi\u1EEF d\u1EEF li\u1EC7u c\u0169 v\u00E0 th\u00EAm m\u1ED9t card m\u1EDBi r\u1ED7ng \u1EDF cu\u1ED1i danh s\u00E1ch.
     if (plusBtn) {
         plusBtn.addEventListener('click', function () {
             const data = collectParticipants();
@@ -192,7 +203,7 @@
         });
     }
 
-    // Thay \u0111\u1ed5i l\u1ecbch kh\u1edfi h\u00e0nh ho\u1eb7c nh\u00f3m tu\u1ed5i \u0111\u1ec1u c\u1eadp nh\u1eadt l\u1ea1i b\u1ea3ng t\u1ed5ng quan \u0111\u01a1n \u0111\u1eb7t.
+    // Thay \u0111\u1ED5i l\u1ECBch kh\u1EDFi h\u00E0nh ho\u1EB7c nh\u00F3m tu\u1ED5i \u0111\u1EC1u c\u1EADp nh\u1EADt l\u1EA1i b\u1EA3ng t\u1ED5ng quan \u0111\u01A1n \u0111\u1EB7t.
     document.querySelectorAll('[name="scheduleId"]').forEach(function (radio) {
         radio.addEventListener('change', updateBookingSummary);
     });
@@ -205,8 +216,8 @@
     }
 
 
-    // D\u01b0\u01a1ng l\u00e0m \u0111o\u1ea1n n\u00e0y: n\u00fat th\u00f9ng r\u00e1c ch\u1ec9 xu\u1ea5t hi\u1ec7n \u1edf ng\u01b0\u1eddi \u0111i c\u00f9ng \u0111\u1ec3 xo\u00e1 nhanh \u0111\u00fang card \u0111\u00f3.
-    // Sau khi xo\u00e1, danh s\u00e1ch \u0111\u01b0\u1ee3c render l\u1ea1i \u0111\u1ec3 s\u1ed1 th\u1ee9 t\u1ef1, participantCount v\u00e0 b\u1ea3ng t\u1ed5ng quan ti\u1ec1n lu\u00f4n \u0111\u1ed3ng b\u1ed9.
+    // D\u01B0\u01A1ng l\u00E0m \u0111o\u1EA1n n\u00E0y: n\u00FAt th\u00F9ng r\u00E1c ch\u1EC9 xu\u1EA5t hi\u1EC7n \u1EDF ng\u01B0\u1EDDi \u0111i c\u00F9ng \u0111\u1EC3 xo\u00E1 nhanh \u0111\u00FAng card \u0111\u00F3.
+    // Sau khi xo\u00E1, danh s\u00E1ch \u0111\u01B0\u1EE3c render l\u1EA1i \u0111\u1EC3 s\u1ED1 th\u1EE9 t\u1EF1, participantCount v\u00E0 b\u1EA3ng t\u1ED5ng quan ti\u1EC1n lu\u00F4n \u0111\u1ED3ng b\u1ED9.
     if (list) {
         list.addEventListener('click', function (event) {
             const removeButton = event.target.closest('.remove-participant-btn');
@@ -220,7 +231,7 @@
             if (window.lucide) lucide.createIcons();
         });
     }
-    // Ch\u1eb7n submit n\u1ebfu validate client-side ch\u01b0a \u0111\u1ea1t.
+    // Ch\u1EB7n submit n\u1EBFu validate client-side ch\u01B0a \u0111\u1EA1t.
     if (createForm) {
         createForm.addEventListener('submit', function (event) {
             if (!validateCreateForm()) {
@@ -230,8 +241,8 @@
     }
 
 
-    // D\u01b0\u01a1ng l\u00e0m \u0111o\u1ea1n n\u00e0y: customerNote t\u1ef1 t\u0103ng chi\u1ec1u cao theo n\u1ed9i dung kh\u00e1ch nh\u1eadp.
-    // Textarea v\u1eabn gi\u1eef maxlength=500 n\u00ean khi t\u1edbi gi\u1edbi h\u1ea1n tr\u00ecnh duy\u1ec7t s\u1ebd kh\u00f4ng cho nh\u1eadp th\u00eam k\u00fd t\u1ef1.
+    // D\u01B0\u01A1ng l\u00E0m \u0111o\u1EA1n n\u00E0y: customerNote t\u1EF1 t\u0103ng chi\u1EC1u cao theo n\u1ED9i dung kh\u00E1ch nh\u1EADp.
+    // Textarea v\u1EABn gi\u1EEF maxlength=500 n\u00EAn khi t\u1EDBi gi\u1EDBi h\u1EA1n tr\u00ECnh duy\u1EC7t s\u1EBD kh\u00F4ng cho nh\u1EADp th\u00EAm k\u00FD t\u1EF1.
     const customerNote = document.getElementById('customer-note');
     function autoResizeCustomerNote() {
         if (!customerNote) return;
@@ -243,7 +254,7 @@
         customerNote.addEventListener('input', autoResizeCustomerNote);
         autoResizeCustomerNote();
     }
-    // Render m\u1eb7c \u0111\u1ecbnh m\u1ed9t participant khi trang v\u1eeba load.
+    // Render m\u1EB7c \u0111\u1ECBnh m\u1ED9t participant khi trang v\u1EEBa load.
     renderParticipants([]);
     if (window.lucide) lucide.createIcons();
 })();

@@ -1,0 +1,29 @@
+/*
+ * Người làm: Dương
+ * Thời gian tạo: 04/06/2026
+ * Chức năng: CSS cho màn Customer hoàn tất booking.
+ * Ý nghĩa: Căn giữa thông báo thành công và mã booking sau khi hệ thống ghi nhận payment.
+ */
+@import url('customer-booking-common.css?v=2.1');
+
+/* Màn success chỉ cần một khối thông báo nên layout chuyển về block thay vì grid 2 cột. */
+.booking-layout {
+    display: block;
+}
+
+/* Hộp thành công căn giữa nội dung để nhấn mạnh trạng thái đã hoàn tất. */
+.success-box {
+    display: grid;
+    justify-items: center;
+    gap: 14px;
+    min-height: 360px;
+    align-content: center;
+    text-align: center;
+}
+
+/* Icon badge-check màu xanh biểu thị thanh toán và đặt tour đã thành công. */
+.success-box > svg {
+    width: 58px;
+    height: 58px;
+    color: #059669;
+}

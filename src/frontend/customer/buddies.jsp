@@ -579,25 +579,25 @@
             <div class="main-column">
                 
                 <div class="buddy-tabs">
-                    <button class="buddy-tab-btn active" onclick="switchBuddyTab('discover', this)">Khám phá</button>
+                    <button class="buddy-tab-btn active" onclick="switchBuddyTab('discover', this)">Kh&#225;m ph&#225;</button>
                     <button class="buddy-tab-btn" onclick="switchBuddyTab('received', this)">
-                        Đã nhận <span style="background:#ef4444;color:white;padding:2px 8px;border-radius:10px;font-size:11px;margin-left:4px;">${receivedRequests.stream().filter(r -> r.status == 'Pending').count()}</span>
+                        &#272;&#227; nh&#7853;n <span style="background:#ef4444;color:white;padding:2px 8px;border-radius:10px;font-size:11px;margin-left:4px;">${receivedRequests.stream().filter(r -> r.status == 'Pending').count()}</span>
                     </button>
-                    <button class="buddy-tab-btn" onclick="switchBuddyTab('sent', this)">Đã gửi</button>
-                    <button class="buddy-tab-btn" onclick="switchBuddyTab('friends', this)">Bạn đồng hành (${acceptedBuddies.size()})</button>
+                    <button class="buddy-tab-btn" onclick="switchBuddyTab('sent', this)">&#272;&#227; g&#7917;i</button>
+                    <button class="buddy-tab-btn" onclick="switchBuddyTab('friends', this)">B&#7841;n &#273;&#7891;ng h&#224;nh (${acceptedBuddies.size()})</button>
                 </div>
 
                 <!-- Tab: Discover -->
                 <div class="buddy-tab-content active" id="buddy-tab-discover">
                     <div class="matches-header">
-                        <h3>Gợi ý hàng đầu cho bạn <i data-lucide="info" style="width: 16px; color: #94a3b8;"></i></h3>
+                        <h3>G&#7907;i &#253; h&#224;ng &#273;&#7847;u cho b&#7841;n <i data-lucide="info" style="width: 16px; color: #94a3b8;"></i></h3>
                         <div style="display: flex; align-items: center; gap: 20px;">
-                            <span class="count">${topMatches.size()} người phù hợp</span>
+                            <span class="count">${topMatches.size()} ng&#432;&#7901;i ph&#249; h&#7907;p</span>
                             <div class="sort-by">
-                                Sắp xếp: 
+                                S&#7855;p x&#7871;p: 
                                 <select id="matchSortSelect" onchange="sortMatches()">
-                                    <option value="match">Phù hợp nhất</option>
-                                    <option value="newest">Mới nhất</option>
+                                    <option value="match">Ph&#249; h&#7907;p nh&#7845;t</option>
+                                    <option value="newest">M&#7899;i nh&#7845;t</option>
                                 </select>
                             </div>
                         </div>
@@ -606,14 +606,14 @@
                     <div class="match-grid">
                         <c:if test="${empty topMatches}">
                             <div style="grid-column: 1 / -1; text-align: center; padding: 40px; background: white; border-radius: 12px; color: #64748b;">
-                                Không tìm thấy ai phù hợp với tiêu chí hiện tại. Hãy thử điều chỉnh ở trang <a href="${pageContext.request.contextPath}/profile">Sở thích cá nhân</a>!
+                                Kh&#244;ng t&#236;m th&#7845;y ai ph&#249; h&#7907;p v&#7899;i ti&#234;u ch&#237; hi&#7879;n t&#7841;i. H&#227;y th&#7917; &#273;i&#7873;u ch&#7881;nh &#7903; trang <a href="${pageContext.request.contextPath}/profile">S&#7903; th&#237;ch c&#225; nh&#226;n</a>!
                             </div>
                         </c:if>
                         
                         <c:forEach var="m" items="${topMatches}">
                             <div class="match-card" data-match="${m.matchPercentage}" data-id="${m.user.userId}">
                                 <div class="match-card-cover">
-                                    <div class="match-badge">${m.matchPercentage}% Phù hợp</div>
+                                    <div class="match-badge">${m.matchPercentage}% Ph&#249; h&#7907;p</div>
                                     <button class="btn-heart"><i data-lucide="heart" style="width: 16px;"></i></button>
                                 </div>
                                 <div class="match-card-body">
@@ -628,10 +628,10 @@
                                     
                                     <h4 class="match-name">${m.user.fullName} <i data-lucide="badge-check"></i></h4>
                                     <div class="match-location">
-                                        <i data-lucide="map-pin" style="width: 14px;"></i> ${not empty m.profile.address ? m.profile.address : 'Chưa cập nhật vị trí'}
+                                        <i data-lucide="map-pin" style="width: 14px;"></i> ${not empty m.profile.address ? m.profile.address : 'Ch&#432;a c&#7853;p nh&#7853;t v&#7883; tr&#237;'}
                                     </div>
                                     <div class="match-style">
-                                        Phong cách: <span>${not empty m.preference.travelStyle ? m.preference.travelStyle : 'Explorer'}</span>
+                                        Phong c&#225;ch: <span>${not empty m.preference.travelStyle ? m.preference.travelStyle : 'Explorer'}</span>
                                     </div>
                                     <div class="tags">
                                         <c:if test="${not empty m.preference.tags}">
@@ -640,11 +640,11 @@
                                             </c:forEach>
                                         </c:if>
                                         <c:if test="${empty m.preference.tags}">
-                                            <span class="tag">Chưa có Tags</span>
+                                            <span class="tag">Ch&#432;a c&#243; Tags</span>
                                         </c:if>
                                     </div>
                                     <div class="match-bio">
-                                        ${not empty m.profile.biography ? m.profile.biography : 'Đam mê du lịch và khám phá những vùng đất mới. Cùng nhau xách balo lên và đi nhé!'}
+                                        ${not empty m.profile.biography ? m.profile.biography : '&#272;am m&#234; du l&#7883;ch v&#224; kh&#225;m ph&#225; nh&#7919;ng v&#249;ng &#273;&#7845;t m&#7899;i. C&#249;ng nhau x&#225;ch balo l&#234;n v&#224; &#273;i nh&#233;!'}
                                     </div>
                                     <div class="match-details">
                                         <div><i data-lucide="calendar" style="width: 14px;"></i> ${not empty m.preference.startDate ? m.preference.startDate : 'Anytime'}</div>
@@ -664,21 +664,21 @@
                                            data-avatar="${not empty m.profile.avatarUrl ? m.profile.avatarUrl : 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80'}"
                                            data-address="${not empty m.profile.address ? m.profile.address : 'Vietnam'}"
                                            data-email="${m.user.email}"
-                                           data-bio="${not empty m.profile.biography ? m.profile.biography : 'Chưa có thông tin tiểu sử.'}"
-                                           data-style="${not empty m.preference.travelStyle ? m.preference.travelStyle : 'Chưa cập nhật'}"
-                                           data-dest="${not empty m.preference.destination ? m.preference.destination : 'Bất kỳ'}"
-                                           data-tags="${not empty m.preference.tags ? m.preference.tags : 'Chưa có'}"
-                                           data-duration="${not empty m.preference.tripDuration ? m.preference.tripDuration : 'Bất kỳ'}"
-                                           data-freq="${not empty m.preference.travelFrequency ? m.preference.travelFrequency : 'Bất kỳ'}"
-                                           data-smoke="${not empty m.preference.smokingPreference ? m.preference.smokingPreference : 'Chưa rõ'}"
-                                           data-drink="${not empty m.preference.drinkingPreference ? m.preference.drinkingPreference : 'Chưa rõ'}"
-                                           data-lang="${not empty m.preference.languages ? m.preference.languages : 'Chưa có'}"
-                                           onclick="openProfileModal(this)">Xem hồ sơ</a>
+                                           data-bio="${not empty m.profile.biography ? m.profile.biography : 'Ch&#432;a c&#243; th&#244;ng tin ti&#7875;u s&#7917;.'}"
+                                           data-style="${not empty m.preference.travelStyle ? m.preference.travelStyle : 'Ch&#432;a c&#7853;p nh&#7853;t'}"
+                                           data-dest="${not empty m.preference.destination ? m.preference.destination : 'B&#7845;t k&#7923;'}"
+                                           data-tags="${not empty m.preference.tags ? m.preference.tags : 'Ch&#432;a c&#243;'}"
+                                           data-duration="${not empty m.preference.tripDuration ? m.preference.tripDuration : 'B&#7845;t k&#7923;'}"
+                                           data-freq="${not empty m.preference.travelFrequency ? m.preference.travelFrequency : 'B&#7845;t k&#7923;'}"
+                                           data-smoke="${not empty m.preference.smokingPreference ? m.preference.smokingPreference : 'Ch&#432;a r&#245;'}"
+                                           data-drink="${not empty m.preference.drinkingPreference ? m.preference.drinkingPreference : 'Ch&#432;a r&#245;'}"
+                                           data-lang="${not empty m.preference.languages ? m.preference.languages : 'Ch&#432;a c&#243;'}"
+                                           onclick="openProfileModal(this)">Xem h&#7891; s&#417;</a>
                                         <form action="${pageContext.request.contextPath}/customer/buddies" method="POST">
                                             <input type="hidden" name="action" value="send">
                                             <input type="hidden" name="receiverId" value="${m.user.userId}">
                                             <button type="submit" class="btn-action btn-action-primary btn-block">
-                                                <i data-lucide="user-plus" style="width: 16px;"></i> Gửi kết bạn
+                                                <i data-lucide="user-plus" style="width: 16px;"></i> G&#7917;i k&#7871;t b&#7841;n
                                             </button>
                                         </form>
                                     </div>
@@ -693,7 +693,7 @@
                     <div class="request-list">
                         <c:if test="${empty receivedRequests}">
                             <div style="text-align: center; padding: 40px; background: white; border-radius: 12px; color: #64748b;">
-                                Bạn chưa có lời mời kết bạn nào.
+                                B&#7841;n ch&#432;a c&#243; l&#7901;i m&#7901;i k&#7871;t b&#7841;n n&#224;o.
                             </div>
                         </c:if>
                         <c:forEach var="req" items="${receivedRequests}">
@@ -718,16 +718,16 @@
                                             <form action="${pageContext.request.contextPath}/customer/buddies" method="POST" style="display:inline;">
                                                 <input type="hidden" name="action" value="accept">
                                                 <input type="hidden" name="requestId" value="${req.requestId}">
-                                                <button type="submit" class="btn-action btn-action-success"><i data-lucide="check" style="width:16px;"></i> Chấp nhận</button>
+                                                <button type="submit" class="btn-action btn-action-success"><i data-lucide="check" style="width:16px;"></i> Ch&#7845;p nh&#7853;n</button>
                                             </form>
                                             <form action="${pageContext.request.contextPath}/customer/buddies" method="POST" style="display:inline;">
                                                 <input type="hidden" name="action" value="reject">
                                                 <input type="hidden" name="requestId" value="${req.requestId}">
-                                                <button type="submit" class="btn-action btn-action-danger"><i data-lucide="x" style="width:16px;"></i> Từ chối</button>
+                                                <button type="submit" class="btn-action btn-action-danger"><i data-lucide="x" style="width:16px;"></i> T&#7915; ch&#7889;i</button>
                                             </form>
                                         </c:when>
                                         <c:otherwise>
-                                            <span class="status-badge status-${req.status.toLowerCase()}">${req.status == 'Accepted' ? 'Đã kết nối' : (req.status == 'Rejected' ? 'Đã từ chối' : req.status)}</span>
+                                            <span class="status-badge status-${req.status.toLowerCase()}">${req.status == 'Accepted' ? '&#272;&#227; k&#7871;t n&#7889;i' : (req.status == 'Rejected' ? '&#272;&#227; t&#7915; ch&#7889;i' : req.status)}</span>
                                         </c:otherwise>
                                     </c:choose>
                                 </div>
@@ -741,7 +741,7 @@
                     <div class="request-list">
                         <c:if test="${empty sentRequests}">
                             <div style="text-align: center; padding: 40px; background: white; border-radius: 12px; color: #64748b;">
-                                Bạn chưa gửi lời mời kết bạn nào.
+                                B&#7841;n ch&#432;a g&#7917;i l&#7901;i m&#7901;i k&#7871;t b&#7841;n n&#224;o.
                             </div>
                         </c:if>
                         <c:forEach var="req" items="${sentRequests}">
@@ -756,17 +756,17 @@
                                         </c:otherwise>
                                     </c:choose>
                                     <div class="request-details">
-                                        <h4>Đã gửi đến: ${req.sender.fullName}</h4>
+                                        <h4>&#272;&#227; g&#7917;i &#273;&#7871;n: ${req.sender.fullName}</h4>
                                         <p>${req.sender.email} &bull; <i data-lucide="clock" style="width:12px"></i> <fmt:formatDate value="${req.createdAt}" pattern="yyyy-MM-dd HH:mm"/></p>
                                     </div>
                                 </div>
                                 <div class="request-actions">
-                                    <span class="status-badge status-${req.status.toLowerCase()}">${req.status == 'Pending' ? 'Đang chờ' : (req.status == 'Accepted' ? 'Đã kết nối' : (req.status == 'Rejected' ? 'Bị từ chối' : 'Đã hủy'))}</span>
+                                    <span class="status-badge status-${req.status.toLowerCase()}">${req.status == 'Pending' ? '&#272;ang ch&#7901;' : (req.status == 'Accepted' ? '&#272;&#227; k&#7871;t n&#7889;i' : (req.status == 'Rejected' ? 'B&#7883; t&#7915; ch&#7889;i' : '&#272;&#227; h&#7911;y'))}</span>
                                     <c:if test="${req.status == 'Pending'}">
                                         <form action="${pageContext.request.contextPath}/customer/buddies" method="POST" style="display:inline; margin-left:8px;">
                                             <input type="hidden" name="action" value="cancel">
                                             <input type="hidden" name="requestId" value="${req.requestId}">
-                                            <button type="submit" class="btn-action btn-action-danger">Hủy lời mời</button>
+                                            <button type="submit" class="btn-action btn-action-danger">H&#7911;y l&#7901;i m&#7901;i</button>
                                         </form>
                                     </c:if>
                                 </div>
@@ -780,7 +780,7 @@
                     <div class="request-list">
                         <c:if test="${empty acceptedBuddies}">
                             <div style="text-align: center; padding: 40px; background: white; border-radius: 12px; color: #64748b;">
-                                Bạn chưa có người bạn đồng hành nào.
+                                B&#7841;n ch&#432;a c&#243; ng&#432;&#7901;i b&#7841;n &#273;&#7891;ng h&#224;nh n&#224;o.
                             </div>
                         </c:if>
                         <c:forEach var="friend" items="${acceptedBuddies}">
@@ -803,7 +803,12 @@
                                     <form action="${pageContext.request.contextPath}/customer/chat" method="POST" style="display:inline;">
                                         <input type="hidden" name="action" value="create">
                                         <input type="hidden" name="targetUserId" value="${friend.userId}">
-                                        <button type="submit" class="btn-action btn-action-info"><i data-lucide="message-circle" style="width:16px;"></i> Nhắn tin</button>
+                                        <button type="submit" class="btn-action btn-action-info"><i data-lucide="message-circle" style="width:16px;"></i> Nh&#7855;n tin</button>
+                                    </form>
+                                    <form action="${pageContext.request.contextPath}/customer/buddies" method="POST" style="display:inline;" onsubmit="return confirm('B&#7841;n c&#243; ch&#7855;c ch&#7855;n mu&#7889;n h&#7911;y k&#7871;t b&#7841;n v&#7899;i ng&#432;&#7901;i n&#224;y kh&#244;ng?');">
+                                        <input type="hidden" name="action" value="unfriend">
+                                        <input type="hidden" name="targetId" value="${friend.userId}">
+                                        <button type="submit" class="btn-action btn-action-danger"><i data-lucide="user-minus" style="width:16px;"></i> H&#7911;y k&#7871;t b&#7841;n</button>
                                     </form>
                                     <c:set var="pref" value="${friendPrefs[friend.userId]}"/>
                                     <a href="javascript:void(0)" 
@@ -812,16 +817,16 @@
                                        data-avatar="${not empty friend.profile.avatarUrl ? friend.profile.avatarUrl : 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80'}"
                                        data-address="${not empty friend.profile.address ? friend.profile.address : 'Vietnam'}"
                                        data-email="${friend.email}"
-                                       data-bio="${not empty friend.profile.biography ? friend.profile.biography : 'Chưa có thông tin tiểu sử.'}"
-                                       data-style="${not empty pref.travelStyle ? pref.travelStyle : 'Chưa cập nhật'}"
-                                       data-dest="${not empty pref.destination ? pref.destination : 'Bất kỳ'}"
-                                       data-tags="${not empty pref.tags ? pref.tags : 'Chưa có'}"
-                                       data-duration="${not empty pref.tripDuration ? pref.tripDuration : 'Bất kỳ'}"
-                                       data-freq="${not empty pref.travelFrequency ? pref.travelFrequency : 'Bất kỳ'}"
-                                       data-smoke="${not empty pref.smokingPreference ? pref.smokingPreference : 'Chưa rõ'}"
-                                       data-drink="${not empty pref.drinkingPreference ? pref.drinkingPreference : 'Chưa rõ'}"
-                                       data-lang="${not empty pref.languages ? pref.languages : 'Chưa có'}"
-                                       onclick="openProfileModal(this)">Hồ sơ</a>
+                                       data-bio="${not empty friend.profile.biography ? friend.profile.biography : 'Ch&#432;a c&#243; th&#244;ng tin ti&#7875;u s&#7917;.'}"
+                                       data-style="${not empty pref.travelStyle ? pref.travelStyle : 'Ch&#432;a c&#7853;p nh&#7853;t'}"
+                                       data-dest="${not empty pref.destination ? pref.destination : 'B&#7845;t k&#7923;'}"
+                                       data-tags="${not empty pref.tags ? pref.tags : 'Ch&#432;a c&#243;'}"
+                                       data-duration="${not empty pref.tripDuration ? pref.tripDuration : 'B&#7845;t k&#7923;'}"
+                                       data-freq="${not empty pref.travelFrequency ? pref.travelFrequency : 'B&#7845;t k&#7923;'}"
+                                       data-smoke="${not empty pref.smokingPreference ? pref.smokingPreference : 'Ch&#432;a r&#245;'}"
+                                       data-drink="${not empty pref.drinkingPreference ? pref.drinkingPreference : 'Ch&#432;a r&#245;'}"
+                                       data-lang="${not empty pref.languages ? pref.languages : 'Ch&#432;a c&#243;'}"
+                                       onclick="openProfileModal(this)">H&#7891; s&#417;</a>
                                 </div>
                             </div>
                         </c:forEach>
@@ -835,8 +840,8 @@
                 
                 <div class="sidebar-widget">
                     <div class="widget-header">
-                        <h3>Hồ sơ Matching của bạn</h3>
-                        <a href="${pageContext.request.contextPath}/profile"><i data-lucide="edit-2" style="width: 14px;"></i> Sửa</a>
+                        <h3>H&#7891; s&#417; Matching c&#7911;a b&#7841;n</h3>
+                        <a href="${pageContext.request.contextPath}/profile"><i data-lucide="edit-2" style="width: 14px;"></i> S&#7917;a</a>
                     </div>
                     <div class="my-profile-mini">
                         <c:choose>
@@ -850,30 +855,30 @@
                         <div class="my-profile-info">
                             <h4>${sessionUser.fullName}</h4>
                             <p><i data-lucide="map-pin" style="width: 12px;"></i> ${not empty sessionUser.profile.address ? sessionUser.profile.address : 'Vietnam'}</p>
-                            <p>Phong cách: <span style="color: #5b21b6; font-weight: 500;">${myPref.travelStyle}</span></p>
-                            <p>Ngôn ngữ: ${myPref.languages}</p>
+                            <p>Phong c&#225;ch: <span style="color: #5b21b6; font-weight: 500;">${myPref.travelStyle}</span></p>
+                            <p>Ng&#244;n ng&#7919;: ${myPref.languages}</p>
                         </div>
                     </div>
                     <div class="completeness-box">
                         <div class="comp-header">
-                            <span>Độ hoàn thiện hồ sơ</span>
+                            <span>&#272;&#7897; ho&#224;n thi&#7879;n h&#7891; s&#417;</span>
                             <span>${completeness}%</span>
                         </div>
                         <div class="comp-bar-bg">
                             <div class="comp-bar-fill" style="width: ${completeness}%;"></div>
                         </div>
-                        <a href="${pageContext.request.contextPath}/profile" class="comp-link">Thêm chi tiết để match tốt hơn! <i data-lucide="chevron-right" style="width: 14px;"></i></a>
+                        <a href="${pageContext.request.contextPath}/profile" class="comp-link">Th&#234;m chi ti&#7871;t &#273;&#7875; match t&#7889;t h&#417;n! <i data-lucide="chevron-right" style="width: 14px;"></i></a>
                     </div>
                 </div>
 
                 <div class="sidebar-widget">
                     <div class="widget-header">
-                        <h3>Điểm đến phổ biến</h3>
-                        <a href="${pageContext.request.contextPath}/home#destinations">Xem tất cả</a>
+                        <h3>&#272;i&#7875;m &#273;&#7871;n ph&#7893; bi&#7871;n</h3>
+                        <a href="${pageContext.request.contextPath}/home#destinations">Xem t&#7845;t c&#7843;</a>
                     </div>
                     <ul class="dest-list">
                         <c:forEach var="dest" items="${destinations}" begin="0" end="3">
-                            <li class="dest-item" onclick="window.location.href='${pageContext.request.contextPath}/tourdiscovery?dest=${dest.name}'" style="cursor: pointer;" title="Tìm tour tại ${dest.name}">
+                            <li class="dest-item" onclick="window.location.href='${pageContext.request.contextPath}/tourdiscovery?dest=${dest.name}'" style="cursor: pointer;" title="T&#236;m tour t&#7841;i ${dest.name}">
                                 <c:choose>
                                     <c:when test="${not empty dest.imageUrl && (dest.imageUrl.startsWith('http://') || dest.imageUrl.startsWith('https://'))}">
                                         <img src="${dest.imageUrl}" alt="${dest.name}">
@@ -895,14 +900,14 @@
                 </div>
 
                 <div class="sidebar-widget tips-box">
-                    <h3 style="margin-top: 0;"><i data-lucide="lightbulb"></i> Mẹo tìm bạn</h3>
+                    <h3 style="margin-top: 0;"><i data-lucide="lightbulb"></i> M&#7865;o t&#236;m b&#7841;n</h3>
                     <ul class="tips-list">
-                        <li><i data-lucide="check-circle-2"></i> Hoàn thiện hồ sơ để tăng độ chính xác</li>
-                        <li><i data-lucide="check-circle-2"></i> Ghi rõ sở thích du lịch (Tags)</li>
-                        <li><i data-lucide="check-circle-2"></i> Thêm ngày dự kiến chính xác</li>
-                        <li><i data-lucide="check-circle-2"></i> Phản hồi tin nhắn nhanh chóng</li>
+                        <li><i data-lucide="check-circle-2"></i> Ho&#224;n thi&#7879;n h&#7891; s&#417; &#273;&#7875; t&#259;ng &#273;&#7897; ch&#237;nh x&#225;c</li>
+                        <li><i data-lucide="check-circle-2"></i> Ghi r&#245; s&#7903; th&#237;ch du l&#7883;ch (Tags)</li>
+                        <li><i data-lucide="check-circle-2"></i> Th&#234;m ng&#224;y d&#7921; ki&#7871;n ch&#237;nh x&#225;c</li>
+                        <li><i data-lucide="check-circle-2"></i> Ph&#7843;n h&#7891;i tin nh&#7855;n nhanh ch&#243;ng</li>
                     </ul>
-                    <a href="${pageContext.request.contextPath}/help#buddies" class="tips-link">Tìm hiểu thêm &rarr;</a>
+                    <a href="${pageContext.request.contextPath}/help#buddies" class="tips-link">T&#236;m hi&#7875;u th&#234;m &rarr;</a>
                 </div>
 
             </div>
@@ -925,25 +930,25 @@
             </div>
         </div>
         
-        <h4 style="margin: 0 0 8px 0; font-size: 15px; color: #0f172a;">Tiểu sử</h4>
+        <h4 style="margin: 0 0 8px 0; font-size: 15px; color: #0f172a;">Ti&#7875;u s&#7917;</h4>
         <div class="modal-bio" id="modalBio" style="margin-bottom: 24px;">
             Bio goes here.
         </div>
         
-        <h4 style="margin: 0 0 12px 0; font-size: 15px; color: #0f172a; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">Sở thích du lịch</h4>
+        <h4 style="margin: 0 0 12px 0; font-size: 15px; color: #0f172a; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">S&#7903; th&#237;ch du l&#7883;ch</h4>
         
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 13px; color: #475569; margin-bottom: 24px;">
-            <div><strong>Phong cách:</strong> <span id="m-style" style="color: #0f172a;"></span></div>
-            <div><strong>Điểm đến:</strong> <span id="m-dest" style="color: #0f172a;"></span></div>
-            <div><strong>Thời gian:</strong> <span id="m-duration" style="color: #0f172a;"></span></div>
-            <div><strong>Tần suất:</strong> <span id="m-freq" style="color: #0f172a;"></span></div>
-            <div><strong>Hút thuốc:</strong> <span id="m-smoke" style="color: #0f172a;"></span></div>
-            <div><strong>Đồ uống có cồn:</strong> <span id="m-drink" style="color: #0f172a;"></span></div>
-            <div style="grid-column: 1 / -1;"><strong>Ngôn ngữ:</strong> <span id="m-lang" style="color: #0f172a;"></span></div>
-            <div style="grid-column: 1 / -1;"><strong>Sở thích (Tags):</strong> <span id="m-tags" style="color: #0f172a;"></span></div>
+            <div><strong>Phong c&#225;ch:</strong> <span id="m-style" style="color: #0f172a;"></span></div>
+            <div><strong>&#272;i&#7875;m &#273;&#7871;n:</strong> <span id="m-dest" style="color: #0f172a;"></span></div>
+            <div><strong>Th&#7901;i gian:</strong> <span id="m-duration" style="color: #0f172a;"></span></div>
+            <div><strong>T&#7847;n su&#7845;t:</strong> <span id="m-freq" style="color: #0f172a;"></span></div>
+            <div><strong>H&#250;t thu&#7889;c:</strong> <span id="m-smoke" style="color: #0f172a;"></span></div>
+            <div><strong>&#272;&#7891; u&#7889;ng c&#243; c&#7891;n:</strong> <span id="m-drink" style="color: #0f172a;"></span></div>
+            <div style="grid-column: 1 / -1;"><strong>Ng&#244;n ng&#7919;:</strong> <span id="m-lang" style="color: #0f172a;"></span></div>
+            <div style="grid-column: 1 / -1;"><strong>S&#7903; th&#237;ch (Tags):</strong> <span id="m-tags" style="color: #0f172a;"></span></div>
         </div>
         
-        <button class="btn-block btn-block-light" onclick="closeProfileModal()">Đóng</button>
+        <button class="btn-block btn-block-light" onclick="closeProfileModal()">&#272;&#243;ng</button>
     </div>
 </div>
 
@@ -965,7 +970,7 @@
         document.getElementById('modalAvatar').src = btn.getAttribute('data-avatar');
         document.getElementById('modalLocation').textContent = btn.getAttribute('data-address');
         document.getElementById('modalBio').textContent = btn.getAttribute('data-bio');
-        document.getElementById('modalEmail').textContent = btn.getAttribute('data-email') || 'Chưa cập nhật email';
+        document.getElementById('modalEmail').textContent = btn.getAttribute('data-email') || 'Ch\u01b0a c\u1eadp nh\u1eadt email';
         
         document.getElementById('m-style').textContent = btn.getAttribute('data-style');
         document.getElementById('m-dest').textContent = btn.getAttribute('data-dest');
