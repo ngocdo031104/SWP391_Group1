@@ -1,3 +1,8 @@
+﻿/*
+ * Liên quan đến UCs: Recover Password
+ * Tác giả: Đỗ Vũ Minh Ngọc
+ * MSSV: HE182479
+ */
 package Controller;
 
 import Model.UserDAO;
@@ -30,7 +35,7 @@ public class ForgotPasswordController extends HttpServlet {
         String email = request.getParameter("email");
         
         if (email == null || email.trim().isEmpty()) {
-            request.setAttribute("errorMessage", "Vui lòng nhập địa chỉ email.");
+            request.setAttribute("errorMessage", "Vui lĂ²ng nháº­p Ä‘á»‹a chá»‰ email.");
             request.getRequestDispatcher("/views/forgot-password.jsp").forward(request, response);
             return;
         }
@@ -50,19 +55,20 @@ public class ForgotPasswordController extends HttpServlet {
                     EmailUtil.sendPasswordRecoveryEmail(email, resetLink);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    request.setAttribute("errorMessage", "Không thể gửi email khôi phục. Vui lòng thử lại sau.");
+                    request.setAttribute("errorMessage", "KhĂ´ng thá»ƒ gá»­i email khĂ´i phá»¥c. Vui lĂ²ng thá»­ láº¡i sau.");
                     request.getRequestDispatcher("/views/forgot-password.jsp").forward(request, response);
                     return;
                 }
             } else {
-                request.setAttribute("errorMessage", "Lỗi hệ thống khi tạo yêu cầu khôi phục.");
+                request.setAttribute("errorMessage", "Lá»—i há»‡ thá»‘ng khi táº¡o yĂªu cáº§u khĂ´i phá»¥c.");
                 request.getRequestDispatcher("/views/forgot-password.jsp").forward(request, response);
                 return;
             }
         }
         
         // Always show success message to prevent email enumeration
-        request.setAttribute("successMessage", "Nếu email tồn tại trong hệ thống, chúng tôi đã gửi hướng dẫn khôi phục mật khẩu. Vui lòng kiểm tra hộp thư của bạn.");
+        request.setAttribute("successMessage", "Náº¿u email tá»“n táº¡i trong há»‡ thá»‘ng, chĂºng tĂ´i Ä‘Ă£ gá»­i hÆ°á»›ng dáº«n khĂ´i phá»¥c máº­t kháº©u. Vui lĂ²ng kiá»ƒm tra há»™p thÆ° cá»§a báº¡n.");
         request.getRequestDispatcher("/views/forgot-password.jsp").forward(request, response);
     }
 }
+

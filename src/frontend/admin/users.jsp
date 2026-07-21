@@ -1,3 +1,8 @@
+﻿<%-- 
+    Liên quan đến UCs: Admin Management
+    Tác giả: Đỗ Vũ Minh Ngọc
+    MSSV: HE182479
+--%>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
@@ -142,9 +147,9 @@
     <c:set var="activePage" value="users" scope="request" />
     <jsp:include page="sidebar.jsp" />
 
-    <!-- Main Content Area -->
+    <!-- Vùng nội dung chính -->
     <main class="main-content">
-        <!-- Top Header -->
+        <!-- Tiêu đề trên cùng -->
         <header class="top-header" style="margin-bottom: 24px;">
             <div>
                 <h1 style="font-size: 26px; font-weight: 800; color: #c084fc; text-shadow: 0 0 16px rgba(192, 132, 252, 0.4); margin: 0 0 8px 0;">Danh s&#225;ch ng&#432;&#7901;i d&#249;ng</h1>
@@ -163,46 +168,46 @@
             </div>
         </header>
 
-        <!-- Stats Grid -->
+        <!-- Lưới thống kê tổng quan -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-icon primary"><i data-lucide="users"></i></div>
                 <div class="stat-info">
-                    <h4>T&#7893;ng ng&#432;&#7901;i d&#249;ng</h4>
-                    <div class="stat-value" style="color: #38bdf8 !important;">${totalUsers}</div>
+                    <h4 style="color: #9fa9cb !important;">T&#7893;ng ng&#432;&#7901;i d&#249;ng</h4>
+                    <div class="stat-value" style="color: #ffffff !important; font-weight: 800;">${totalUsers}</div>
                 </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon success"><i data-lucide="user-check"></i></div>
                 <div class="stat-info">
-                    <h4>&#272;&#259;ng ho&#7841;t &#273;&#7897;ng</h4>
-                    <div class="stat-value" style="color: #34d399 !important;">${activeUsers}</div>
+                    <h4 style="color: #9fa9cb !important;">&#272;&#259;ng ho&#7841;t &#273;&#7897;ng</h4>
+                    <div class="stat-value" style="color: #ffffff !important; font-weight: 800;">${activeUsers}</div>
                 </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon danger"><i data-lucide="lock"></i></div>
                 <div class="stat-info">
-                    <h4>&#272;&#227; kh&#243;a</h4>
-                    <div class="stat-value" style="color: #f87171 !important;">${lockedUsers}</div>
+                    <h4 style="color: #9fa9cb !important;">&#272;&#227; kh&#243;a</h4>
+                    <div class="stat-value" style="color: #ffffff !important; font-weight: 800;">${lockedUsers}</div>
                 </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon warning"><i data-lucide="briefcase"></i></div>
                 <div class="stat-info">
-                    <h4>H&#432;&#7899;ng d&#7851;n vi&#234;n</h4>
-                    <div class="stat-value" style="color: #fbbf24 !important;">${guideUsers}</div>
+                    <h4 style="color: #9fa9cb !important;">H&#432;&#7899;ng d&#7851;n vi&#234;n</h4>
+                    <div class="stat-value" style="color: #ffffff !important; font-weight: 800;">${guideUsers}</div>
                 </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon purple"><i data-lucide="star"></i></div>
                 <div class="stat-info">
-                    <h4>Premium Members</h4>
-                    <div class="stat-value" style="color: #c084fc !important;">${premiumUsers}</div>
+                    <h4 style="color: #9fa9cb !important;">Premium Members</h4>
+                    <div class="stat-value" style="color: #ffffff !important; font-weight: 800;">${premiumUsers}</div>
                 </div>
             </div>
         </div>
 
-        <!-- Filters & Table Card -->
+        <!-- Bộ lọc và Bảng dữ liệu -->
         <div class="modern-card">
             <!-- Filter Bar -->
             <div style="padding: 20px 24px; border-bottom: 1px solid var(--gray-200);">
@@ -248,7 +253,7 @@
                 </div>
             </div>
 
-            <!-- Table -->
+            <!-- Bảng dữ liệu chính -->
             <div style="overflow-x: auto;">
                 <table class="modern-table" id="usersTable">
                     <thead>

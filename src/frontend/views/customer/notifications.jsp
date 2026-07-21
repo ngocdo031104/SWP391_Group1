@@ -1,3 +1,8 @@
+﻿<%-- 
+    Liên quan đến UCs: View Notifications
+    Tác giả: Đỗ Vũ Minh Ngọc
+    MSSV: HE182479
+--%>
 &#65279;<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="jakarta.tags.core"%>
 <%@taglib prefix="fmt" uri="jakarta.tags.fmt"%>
@@ -355,3 +360,4 @@
     }
 </script>
 <jsp:include page="/common/footer.jsp" />
+

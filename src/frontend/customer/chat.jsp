@@ -1,3 +1,8 @@
+﻿<%-- 
+    Liên quan đến UCs: Exchange Messages, Schedule Video Calls
+    Tác giả: Đỗ Vũ Minh Ngọc
+    MSSV: HE182479
+--%>
 &#65279;<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
@@ -350,7 +355,7 @@
 </style>
 
 <div class="chat-container">
-    <!-- Sidebar -->
+    <!-- Thanh menu bên trái (Sidebar) -->
     <div class="chat-sidebar">
         <div class="chat-sidebar-header">
             <h2>Tin nh&#7855;n</h2>
@@ -392,7 +397,7 @@
         </div>
     </div>
 
-    <!-- Main Chat -->
+    <!-- Khung chat chính -->
     <div class="chat-main">
         <div id="emptyChat" class="empty-state">
             <i data-lucide="message-circle" style="width: 64px; height: 64px;"></i>
@@ -420,7 +425,7 @@
             </div>
 
             <div class="chat-history" id="chatHistory">
-                <!-- Messages will be injected here via JS -->
+                <!-- Tin nhắn sẽ được load vào đây qua JS -->
             </div>
 
             <div class="chat-input-area">
@@ -436,7 +441,7 @@
     </div>
 </div>
 
-<!-- Create Group Modal -->
+<!-- Hộp thoại tạo nhóm chat -->
 <div class="modal-overlay" id="createGroupModal">
     <div class="modal-content">
         <div class="modal-header">
@@ -474,7 +479,7 @@
     </div>
 </div>
 
-<!-- Schedule Call Modal -->
+<!-- Hộp thoại lên lịch gọi Video -->
 <div class="modal-overlay" id="scheduleModal">
     <div class="modal-content">
         <div class="modal-header">
@@ -536,3 +541,4 @@
 </script>
 
 <jsp:include page="/common/footer.jsp"/>
+

@@ -1,3 +1,8 @@
+﻿<%-- 
+    Liên quan đến UCs: Admin Management
+    Tác giả: Đỗ Vũ Minh Ngọc
+    MSSV: HE182479
+--%>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
@@ -27,11 +32,11 @@
 </head>
 <body class="dashboard-body tb-cosmic">
     <div class="dashboard-wrapper">
-        <!-- Sidebar -->
+        <!-- Thanh menu bên trái (Sidebar) -->
         <c:set var="activePage" value="fraud-monitor" scope="request" />
         <jsp:include page="/admin/sidebar.jsp" />
 
-        <!-- Main Content Area -->
+        <!-- Vùng nội dung chính -->
         <main class="main-content theme-light">
             <header class="top-header" style="margin-bottom: 24px;">
                 <div>
@@ -41,41 +46,41 @@
             </header>
 
             <div class="container-fluid px-0">
-                <!-- Summary Stats -->
+                <!-- Thống kê tóm tắt -->
                 <div class="row mb-4">
                     <div class="col-md-2">
                         <div class="card shadow-sm text-center py-3" style="border-radius: 12px; border-left: 4px solid var(--gray-500);">
-                            <div class="text-muted small text-uppercase fw-bold mb-1">T&#7893;ng Thanh To&#225;n</div>
-                            <h3 class="mb-0 text-light"><fmt:formatNumber value="${stats.total}" pattern="#,###"/></h3>
+                            <div class="small text-uppercase fw-bold mb-1" style="color: #9fa9cb !important;">T&#7893;ng Thanh To&#225;n</div>
+                            <h3 class="mb-0" style="color: #ffffff !important; font-weight: 700;"><fmt:formatNumber value="${stats.total}" pattern="#,###"/></h3>
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="card shadow-sm text-center py-3" style="border-radius: 12px; border-left: 4px solid var(--danger);">
-                            <div class="text-muted small text-uppercase fw-bold mb-1">&#272;&#225;ng ng&#7901;</div>
-                            <h3 class="mb-0 text-danger"><fmt:formatNumber value="${stats.suspicious}" pattern="#,###"/></h3>
+                            <div class="small text-uppercase fw-bold mb-1" style="color: #9fa9cb !important;">&#272;&#225;ng ng&#7901;</div>
+                            <h3 class="mb-0" style="color: #ffffff !important; font-weight: 700;"><fmt:formatNumber value="${stats.suspicious}" pattern="#,###"/></h3>
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="card shadow-sm text-center py-3" style="border-radius: 12px; border-left: 4px solid var(--warning);">
-                            <div class="text-muted small text-uppercase fw-bold mb-1">Tr&#249;ng l&#7863;p</div>
-                            <h3 class="mb-0 text-warning"><fmt:formatNumber value="${stats.duplicate}" pattern="#,###"/></h3>
+                            <div class="small text-uppercase fw-bold mb-1" style="color: #9fa9cb !important;">Tr&#249;ng l&#7863;p</div>
+                            <h3 class="mb-0" style="color: #ffffff !important; font-weight: 700;"><fmt:formatNumber value="${stats.duplicate}" pattern="#,###"/></h3>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="card shadow-sm text-center py-3" style="border-radius: 12px; border-left: 4px solid var(--info);">
-                            <div class="text-muted small text-uppercase fw-bold mb-1">L&#7879;ch s&#7889; ti&#7873;n</div>
-                            <h3 class="mb-0 text-info"><fmt:formatNumber value="${stats.mismatch}" pattern="#,###"/></h3>
+                            <div class="small text-uppercase fw-bold mb-1" style="color: #9fa9cb !important;">L&#7879;ch s&#7889; ti&#7873;n</div>
+                            <h3 class="mb-0" style="color: #ffffff !important; font-weight: 700;"><fmt:formatNumber value="${stats.mismatch}" pattern="#,###"/></h3>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="card shadow-sm text-center py-3" style="border-radius: 12px; border-left: 4px solid var(--success);">
-                            <div class="text-muted small text-uppercase fw-bold mb-1">TT Th&#224;nh C&#244;ng</div>
-                            <h3 class="mb-0 text-success"><fmt:formatNumber value="${stats.successCount}" pattern="#,###"/></h3>
+                            <div class="small text-uppercase fw-bold mb-1" style="color: #9fa9cb !important;">TT Th&#224;nh C&#244;ng</div>
+                            <h3 class="mb-0" style="color: #ffffff !important; font-weight: 700;"><fmt:formatNumber value="${stats.successCount}" pattern="#,###"/></h3>
                         </div>
                     </div>
                 </div>
 
-                <!-- Filters -->
+                <!-- Bộ lọc dữ liệu -->
                 <div class="card mb-4 shadow-sm" style="border: 1px solid var(--gray-200); border-radius: 12px;">
                     <div class="card-body">
                         <form action="${pageContext.request.contextPath}/admin/fraud-monitor" method="GET">
@@ -128,7 +133,7 @@
                     </div>
                 </div>
 
-                <!-- Table -->
+                <!-- Bảng dữ liệu chính -->
                 <div class="card shadow-sm" style="border: 1px solid var(--gray-200); border-radius: 12px; overflow: hidden;">
                     <div class="card-body p-0">
                         <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
