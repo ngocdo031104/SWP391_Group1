@@ -1,3 +1,9 @@
+/*
+ * Màn hình 42: Update Tour Status - Cập nhật trạng thái vận hành tour
+ * Tác giả: Dương Quang Sơn
+ * MSSV: HE186525
+ * Ngày tạo: 2026-07-21
+ */
 package Controller.admin;
 
 import Entities.User;

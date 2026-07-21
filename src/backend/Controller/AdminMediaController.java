@@ -1,3 +1,9 @@
+/*
+ * Màn hình 22: Manage Tour Media - Quản lý hình ảnh & media tour
+ * Tác giả: Dương Quang Sơn
+ * MSSV: HE186525
+ * Ngày tạo: 2026-07-21
+ */
 package Controller;
 
 import Entities.Tour;

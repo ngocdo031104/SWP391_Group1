@@ -1,7 +1,6 @@
 package Controller.accountant;
 
-// Dương làm đoạn này:
-// Tạo ngày 14/07/2026
+// UC40: Xu ly hoan tien (Accountant).
 // - Xem danh sach CancellationRequest (Pending hoac Approved/Rejected).
 // - Duyet: cancel booking + tao Payment(Refunded) + gui Notification.
 // - Tu choi: doi status Rejected + gui Notification.

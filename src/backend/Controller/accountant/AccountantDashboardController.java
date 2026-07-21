@@ -1,3 +1,9 @@
+/*
+ * Màn hình 38: Export Revenue Reports - Dashboard & xuất báo cáo doanh thu
+ * Tác giả: Dương Quang Sơn
+ * MSSV: HE186525
+ * Ngày tạo: 2026-07-21
+ */
 package Controller.accountant;
 // Dương làm đoạn này:
 // Tạo ngày 14/07/2026
