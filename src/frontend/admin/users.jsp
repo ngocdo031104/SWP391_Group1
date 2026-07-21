@@ -1,3 +1,8 @@
+﻿<%-- 
+    Liên quan đến UCs: Admin Management
+    Tác giả: Đỗ Vũ Minh Ngọc
+    MSSV: HE182479
+--%>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
@@ -142,9 +147,9 @@
     <c:set var="activePage" value="users" scope="request" />
     <jsp:include page="sidebar.jsp" />
 
-    <!-- Main Content Area -->
+    <!-- Vùng nội dung chính -->
     <main class="main-content">
-        <!-- Top Header -->
+        <!-- Tiêu đề trên cùng -->
         <header class="top-header" style="margin-bottom: 24px;">
             <div>
                 <h1 style="font-size: 26px; font-weight: 800; color: #c084fc; text-shadow: 0 0 16px rgba(192, 132, 252, 0.4); margin: 0 0 8px 0;">Danh s&#225;ch ng&#432;&#7901;i d&#249;ng</h1>
@@ -163,7 +168,7 @@
             </div>
         </header>
 
-        <!-- Stats Grid -->
+        <!-- Lưới thống kê tổng quan -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-icon primary"><i data-lucide="users"></i></div>
@@ -202,7 +207,7 @@
             </div>
         </div>
 
-        <!-- Filters & Table Card -->
+        <!-- Bộ lọc và Bảng dữ liệu -->
         <div class="modern-card">
             <!-- Filter Bar -->
             <div style="padding: 20px 24px; border-bottom: 1px solid var(--gray-200);">
@@ -248,7 +253,7 @@
                 </div>
             </div>
 
-            <!-- Table -->
+            <!-- Bảng dữ liệu chính -->
             <div style="overflow-x: auto;">
                 <table class="modern-table" id="usersTable">
                     <thead>

@@ -1,3 +1,8 @@
+﻿<%-- 
+    Liên quan đến UCs: Manage User Profile
+    Tác giả: Đỗ Vũ Minh Ngọc
+    MSSV: HE182479
+--%>
 &#65279;<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 <%-- 
     Document   : profile.jsp
@@ -106,12 +111,12 @@
 
 <div class="profile-wrapper">
 
-  <!-- Cover Photo -->
+  <!-- Ảnh bìa trang cá nhân -->
   <div class="profile-cover"></div>
 
   <div class="profile-body">
 
-    <!-- Profile Header -->
+    <!-- Phần đầu trang hồ sơ -->
     <div class="profile-header fade-up">
       <div class="avatar-wrap">
         <c:choose>
@@ -155,7 +160,7 @@
       </div>
     </div>
 
-    <!-- Stats -->
+    <!-- Thống kê hoạt động -->
     <div class="stats-row fade-up" style="animation-delay:.1s;margin-top:24px">
       <div class="stat-card">
         <div class="stat-value">${not empty totalBookings ? totalBookings : 0}</div>
@@ -171,7 +176,7 @@
       </div>
     </div>
 
-    <!-- Profile Completion -->
+    <!-- Tiến độ hoàn thiện hồ sơ -->
     <div class="profile-completion card fade-up" style="padding:16px 20px;margin-bottom:0">
       <p>&#272;&#7897; ho&#224;n thi&#7879;n h&#7891; s&#417;: <strong id="pct">0%</strong></p>
       <div class="progress-bar-wrap">
@@ -179,7 +184,7 @@
       </div>
     </div>
 
-    <!-- Server messages -->
+    <!-- Hiển thị thông báo lỗi từ Server -->
     <c:if test="${not empty successMessage}">
       <div class="alert alert-success fade-up" style="margin-top:16px">
         <i class="fa fa-circle-check"></i> ${successMessage}
@@ -768,3 +773,4 @@ function shareProfile() {
 }
 </script>
 <jsp:include page="/common/footer.jsp" />
+

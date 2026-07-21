@@ -1,3 +1,8 @@
+﻿<%-- 
+    Liên quan đến UCs: Register Account
+    Tác giả: Đỗ Vũ Minh Ngọc
+    MSSV: HE182479
+--%>
 &#65279;<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 <%-- 
     Document   : register.jsp
@@ -77,7 +82,7 @@
 
 <div class="auth-wrapper" style="padding-top:68px">
 
-  <!-- Left Hero -->
+  <!-- Cột trái: Hình ảnh giới thiệu -->
   <div class="auth-hero">
     <div class="auth-hero-content">
       <h1>Tham gia c&#7897;ng &#273;&#7891;ng <em>du l&#7883;ch</em></h1>
@@ -90,7 +95,7 @@
     </div>
   </div>
 
-  <!-- Right Panel -->
+  <!-- Khung bên phải -->
   <div class="auth-panel" style="align-items:flex-start;padding-top:52px">
     <div class="auth-form-wrap fade-up" style="max-width:460px">
 
@@ -105,7 +110,7 @@
         </div>
       </c:if>
 
-      <!-- Step Indicator -->
+      <!-- Thanh tiến trình các bước -->
       <div class="step-indicator fade-up fade-up-2">
         <div>
           <div class="step-dot active" id="sd1">1</div>
@@ -127,7 +132,7 @@
       method="post"
       id="regForm">
 
-        <!-- STEP 1: Account -->
+        <!-- Bước 1: Thông tin tài khoản -->
         <div class="step-block active fade-up fade-up-3" id="step1">
 
           <div class="form-group">
@@ -157,7 +162,7 @@
               <button type="button" class="toggle-pwd"
                       onclick="togglePwd('password','ti1')"><i id="ti1" class="fa fa-eye"></i></button>
             </div>
-            <!-- Strength bar -->
+            <!-- Thanh đo độ mạnh mật khẩu -->
             <div class="strength-bar">
               <div class="strength-seg" id="seg1"></div>
               <div class="strength-seg" id="seg2"></div>
@@ -474,3 +479,4 @@ document.getElementById('regForm').addEventListener('submit', function(e) {
 </script>
 </body>
 </html>
+

@@ -1,3 +1,8 @@
+﻿<%-- 
+    Liên quan đến UCs: Admin Management
+    Tác giả: Đỗ Vũ Minh Ngọc
+    MSSV: HE182479
+--%>
 <%@ page pageEncoding="UTF-8" contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
@@ -27,11 +32,11 @@
 </head>
 <body class="dashboard-body tb-cosmic">
     <div class="dashboard-wrapper">
-        <!-- Sidebar -->
+        <!-- Thanh menu bên trái (Sidebar) -->
         <c:set var="activePage" value="financial-audit" scope="request" />
         <jsp:include page="/admin/sidebar.jsp" />
 
-        <!-- Main Content Area -->
+        <!-- Vùng nội dung chính -->
         <main class="main-content theme-light">
             <header class="top-header" style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
                 <div>
@@ -46,7 +51,7 @@
             </header>
 
             <div class="container-fluid px-0">
-                <!-- Summary Stats -->
+                <!-- Thống kê tóm tắt -->
                 <div class="row mb-4">
                     <div class="col-md-3">
                         <div class="card shadow-sm text-center py-3" style="border-radius: 12px; border-left: 4px solid var(--gray-500);">
@@ -74,7 +79,7 @@
                     </div>
                 </div>
 
-                <!-- Filters -->
+                <!-- Bộ lọc dữ liệu -->
                 <div class="card mb-4 shadow-sm" style="border: 1px solid var(--gray-200); border-radius: 12px;">
                     <div class="card-body">
                         <form action="${pageContext.request.contextPath}/admin/financial-audit" method="GET">
@@ -122,7 +127,7 @@
                     </div>
                 </div>
 
-                <!-- Table -->
+                <!-- Bảng dữ liệu chính -->
                 <div class="card shadow-sm" style="border: 1px solid var(--gray-200); border-radius: 12px; overflow: hidden;">
                     <div class="card-body p-0">
                         <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">

@@ -1,3 +1,8 @@
+﻿/*
+ * Liên quan đến UCs: Exchange Messages
+ * Tác giả: Đỗ Vũ Minh Ngọc
+ * MSSV: HE182479
+ */
 package WebSockets;
 
 import Entities.Message;
@@ -15,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @ServerEndpoint(value = "/ws/chat/{userId}")
 public class ChatEndpoint {
 
-    // Store active sessions: Map<UserID, Session>
+    // Lưu trữ các phiên WebSocket đang hoạt động
     private static final Map<Integer, Session> activeSessions = new ConcurrentHashMap<>();
     private static final Gson gson = new Gson();
     private final ChatDAO chatDAO = new ChatDAO();
@@ -41,7 +46,7 @@ public class ChatEndpoint {
             int senderId = Integer.parseInt(userIdStr);
             JsonObject jsonMsg = gson.fromJson(messageJson, JsonObject.class);
             
-            // Format expected from client:
+            // Định dạng dữ liệu mong đợi từ client:
             // { "conversationId": 1, "content": "Hello", "recipientId": 2 }
             
             int conversationId = jsonMsg.has("conversationId") ? jsonMsg.get("conversationId").getAsInt() : -1;
@@ -53,15 +58,15 @@ public class ChatEndpoint {
                 return;
             }
 
-            // Create conversation if it doesn't exist (e.g. starting a new chat)
+            // Tạo mới hội thoại nếu chưa tồn tại
             if (conversationId <= 0 && recipientId > 0) {
                 conversationId = chatDAO.getOrCreateDirectConversation(senderId, recipientId);
             }
 
             if (conversationId > 0) {
-                // Check block list before sending
+                // Kiểm tra danh sách chặn trước khi gửi
                 if (recipientId > 0 && chatDAO.isBlocked(senderId, recipientId)) {
-                    // Send error back to sender
+                    // Gửi thông báo lỗi về cho người gửi
                     JsonObject error = new JsonObject();
                     error.addProperty("type", "error");
                     error.addProperty("message", "Cannot send message. User is blocked.");
@@ -69,7 +74,7 @@ public class ChatEndpoint {
                     return;
                 }
 
-                // Save to DB
+                // Lưu dữ liệu vào Database
                 Message msg = new Message();
                 msg.setConversationId(conversationId);
                 msg.setSenderId(senderId);
@@ -79,7 +84,7 @@ public class ChatEndpoint {
                 Message savedMsg = chatDAO.saveMessage(msg);
 
                 if (savedMsg != null) {
-                    // Prepare response JSON
+                    // Chuẩn bị dữ liệu JSON để phản hồi
                     JsonObject responseMsg = new JsonObject();
                     responseMsg.addProperty("type", "chatMessage");
                     responseMsg.addProperty("messageId", savedMsg.getMessageId());
@@ -90,11 +95,11 @@ public class ChatEndpoint {
                     
                     String payload = responseMsg.toString();
                     
-                    // Send to sender so they see it's delivered
+                    // Trả về cho người gửi để xác nhận đã gửi
                     session.getBasicRemote().sendText(payload);
                     
-                    // Send to recipient if they are online
-                    // In a real group chat, we would fetch all participants from DB and broadcast
+                    // Gửi cho người nhận nếu họ đang trực tuyến
+                    // Broadcast tin nhắn cho tất cả thành viên trong nhóm
                     if (recipientId > 0) {
                         Session recipientSession = activeSessions.get(recipientId);
                         if (recipientSession != null && recipientSession.isOpen()) {
@@ -123,3 +128,4 @@ public class ChatEndpoint {
         System.err.println("Chat WebSocket error: " + throwable.getMessage());
     }
 }
+
