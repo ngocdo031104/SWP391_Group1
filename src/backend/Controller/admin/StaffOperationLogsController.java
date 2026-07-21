@@ -1,3 +1,9 @@
+/*
+ * Màn hình 44: Review Tour Operation Logs - Nhật ký vận hành tour (Staff)
+ * Tác giả: Dương Quang Sơn
+ * MSSV: HE186525
+ * Ngày tạo: 2026-07-21
+ */
 package Controller.admin;
 
 import Entities.User;

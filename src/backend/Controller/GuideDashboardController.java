@@ -1,3 +1,12 @@
+/*
+ * Màn hình 14: View Guide Dashboard - Dashboard hướng dẫn viên
+ * Màn hình 29: Check In Participants - Check-in khách trước tour
+ * Màn hình 43: Report Tour Incident - Báo cáo sự cố tour
+ * Màn hình 44: Review Tour Operation Logs - Nhật ký vận hành (Guide)
+ * Tác giả: Dương Quang Sơn
+ * MSSV: HE186525
+ * Ngày tạo: 2026-07-21
+ */
 package Controller;
 
 import Entities.IncidentReport;

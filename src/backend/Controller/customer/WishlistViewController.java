@@ -1,3 +1,9 @@
+/*
+ * Màn hình 15: Manage Favorite Tours - Quản lý tour yêu thích (view)
+ * Tác giả: Dương Quang Sơn
+ * MSSV: HE186525
+ * Ngày tạo: 2026-07-21
+ */
 package Controller.customer;
 
 import Entities.Tour;

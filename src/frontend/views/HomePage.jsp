@@ -1,3 +1,9 @@
+<%-- 
+    Màn hình 4: View Home Page - Trang chủ hiển thị banners, featured tours, trending tours
+    Tác giả: Dương Quang Sơn
+    MSSV: HE186525
+    Ngày tạo: 2026-07-21
+--%>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
 <%@ page import="Entities.Tour" %>

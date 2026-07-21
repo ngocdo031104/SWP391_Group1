@@ -19,8 +19,9 @@
     <% 
         String extraCss = (String) request.getAttribute("extraCss");
         if (extraCss != null && !extraCss.trim().isEmpty()) {
+            String separator = extraCss.contains("?") ? "&" : "?";
     %>
-    <link class="page-css" rel="stylesheet" href="${pageContext.request.contextPath}/<%= extraCss %>?v=2.1">
+    <link class="page-css" rel="stylesheet" href="${pageContext.request.contextPath}/<%= extraCss %><%= separator %>v=2.1">
     <% 
         } else {
     %>

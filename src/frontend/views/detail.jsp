@@ -1,3 +1,9 @@
+<%-- 
+    Màn hình 5: View Tour Details - Chi tiết tour: mô tả, lịch trình, hình ảnh, chỗ trống
+    Tác giả: Dương Quang Sơn
+    MSSV: HE186525
+    Ngày tạo: 2026-07-21
+--%>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 
 <%@ page import="java.util.List" %>
