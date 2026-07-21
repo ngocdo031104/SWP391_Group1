@@ -12,7 +12,7 @@
     // Ý nghĩa: Hiển thị mã booking, tên tour, số tiền và ngày khởi hành sau khi SePay ghi nhận thanh toán.
 
     // Nạp CSS riêng cho màn success và giữ bodyClass booking-page để dùng chung layout booking.
-    request.setAttribute("extraCss", "css/customer-booking-success.css");
+    request.setAttribute("extraCss", "css/customer-booking-success.css?v=3.5");
     request.setAttribute("bodyClass", "booking-page");
 
     // bookingCode được BookingSuccessController lấy từ query string để khách lưu lại mã giao dịch.
@@ -73,38 +73,39 @@
         <section class="booking-main-panel success-box">
             <i data-lucide="badge-check"></i>
             <h1>Đã ghi nhận thanh toán</h1>
-            <p>Mã booking của bạn là <strong><%= bookingCode != null ? bookingCode : "" %></strong>. Đơn đã được ghi nhận thanh toán và chuyển sang trạng thái Success.</p>
+            <p>Mã booking của bạn là <strong><%= bookingCode != null ? bookingCode : "" %></strong>.</p>
         </section>
 
         <%-- Khối tóm tắt đơn đặt: tên tour, ngày khởi hành, số thành viên, chi tiết tiền. --%>
         <% if (booking != null) { %>
-            <section class="payment-summary-card" style="margin-top: 1.5rem; max-width: 720px; margin-left: auto; margin-right: auto;">
+            <section class="payment-summary-card">
                 <h3>Chi tiết đơn đặt của bạn</h3>
-                <p style="font-weight: 600; margin-bottom: 1rem;"><%= tourName %></p>
+                <p class="tour-title"><%= tourName %></p>
                 <dl>
                     <div><dt>Điểm đến</dt><dd><%= destination %></dd></div>
                     <div><dt>Thời lượng</dt><dd><%= durationDays %> ngày</dd></div>
                     <div><dt>Số lượng thành viên</dt><dd><%= numParticipants %> khách</dd></div>
                     <div><dt>Ngày khởi hành</dt><dd><%= departureDate != null ? dateFormat.format(departureDate) : "-" %></dd></div>
                     <div><dt>Ngày về</dt><dd><%= returnDate != null ? dateFormat.format(returnDate) : "-" %></dd></div>
+                    <div class="price-divider"></div>
                     <div><dt>Tiền tour gốc</dt><dd><%= money.format(baseAmount) %> đ</dd></div>
                     <div><dt>VAT</dt><dd><%= money.format(vatAmount) %> đ</dd></div>
                     <div><dt>Giảm giá</dt><dd>-<%= money.format(discountAmount) %> đ</dd></div>
                 </dl>
-                <div class="summary-total light"><span>Tổng đã thanh toán</span><strong><%= money.format(totalAmount) %> đ</strong></div>
-                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: 1.25rem;">
+                <div class="summary-total"><span>Tổng đã thanh toán</span><strong><%= money.format(totalAmount) %> đ</strong></div>
+                <div class="action-buttons">
                     <a class="booking-primary-btn inline-link" href="${pageContext.request.contextPath}/customer/booking/invoice?code=<%= bookingCode %>">
                         <i data-lucide="file-text" style="width:16px;height:16px;vertical-align:middle;margin-right:6px;"></i>Xem hóa đơn
                     </a>
-                    <a class="booking-primary-btn inline-link" href="${pageContext.request.contextPath}/home">Về trang chủ</a>
+                    <a class="booking-primary-btn btn-secondary inline-link" href="${pageContext.request.contextPath}/home">Về trang chủ</a>
                 </div>
             </section>
         <% } else { %>
-            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: 1rem;">
+            <div class="action-buttons" style="margin-top: 2rem;">
                 <a class="booking-primary-btn inline-link" href="${pageContext.request.contextPath}/customer/booking/invoice?code=<%= bookingCode %>">
                     <i data-lucide="file-text" style="width:16px;height:16px;vertical-align:middle;margin-right:6px;"></i>Xem hóa đơn
                 </a>
-                <a class="booking-primary-btn inline-link" href="${pageContext.request.contextPath}/home">Về trang chủ</a>
+                <a class="booking-primary-btn btn-secondary inline-link" href="${pageContext.request.contextPath}/home">Về trang chủ</a>
             </div>
         <% } %>
     </div>

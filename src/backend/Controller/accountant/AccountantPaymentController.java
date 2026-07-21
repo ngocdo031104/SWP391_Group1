@@ -1,7 +1,10 @@
+/*
+ * Màn hình 38: Export Revenue Reports - Xem & xuất dữ liệu thanh toán
+ * Tác giả: Dương Quang Sơn
+ * MSSV: HE186525
+ * Ngày tạo: 2026-07-21
+ */
 package Controller.accountant;
-
-// Dương làm đoạn này
-// Thời gian tạo: 14/07/2026
 
 import Entities.Payment;
 import Entities.User;

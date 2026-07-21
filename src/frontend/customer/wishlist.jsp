@@ -1,4 +1,10 @@
-&#65279;<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
+﻿<%-- 
+    Màn hình 15: Manage Favorite Tours - Quản lý danh sách tour yêu thích
+    Tác giả: Dương Quang Sơn
+    MSSV: HE186525
+    Ngày tạo: 2026-07-21
+--%>
+<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
 <%@ page import="Entities.Tour" %>

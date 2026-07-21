@@ -78,12 +78,14 @@
             </a>
         </li>
 
-        <li class="${activePage eq 'forecast' ? 'active' : ''}">
-            <a href="${pageContext.request.contextPath}/admin/forecast">
-                <i data-lucide="trending-up"></i>
-                <span>D&#7921; B&#225;o & Xu H&#432;&#7899;ng</span>
-            </a>
-        </li>
+        <c:if test="${!isAccountant}">
+            <li class="${activePage eq 'forecast' ? 'active' : ''}">
+                <a href="${pageContext.request.contextPath}/admin/forecast">
+                    <i data-lucide="trending-up"></i>
+                    <span>D&#7921; B&#225;o & Xu H&#432;&#7899;ng</span>
+                </a>
+            </li>
+        </c:if>
 
         <li class="${activePage eq 'fraud-monitor' ? 'active' : ''}">
             <a href="${pageContext.request.contextPath}/admin/fraud-monitor">
@@ -99,28 +101,28 @@
             </a>
         </li>
 
-        <li class="${activePage eq 'moderation' ? 'active' : ''}">
-            <a href="${pageContext.request.contextPath}/admin/moderation">
-                <i data-lucide="shield-alert"></i>
-                <span>Ki&#7875;m Duy&#7879;t N&#7897;i Dung</span>
-            </a>
-        </li>
-
-        <li class="${activePage eq 'assignments' ? 'active' : ''}">
-            <a href="${pageContext.request.contextPath}/admin/assignments">
-                <i data-lucide="clipboard-list"></i>
-                <span>Nh&#7853;t K&#253; Ph&#226;n C&#244;ng</span>
-            </a>
-        </li>
-
-        <li class="${activePage eq 'oplogs' ? 'active' : ''}">
-            <a href="${pageContext.request.contextPath}/admin/operation-logs">
-                <i data-lucide="scroll-text"></i>
-                <span>Nh&#7853;t K&#253; V&#7853;n H&#224;nh</span>
-            </a>
-        </li>
-
         <c:if test="${!isAccountant}">
+            <li class="${activePage eq 'moderation' ? 'active' : ''}">
+                <a href="${pageContext.request.contextPath}/admin/moderation">
+                    <i data-lucide="shield-alert"></i>
+                    <span>Ki&#7875;m Duy&#7879;t N&#7897;i Dung</span>
+                </a>
+            </li>
+
+            <li class="${activePage eq 'assignments' ? 'active' : ''}">
+                <a href="${pageContext.request.contextPath}/admin/assignments">
+                    <i data-lucide="clipboard-list"></i>
+                    <span>Nh&#7853;t K&#253; Ph&#226;n C&#244;ng</span>
+                </a>
+            </li>
+
+            <li class="${activePage eq 'oplogs' ? 'active' : ''}">
+                <a href="${pageContext.request.contextPath}/admin/operation-logs">
+                    <i data-lucide="scroll-text"></i>
+                    <span>Nh&#7853;t K&#253; V&#7853;n H&#224;nh</span>
+                </a>
+            </li>
+
             <li class="${activePage eq 'roles' ? 'active' : ''}">
                 <a href="${pageContext.request.contextPath}/admin/roles">
                     <i data-lucide="shield-check"></i>

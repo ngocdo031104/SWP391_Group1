@@ -1,3 +1,9 @@
+/*
+ * Màn hình 28: Assign Tour Guide - Phân công hướng dẫn viên (Staff)
+ * Tác giả: Dương Quang Sơn
+ * MSSV: HE186525
+ * Ngày tạo: 2026-07-21
+ */
 package Controller.admin;
 
 import Entities.User;

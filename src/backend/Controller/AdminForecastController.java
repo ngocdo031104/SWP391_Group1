@@ -1,3 +1,9 @@
+/*
+ * Màn hình 39: Perform Predictive Analytics - Dự đoán xu hướng booking & doanh thu
+ * Tác giả: Dương Quang Sơn
+ * MSSV: HE186525
+ * Ngày tạo: 2026-07-21
+ */
 package Controller;
 
 import Entities.PredictionResult;

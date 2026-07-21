@@ -1,3 +1,9 @@
+/*
+ * Màn hình 21: Manage Tour Schedule and Pricing - Quản lý lịch khởi hành & giá
+ * Tác giả: Dương Quang Sơn
+ * MSSV: HE186525
+ * Ngày tạo: 2026-07-21
+ */
 package Controller;
 
 import Entities.Coupon;
