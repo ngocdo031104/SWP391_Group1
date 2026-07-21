@@ -168,36 +168,36 @@
             <div class="stat-card">
                 <div class="stat-icon primary"><i data-lucide="users"></i></div>
                 <div class="stat-info">
-                    <h4>T&#7893;ng ng&#432;&#7901;i d&#249;ng</h4>
-                    <div class="stat-value" style="color: #38bdf8 !important;">${totalUsers}</div>
+                    <h4 style="color: #9fa9cb !important;">T&#7893;ng ng&#432;&#7901;i d&#249;ng</h4>
+                    <div class="stat-value" style="color: #ffffff !important; font-weight: 800;">${totalUsers}</div>
                 </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon success"><i data-lucide="user-check"></i></div>
                 <div class="stat-info">
-                    <h4>&#272;&#259;ng ho&#7841;t &#273;&#7897;ng</h4>
-                    <div class="stat-value" style="color: #34d399 !important;">${activeUsers}</div>
+                    <h4 style="color: #9fa9cb !important;">&#272;&#259;ng ho&#7841;t &#273;&#7897;ng</h4>
+                    <div class="stat-value" style="color: #ffffff !important; font-weight: 800;">${activeUsers}</div>
                 </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon danger"><i data-lucide="lock"></i></div>
                 <div class="stat-info">
-                    <h4>&#272;&#227; kh&#243;a</h4>
-                    <div class="stat-value" style="color: #f87171 !important;">${lockedUsers}</div>
+                    <h4 style="color: #9fa9cb !important;">&#272;&#227; kh&#243;a</h4>
+                    <div class="stat-value" style="color: #ffffff !important; font-weight: 800;">${lockedUsers}</div>
                 </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon warning"><i data-lucide="briefcase"></i></div>
                 <div class="stat-info">
-                    <h4>H&#432;&#7899;ng d&#7851;n vi&#234;n</h4>
-                    <div class="stat-value" style="color: #fbbf24 !important;">${guideUsers}</div>
+                    <h4 style="color: #9fa9cb !important;">H&#432;&#7899;ng d&#7851;n vi&#234;n</h4>
+                    <div class="stat-value" style="color: #ffffff !important; font-weight: 800;">${guideUsers}</div>
                 </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon purple"><i data-lucide="star"></i></div>
                 <div class="stat-info">
-                    <h4>Premium Members</h4>
-                    <div class="stat-value" style="color: #c084fc !important;">${premiumUsers}</div>
+                    <h4 style="color: #9fa9cb !important;">Premium Members</h4>
+                    <div class="stat-value" style="color: #ffffff !important; font-weight: 800;">${premiumUsers}</div>
                 </div>
             </div>
         </div>
