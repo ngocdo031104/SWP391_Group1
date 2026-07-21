@@ -27,3 +27,131 @@
     height: 58px;
     color: #059669;
 }
+
+/* Card tóm tắt thanh toán sang trọng */
+.payment-summary-card {
+    max-width: 640px;
+    margin: 2.5rem auto 0;
+    padding: 2.5rem;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 16px -6px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+}
+
+.payment-summary-card h3 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 0.5rem;
+    text-align: center;
+}
+
+.payment-summary-card .tour-title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #0ea5e9;
+    text-align: center;
+    margin-bottom: 2rem;
+    position: relative;
+    padding-bottom: 1rem;
+}
+
+.payment-summary-card .tour-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 25%;
+    width: 50%;
+    height: 1px;
+    background: #e2e8f0;
+}
+
+.payment-summary-card dl {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin: 1.5rem 0;
+}
+
+.payment-summary-card dl div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.98rem;
+}
+
+.payment-summary-card dt {
+    color: #64748b;
+    font-weight: 500;
+}
+
+.payment-summary-card dd {
+    color: #0f172a;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* Kẻ ngăn cách nét đứt trước phần tiền */
+.payment-summary-card dl .price-divider {
+    border-top: 1px dashed #cbd5e1;
+    margin: 8px 0;
+    height: 0;
+    width: 100%;
+}
+
+.payment-summary-card .summary-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 1.5rem 0 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.payment-summary-card .summary-total span {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.payment-summary-card .summary-total strong {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #059669;
+}
+
+/* Các nút hành động */
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+}
+
+.action-buttons .booking-primary-btn {
+    border-radius: 99px;
+    padding: 0 28px;
+    font-weight: 600;
+    height: 46px;
+    transition: all 0.2s ease;
+}
+
+.action-buttons .booking-primary-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.2);
+}
+
+.action-buttons .btn-secondary {
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+}
+
+.action-buttons .btn-secondary:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}

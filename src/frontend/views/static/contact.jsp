@@ -2,8 +2,8 @@
 <jsp:include page="/common/header.jsp" />
 
 <div class="container" style="margin-top: 120px; margin-bottom: 60px; max-width: 600px; font-family: 'Inter', sans-serif;">
-    <h1 style="font-family: 'Outfit', sans-serif; font-size: 2.5rem; color: #1e1b4b; text-align: center; margin-bottom: 10px;">Liên Hệ Hỗ Trợ</h1>
-    <p style="text-align: center; color: #64748b; margin-bottom: 30px; font-size: 1.1rem;">Hãy để lại lời nhắn, đội ngũ hỗ trợ sẽ liên hệ với bạn sớm nhất.</p>
+    <h1 style="font-family: 'Outfit', sans-serif; font-size: 2.5rem; color: #1e1b4b; text-align: center; margin-bottom: 10px;">Li&#234;n H&#7879; H&#7895; Tr&#7907;</h1>
+    <p style="text-align: center; color: #64748b; margin-bottom: 30px; font-size: 1.1rem;">H&#227;y &#273;&#7875; l&#7841;i l&#7901;i nh&#7855;n, &#273;&#7897;i ng&#361; h&#7895; tr&#7907; s&#7869; li&#234;n h&#7879; v&#7899;i b&#7841;n s&#7899;m nh&#7845;t.</p>
 
     <div style="background: #ffffff; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); padding: 30px;">
         <%
@@ -26,7 +26,7 @@
         %>
 
         <%
-            // Lấy thông tin user đăng nhập
+            // L&#7845;y th&#244;ng tin user &#273;&#259;ng nh&#7853;p
             Entities.User currentUser = (Entities.User) session.getAttribute("sessionUser");
             String fullName = currentUser != null ? currentUser.getFullName() : "";
             String email = currentUser != null ? currentUser.getEmail() : "";
@@ -34,26 +34,26 @@
 
         <form action="${pageContext.request.contextPath}/contact" method="POST" style="display: flex; flex-direction: column; gap: 20px;">
             <div style="display: flex; flex-direction: column; gap: 8px;">
-                <label for="contact-name" style="font-weight: 600; color: #334155; font-size: 0.95rem;">Họ và Tên *</label>
+                <label for="contact-name" style="font-weight: 600; color: #334155; font-size: 0.95rem;">H&#7885; v&#224; T&#234;n *</label>
                 <input type="text" id="contact-name" name="name" value="<%= fullName %>" readonly required style="padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; outline: none; background-color: #f1f5f9; cursor: not-allowed;">
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 8px;">
-                <label for="contact-email" style="font-weight: 600; color: #334155; font-size: 0.95rem;">Địa chỉ Email *</label>
+                <label for="contact-email" style="font-weight: 600; color: #334155; font-size: 0.95rem;">&#272;&#7883;a ch&#7881; Email *</label>
                 <input type="email" id="contact-email" name="email" value="<%= email %>" readonly required style="padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; outline: none; background-color: #f1f5f9; cursor: not-allowed;">
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 8px;">
-                <label for="contact-subject" style="font-weight: 600; color: #334155; font-size: 0.95rem;">Chủ đề cần hỗ trợ</label>
+                <label for="contact-subject" style="font-weight: 600; color: #334155; font-size: 0.95rem;">Ch&#7911; &#273;&#7873; c&#7847;n h&#7895; tr&#7907;</label>
                 <input type="text" id="contact-subject" name="subject" style="padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; outline: none; transition: border 0.2s;" onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='#cbd5e1'">
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 8px;">
-                <label for="contact-message" style="font-weight: 600; color: #334155; font-size: 0.95rem;">Nội dung lời nhắn *</label>
+                <label for="contact-message" style="font-weight: 600; color: #334155; font-size: 0.95rem;">N&#7897;i dung l&#7901;i nh&#7855;n *</label>
                 <textarea id="contact-message" name="message" rows="5" required style="padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; outline: none; resize: vertical; min-height: 120px; transition: border 0.2s;" onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='#cbd5e1'"></textarea>
             </div>
 
-            <button type="submit" class="btn btn-primary" style="padding: 12px; font-weight: 600; cursor: pointer; text-align: center; border: none;">Gửi lời nhắn liên hệ &rarr;</button>
+            <button type="submit" class="btn btn-primary" style="padding: 12px; font-weight: 600; cursor: pointer; text-align: center; border: none;">G&#7917;i l&#7901;i nh&#7855;n li&#234;n h&#7879; &rarr;</button>
         </form>
     </div>
 </div>

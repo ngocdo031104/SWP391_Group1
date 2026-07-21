@@ -240,7 +240,7 @@ CREATE TABLE TourSchedule (
     Transportation NVARCHAR(100) NULL,
     GuideID        INT           NULL REFERENCES [User](UserID),
     TourStatus     NVARCHAR(50)  NOT NULL DEFAULT 'Scheduled'
-                   CHECK (TourStatus IN ('Scheduled','InProgress','Completed','Cancelled')),
+                   CHECK (TourStatus IN ('Preparing','Scheduled','InProgress','Completed','Cancelled')),
     Status         NVARCHAR(20)  NOT NULL DEFAULT 'Open'
                    CHECK (Status IN ('Open','Full','Closed','Cancelled')),
     CreatedAt      DATETIME2     NOT NULL DEFAULT SYSDATETIME(),
@@ -352,7 +352,7 @@ CREATE TABLE Booking (
     BookingCode     NVARCHAR(20)  NOT NULL UNIQUE,
     ScheduleID      INT           NOT NULL REFERENCES TourSchedule(ScheduleID),
     CustomerID      INT           NOT NULL REFERENCES [User](UserID),
-    NumParticipants INT           NOT NULL CHECK (NumParticipants BETWEEN 1 AND 10),
+    NumParticipants INT           NOT NULL CHECK (NumParticipants BETWEEN 1 AND 20),
     BaseAmount      DECIMAL(18,2) NOT NULL,
     VATAmount       DECIMAL(18,2) NOT NULL DEFAULT 0,
     DiscountAmount  DECIMAL(18,2) NOT NULL DEFAULT 0,
@@ -684,11 +684,6 @@ GO
 -- 12. NOTIFICATIONS
 --     Single table: Notifications (camelCase columns)
 --     Matches NotificationDAO.java exclusively.
---
---     NOTE FOR DEVELOPERS:
---     UserDAO.java line 557 has "DELETE FROM Notification WHERE UserID = ?"
---     This is a BUG -- should be "DELETE FROM Notifications WHERE userId = ?"
---     Please fix UserDAO.java to use: "DELETE FROM Notifications WHERE userId = ?"
 -- ============================================================
 
 CREATE TABLE Notifications (

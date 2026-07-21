@@ -42,7 +42,7 @@ public class BookingPaymentController extends HttpServlet {
             return;
         }
 
-BookingDAO bookingDAO = null;
+        BookingDAO bookingDAO = null;
         try {
             bookingDAO = new BookingDAO();
             // Dương làm đoạn này: nếu booking PendingPayment quá 10 phút thì nhả slot trước khi hiển thị QR.
@@ -96,8 +96,6 @@ BookingDAO bookingDAO = null;
                 holdBookingDAO.close();
             }
         }
-
-
 
         BookingDAO bookingDAO = null;
         try {
@@ -162,6 +160,4 @@ BookingDAO bookingDAO = null;
         HttpSession session = request.getSession(false);
         return session != null ? (BookingDraft) session.getAttribute("bookingDraft") : null;
     }
-
-    }
-
+}

@@ -527,12 +527,60 @@ public class UserDAO extends DBContext {
     }
     public boolean updateUserRole(int userId, int roleId) {
         String sql = "UPDATE [User] SET RoleID = ?, UpdatedAt = SYSDATETIME() WHERE UserID = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, roleId);
-            ps.setInt(2, userId);
-            return ps.executeUpdate() > 0;
+        try {
+            connection.setAutoCommit(false);
+            try (PreparedStatement ps = connection.prepareStatement(sql)) {
+                ps.setInt(1, roleId);
+                ps.setInt(2, userId);
+                if (ps.executeUpdate() > 0) {
+                    if (roleId == 3) {
+                        // Nếu đổi thành Guide: đảm bảo có GuideProfile và IsActive = 1
+                        String checkProfileSql = "SELECT COUNT(*) FROM GuideProfile WHERE UserID = ?";
+                        try (PreparedStatement psCheck = connection.prepareStatement(checkProfileSql)) {
+                            psCheck.setInt(1, userId);
+                            try (ResultSet rs = psCheck.executeQuery()) {
+                                if (rs.next() && rs.getInt(1) > 0) {
+                                    // Đã có profile, cập nhật isActive = 1
+                                    String updateProfileSql = "UPDATE GuideProfile SET IsActive = 1 WHERE UserID = ?";
+                                    try (PreparedStatement psUp = connection.prepareStatement(updateProfileSql)) {
+                                        psUp.setInt(1, userId);
+                                        psUp.executeUpdate();
+                                    }
+                                } else {
+                                    // Chưa có profile, insert mới
+                                    String insertProfileSql = "INSERT INTO GuideProfile (UserID, IsActive, YearsOfExperience, TotalToursLed, Rating, Bio, Specialization, Languages, Certifications, EmergencyPhone) VALUES (?, 1, 0, 0, 5.0, N'', N'', N'Tiếng Việt', N'', N'')";
+                                    try (PreparedStatement psIn = connection.prepareStatement(insertProfileSql)) {
+                                        psIn.setInt(1, userId);
+                                        psIn.executeUpdate();
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        // Nếu đổi sang vai trò khác: set IsActive = 0 trong GuideProfile (nếu có)
+                        String updateProfileSql = "UPDATE GuideProfile SET IsActive = 0 WHERE UserID = ?";
+                        try (PreparedStatement psUp = connection.prepareStatement(updateProfileSql)) {
+                            psUp.setInt(1, userId);
+                            psUp.executeUpdate();
+                        }
+                    }
+                    connection.commit();
+                    return true;
+                }
+            }
         } catch (SQLException ex) {
+            try {
+                connection.rollback();
+            } catch (SQLException rollbackEx) {
+                Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, rollbackEx);
+            }
             Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException ex) {
+                Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         return false;
     }
@@ -650,6 +698,44 @@ public class UserDAO extends DBContext {
             java.util.logging.Logger.getLogger(UserDAO.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         return stats;
+    }
+
+    /**
+     * Lấy danh sách user theo các role IDs.
+     */
+    public List<User> getUsersByRoles(int[] roleIds) {
+        List<User> users = new ArrayList<>();
+        if (roleIds == null || roleIds.length == 0) return users;
+
+        StringBuilder placeholders = new StringBuilder();
+        for (int i = 0; i < roleIds.length; i++) {
+            placeholders.append(i > 0 ? ",?" : "?");
+        }
+
+        String sql = "SELECT u.UserID, u.RoleID, u.Email, u.FullName, u.PhoneNumber, u.IsActive, u.IsVerified "
+                   + "FROM [User] u WHERE u.RoleID IN (" + placeholders + ") AND u.IsActive = 1";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            for (int i = 0; i < roleIds.length; i++) {
+                ps.setInt(i + 1, roleIds[i]);
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    User user = new User();
+                    user.setUserId(rs.getInt("UserID"));
+                    user.setRoleId(rs.getInt("RoleID"));
+                    user.setEmail(rs.getString("Email"));
+                    user.setFullName(rs.getString("FullName"));
+                    user.setPhoneNumber(rs.getString("PhoneNumber"));
+                    user.setIsActive(rs.getBoolean("IsActive"));
+                    user.setIsVerified(rs.getBoolean("IsVerified"));
+                    users.add(user);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, "Lỗi khi lấy users theo roles", ex);
+        }
+        return users;
     }
 }
 

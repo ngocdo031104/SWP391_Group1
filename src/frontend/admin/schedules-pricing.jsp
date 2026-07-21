@@ -1,4 +1,10 @@
-﻿<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
+<%-- 
+    Màn hình 21: Manage Tour Schedule and Pricing - Quản lý lịch khởi hành & giá tour
+    Tác giả: Dương Quang Sơn
+    MSSV: HE186525
+    Ngày tạo: 2026-07-21
+--%>
+<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt"  prefix="fmt" %>
@@ -10,39 +16,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lịch Trình & Giá — TourBuddy Enterprise</title>
+    <title>L&#7883;ch Tr&#236;nh & Gi&#225; &#151; TourBuddy Enterprise</title>
     <!-- Outfit & Inter Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
     <!-- Lucide Icons & FontAwesome CDNs -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-dashboard.css?v=2.1">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-dashboard.css?v=2.3">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-schedules.css?v=1.0">
 
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-space-overrides.css?v=1.0">
 </head>
-<body class="dashboard-body">
+<body class="dashboard-body tb-cosmic">
 
 <div class="dashboard-wrapper">
     <c:set var="activePage" value="schedules" scope="request" />
     <jsp:include page="sidebar.jsp" />
 
-    <!-- ── Main Content Area ── -->
-    <main class="main-content">
+    <!-- -- Main Content Area -- -->
+    <main class="main-content theme-light">
         <!-- Top Header -->
         <header class="top-header">
-            <h1>Quản lý Lịch trình & Giá Tour</h1>
+            <h1>Qu&#7843;n l&#253; L&#7883;ch tr&#236;nh & Gi&#225; Tour</h1>
             <div class="header-right">
                 <div class="header-search">
                     <i data-lucide="search"></i>
-                    <input type="text" placeholder="Tìm kiếm nhanh...">
+                    <input type="text" placeholder="T&#236;m ki&#7871;m nhanh...">
                 </div>
                 
                 <div class="profile-user" style="cursor: pointer;">
                     <div class="profile-meta" style="text-align: right; margin-right: 5px;">
                         <span class="name">${not empty sessionUser.fullName ? sessionUser.fullName : 'Sarah Jenkins'}</span>
-                        <span class="role">Quản trị viên</span>
+                        <span class="role">Qu&#7843;n tr&#7883; vi&#234;n</span>
                     </div>
                     <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80" alt="Avatar">
                 </div>
@@ -52,29 +58,29 @@
         <!-- Dynamic Content Tabs -->
         <div class="tabs-container">
             <button class="tab-btn active" onclick="switchTab(event, 'tab-schedules')">
-                <i data-lucide="calendar-days"></i> Lịch Khởi Hành & Giá
+                <i data-lucide="calendar-days"></i> L&#7883;ch Kh&#7903;i H&#224;nh & Gi&#225;
             </button>
             <!-- Temporarily hidden as requested
             <button class="tab-btn" onclick="switchTab(event, 'tab-coupons')">
-                <i data-lucide="ticket"></i> Chương Trình Khuyến Mãi (Coupons)
+                <i data-lucide="ticket"></i> Chu&#417;ng Tr&#236;nh Khuy&#7871;n M&#227;i (Coupons)
             </button>
             -->
         </div>
 
-        <!-- ── TAB 1: SCHEDULES MANAGEMENT ── -->
+        <!-- -- TAB 1: SCHEDULES MANAGEMENT -- -->
         <section class="tab-panel active" id="tab-schedules">
             <div class="control-bar">
                 <div class="selector-group">
-                    <span class="control-label">Chọn Tour:</span>
+                    <span class="control-label">Ch&#7885;n Tour:</span>
                     <select class="custom-select" id="tour-selector" onchange="loadSchedules(this.value)">
-                        <option value="">-- Chọn Tour cần quản lý --</option>
+                        <option value="">-- Ch&#7885;n Tour c&#7847;n qu&#7843;n l&#253; --</option>
                         <c:forEach var="t" items="${tours}">
                             <option value="${t.tourId}" data-category-id="${t.categoryId}" data-duration="${t.durationDays}">${t.tourName}</option>
                         </c:forEach>
                     </select>
                 </div>
                 <button class="btn-primary" onclick="openAddScheduleModal()">
-                    <i data-lucide="plus"></i> Thêm Lịch Khởi Hành
+                    <i data-lucide="plus"></i> Th&#234;m L&#7883;ch Kh&#7903;i H&#224;nh
                 </button>
             </div>
 
@@ -83,15 +89,15 @@
                 <table class="custom-table">
                     <thead>
                         <tr>
-                            <th>Ngày Khởi Hành</th>
-                            <th>Ngày Về</th>
-                            <th>Ghế (Trống/Tổng)</th>
-                            <th>Bảng Giá</th>
-                            <th>Phương Tiện</th>
-                            <th>Trạng Thái</th>
-                            <th>HDV phụ trách</th>
-                            <th>Vận Hành</th>
-                            <th style="width: 100px; text-align: center;">Hành Động</th>
+                            <th>Ng&#224;y Kh&#7903;i H&#224;nh</th>
+                            <th>Ng&#224;y V&#7870;</th>
+                            <th>Gh&#7870; (Tr&#7888;ng/T&#7892;ng)</th>
+                            <th>B&#7842;ng Gi&#225;</th>
+                            <th>Ph&#431;&#416;ng Ti&#7878;n</th>
+                            <th>Tr&#7840;ng Th&#193;i</th>
+                            <th>HDV ph&#7908; tr&#225;ch</th>
+                            <th>V&#7852;N H&#192;NH</th>
+                            <th style="width: 100px; text-align: center;">H&#192;NH &#272;&#7896;NG</th>
                         </tr>
                     </thead>
                     <tbody id="schedules-table-body">
@@ -99,8 +105,8 @@
                             <td colspan="9">
                                 <div class="empty-state">
                                     <i data-lucide="compass" style="width: 48px; height: 48px;"></i>
-                                    <h4>Chưa chọn Tour</h4>
-                                    <p>Vui lòng chọn một tour từ danh sách trên để xem và quản lý lịch khởi hành.</p>
+                                    <h4>Ch&#432;a ch&#7885;n Tour</h4>
+                                    <p>Vui l&#242;ng ch&#7885;n m&#7897;t tour t&#7913; danh s&#225;ch tr&#234;n &#273;&#7875; xem v&#224; qu&#7843;n l&#253; l&#7883;ch kh&#7903;i h&#224;nh.</p>
                                 </div>
                             </td>
                         </tr>
@@ -109,16 +115,16 @@
             </div>
         </section>
 
-        <!-- ── TAB 2: COUPONS MANAGEMENT ── -->
+        <!-- -- TAB 2: COUPONS MANAGEMENT -- -->
         <%-- Temporarily hidden as requested
         <section class="tab-panel" id="tab-coupons">
             <div class="control-bar">
                 <div class="selector-group">
-                    <span class="control-label">Tổng số mã khuyến mãi:</span>
+                    <span class="control-label">T&#7893;ng s&#7889; m&#227; khuy&#7871;n m&#227;i:</span>
                     <span class="control-label" style="color: var(--text-light); font-weight: 600;" id="coupon-count">${coupons.size()}</span>
                 </div>
                 <button class="btn-primary" onclick="openAddCouponModal()">
-                    <i data-lucide="plus"></i> Thêm Mã Khuyến Mãi
+                    <i data-lucide="plus"></i> Th&#234;m M&#227; Khuy&#7871;n M&#227;i
                 </button>
             </div>
 
@@ -127,15 +133,15 @@
                 <table class="custom-table">
                     <thead>
                         <tr>
-                            <th>Mã Giảm Giá</th>
-                            <th>Loại Giảm</th>
-                            <th>Giá Trị</th>
-                            <th>Đơn Tối Thiểu</th>
-                            <th>Lượt Dùng (Đã dùng/Tối đa)</th>
-                            <th>Ngày Bắt Đầu</th>
-                            <th>Ngày Kết Thúc</th>
-                            <th>Hoạt Động</th>
-                            <th style="width: 100px; text-align: center;">Hành Động</th>
+                            <th>M&#227; Gi&#7843;m Gi&#225;</th>
+                            <th>Lo&#7841;i Gi&#7843;m</th>
+                            <th>Gi&#225; Tr&#7883;</th>
+                            <th>&#272;&#417;n T&#7889;i Thi&#7875;u</th>
+                            <th>L&#432;&#7907;t D&#249;ng (&#272;&#227; d&#249;ng/T&#7889;i &#272;a)</th>
+                            <th>Ng&#224;y B&#7855;t &#272;&#7847;u</th>
+                            <th>Ng&#224;y K&#7871;t Th&#250;c</th>
+                            <th>Ho&#7841;t &#272;&#7897;ng</th>
+                            <th style="width: 100px; text-align: center;">H&#192;NH &#272;&#7896;NG</th>
                         </tr>
                     </thead>
                     <tbody id="coupons-table-body">
@@ -144,20 +150,20 @@
                                 <td style="font-weight: 700; color: #f59e0b; font-family: monospace; font-size: 1.1rem;">${c.couponCode}</td>
                                 <td>
                                     <c:choose>
-                                        <c:when test="${c.discountType eq 'Percentage'}">Phần trăm (%)</c:when>
-                                        <c:otherwise>Số tiền cố định (đ)</c:otherwise>
+                                        <c:when test="${c.discountType eq 'Percentage'}">Ph&#7847;n tr&#259;m (%)</c:when>
+                                        <c:otherwise>S&#7889; ti&#7873;n c&#7889; &#272;&#7883;nh (&#8363;)</c:otherwise>
                                     </c:choose>
                                 </td>
                                 <td style="font-weight: 600;">
                                     <c:choose>
                                         <c:when test="${c.discountType eq 'Percentage'}">${c.discountValue}%</c:when>
-                                        <c:otherwise><fmt:formatNumber value="${c.discountValue}" pattern="#,##0" /> ₫</c:otherwise>
+                                        <c:otherwise><fmt:formatNumber value="${c.discountValue}" pattern="#,##0" /> &#8363;</c:otherwise>
                                     </c:choose>
                                 </td>
-                                <td><fmt:formatNumber value="${c.minOrderAmount}" pattern="#,##0" /> ₫</td>
+                                <td><fmt:formatNumber value="${c.minOrderAmount}" pattern="#,##0" /> &#8363;</td>
                                 <td>
                                     <span style="color: var(--success-green); font-weight: 600;">${c.usedCount}</span> / 
-                                    <span style="color: var(--text-gray);">${c.maxUses eq null || c.maxUses eq 0 ? 'Vô hạn' : c.maxUses}</span>
+                                    <span style="color: var(--text-gray);">${c.maxUses eq null || c.maxUses eq 0 ? 'V&#244; h&#7841;n' : c.maxUses}</span>
                                 </td>
                                 <td>${c.startDate}</td>
                                 <td>${c.endDate}</td>
@@ -169,10 +175,10 @@
                                 </td>
                                 <td style="text-align: center;">
                                     <div class="action-btn-group">
-                                        <button class="btn-icon edit" title="Sửa" onclick="openEditCouponModal(${c.couponId}, '${c.couponCode}', '${c.discountType}', ${c.discountValue}, ${c.minOrderAmount}, '${c.maxUses}', '${c.startDate}', '${c.endDate}', ${c.isActive})">
+                                        <button class="btn-icon edit" title="S?a" onclick="openEditCouponModal(${c.couponId}, '${c.couponCode}', '${c.discountType}', ${c.discountValue}, ${c.minOrderAmount}, '${c.maxUses}', '${c.startDate}', '${c.endDate}', ${c.isActive})">
                                             <i data-lucide="edit-3"></i>
                                         </button>
-                                        <button class="btn-icon delete" title="Xóa" onclick="deleteCoupon(${c.couponId})">
+                                        <button class="btn-icon delete" title="X&#243;a" onclick="deleteCoupon(${c.couponId})">
                                             <i data-lucide="trash-2"></i>
                                         </button>
                                     </div>
@@ -184,8 +190,8 @@
                                 <td colspan="9">
                                     <div class="empty-state">
                                         <i data-lucide="ticket" style="width: 48px; height: 48px;"></i>
-                                        <h4>Chưa có mã giảm giá nào</h4>
-                                        <p>Click vào "Thêm Mã Khuyến Mãi" ở trên để tạo mã mới.</p>
+                                        <h4>Ch&#432;a c&#243; m&#227; gi&#7843;m gi&#225; n&#224;o</h4>
+                                        <p>Click v&#224;o "Th&#234;m M&#227; Khuy&#7871;n M&#227;i" &#7903; tr&#234;n &#273;&#7875; t&#7841;o m&#227; m&#7899;i.</p>
                                     </div>
                                 </td>
                             </tr>
@@ -198,11 +204,11 @@
     </main>
 </div>
 
-<!-- ── MODAL 1: SCHEDULE FORM (ADD/EDIT) ── -->
+<!-- -- MODAL 1: SCHEDULE FORM (ADD/EDIT) -- -->
 <div class="modal-backdrop" id="schedule-modal">
     <div class="modal-dialog">
         <div class="modal-header">
-            <h3 id="schedule-modal-title">Thêm Lịch Khởi Hành</h3>
+            <h3 id="schedule-modal-title">Th&#234;m L&#7883;ch Kh&#7903;i H&#224;nh</h3>
             <button class="modal-close" onclick="closeModal('schedule-modal')">
                 <i data-lucide="x"></i>
             </button>
@@ -214,38 +220,38 @@
             <div class="modal-body">
                 <div class="form-grid">
                     <div class="form-group">
-                        <label>Ngày Khởi Hành *</label>
+                        <label>Ng&#224;y Kh&#7903;i H&#224;nh *</label>
                         <input type="date" name="departureDate" id="form-schedule-dep" class="form-control" required>
                     </div>
                     <div class="form-group">
-                        <label>Ngày Về *</label>
+                        <label>Ng&#224;y V&#7870; *</label>
                         <input type="date" name="returnDate" id="form-schedule-ret" class="form-control" required>
                     </div>
                     <div class="form-group">
-                        <label>Tổng Số Chỗ *</label>
+                        <label>T&#7893;ng S&#7889; Ch&#7895; *</label>
                         <input type="number" name="totalSeats" id="form-schedule-seats" class="form-control" min="1" required>
                     </div>
                     <div class="form-group" id="available-seats-group" style="display: none;">
-                        <label>Số Ghế Còn Trống</label>
+                        <label>S&#7889; Gh&#7870; C&#242;n Tr&#7888;ng</label>
                         <input type="number" name="availableSeats" id="form-schedule-avai" class="form-control" min="0">
                     </div>
                     <div class="form-group">
-                        <label>Phương Tiện Di Chuyển</label>
-                        <input type="text" name="transportation" id="form-schedule-transport" class="form-control" placeholder="Ví dụ: Ô tô, Máy bay khứ hồi...">
+                        <label>Ph&#431;&#416;ng Ti&#7878;n Di Chuy&#7875;n</label>
+                        <input type="text" name="transportation" id="form-schedule-transport" class="form-control" placeholder="V&#237; d?: &#212; t&#244;, M&#225;y bay kh&#7913; h&#7891;i...">
                     </div>
                     <div class="form-group">
-                        <label>Trạng Thái Nhận Chỗ</label>
+                        <label>Tr&#7840;ng Th&#193;i Nh&#7853;n Ch&#7895;</label>
                         <select name="status" id="form-schedule-status" class="form-control">
-                            <option value="Open">Open (Còn chỗ)</option>
-                            <option value="Full">Full (Đầy chỗ)</option>
-                            <option value="Closed">Closed (Đã đóng đăng ký)</option>
-                            <option value="Cancelled">Cancelled (Đã hủy)</option>
+                            <option value="Open">Open (C&#242;n ch&#7895;)</option>
+                            <option value="Full">Full (&#272;&#7847;y ch&#7895;)</option>
+                            <option value="Closed">Closed (&#272;&#227; d&#243;ng &#273;&#259;ng k&#253;)</option>
+                            <option value="Cancelled">Cancelled (&#272;&#227; h&#7911;y)</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Hướng Dẫn Viên</label>
+                        <label>H&#432;&#7899;ng D&#7851;n Vi&#234;n</label>
                         <select name="guideId" id="form-schedule-guide" class="form-control">
-                            <option value="0">-- Chưa phân công --</option>
+                            <option value="0">-- Ch&#432;a ph&#226;n c&#244;ng --</option>
                             <c:forEach var="g" items="${guides}">
                                 <option value="${g.userId}">
                                     <c:choose>
@@ -256,60 +262,60 @@
                                             Guide #${g.userId}
                                         </c:otherwise>
                                     </c:choose>
-                                    (${not empty g.specialization ? g.specialization : 'Đoàn'})
+                                    (${not empty g.specialization ? g.specialization : '&#272;o&#224;n'})
                                 </option>
                             </c:forEach>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Trạng Thái Tour (Vận Hành)</label>
+                        <label>Tr&#7840;ng Th&#193;i Tour (V&#7852;N H&#192;NH)</label>
                         <select name="tourStatus" id="form-schedule-tourstatus" class="form-control">
-                            <option value="Preparing">Preparing (Chuẩn bị)</option>
-                            <option value="Scheduled">Scheduled (Lên lịch khởi hành)</option>
-                            <option value="InProgress">InProgress (Đang đi)</option>
-                            <option value="Completed">Completed (Đã hoàn thành)</option>
-                            <option value="Cancelled">Cancelled (Đã hủy đoàn)</option>
+                            <option value="Preparing">Preparing (Chu&#7843;n b&#7883;)</option>
+                            <option value="Scheduled">Scheduled (L&#234;n l&#7883;ch kh&#7903;i h&#224;nh)</option>
+                            <option value="InProgress">InProgress (&#272;&#259;ng &#273;i)</option>
+                            <option value="Completed">Completed (&#272;&#227; ho&#224;n th&#224;nh)</option>
+                            <option value="Cancelled">Cancelled (&#272;&#227; h&#7911;y &#273;o&#224;n)</option>
                         </select>
                     </div>
                     <div class="form-group form-grid-full">
-                        <label>Ghi chú phân công HDV (Notes)</label>
-                        <textarea name="notes" id="form-schedule-notes" class="form-control" rows="2" placeholder="Nhập ghi chú cho hướng dẫn viên..." style="resize: vertical; min-height: 60px; font-family: inherit; font-size: 0.9rem; padding: 8px 12px;"></textarea>
+                        <label>Ghi ch&#250; ph&#226;n c&#244;ng HDV (Notes)</label>
+                        <textarea name="notes" id="form-schedule-notes" class="form-control" rows="2" placeholder="Nh&#7853;p ghi ch&#250; cho h&#432;&#7899;ng d&#7851;n vi&#234;n..." style="resize: vertical; min-height: 60px; font-family: inherit; font-size: 0.9rem; padding: 8px 12px;"></textarea>
                     </div>
                     
                     <div class="form-grid-full" style="border-top: 1px solid var(--border-dark); margin: 0.5rem 0; padding-top: 1rem;">
-                        <span style="font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 600; color: var(--text-light);">Cấu hình Bảng Giá:</span>
+                        <span style="font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 600; color: var(--text-light);">C&#7845;u h&#236;nh B&#7842;ng Gi&#225;:</span>
                     </div>
                     <div class="form-group">
-                        <label>Giá Người Lớn * (đ) <small style="color: var(--text-gray); font-size: 0.8rem; font-weight: normal;">(Từ 12 tuổi trở lên)</small></label>
+                        <label>Gi&#225; Ng&#432;&#7901;i L&#7899;n * (&#8363;) <small style="color: var(--text-gray); font-size: 0.8rem; font-weight: normal;">(T&#7913; 12 tu&#7893;i tr&#7903; l&#234;n)</small></label>
                         <input type="number" name="priceAdult" id="form-schedule-price-adult" class="form-control" min="0" required>
                     </div>
                     <div class="form-group">
-                        <label>Giá Trẻ Em (đ) <small style="color: var(--text-gray); font-size: 0.8rem; font-weight: normal;">(Từ 2 đến 11 tuổi)</small></label>
+                        <label>Gi&#225; Tr&#7867; Em (&#8363;) <small style="color: var(--text-gray); font-size: 0.8rem; font-weight: normal;">(T&#7913; 2 &#273;&#7871;n 11 tu&#7893;i)</small></label>
                         <input type="number" name="priceChild" id="form-schedule-price-child" class="form-control" min="0" value="0">
                     </div>
                     <div class="form-group">
-                        <label>Giá Trẻ Sơ Sinh (đ) <small style="color: var(--text-gray); font-size: 0.8rem; font-weight: normal;">(Dưới 2 tuổi)</small></label>
+                        <label>Gi&#225; Tr&#7867; S&#417; Sinh (&#8363;) <small style="color: var(--text-gray); font-size: 0.8rem; font-weight: normal;">(D&#432;&#7899;i 2 tu&#7893;i)</small></label>
                         <input type="number" name="priceInfant" id="form-schedule-price-infant" class="form-control" min="0" value="0">
                         <span id="infant-warning" style="display: none; color: var(--error-red); font-size: 0.8rem; margin-top: 0.25rem; font-weight: 500;">
-                            <i class="fa-solid fa-triangle-exclamation"></i> Tour mạo hiểm - Không cho phép Trẻ sơ sinh tham gia.
+                            <i class="fa-solid fa-triangle-exclamation"></i> Tour m&#7841;o hi&#7875;m - Kh&#244;ng cho ph&#233;p Tr&#7867; s&#417; sinh tham gia.
                         </span>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn-secondary" onclick="closeModal('schedule-modal')">Hủy bỏ</button>
-                <button type="submit" class="btn-primary">Lưu Lịch Trình</button>
+                <button type="button" class="btn-secondary" onclick="closeModal('schedule-modal')">H&#7911;y b&#7887;</button>
+                <button type="submit" class="btn-primary">L&#432;u L&#7883;ch Tr&#236;nh</button>
             </div>
         </form>
     </div>
 </div>
 
-<!-- ── MODAL 2: COUPON FORM (ADD/EDIT) ── -->
+<!-- -- MODAL 2: COUPON FORM (ADD/EDIT) -- -->
 <%-- Temporarily hidden as requested
 <div class="modal-backdrop" id="coupon-modal">
     <div class="modal-dialog">
         <div class="modal-header">
-            <h3 id="coupon-modal-title">Thêm Mã Khuyến Mãi</h3>
+            <h3 id="coupon-modal-title">Th&#234;m M&#227; Khuy&#7871;n M&#227;i</h3>
             <button class="modal-close" onclick="closeModal('coupon-modal')">
                 <i data-lucide="x"></i>
             </button>
@@ -320,48 +326,48 @@
             <div class="modal-body">
                 <div class="form-grid">
                     <div class="form-group">
-                        <label>Mã Giảm Giá *</label>
+                        <label>M&#227; Gi&#7843;m Gi&#225; *</label>
                         <input type="text" name="couponCode" id="form-coupon-code" class="form-control" placeholder="VD: FLASH20, TOURBUDDY" required style="text-transform: uppercase;">
                     </div>
                     <div class="form-group">
-                        <label>Loại Giảm Giá</label>
+                        <label>Lo&#7841;i Gi&#7843;m Gi&#225;</label>
                         <select name="discountType" id="form-coupon-type" class="form-control" onchange="adjustDiscountInput(this.value)">
-                            <option value="Percentage">Giảm theo Phần Trăm (%)</option>
-                            <option value="FixedAmount">Giảm Số Tiền Cố Định (đ)</option>
+                            <option value="Percentage">Gi&#7843;m theo Ph&#7847;n Tr&#259;m (%)</option>
+                            <option value="FixedAmount">Gi&#7843;m S&#7889; Ti&#7873;n C&#7889; &#272;&#7883;nh (&#8363;)</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label id="label-discount-value">Giá trị giảm * (%)</label>
+                        <label id="label-discount-value">Gi&#225; tr&#7883; gi&#7843;m * (%)</label>
                         <input type="number" name="discountValue" id="form-coupon-value" class="form-control" min="0.01" step="any" required>
                     </div>
                     <div class="form-group">
-                        <label>Đơn Hàng Tối Thiểu (đ)</label>
+                        <label>&#272;&#417;n H&#224;ng T&#7889;i Thi&#7875;u (&#8363;)</label>
                         <input type="number" name="minOrderAmount" id="form-coupon-minorder" class="form-control" min="0" value="0">
                     </div>
                     <div class="form-group">
-                        <label>Số Lượt Sử Dụng Tối Đa</label>
-                        <input type="number" name="maxUses" id="form-coupon-maxuses" class="form-control" min="1" placeholder="Vô hạn nếu bỏ trống">
+                        <label>S&#7889; L&#432;&#7907;t S&#7917; D&#7921;ng T&#7889;i &#272;a</label>
+                        <input type="number" name="maxUses" id="form-coupon-maxuses" class="form-control" min="1" placeholder="V&#244; h&#7841;n n&#7871;u b&#7883; tr&#7888;ng">
                     </div>
                     <div class="form-group">
-                        <label>Trạng Thái Hoạt Động</label>
+                        <label>Tr&#7840;ng Th&#193;i Ho&#7841;t &#272;&#7897;ng</label>
                         <select name="isActive" id="form-coupon-status" class="form-control">
-                            <option value="true">Active (Kích hoạt)</option>
-                            <option value="false">Inactive (Vô hiệu hóa)</option>
+                            <option value="true">Active (K&#237;ch ho&#7841;t)</option>
+                            <option value="false">Inactive (V&#244; hi&#7875;u h&#243;a)</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Ngày Bắt Đầu *</label>
+                        <label>Ng&#224;y B&#7855;t &#272;&#7847;u *</label>
                         <input type="date" name="startDate" id="form-coupon-start" class="form-control" required>
                     </div>
                     <div class="form-group">
-                        <label>Ngày Kết Thúc *</label>
+                        <label>Ng&#224;y K&#7871;t Th&#250;c *</label>
                         <input type="date" name="endDate" id="form-coupon-end" class="form-control" required>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn-secondary" onclick="closeModal('coupon-modal')">Hủy bỏ</button>
-                <button type="submit" class="btn-primary">Lưu Khuyến Mãi</button>
+                <button type="button" class="btn-secondary" onclick="closeModal('coupon-modal')">H&#7911;y b&#7887;</button>
+                <button type="submit" class="btn-primary">L&#432;u Khuy&#7871;n M&#227;i</button>
             </div>
         </form>
     </div>
@@ -370,12 +376,12 @@
 
 <!-- JS Controller Logic -->
 <script>
-    // Khởi tạo Lucide Icons khi tải trang
+    // Kh?i t?o Lucide Icons khi t?i trang
     document.addEventListener("DOMContentLoaded", function() {
         lucide.createIcons();
     });
 
-    // Chuyển Tab
+    // Chuy?n Tab
     function switchTab(evt, tabId) {
         document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
         document.querySelectorAll(".tab-panel").forEach(panel => panel.classList.remove("active"));
@@ -384,7 +390,7 @@
         document.getElementById(tabId).classList.add("active");
     }
 
-    // Đóng/Mở Modal
+    // \u00d0\u00f3ng/M? Modal
     function openModal(modalId) {
         document.getElementById(modalId).classList.add("open");
     }
@@ -392,12 +398,12 @@
         document.getElementById(modalId).classList.remove("open");
     }
 
-    // Định dạng số thành VND
+    // \u00d0?nh d?ng s? th\u00e0nh VND
     function formatVND(amount) {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
     }
 
-    // ── LOGIC LỊCH TRÌNH ──
+    // -- LOGIC L?CH TR\u00ccNH --
     function loadSchedules(tourId) {
         const tbody = document.getElementById("schedules-table-body");
         if (!tourId) {
@@ -406,8 +412,8 @@
                     <td colspan="9">
                         <div class="empty-state">
                             <i data-lucide="compass" style="width: 48px; height: 48px;"></i>
-                            <h4>Chưa chọn Tour</h4>
-                            <p>Vui lòng chọn một tour từ danh sách trên để xem và quản lý lịch khởi hành.</p>
+                            <h4>Ch&#432;a ch&#7885;n Tour</h4>
+                            <p>Vui l&#242;ng ch&#7885;n m&#7897;t tour t&#7913; danh s&#225;ch tr&#234;n &#273;&#7875; xem v&#224; qu&#7843;n l&#253; l&#7883;ch kh&#7903;i h&#224;nh.</p>
                         </div>
                     </td>
                 </tr>`;
@@ -420,7 +426,7 @@
                 <td colspan="9" style="text-align: center; padding: 3rem 0;">
                     <div style="display:inline-flex; align-items:center; gap: 10px; color: var(--text-gray);">
                         <i class="fa-solid fa-circle-notch fa-spin fa-lg" style="color: #8b5cf6;"></i>
-                        <span>Đang tải lịch trình khởi hành...</span>
+                        <span>&#272;&#259;ng t&#7843;i l&#7883;ch tr&#236;nh kh&#7903;i h&#224;nh...</span>
                     </div>
                 </td>
             </tr>`;
@@ -434,8 +440,8 @@
                             <td colspan="9">
                                 <div class="empty-state">
                                     <i data-lucide="calendar-x" style="width: 48px; height: 48px;"></i>
-                                    <h4>Chưa có lịch trình</h4>
-                                    <p>Tour này hiện tại chưa được lên lịch khởi hành nào. Click "Thêm Lịch Khởi Hành" để tạo mới.</p>
+                                    <h4>Ch&#432;a c&#243; l&#7883;ch tr&#236;nh</h4>
+                                    <p>Tour n&#224;y hi&#7875;n t&#7841;i ch&#432;a &#273;&#432;&#7901;c l&#234;n l&#7883;ch kh&#7903;i h&#224;nh n&#224;o. Click "Th&#234;m L&#7883;ch Kh&#7903;i H&#224;nh" &#273;&#7875; t&#7841;o m&#227; m&#7899;i.</p>
                                 </div>
                             </td>
                         </tr>`;
@@ -451,11 +457,11 @@
                     else if (s.status === 'Cancelled') badgeClass = 'badge-cancelled';
 
                     let opBadgeClass = 'badge-op-preparing';
-                    let opText = 'Chuẩn bị';
-                    if (s.tourStatus === 'Scheduled') { opBadgeClass = 'badge-op-scheduled'; opText = 'Lên lịch'; }
-                    else if (s.tourStatus === 'InProgress') { opBadgeClass = 'badge-op-progress'; opText = 'Đang đi'; }
-                    else if (s.tourStatus === 'Completed') { opBadgeClass = 'badge-op-completed'; opText = 'Hoàn thành'; }
-                    else if (s.tourStatus === 'Cancelled') { opBadgeClass = 'badge-cancelled'; opText = 'Hủy đoàn'; }
+                    let opText = 'Chu&#7843;n b&#7883;';
+                    if (s.tourStatus === 'Scheduled') { opBadgeClass = 'badge-op-scheduled'; opText = 'L&#234;n l&#7883;ch'; }
+                    else if (s.tourStatus === 'InProgress') { opBadgeClass = 'badge-op-progress'; opText = '&#272;&#259;ng &#273;i'; }
+                    else if (s.tourStatus === 'Completed') { opBadgeClass = 'badge-op-completed'; opText = 'Ho&#224;n th&#224;nh'; }
+                    else if (s.tourStatus === 'Cancelled') { opBadgeClass = 'badge-cancelled'; opText = 'H&#7911;y &#273;o&#224;n'; }
 
                     html += `
                         <tr id="schedule-row-\${s.scheduleId}">
@@ -468,20 +474,20 @@
                             <td>
                                 <div class="price-tag-group">
                                     <div class="price-row">
-                                        <span class="price-type">Lớn:</span>
+                                        <span class="price-type">L?n:</span>
                                         <span class="price-amount">\${formatVND(s.priceAdult)}</span>
                                     </div>
                                     <div class="price-row">
-                                        <span class="price-type">Trẻ em:</span>
+                                        <span class="price-type">Tr? em:</span>
                                         <span class="price-amount">\${formatVND(s.priceChild)}</span>
                                     </div>
                                     <div class="price-row">
-                                        <span class="price-type">Sơ sinh:</span>
+                                        <span class="price-type">So sinh:</span>
                                         <span class="price-amount">\${formatVND(s.priceInfant)}</span>
                                     </div>
                                 </div>
                             </td>
-                            <td>\${s.transportation || 'Chưa rõ'}</td>
+                            <td>\${s.transportation || 'Chua r\u00f5'}</td>
                             <td>
                                 <span class="badge \${badgeClass}">\${s.status}</span>
                             </td>
@@ -491,10 +497,10 @@
                             </td>
                             <td style="text-align: center;">
                                 <div class="action-btn-group">
-                                    <button class="btn-icon edit" title="Sửa" onclick="openEditScheduleModal(\${JSON.stringify(s).replace(/"/g, '&quot;')})">
+                                    <button class="btn-icon edit" title="S?a" onclick="openEditScheduleModal(\${JSON.stringify(s).replace(/"/g, '&quot;')})">
                                         <i data-lucide="edit-3"></i>
                                     </button>
-                                    <button class="btn-icon delete" title="Xóa" onclick="deleteSchedule(\${s.scheduleId}, '\${s.tourStatus}')">
+                                    <button class="btn-icon delete" title="X\u00f3a" onclick="deleteSchedule(\${s.scheduleId}, '\${s.tourStatus}')">
                                         <i data-lucide="trash-2"></i>
                                     </button>
                                 </div>
@@ -509,7 +515,7 @@
                 tbody.innerHTML = `
                     <tr>
                         <td colspan="9" style="text-align: center; color: var(--error-red); padding: 2rem;">
-                            Có lỗi khi tải danh sách lịch khởi hành. Vui lòng thử lại.
+                            C&#243; l&#7895;i khi t&#7843;i danh s&#225;ch l&#7883;ch kh&#7903;i h&#224;nh. Vui l&#242;ng th&#7917; l&#7841;i.
                         </td>
                     </tr>`;
             });
@@ -526,14 +532,14 @@
         const infantWarning = document.getElementById("infant-warning");
         
         if (catId === 1 || catId === 2) {
-            // Tour mạo hiểm: Reset về 0, khóa chỉnh sửa bằng readonly, làm mờ
+            // Tour m&#7841;o hi&#7875;m: Reset v&#7873; 0, kh&#243;a ch&#7881;nh s&#7917;a b&#7855;ng readonly, l&#224;m m&#7901;
             infantInput.value = 0;
             infantInput.readOnly = true;
             infantInput.style.opacity = "0.5";
             infantInput.style.pointerEvents = "none";
             if (infantWarning) infantWarning.style.display = "block";
         } else {
-            // Tour bình thường: Mở khóa
+            // Tour b&#236;nh th&#432;&#7901;ng: M&#7903; kh&#243;a
             infantInput.readOnly = false;
             infantInput.style.opacity = "1";
             infantInput.style.pointerEvents = "auto";
@@ -544,26 +550,26 @@
     function openAddScheduleModal() {
         const tourId = document.getElementById("tour-selector").value;
         if (!tourId) {
-            alert("Vui lòng chọn một Tour trước khi thêm lịch khởi hành!");
+            alert("Vui l&#242;ng ch&#7885;n m&#7897;t Tour tr&#432;&#7899;c khi th&#234;m l&#7883;ch kh&#7903;i h&#224;nh!");
             return;
         }
 
         document.getElementById("schedule-form").reset();
-        document.getElementById("schedule-modal-title").innerText = "Thêm Lịch Khởi Hành";
+        document.getElementById("schedule-modal-title").innerText = "Th&#234;m L&#7883;ch Kh&#7903;i H&#224;nh";
         document.getElementById("schedule-action").value = "addSchedule";
         document.getElementById("form-schedule-id").value = "";
         document.getElementById("form-schedule-tour-id").value = tourId;
         document.getElementById("available-seats-group").style.display = "none";
         
-        // Kiểm tra ràng buộc trẻ sơ sinh đối với tour mạo hiểm
+        // Ki?m tra r\u00e0ng bu?c tr? so sinh d?i v?i tour m?o hi?m
         checkInfantRestriction();
         
         openModal("schedule-modal");
     }
 
-    // Nhận chuỗi JSON của schedule để điền vào form khi Edit
+    // Nh&#7853;n chu&#7895;i JSON c&#7911;a schedule &#273;&#7875; &#273;i&#7875;n v&#224;o form khi Edit
     function openEditScheduleModal(s) {
-        document.getElementById("schedule-modal-title").innerText = "Sửa Lịch Khởi Hành";
+        document.getElementById("schedule-modal-title").innerText = "S&#7917;a L&#7883;ch Kh&#7903;i H&#224;nh";
         document.getElementById("schedule-action").value = "editSchedule";
         document.getElementById("form-schedule-id").value = s.scheduleId;
         document.getElementById("form-schedule-tour-id").value = s.tourId;
@@ -572,7 +578,7 @@
         document.getElementById("form-schedule-ret").value = s.returnStr;
         document.getElementById("form-schedule-seats").value = s.totalSeats;
         
-        // Hiện số chỗ trống để chỉnh sửa
+        // Hi&#7875;n s&#7889; ch&#7895; tr&#7888;ng &#273;&#7875; ch&#7881;nh s&#7917;a
         document.getElementById("available-seats-group").style.display = "flex";
         document.getElementById("form-schedule-avai").value = s.availableSeats;
         
@@ -586,7 +592,7 @@
         document.getElementById("form-schedule-price-infant").value = s.priceInfant;
         document.getElementById("form-schedule-notes").value = s.notes || "";
 
-        // Kiểm tra ràng buộc trẻ sơ sinh đối với tour mạo hiểm
+        // Ki?m tra r\u00e0ng bu?c tr? so sinh d?i v?i tour m?o hi?m
         checkInfantRestriction();
 
         openModal("schedule-modal");
@@ -596,7 +602,7 @@
         e.preventDefault();
         const form = document.getElementById("schedule-form");
         
-        // ── CLIENT-SIDE VALIDATIONS ──
+        // -- CLIENT-SIDE VALIDATIONS --
         const action = document.getElementById("schedule-action").value;
         const depVal = document.getElementById("form-schedule-dep").value;
         const retVal = document.getElementById("form-schedule-ret").value;
@@ -606,7 +612,7 @@
         const priceInfant = parseFloat(document.getElementById("form-schedule-price-infant").value) || 0;
 
         if (!depVal || !retVal) {
-            alert("Vui lòng chọn đầy đủ ngày khởi hành và ngày về!");
+            alert("Vui l&#242;ng ch&#7885;n &#273;&#7847;y &#273;&#7911; ng&#224;y kh&#7903;i h&#224;nh v&#224; ng&#224;y v&#7870;!");
             return;
         }
 
@@ -617,53 +623,53 @@
         depDate.setHours(0, 0, 0, 0);
         retDate.setHours(0, 0, 0, 0);
 
-        // 1. Không cho phép ngày khởi hành ở quá khứ khi thêm mới
+        // 1. Kh&#244;ng cho ph&#233;p ng&#224;y kh&#7903;i h&#224;nh &#7903; qu&#225; kh&#7913; khi th&#234;m m&#7899;i
         if (action === "addSchedule" && depDate < today) {
-            alert("Ngày khởi hành không được ở quá khứ!");
+            alert("Ng&#224;y kh&#7903;i h&#224;nh kh&#244;ng &#273;&#432;&#7901;c &#7903; qu&#225; kh&#7913;!");
             return;
         }
 
-        // 2. Ngày về không được trước ngày khởi hành
+        // 2. Ng&#224;y v&#7870; kh&#244;ng &#273;&#432;&#7901;c tr&#432;&#7899;c ng&#224;y kh&#7903;i h&#224;nh
         if (retDate < depDate) {
-            alert("Ngày về không được trước ngày khởi hành!");
+            alert("Ng&#224;y v&#7870; kh&#244;ng &#273;&#432;&#7901;c tr&#432;&#7899;c ng&#224;y kh&#7903;i h&#224;nh!");
             return;
         }
 
-        // 3. Tour không được kéo dài quá lâu (chênh lệch ngày không vượt quá thời lượng tour)
+        // 3. Tour kh&#244;ng &#273;&#432;&#7901;c k&#233;o d&#224;i qu&#225; l&#222;u (ch&#234;nh l&#7883;ch ng&#224;y kh&#244;ng v&#432;&#7907;t qu&#225; th&#7901;i l&#432;&#7907;t tour)
         const selector = document.getElementById("tour-selector");
         const selectedOpt = selector.options[selector.selectedIndex];
         const duration = parseInt(selectedOpt.getAttribute("data-duration")) || 1;
         
         const timeDiff = Math.abs(retDate.getTime() - depDate.getTime());
-        const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1; // Số ngày thực tế đi
+        const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1; // S&#7889; ng&#224;y th&#7921;c t&#7871; di
         
         if (diffDays > duration) {
-            alert("Lịch trình kéo dài quá lâu (" + diffDays + " ngày). Thời lượng của tour này được cấu hình tối đa là " + duration + " ngày!");
+            alert("L&#7883;ch tr&#236;nh k&#233;o d&#224;i qu&#225; l&#222;u (" + diffDays + " ng&#224;y). Th&#7901;i l&#432;&#7907;t c&#7911;a tour n&#224;y &#273;&#432;&#7901;c c&#7845;u h&#236;nh t&#7889;i &#272;a l&#224; " + duration + " ng&#224;y!");
             return;
         }
 
-        // 3.5. Kiểm tra số ghế còn trống không được lớn hơn tổng số chỗ (chỉ khi sửa lịch trình)
+        // 3.5. Ki&#7875;m tra s&#7889; gh&#7870; c&#242;n tr&#7888;ng kh&#244;ng &#273;&#432;&#7901;c l&#7899;n h&#417;n t&#7893;ng s&#7889; ch&#7895; (ch&#7881; khi s&#7917;a l&#7883;ch tr&#236;nh)
         if (action === "editSchedule") {
             const avaiSeats = parseInt(document.getElementById("form-schedule-avai").value) || 0;
             if (avaiSeats > totalSeats) {
-                alert("Số ghế còn trống (" + avaiSeats + ") không được lớn hơn tổng số chỗ (" + totalSeats + ")!");
+                alert("S&#7889; gh&#7870; c&#242;n tr&#7888;ng (" + avaiSeats + ") kh&#244;ng &#273;&#432;&#7901;c l&#7899;n h&#417;n t&#7893;ng s&#7889; ch&#7895; (" + totalSeats + ")!");
                 return;
             }
         }
 
-        // 4. Khóa/chặn giá trẻ sơ sinh đối với các tour mạo hiểm (Biển/Núi)
+        // 4. Kh&#243;a/ch&#7885;n gi&#225; tr&#7883; s&#417; sinh &#273;&#7889;i v&#7899;i c&#225;c tour m&#7841;o hi&#7875;m (Bi&#7875;n/N&#250;i)
         const catId = parseInt(selectedOpt.getAttribute("data-category-id")) || 0;
         if ((catId === 1 || catId === 2) && priceInfant > 0) {
-            alert("Tour thuộc danh mục mạo hiểm (Biển & Đảo / Núi & Rừng), không cho phép trẻ sơ sinh tham gia!");
+            alert("Tour thu&#7897;c danh m&#7909;c m&#7841;o hi&#7875;m (Bi&#7875;n & &#272;&#7843;o / N&#250;i & R&#7915;ng), kh&#244;ng cho ph&#233;p tr&#7867; s&#417; sinh tham gia!");
             return;
         }
 
         if (totalSeats <= 0) {
-            alert("Tổng số chỗ phải lớn hơn 0!");
+            alert("T&#7893;ng s&#7889; ch&#7895; ph&#7843;i l&#7899;n h&#417;n 0!");
             return;
         }
         if (priceAdult < 0 || priceChild < 0 || priceInfant < 0) {
-            alert("Giá vé cấu hình không được âm!");
+            alert("Gi&#225; v&#233; c&#7845;u h&#236;nh kh&#244;ng &#273;&#432;&#7901;c &#226;m!");
             return;
         }
 
@@ -689,20 +695,20 @@
         })
         .catch(err => {
             console.error(err);
-            alert("Có lỗi kết nối hệ thống.");
+            alert("C&#243; l&#7895;i k&#7871;t n&#7889;i h&#7879; th&#7889;ng.");
         });
     }
 
     function deleteSchedule(scheduleId, tourStatus) {
         if (tourStatus && tourStatus !== 'Preparing' && tourStatus !== 'Completed' && tourStatus !== 'Cancelled') {
             let statusText = tourStatus;
-            if (tourStatus === 'Scheduled') statusText = 'Scheduled (Lên lịch khởi hành)';
-            else if (tourStatus === 'InProgress') statusText = 'InProgress (Đang đi)';
-            alert("Không thể xóa lịch khởi hành đang ở trạng thái '" + statusText + "'. Chỉ cho phép xóa khi ở trạng thái Chuẩn bị, Hoàn thành hoặc Hủy đoàn.");
+            if (tourStatus === 'Scheduled') statusText = 'Scheduled (L&#234;n l&#7883;ch kh&#7903;i h&#224;nh)';
+            else if (tourStatus === 'InProgress') statusText = 'InProgress (&#272;&#259;ng &#273;i)';
+            alert("Kh&#244;ng th&#7875; x&#243;a l&#7883;ch kh&#7903;i h&#224;nh &#272;&#259;ng &#7903; tr&#7840;ng th&#193;i '" + statusText + "'. Ch&#7881; cho ph&#233;p x&#243;a khi &#7903; tr&#7840;ng th&#193;i Chu&#7843;n b&#7883;, Ho&#224;n th&#224;nh ho&#7863;c H&#7911;y &#273;o&#224;n.");
             return;
         }
 
-        if (!confirm("Bạn có chắc chắn muốn xóa lịch khởi hành này? Hành động này không thể hoàn tác.")) {
+        if (!confirm("B&#7841;n c&#243; ch&#7855;c ch&#7855;n mu&#7889;n x&#243;a l&#7883;ch kh&#7903;i h&#224;nh n&#224;y? H&#224;nh &#272;&#7896;NG n&#224;y kh&#244;ng th&#7875; ho&#224;n t&#225;c.")) {
             return;
         }
 
@@ -724,23 +730,23 @@
         })
         .catch(err => {
             console.error(err);
-            alert("Có lỗi xảy ra khi gửi yêu cầu.");
+            alert("C&#243; l&#7895;i x&#7843;y ra khi g&#7917;i y&#234;u c&#7847;u.");
         });
     }
 
-    // ── LOGIC MÃ GIẢM GIÁ (COUPONS) ──
+    // -- LOGIC M\u00c3 GI?M GI\u00c1 (COUPONS) --
     function adjustDiscountInput(type) {
         const label = document.getElementById("label-discount-value");
         if (type === "Percentage") {
-            label.innerText = "Giá trị giảm * (%)";
+            label.innerText = "Gi&#225; tr&#7883; gi&#7843;m * (%)";
         } else {
-            label.innerText = "Giá trị giảm * (đ)";
+            label.innerText = "Gi&#225; tr&#7883; gi&#7843;m * (&#8363;)";
         }
     }
 
     function openAddCouponModal() {
         document.getElementById("coupon-form").reset();
-        document.getElementById("coupon-modal-title").innerText = "Thêm Mã Khuyến Mãi";
+        document.getElementById("coupon-modal-title").innerText = "Th&#234;m M&#227; Khuy&#7871;n M&#227;i";
         document.getElementById("coupon-action").value = "addCoupon";
         document.getElementById("form-coupon-id").value = "";
         adjustDiscountInput("Percentage");
@@ -748,7 +754,7 @@
     }
 
     function openEditCouponModal(id, code, type, value, minOrder, maxUses, start, end, isActive) {
-        document.getElementById("coupon-modal-title").innerText = "Sửa Mã Khuyến Mãi";
+        document.getElementById("coupon-modal-title").innerText = "S&#7917;a M&#227; Khuy&#7871;n M&#227;i";
         document.getElementById("coupon-action").value = "editCoupon";
         document.getElementById("form-coupon-id").value = id;
         document.getElementById("form-coupon-code").value = code;
@@ -782,14 +788,14 @@
             if (res.status === "success") {
                 alert(res.message);
                 closeModal("coupon-modal");
-                location.reload(); // Tải lại trang để cập nhật danh sách
+                location.reload(); // T&#7843;i l&#7841;i trang &#273;&#7875; c&#7853;p nh&#7853;t danh s&#225;ch
             } else {
                 alert(res.message);
             }
         })
         .catch(err => {
             console.error(err);
-            alert("Có lỗi kết nối hệ thống.");
+            alert("C&#243; l&#7895;i k&#7871;t n&#7889;i h&#7879; th&#7889;ng.");
         });
     }
 
@@ -810,13 +816,13 @@
         })
         .catch(err => {
             console.error(err);
-            alert("Lỗi kết nối khi thay đổi trạng thái mã giảm giá.");
+            alert("L&#7895;i k&#7871;t n&#7889;i khi thay &#273;&#7893;i tr&#7840;ng th&#193;i m&#227; gi&#7843;m gi&#225;.");
             location.reload();
         });
     }
 
     function deleteCoupon(couponId) {
-        if (!confirm("Bạn có chắc chắn muốn xóa mã giảm giá này?")) {
+        if (!confirm("B&#7841;n c&#243; ch&#7855;c ch&#7855;n mu&#7889;n x&#243;a m&#227; gi&#7843;m gi&#225; n&#224;o?")) {
             return;
         }
 
@@ -834,7 +840,7 @@
                 const row = document.getElementById(`coupon-row-\${couponId}`);
                 if (row) row.remove();
                 
-                // Cập nhật đếm
+                // C?p nh?t d?m
                 const cnt = document.getElementById("coupon-count");
                 if (cnt) cnt.innerText = parseInt(cnt.innerText) - 1;
             } else {
@@ -843,7 +849,7 @@
         })
         .catch(err => {
             console.error(err);
-            alert("Có lỗi xảy ra khi xóa mã giảm giá.");
+            alert("C&#243; l&#7895;i x&#7843;y ra khi x&#243;a m&#227; gi&#7843;m gi&#225;.");
         });
     }
 </script>

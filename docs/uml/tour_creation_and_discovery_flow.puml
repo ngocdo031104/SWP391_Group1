@@ -1,0 +1,61 @@
+@startuml TourCreationAndDiscoveryFlow
+title Tour Creation / Tour Discovery
+
+skinparam swimlaneWidth same
+skinparam activityBackgroundColor #F8F8F8
+skinparam activityBorderColor #2F6FED
+skinparam conditionStyle diamond
+skinparam noteBackgroundColor #FFF8E1
+skinparam noteBorderColor #D97706
+
+|#LightBlue|Admin|
+|#Lavender|System|
+|#LightBlue|Customer|
+
+|Admin|
+:Step 1: Inputs tour details;
+
+|System|
+:Step 2: Validates tour data;
+
+if (Valid?) then (No)
+  :Step 3 (If Invalid):\nDisplays validation error;
+
+  |Admin|
+  :Step 4: Edits tour information;
+
+  |System|
+  :Re-validates (back to Step 2);
+else (Yes)
+  :Step 5 (If Valid):\nSaves and publishes tour;
+endif
+
+|Customer|
+:Step 6: Accesses home page;
+
+:Step 7: Searches and filters tours;
+
+|System|
+:Step 8: Queries active tours;
+
+if (Match?) then (No)
+  :Step 9 (If No Match):\nDisplays "No Tours Found";
+
+  |Customer|
+  :Step 10: Retries search;
+
+  |System|
+  :Re-queries (back to Step 8);
+else (Yes)
+  :Step 11 (If Match):\nDisplays matching tours;
+
+  |Customer|
+  :Step 12: Selects and views tour;
+endif
+
+note over Admin, Customer
+  Sub-flow 1: Tour Creation Flow  (Step 1 - 5)
+  Sub-flow 2: Tour Discovery Flow (Step 6 - 12)
+end note
+
+@enduml

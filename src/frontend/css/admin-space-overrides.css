@@ -109,27 +109,80 @@ label,
 .drawer-section h4,
 .notes-text { color: #9fa9cb !important; }
 
-/* Prevent overriding text-light content */
-h1, h2, h3, h4, h5,
+/* Page main titles — Majestic Neon Purple Glow */
+h1,
 .top-header h1,
-.drawer-name-center,
-.stat-value,
-td strong { color: #f8fafc !important; }
+.top-header h1[style],
+.top-header div h1 { 
+  color: #c084fc !important; 
+  text-shadow: 0 0 16px rgba(192, 132, 252, 0.4) !important;
+  font-weight: 800 !important;
+}
 
+h2, h3, h4, h5,
+.drawer-name-center,
+td strong,
+.text-dark,
+body.tb-cosmic .text-dark,
+.card h3.text-dark,
+.card h3,
+.stat-card h3 { 
+  color: #f8fafc !important; 
+}
+
+/* Stat numbers/values: vibrant neon emerald green / cyan / purple text */
+.stat-value,
+.stat-info .stat-value,
+body.tb-cosmic .stat-value,
+body.tb-cosmic .stat-info .stat-value,
+.stat-card .stat-value {
+  color: #34d399; /* Emerald Neon Green fallback */
+  -webkit-text-fill-color: currentcolor !important;
+  background: none !important;
+  -webkit-background-clip: initial !important;
+  background-clip: initial !important;
+  font-weight: 800 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  text-shadow: 0 0 12px rgba(52, 211, 153, 0.25);
+}
+
+.top-header p,
+.top-header p[style],
+.top-header div p,
 .text-muted,
 .text-secondary,
 .pagination-info,
 .table-logs td:not(:first-child),
 .text-slate-500 { color: #9fa9cb !important; }
 
-/* Override hardcoded dark text inline styles */
+/* Override all hardcoded dark text inline styles & variables */
 [style*="color: #1e293b"],
 [style*="color: #334155"],
-[style*="color: #0f172a"] { color: #f8fafc !important; }
+[style*="color: #0f172a"],
+[style*="color: #212529"],
+[style*="color:#1e293b"],
+[style*="color:#334155"],
+[style*="color:#0f172a"],
+[style*="color:#212529"],
+[style*="var(--gray-900)"],
+[style*="var(--gray-800)"],
+[style*="var(--gray-700)"],
+[style*="var(--gray-600)"],
+[style*="color: var(--gray-900)"],
+[style*="color: var(--gray-800)"],
+[style*="color: var(--gray-700)"],
+[style*="color: var(--gray-600)"] { 
+  color: #f8fafc !important; 
+}
 
 [style*="color: #64748b"],
 [style*="color: #475569"],
-[style*="color: #94a3b8"] { color: #9fa9cb !important; }
+[style*="color: #94a3b8"],
+[style*="var(--gray-500)"],
+[style*="color: var(--gray-500)"] { 
+  color: #9fa9cb !important; 
+}
 
 /* ==========================================================================
    TABLES (table-logs, booking-table, modern-table, etc.)
@@ -624,7 +677,7 @@ div[style*="background: #F1F5F9"] {
 }
 
 /* ==========================================================================
-   LAYOUT FIXES FOR OVERFLOW AND CRIMPING
+   LAYOUT FIXES FOR OVERFLOW, SIDEBAR MARGIN AND ALIGNMENT
    ========================================================================== */
 .dashboard-body,
 html,
@@ -638,13 +691,30 @@ body {
   overflow-x: hidden !important;
   display: flex !important;
   width: 100% !important;
+  min-height: 100vh !important;
+  position: relative !important;
+}
+
+.sidebar {
+  width: 260px !important;
+  min-width: 260px !important;
+  flex-shrink: 0 !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  height: 100vh !important;
+  z-index: 1000 !important;
 }
 
 .main-content {
+  margin-left: 260px !important;
+  width: calc(100% - 260px) !important;
+  max-width: calc(100% - 260px) !important;
   flex: 1 !important;
   min-width: 0 !important; /* Cho phép flex item co lại nhỏ hơn nội dung */
-  max-width: calc(100% - 260px) !important;
+  box-sizing: border-box !important;
   overflow-x: hidden !important;
+  padding: 24px 32px !important;
 }
 
 /* Biểu đồ canvas tự co giãn linh hoạt */

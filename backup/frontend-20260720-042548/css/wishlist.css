@@ -1,0 +1,214 @@
+/* Wishlist page design */
+.wishlist-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+    min-height: 50vh;
+}
+
+.wishlist-header {
+    margin-bottom: 40px;
+    border-bottom: 2px solid var(--slate-100);
+    padding-bottom: 20px;
+}
+
+.wishlist-header h1 {
+    font-family: var(--font-heading);
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: var(--slate-900);
+    margin: 0;
+    letter-spacing: -0.025em;
+}
+
+.wishlist-header p {
+    color: var(--slate-500);
+    margin-top: 6px;
+    font-size: 1.05rem;
+}
+
+/* Grid layout */
+.wishlist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 30px;
+    margin-bottom: 50px;
+}
+
+.wishlist-card {
+    background: #ffffff;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--slate-200);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.wishlist-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.wishlist-img-wrapper {
+    position: relative;
+    height: 220px;
+    overflow: hidden;
+}
+
+.wishlist-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.wishlist-card:hover .wishlist-img {
+    transform: scale(1.05);
+}
+
+.wishlist-btn-remove {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(4px);
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--danger);
+    box-shadow: var(--shadow-md);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.wishlist-btn-remove:hover {
+    background-color: var(--danger);
+    color: #ffffff;
+    transform: scale(1.1);
+}
+
+.wishlist-details {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.wishlist-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 0.85rem;
+    color: var(--slate-500);
+}
+
+.wishlist-rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--accent);
+    font-weight: 600;
+}
+
+.wishlist-duration {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.wishlist-details h3 {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--slate-900);
+    margin-bottom: 12px;
+    line-height: 1.4;
+    height: 56px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.wishlist-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 18px;
+    border-top: 1px solid var(--slate-100);
+}
+
+.wishlist-price {
+    display: flex;
+    flex-direction: column;
+}
+
+.wishlist-price .label {
+    font-size: 0.75rem;
+    color: var(--slate-400);
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+}
+
+.wishlist-price .amount {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--primary);
+}
+
+/* Empty State */
+.wishlist-empty {
+    text-align: center;
+    padding: 60px 20px;
+    background: #ffffff;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--slate-200);
+    box-shadow: var(--shadow-md);
+    max-width: 600px;
+    margin: 40px auto;
+}
+
+.wishlist-empty-icon {
+    font-size: 4rem;
+    color: var(--slate-300);
+    margin-bottom: 20px;
+}
+
+.wishlist-empty h2 {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--slate-800);
+    margin-bottom: 8px;
+}
+
+.wishlist-empty p {
+    color: var(--slate-500);
+    margin-bottom: 24px;
+}
+
+/* Fading animation for removal */
+.wishlist-card.fade-out {
+    animation: cardFadeOut 0.4s ease forwards;
+}
+
+@keyframes cardFadeOut {
+    to {
+        transform: scale(0.9) translateY(20px);
+        opacity: 0;
+        margin-bottom: -320px;
+        height: 0;
+        padding: 0;
+        border: none;
+    }
+}

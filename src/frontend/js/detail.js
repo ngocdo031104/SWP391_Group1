@@ -1,4 +1,4 @@
-\uFEFFdocument.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
     // Initialize Lucide Icons
     lucide.createIcons();
 
@@ -86,7 +86,17 @@
     if (hlDuration) hlDuration.textContent = `${activeTour.duration} Ng\u00e0y`;
     
     const hlGroupSize = document.getElementById('hl-group-size');
-    if (hlGroupSize) hlGroupSize.textContent = `${activeTour.seatsLeft} Ch\u1ed7`;
+    if (hlGroupSize) {
+        // D\u01b0\u01a1ng: Hi\u1ec3n th\u1ecb gi\u1edbi h\u1ea1n \u0111o\u00e0n (MaxParticipants do admin c\u1ea5u h\u00ecnh) thay v\u00ec "X Ch\u1ed7".
+        // activeTour.maxParticipants c\u00f3 th\u1ec3 undefined khi data thi\u1ebfu \u2192 fallback 10.
+        const maxPerDeparture = (typeof activeTour.maxParticipants === 'number' && activeTour.maxParticipants > 0)
+            ? activeTour.maxParticipants : 10;
+        hlGroupSize.textContent = `T\u1ed1i \u0111a ${maxPerDeparture} kh\u00e1ch/\u0111o\u00e0n`;
+    }
+    const hlSeatsLeft = document.getElementById('hl-seats-left');
+    if (hlSeatsLeft) {
+        hlSeatsLeft.textContent = `${activeTour.seatsLeft || 0} Ch\u1ed7`;
+    }
     const hlLang = document.getElementById('hl-languages');
     if (hlLang && activeTour.languages) {
         hlLang.textContent = activeTour.languages;

@@ -1,13 +1,13 @@
-\uFEFF/*
- * Ng\u01B0\u1EDDi l\u00E0m: D\u01B0\u01A1ng
- * Th\u1EDDi gian t\u1EA1o: 04/06/2026
- * Ch\u1EE9c n\u0103ng: JavaScript cho m\u00E0n Customer thanh to\u00E1n booking.
- * \u00DD ngh\u0129a: H\u01B0\u1EDBng d\u1EABn \u00E1p d\u1EE5ng coupon, \u0111\u1EBFm ng\u01B0\u1EE3c th\u1EDDi gian gi\u1EEF slot v\u00E0 polling tr\u1EA1ng th\u00E1i SePay \u0111\u1EC3 t\u1EF1 chuy\u1EC3n sang m\u00E0n th\u00E0nh c\u00F4ng khi webhook x\u00E1c nh\u1EADn ti\u1EC1n v\u00E0o.
+/*
+ * Ng\u01b0\u1eddi l\u00e0m: D\u01b0\u01a1ng
+ * Th\u1eddi gian t\u1ea1o: 04/06/2026
+ * Ch\u1ee9c n\u0103ng: JavaScript cho m\u00e0n Customer thanh to\u00e1n booking.
+ * \u00dd ngh\u0129a: H\u01b0\u1edbng d\u1eabn \u00e1p d\u1ee5ng coupon, \u0111\u1ebfm ng\u01b0\u1ee3c th\u1eddi gian gi\u1eef slot v\u00e0 polling tr\u1ea1ng th\u00e1i SePay \u0111\u1ec3 t\u1ef1 chuy\u1ec3n sang m\u00e0n th\u00e0nh c\u00f4ng khi webhook x\u00e1c nh\u1eadn ti\u1ec1n v\u00e0o.
  */
 (function () {
-    // couponBtn l\u00E0 n\u00FAt "\u00C1p d\u1EE5ng" \u1EDF khung coupon, ch\u1EC9 hi\u1EC3n th\u1ECB h\u01B0\u1EDBng d\u1EABn ch\u1EE9 kh\u00F4ng submit form.
+    // couponBtn l\u00e0 n\u00fat "\u00c1p d\u1ee5ng" \u1edf khung coupon, ch\u1ec9 hi\u1ec3n th\u1ecb h\u01b0\u1edbng d\u1eabn ch\u1ee9 kh\u00f4ng submit form.
     const couponBtn = document.getElementById('coupon-preview-btn');
-    // couponInput l\u00E0 \u00F4 nh\u1EADp m\u00E3 coupon, thu\u1ED9c payment-form th\u00F4ng qua thu\u1ED9c t\u00EDnh form="payment-form".
+    // couponInput l\u00e0 \u00f4 nh\u1eadp m\u00e3 coupon, thu\u1ed9c payment-form th\u00f4ng qua thu\u1ed9c t\u00ednh form="payment-form".
     const couponInput = document.getElementById('payment-coupon-code');
     // couponError l\u00E0 v\u00F9ng th\u00F4ng b\u00E1o ngay d\u01B0\u1EDBi \u00F4 coupon.
     const couponError = document.getElementById('coupon-error');

@@ -1,3 +1,9 @@
+/*
+ * Màn hình 7: Manage Tours - Quản lý tour (tạo, sửa, vô hiệu hóa)
+ * Tác giả: Dương Quang Sơn
+ * MSSV: HE186525
+ * Ngày tạo: 2026-07-21
+ */
 package Controller;
 
 import Entities.Tour;
@@ -127,6 +133,7 @@ public class AdminTourController extends HttpServlet {
 
                 JsonObject root = new JsonObject();
                 root.add("monthlyRevenue", new Gson().toJsonTree(revenueLongs));
+                root.addProperty("totalRevenue", tourDAO.getTotalRevenue());
 
                 if ("/admin/dashboard".equals(path)) {
                     // Endpoint dashboard: chỉ trả doanh thu, không gửi kèm danh sách tour.
