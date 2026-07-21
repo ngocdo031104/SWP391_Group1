@@ -1,6 +1,5 @@
 package Controller.accountant;
-// Dương làm đoạn này
-// Thời gian tạo: 14/07/2026
+
 // UC: Accountant dashboard — trang chu sau khi Accountant dang nhap.
 // Hien thi tong quan: so luong giao dich, yeu cau hoan tien dang cho xu ly.
 
