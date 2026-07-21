@@ -1,6 +1,7 @@
 package Controller.accountant;
 
-// UC25: Accountant view payments (tien vao/tien ra)
+// Dương làm đoạn này:
+// Tạo ngày 14/07/2026
 
 import Entities.Payment;
 import Entities.User;
