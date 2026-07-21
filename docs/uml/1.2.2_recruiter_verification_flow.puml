@@ -1,0 +1,51 @@
+@startuml RecruiterVerificationFlow
+title 1.2.2 Recruiter Verification Flow
+
+skinparam swimlaneWidth same
+skinparam activityBackgroundColor #F8F8F8
+skinparam activityBorderColor #2F6FED
+skinparam conditionStyle diamond
+skinparam noteBackgroundColor #FFF8E1
+skinparam noteBorderColor #D97706
+
+|#LightBlue|Recruiter|
+|#Lavender|System|
+|#Wheat|Moderator|
+
+|Recruiter|
+start
+
+:Step 1: Register recruiter account;
+note right: POST /api/auth/register\nwith role = RECRUITER
+
+:Step 2: Complete company profile;
+
+|System|
+
+while (Profile < 97%?) is (Yes)
+  :Step 4 (If profile < 97%):\nList missing fields;
+
+  |Recruiter|
+  :Update profile fields;
+
+  |System|
+  :Step 3: Recalculate completeness;
+endwhile (No)
+
+:Create verification request\n(status = Pending);
+
+|Moderator|
+:Step 5: Review verification request;
+
+if (Approve?) then (Approved)
+  :Step 6 (If approved):\nIssue verified badge\nstatus = Verified;
+else (Rejected)
+  :Step 6 (If rejected):\nReject with reason\nstatus = Rejected;
+endif
+
+|System|
+:Step 7: Notify Recruiter\nverification result;
+
+stop
+
+@enduml

@@ -1,3 +1,9 @@
+/*
+ * Màn hình 7: Manage Tours - Quản lý tour (tạo, sửa, vô hiệu hóa)
+ * Tác giả: Dương Quang Sơn
+ * MSSV: HE186525
+ * Ngày tạo: 2026-07-21
+ */
 package Controller;
 
 import Entities.Tour;

@@ -1,3 +1,9 @@
+/*
+ * Màn hình 43: Report Tour Incident - Quản lý & xử lý sự cố tour (Staff)
+ * Tác giả: Dương Quang Sơn
+ * MSSV: HE186525
+ * Ngày tạo: 2026-07-21
+ */
 package Controller.admin;
 
 import Entities.User;

@@ -1,3 +1,9 @@
+/*
+ * Màn hình 23: View Analytics Dashboard - Dashboard thống kê & phân tích
+ * Tác giả: Dương Quang Sơn
+ * MSSV: HE186525
+ * Ngày tạo: 2026-07-21
+ */
 package Controller;
 
 import Entities.AnalyticsReport;
