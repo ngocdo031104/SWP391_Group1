@@ -1,3 +1,8 @@
+﻿<%-- 
+    Liên quan đến UCs: Match Travel Companions, Manage Buddy Requests
+    Tác giả: Đỗ Vũ Minh Ngọc
+    MSSV: HE182479
+--%>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
@@ -575,7 +580,7 @@
         </c:if>
 
         <div class="layout-grid">
-            <!-- LEFT MAIN COLUMN -->
+            <!-- Cột nội dung chính bên trái -->
             <div class="main-column">
                 
                 <div class="buddy-tabs">
@@ -587,7 +592,7 @@
                     <button class="buddy-tab-btn" onclick="switchBuddyTab('friends', this)">B&#7841;n &#273;&#7891;ng h&#224;nh (${acceptedBuddies.size()})</button>
                 </div>
 
-                <!-- Tab: Discover -->
+                <!-- Tab: Khám phá bạn đồng hành -->
                 <div class="buddy-tab-content active" id="buddy-tab-discover">
                     <div class="matches-header">
                         <h3>G&#7907;i &#253; h&#224;ng &#273;&#7847;u cho b&#7841;n <i data-lucide="info" style="width: 16px; color: #94a3b8;"></i></h3>
@@ -688,7 +693,7 @@
                     </div>
                 </div>
 
-                <!-- Tab: Received -->
+                <!-- Tab: Lời mời đã nhận -->
                 <div class="buddy-tab-content" id="buddy-tab-received">
                     <div class="request-list">
                         <c:if test="${empty receivedRequests}">
@@ -736,7 +741,7 @@
                     </div>
                 </div>
 
-                <!-- Tab: Sent -->
+                <!-- Tab: Lời mời đã gửi -->
                 <div class="buddy-tab-content" id="buddy-tab-sent">
                     <div class="request-list">
                         <c:if test="${empty sentRequests}">
@@ -775,7 +780,7 @@
                     </div>
                 </div>
 
-                <!-- Tab: Friends -->
+                <!-- Tab: Danh sách bạn bè -->
                 <div class="buddy-tab-content" id="buddy-tab-friends">
                     <div class="request-list">
                         <c:if test="${empty acceptedBuddies}">
@@ -1013,3 +1018,4 @@
 </script>
 
 <jsp:include page="/common/footer.jsp"/>
+

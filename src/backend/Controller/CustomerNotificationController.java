@@ -1,3 +1,8 @@
+﻿/*
+ * Liên quan đến UCs: View Notifications
+ * Tác giả: Đỗ Vũ Minh Ngọc
+ * MSSV: HE182479
+ */
 package Controller;
 
 import Entities.Notification;
@@ -28,7 +33,7 @@ public class CustomerNotificationController extends HttpServlet {
 
         String path = request.getServletPath();
 
-        // --- Đánh dấu một thông báo đã đọc (AJAX) ---
+        // --- ÄĂ¡nh dáº¥u má»™t thĂ´ng bĂ¡o Ä‘Ă£ Ä‘á»c (AJAX) ---
         if (path.equals("/customer/notifications/read")) {
             NotificationDAO dao = new NotificationDAO();
             try {
@@ -38,7 +43,7 @@ public class CustomerNotificationController extends HttpServlet {
                         int notifId = Integer.parseInt(idStr);
                         dao.markAsRead(notifId);
                     } catch (NumberFormatException e) {
-                        // ignore invalid id
+                        // Bỏ qua ID không hợp lệ
                     }
                 }
             } finally {
@@ -50,7 +55,7 @@ public class CustomerNotificationController extends HttpServlet {
             return;
         }
 
-        // --- Đánh dấu tất cả đã đọc ---
+        // --- ÄĂ¡nh dáº¥u táº¥t cáº£ Ä‘Ă£ Ä‘á»c ---
         if (path.equals("/customer/notifications/read-all")) {
             NotificationDAO dao = new NotificationDAO();
             try {
@@ -62,7 +67,7 @@ public class CustomerNotificationController extends HttpServlet {
             return;
         }
 
-        // --- Xem danh sách thông báo (tạo DAO mới mỗi request) ---
+        // --- Xem danh sĂ¡ch thĂ´ng bĂ¡o (táº¡o DAO má»›i má»—i request) ---
         NotificationDAO dao = new NotificationDAO();
         try {
             String category = request.getParameter("category");
@@ -92,3 +97,4 @@ public class CustomerNotificationController extends HttpServlet {
         doGet(request, response);
     }
 }
+

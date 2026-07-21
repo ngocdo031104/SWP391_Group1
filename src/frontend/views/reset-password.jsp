@@ -1,3 +1,8 @@
+﻿<%-- 
+    Liên quan đến UCs: Recover Password
+    Tác giả: Đỗ Vũ Minh Ngọc
+    MSSV: HE182479
+--%>
 &#65279;<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
@@ -16,7 +21,7 @@
 </head>
 <body>
 
-<!-- Navbar -->
+<!-- Thanh điều hướng (Navbar) -->
 <nav class="navbar">
   <a href="${pageContext.request.contextPath}/home" class="logo" id="nav-logo">
     <div class="logo-icon">T</div>
@@ -28,10 +33,10 @@
   </div>
 </nav>
 
-<!-- Auth Layout -->
+<!-- Bố cục trang xác thực -->
 <div class="auth-wrapper" style="padding-top:68px">
 
-  <!-- Left Hero -->
+  <!-- Cột trái: Hình ảnh giới thiệu -->
   <div class="auth-hero">
     <div class="auth-hero-content">
       <h1>B&#7843;o m&#7853;t<br><em>T&#224;i kho&#7843;n</em></h1>
@@ -39,7 +44,7 @@
     </div>
   </div>
 
-  <!-- Right Form Panel -->
+  <!-- Cột phải: Khung nhập liệu -->
   <div class="auth-panel">
     <div class="auth-form-wrap fade-up">
 
@@ -48,7 +53,7 @@
         Vui l&#242;ng nh&#7853;p m&#7853;t kh&#7849;u m&#7899;i c&#7911;a b&#7841;n b&#234;n d&#432;&#7899;i. M&#7853;t kh&#7849;u ph&#7843;i c&#243; &#237;t nh&#7845;t 8 k&#253; t&#7921;.
       </p>
 
-      <!-- Server messages -->
+      <!-- Hiển thị thông báo lỗi từ Server -->
       <c:if test="${not empty errorMessage}">
         <div class="alert alert-error fade-up">
           <i class="fa fa-circle-exclamation"></i> ${errorMessage}
@@ -170,3 +175,4 @@ document.getElementById('resetForm').addEventListener('submit', function(e) {
 </script>
 </body>
 </html>
+

@@ -1,3 +1,8 @@
+﻿<%-- 
+    Liên quan đến UCs: Manage User Accounts
+    Tác giả: Đỗ Vũ Minh Ngọc
+    MSSV: HE182479
+--%>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
@@ -42,7 +47,7 @@
 
         <section class="view-panel active">
             <div class="detail-grid">
-                <!-- Left Column: Avatar & Basic Info -->
+                <!-- Cột trái: Ảnh đại diện và thông tin cơ bản -->
                 <div class="detail-card">
                     <div style="text-align: center;">
                         <c:choose>
@@ -64,7 +69,7 @@
                     </div>
                 </div>
 
-                <!-- Right Column: Detailed Information -->
+                <!-- Cột phải: Thông tin chi tiết -->
                 <div class="detail-card">
                     <h3 style="margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px;">Th&#244;ng Tin Chi Ti&#7871;t</h3>
                     
@@ -126,3 +131,4 @@
 </script>
 </body>
 </html>
+
