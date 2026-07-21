@@ -64,7 +64,8 @@ public class PaymentDAO extends DBContext {
         }
         return false;
     }
-    // Dương làm đoạn này: kiểm tra mã giao dịch SePay đã từng được lưu chưa.
+    // Người làm đoạn này: Dương
+    // Kiểm tra mã giao dịch SePay đã từng được lưu chưa.
     // Method này giúp webhook không tạo trùng Payment khi SePay gửi lại cùng một giao dịch nhiều lần.
     public boolean existsByTransactionRef(String transactionRef) {
         String sql = "SELECT 1 FROM Payment WHERE TransactionRef = ?";
@@ -79,7 +80,8 @@ public class PaymentDAO extends DBContext {
         return false;
     }
 
-    // Dương làm phần này: lấy thông tin thanh toán theo mã đơn đặt
+    // Người làm đoạn này: Dương
+    // Lấy thông tin thanh toán chi tiết dựa theo mã đơn đặt (BookingID).
     public Payment getPaymentByBookingId(int bookingId) {
         String sql = "SELECT PaymentID, BookingID, PaymentMethod, TransactionRef, Amount, Currency, Status, PaidAt, GatewayResponse, CreatedAt "
                    + "FROM Payment WHERE BookingID = ?";

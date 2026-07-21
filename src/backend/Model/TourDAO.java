@@ -358,11 +358,8 @@ public class TourDAO extends DBContext {
         tour.setRating(reviewCount > 0 ? avgRating : 0.0);
         tour.setReviewsCount(reviewCount);
         
-        // Dương làm đoạn này: Không map TotalSeats, AvailableSeats và NextDeparture vào Tour vì các dữ liệu này thuộc bảng TourSchedule.
-        // Khi cần số ghế hoặc ngày khởi hành, màn hình sẽ lấy từ danh sách TourSchedule của tour để tránh sai mô hình dữ liệu.
-        // NOTE: getAllToursAdmin() trả về các cột TotalSeats, AvailableSeats, NextDeparture qua subquery (đã SELECT ở trên),
-        // nên nếu KHÔNG map ở đây thì JS dashboard sẽ thấy seatsLeft=0 → hiển thị sai "0/N chỗ".
-        // → Map đầy đủ để dashboard/management hiển thị đúng, đồng thời fallback về MaxParticipants khi tour chưa có schedule.
+        // Người làm đoạn này: Dương
+        // Lấy thông tin bổ sung về số ghế và ngày khởi hành tiếp theo (nếu có trong ResultSet).
         if (columnExists(rs, "TotalSeats")) {
             tour.setTotalSeats(rs.getInt("TotalSeats"));
         }

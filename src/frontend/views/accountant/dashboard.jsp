@@ -1,11 +1,11 @@
-<%-- 
-    Màn hình 38: Export Revenue Reports - Xuất báo cáo doanh thu & dữ liệu vận hành
-    Tác giả: Dương Quang Sơn
-    MSSV: HE186525
-    Ngày tạo: 2026-07-21
---%>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
+<%--
+    Người làm: Dương
+    Ngày tạo file: 2026-07-21
+    Ý nghĩa: Giao diện tổng quan cho Kế toán (Accountant).
+    Hiển thị cảnh báo yêu cầu hoàn tiền đang chờ, thống kê thanh toán và các lối tắt chức năng.
+--%>
 
 <c:if test="${empty sessionScope.sessionUser
     || (sessionScope.sessionUser.role.roleName ne 'Accountant'
