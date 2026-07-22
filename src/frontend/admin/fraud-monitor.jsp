@@ -124,9 +124,12 @@
                                         <option value="Cleared" <c:if test="${reviewStatus == 'Cleared'}">selected</c:if>>&#272;&#227; x&#243;a &#225;n</option>
                                     </select>
                                 </div>
-                                <div class="col-md-2 d-flex align-items-end">
-                                    <button type="submit" class="btn btn-primary me-2"><i class="fas fa-search"></i> T&#236;m ki&#7871;m</button>
-                                    <a href="${pageContext.request.contextPath}/admin/fraud-monitor" class="btn btn-outline-secondary text-secondary border-secondary"><i class="fas fa-undo"></i> &#272;&#7863;t l&#7841;i</a>
+                                <div class="col-md-2 d-flex flex-column">
+                                    <label class="form-label">&nbsp;</label>
+                                    <div class="d-flex">
+                                        <button type="submit" class="btn btn-primary me-2"><i class="fas fa-search"></i> T&#236;m ki&#7871;m</button>
+                                        <a href="${pageContext.request.contextPath}/admin/fraud-monitor" class="btn btn-outline-secondary text-secondary border-secondary"><i class="fas fa-undo"></i> &#272;&#7863;t l&#7841;i</a>
+                                    </div>
                                 </div>
                             </div>
                         </form>
@@ -177,7 +180,7 @@
                                                             <c:otherwise><span class="badge bg-secondary"><c:out value="${txn.paymentStatus}" /></span></c:otherwise>
                                                         </c:choose>
                                                     </td>
-                                                    <td class="text-truncate text-danger fw-bold" style="max-width: 200px; cursor: pointer;" 
+                                                    <td class="text-truncate text-danger fw-bold" style="max-width: 300px; cursor: pointer;" 
                                                         data-bs-toggle="tooltip" data-bs-placement="left" 
                                                         title="<c:out value='${txn.fraudReason}'/>">
                                                         <c:out value="${txn.fraudReason}" />
