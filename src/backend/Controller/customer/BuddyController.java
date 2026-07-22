@@ -128,18 +128,18 @@ public class BuddyController extends HttpServlet {
                     try {
                         boolean sent = buddyRequestDAO.sendRequest(currentUserId, receiverId);
                         if (sent) {
-                            session.setAttribute("successMsg", "\u00c4\u0090\u0102\u00a3 g\u1eedi l\u00e1\u00bb\u009di m\u00e1\u00bb\u009di k\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng!");
+                            session.setAttribute("successMsg", "Đã gửi lời mời kết nối thành công!");
                             Notification notif = new Notification();
                             notif.setUserId(receiverId);
                             notif.setSenderId(currentUserId);
-                            notif.setTitle("L\u00e1\u00bb\u009di m\u00e1\u00bb\u009di k\u1ebft n\u1ed1i m\u1edbi");
-                            notif.setContent(sessionUser.getFullName() + " v\u1eeba g\u1eedi cho b\u1ea1n m\u1ed9t l\u00e1\u00bb\u009di m\u00e1\u00bb\u009di k\u1ebft n\u1ed1i Buddy. H\u00e3y ki\u1ec3m tra v\u00e0 ph\u1ea3n h\u1ed3i nh\u00e9!");
+                            notif.setTitle("Lời mời kết nối mới");
+                            notif.setContent(sessionUser.getFullName() + " vừa gửi cho bạn một lời mời kết nối Buddy. Hãy kiểm tra và phản hồi nhé!");
                             notif.setChannel("In-App");
                             notif.setCategory("Buddy Request");
                             NotificationDAO notifDAO = new NotificationDAO();
                             notifDAO.insertNotification(notif);
                         } else {
-                            session.setAttribute("errorMsg", "Kh\u00f4ng th\u1ec3 g\u1eedi l\u00e1\u00bb\u009di m\u00e1\u00bb\u009di. Vui l\u00f2ng th\u1eed l\u1ea1i.");
+                            session.setAttribute("errorMsg", "Không thể gửi lời mời. Vui lòng thử lại.");
                         }
                     } catch (Exception ex) {
                         session.setAttribute("errorMsg", "DB Error: " + ex.getMessage());
@@ -151,20 +151,20 @@ public class BuddyController extends HttpServlet {
                     BuddyRequest reqToAccept = buddyRequestDAO.getRequestById(reqIdAccept);
                     boolean accepted = buddyRequestDAO.updateRequestStatus(reqIdAccept, "Accepted");
                     if (accepted) {
-                        session.setAttribute("successMsg", "\u00c4\u0090\u0102\u00a3 ch\u1ea5p nh\u1eadn l\u00e1\u00bb\u009di m\u00e1\u00bb\u009di k\u1ebft n\u1ed1i!");
+                        session.setAttribute("successMsg", "Đã chấp nhận lời mời kết nối!");
                         if (reqToAccept != null) {
                             Notification notif = new Notification();
                             notif.setUserId(reqToAccept.getSenderId());
                             notif.setSenderId(currentUserId);
-                            notif.setTitle("L\u00e1\u00bb\u009di m\u00e1\u00bb\u009di k\u1ebft b\u1ea1n \u0111\u01b0\u1ee3c ch\u1ea5p nh\u1eadn");
-                            notif.setContent(sessionUser.getFullName() + " \u0111\u00e3 ch\u1ea5p nh\u1eadn l\u00e1\u00bb\u009di m\u00e1\u00bb\u009di k\u1ebft n\u1ed1i Buddy c\u1ee7a b\u1ea1n. Kh\u00e1m ph\u00e1 chuy\u1ebfn \u0111i ngay!");
+                            notif.setTitle("Lời mời kết bạn được chấp nhận");
+                            notif.setContent(sessionUser.getFullName() + " đã chấp nhận lời mời kết nối Buddy của bạn. Khám phá chuyến đi ngay!");
                             notif.setChannel("In-App");
                             notif.setCategory("System Announcement");
                             NotificationDAO notifDAO = new NotificationDAO();
                             notifDAO.insertNotification(notif);
                         }
                     } else {
-                        session.setAttribute("errorMsg", "L\u1ed7i khi ch\u1ea5p nh\u1eadn l\u00e1\u00bb\u009di m\u00e1\u00bb\u009di.");
+                        session.setAttribute("errorMsg", "Lỗi khi chấp nhận lời mời.");
                     }
                     break;
 
@@ -172,9 +172,9 @@ public class BuddyController extends HttpServlet {
                     int reqIdReject = Integer.parseInt(request.getParameter("requestId"));
                     boolean rejected = buddyRequestDAO.updateRequestStatus(reqIdReject, "Rejected");
                     if (rejected) {
-                        session.setAttribute("successMsg", "\u00c4\u0090\u0102\u00a3 t\u1eeb ch\u1ed1i l\u00e1\u00bb\u009di m\u00e1\u00bb\u009di.");
+                        session.setAttribute("successMsg", "Đã từ chối lời mời.");
                     } else {
-                        session.setAttribute("errorMsg", "L\u1ed7i khi t\u1eeb ch\u1ed1i l\u00e1\u00bb\u009di m\u00e1\u00bb\u009di.");
+                        session.setAttribute("errorMsg", "Lỗi khi từ chối lời mời.");
                     }
                     break;
 
@@ -182,9 +182,9 @@ public class BuddyController extends HttpServlet {
                     int reqIdCancel = Integer.parseInt(request.getParameter("requestId"));
                     boolean cancelled = buddyRequestDAO.cancelRequest(reqIdCancel, currentUserId);
                     if (cancelled) {
-                        session.setAttribute("successMsg", "\u00c4\u0090\u0102\u00a3 h\u1ee7y l\u00e1\u00bb\u009di m\u00e1\u00bb\u009di g\u1eedi \u0111i.");
+                        session.setAttribute("successMsg", "Đã hủy lời mời gửi đi.");
                     } else {
-                        session.setAttribute("errorMsg", "Kh\u00f4ng th\u1ec3 h\u1ee7y l\u00e1\u00bb\u009di m\u00e1\u00bb\u009di. L\u00e1\u00bb\u009di m\u00e1\u00bb\u009di c\u00f3 th\u1ec3 \u0111\u00e3 \u0111\u01b0\u1ee3c ch\u1ea5p nh\u1eadn ho\u1eb7c b\u1ecb t\u1eeb ch\u1ed1i.");
+                        session.setAttribute("errorMsg", "Không thể hủy lời mời. Lời mời có thể đã được chấp nhận hoặc bị từ chối.");
                     }
                     break;
 
@@ -192,9 +192,9 @@ public class BuddyController extends HttpServlet {
                     int targetId = Integer.parseInt(request.getParameter("targetId"));
                     boolean unfriended = buddyRequestDAO.unfriendBuddy(currentUserId, targetId);
                     if (unfriended) {
-                        session.setAttribute("successMsg", "\u00c4\u0090\u0102\u00a3 h\u1ee7y k\u1ebft b\u1ea1n th\u00e0nh c\u00f4ng.");
+                        session.setAttribute("successMsg", "Đã hủy kết bạn thành công.");
                     } else {
-                        session.setAttribute("errorMsg", "L\u1ed7i khi h\u1ee7y k\u1ebft b\u1ea1n.");
+                        session.setAttribute("errorMsg", "Lỗi khi hủy kết bạn.");
                     }
                     break;
             }
