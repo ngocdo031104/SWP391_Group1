@@ -1,3 +1,8 @@
+﻿<%-- 
+    Liên quan đến UCs: Authenticate User
+    Tác giả: Đỗ Vũ Minh Ngọc
+    MSSV: HE182479
+--%>
 &#65279;<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 <%-- 
     Document   : login.jsp
@@ -16,7 +21,7 @@
 </head>
 <body>
 
-<!-- Navbar -->
+<!-- Thanh điều hướng (Navbar) -->
 <nav class="navbar">
   <a href="${pageContext.request.contextPath}/home" class="logo" id="nav-logo">
     <div class="logo-icon">T</div>
@@ -29,10 +34,10 @@
   </div>
 </nav>
 
-<!-- Auth Layout -->
+<!-- Bố cục trang xác thực -->
 <div class="auth-wrapper" style="padding-top:68px">
 
-  <!-- Left Hero -->
+  <!-- Cột trái: Hình ảnh giới thiệu -->
   <div class="auth-hero">
     <div class="auth-hero-content">
       <h1>Kh&#225;m ph&#225; <em>th&#7871; gi&#7899;i</em><br>c&#249;ng TourBuddy</h1>
@@ -45,7 +50,7 @@
     </div>
   </div>
 
-  <!-- Right Form Panel -->
+  <!-- Cột phải: Khung nhập liệu -->
   <div class="auth-panel">
     <div class="auth-form-wrap fade-up">
 
@@ -55,7 +60,7 @@
         <a href="${pageContext.request.contextPath}/register">&#272;&#259;ng k&#253; ngay</a>
       </p>
 
-      <!-- Server messages -->
+      <!-- Hiển thị thông báo lỗi từ Server -->
       <c:if test="${not empty errorMessage}">
         <div class="alert alert-error fade-up">
           <i class="fa fa-circle-exclamation"></i> ${errorMessage}
@@ -186,4 +191,5 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
 </script>
 </body>
 </html>
+
 

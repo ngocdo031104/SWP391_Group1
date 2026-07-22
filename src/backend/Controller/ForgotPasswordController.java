@@ -1,3 +1,8 @@
+/*
+ * Liên quan đến UCs: Recover Password
+ * Tác giả: Đỗ Vũ Minh Ngọc
+ * MSSV: HE182479
+ */
 package Controller;
 
 import Model.UserDAO;
@@ -66,3 +71,4 @@ public class ForgotPasswordController extends HttpServlet {
         request.getRequestDispatcher("/views/forgot-password.jsp").forward(request, response);
     }
 }
+

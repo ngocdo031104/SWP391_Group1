@@ -1,10 +1,5 @@
 package Model;
 
-// Người làm: Dương
-// Thời gian tạo: 04/06/2026
-// Chức năng: DAO xử lý dữ liệu liên quan bảng Invoice.
-// Ý nghĩa: Đọc VATRate từ cấu hình cột Invoice.VATRate trong database
-
 import Entities.Invoice;
 import Utils.DBContext;
 import java.sql.PreparedStatement;
@@ -56,10 +51,10 @@ public class InvoiceDAO extends DBContext {
         }
     }
 
-    // Dương làm phần này: tạo mới một bản ghi Invoice trong database sau khi thanh toán thành công.
-    // Hàm nhận đầy đủ thông tin hóa đơn từ controller, INSERT vào bảng Invoice và
-    // cập nhật lại invoiceId trên object để caller có thể dùng ngay mà không cần query lại.
-    // RETURN_GENERATED_KEYS giúp lấy InvoiceID tự tăng vừa được tạo bởi SQL Server.
+    // Người làm đoạn này: Dương
+    // Tạo mới một bản ghi Invoice trong database sau khi thanh toán thành công.
+    // Nhận đầy đủ thông tin hóa đơn, INSERT vào bảng Invoice và cập nhật lại ID trên object để dùng ngay.
+    // Sử dụng RETURN_GENERATED_KEYS để lấy InvoiceID tự tăng.
     public boolean createInvoice(Invoice invoice) {
         String sql = "INSERT INTO Invoice (InvoiceCode, BookingID, PaymentID, SubTotal, VATRate, VATAmount, DiscountAmount, TotalAmount, IssuedAt, IssuedBy) "
                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, SYSDATETIME(), ?)";
@@ -94,9 +89,10 @@ public class InvoiceDAO extends DBContext {
         return false;
     }
 
-    // Dương làm phần này: lấy hóa đơn theo BookingID để kiểm tra hoặc hiển thị cho khách.
-    // Một booking chỉ có tối đa một Invoice nên hàm trả về đối tượng đơn lẻ thay vì List.
-    // Dùng rs.wasNull() sau getInt("IssuedBy") vì cột này cho phép NULL (hệ thống tự tạo).
+    // Người làm đoạn này: Dương
+    // Lấy hóa đơn theo BookingID để kiểm tra hoặc hiển thị cho khách.
+    // Vì một booking chỉ có tối đa một Invoice nên hàm trả về đối tượng đơn lẻ.
+    // Có xử lý wasNull() cho IssuedBy vì cột này cho phép NULL.
     public Invoice getInvoiceByBookingId(int bookingId) {
         String sql = "SELECT * FROM Invoice WHERE BookingID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {

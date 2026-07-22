@@ -1,10 +1,5 @@
 package Model;
 
-// Người làm: Dương (Updated by Antigravity)
-// Thời gian tạo: 04/06/2026
-// Chức năng: DAO xử lý dữ liệu bảng TourSchedule.
-// Ý nghĩa: Cung cấp lịch khởi hành cho luồng booking Customer và các tác vụ CRUD của Admin.
-
 import Entities.TourSchedule;
 import Entities.Tour;
 import Entities.User;

@@ -1,3 +1,8 @@
+/*
+ * Liên quan đến UCs: Monitor Fraudulent Transactions
+ * Tác giả: Đỗ Vũ Minh Ngọc
+ * MSSV: HE182479
+ */
 package Controller.admin;
 
 import Entities.FraudTransactionDTO;
@@ -112,7 +117,7 @@ public class FraudMonitoringController extends HttpServlet {
             }
         }
         
-        // Redirect back to GET
+        // Chuyển hướng về trang danh sách (GET)
         String referer = request.getHeader("Referer");
         if (referer != null) {
             response.sendRedirect(referer);
@@ -121,3 +126,4 @@ public class FraudMonitoringController extends HttpServlet {
         }
     }
 }
+

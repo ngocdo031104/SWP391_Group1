@@ -1,3 +1,8 @@
+/*
+ * Liên quan đến UCs: Register Account
+ * Tác giả: Đỗ Vũ Minh Ngọc
+ * MSSV: HE182479
+ */
 package Controller;
 
 /**
@@ -57,13 +62,13 @@ public class RegisterController extends HttpServlet {
         boolean hasError = false;
 
         // ==========================
-        // Validate Email
+        // Xác thực định dạng Email
         // ==========================
         if (email == null || email.isEmpty()) {
             request.setAttribute("emailError", "Email không được để trống");
             hasError = true;
         } else if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
-            request.setAttribute("emailError", "Định dạng email không hợp lệ");
+            request.setAttribute("emailError", "Äá»‹nh dạng email không hợp lệ");
             hasError = true;
         } else if (userDAO.checkEmailExists(email)) {
             request.setAttribute("emailError", "Email đã được đăng ký");
@@ -71,7 +76,7 @@ public class RegisterController extends HttpServlet {
         }
 
         // ==========================
-        // Validate Password
+        // Xác thực Mật khẩu (độ dài, ký tự)
         // ==========================
         if (password == null || password.isEmpty()) {
             request.setAttribute("passwordError", "Mật khẩu không được để trống");
@@ -87,7 +92,7 @@ public class RegisterController extends HttpServlet {
         }
 
         // ==========================
-        // Validate Confirm Password
+        // Xác nhận lại mật khẩu
         // ==========================
         if (confirmPassword == null || confirmPassword.isEmpty()) {
             request.setAttribute("confirmError",
@@ -100,24 +105,24 @@ public class RegisterController extends HttpServlet {
         }
 
         // ==========================
-        // Validate Full Name
+        // Kiểm tra độ dài và định dạng Họ tên
         // ==========================
         if (fullName == null || fullName.isEmpty()) {
             request.setAttribute("nameError",
-                    "Họ và tên không được để trống");
+                    "Há» và tên không được để trống");
             hasError = true;
         } else if (fullName.length() < 2 || fullName.length() > 100) {
             request.setAttribute("nameError",
-                    "Họ và tên phải từ 2 đến 100 ký tự");
+                    "Há» và tên phải từ 2 đến 100 ký tự");
             hasError = true;
         } else if (!fullName.matches("^[\\p{L} .'-]+$")) {
             request.setAttribute("nameError",
-                    "Họ và tên chỉ được chứa chữ cái và khoảng trắng");
+                    "Há» và tên chỉ được chứa chữ cái và khoảng trắng");
             hasError = true;
         }
 
         // ==========================
-        // Validate Phone
+        // Kiểm tra định dạng số điện thoại
         // ==========================
         if (phone == null || phone.isEmpty()) {
             request.setAttribute("phoneError",
@@ -130,7 +135,7 @@ public class RegisterController extends HttpServlet {
         }
 
         // ==========================
-        // Validate DOB
+        // Kiểm tra ngày sinh (trên 13 tuổi)
         // ==========================
         if (dob == null || dob.isEmpty()) {
             request.setAttribute("dobError",
@@ -158,17 +163,17 @@ public class RegisterController extends HttpServlet {
 
             } catch (IllegalArgumentException e) {
                 request.setAttribute("dobError",
-                        "Định dạng ngày sinh không hợp lệ");
+                        "Äá»‹nh dạng ngày sinh không hợp lệ");
                 hasError = true;
             }
         }
 
         // ==========================
-        // Validate Gender
+        // Xác thực giới tính
         // ==========================
         if (gender == null || gender.isEmpty()) {
             request.setAttribute("genderError",
-                    "Vui lòng chọn giới tính");
+                    "Vui lòng chá»n giới tính");
             hasError = true;
         } else if (!gender.equals("Male")
                 && !gender.equals("Female")
@@ -180,11 +185,11 @@ public class RegisterController extends HttpServlet {
         }
 
         // ==========================
-        // Validate Role
+        // Xác thực quyền (Customer / Guide)
         // ==========================
         if (role == null || role.isEmpty()) {
             request.setAttribute("roleError",
-                    "Vui lòng chọn vai trò");
+                    "Vui lòng chá»n vai trò");
             hasError = true;
         } else if (!role.equals("Customer")
                 && !role.equals("Guide")) {
@@ -235,14 +240,14 @@ public class RegisterController extends HttpServlet {
             boolean success = userDAO.register(user, profile);
 
             if (success) {
-                // Generate OTP
+                // Khởi tạo mã OTP xác thực 6 số
                 String otp = String.format("%06d", new Random().nextInt(999999));
                 
-                // Save to session
+                // Lưu tạm email và OTP vào session
                 request.getSession().setAttribute("verify_email", email);
                 request.getSession().setAttribute("verify_otp", otp);
                 
-                // Send email
+                // Gửi mã OTP xác thực qua Email
                 try {
                     EmailUtil.sendOTP(email, otp);
                 } catch (Exception e) {
@@ -256,7 +261,7 @@ public class RegisterController extends HttpServlet {
 
                 request.setAttribute(
                         "errorMessage",
-                        "Đăng ký không thành công. Vui lòng thử lại."
+                        "ÄÄƒng ký không thành công. Vui lòng thử lại."
                 );
 
                 request.getRequestDispatcher("/views/register.jsp")

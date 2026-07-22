@@ -7,17 +7,18 @@
 <%@ page import="Entities.TourSchedule" %>
 <%@ page import="Entities.BookingParticipant" %>
 <%@ page import="Controller.customer.BookingFlowSupport.BookingDraft" %>
+<%--
+    Người làm: Dương
+    Thời gian tạo: 04/06/2026
+    Chức năng: Màn Customer xác nhận chi tiết đơn đặt tour.
+    Ý nghĩa: Hiển thị tour, lịch khởi hành, danh sách người đi và tổng tiền trước khi hệ thống tạo booking trong DB.
+--%>
 <%
-    // Ng&#432;&#7901;i l&#224;m: D&#432;&#417;ng
-    // Th&#7901;i gian t&#7841;o: 04/06/2026
-    // Ch&#7913;c n&#259;ng: M&#224;n Customer x&#225;c nh&#7853;n chi ti&#7871;t &#273;&#417;n &#273;&#7863;t tour.
-    // &#221; ngh&#297;a: Hi&#7875;n th&#7883; tour, l&#7883;ch kh&#7903;i h&#224;nh, danh s&#225;ch ng&#432;&#7901;i &#273;i v&#224; t&#7893;ng ti&#7873;n tr&#432;&#7899;c khi h&#7879; th&#7889;ng t&#7841;o booking trong DB.
-
-    // Ch&#7881; n&#7841;p CSS c&#7911;a m&#224;n review v&#236; m&#224;n n&#224;y kh&#244;ng c&#7847;n x&#7917; l&#253; JavaScript ri&#234;ng.
+    // Chỉ nạp CSS của màn review vì màn này không cần xử lý JavaScript riêng.
     request.setAttribute("extraCss", "css/customer-booking-review.css");
     request.setAttribute("bodyClass", "booking-page");
 
-    // tour v&#224; selectedSchedule &#273;&#432;&#7907;c controller &#273;&#7885;c l&#7841;i t&#7915; draft trong session &#273;&#7875; &#273;&#7843;m b&#7843;o d&#7919; li&#7879;u review &#273;&#250;ng v&#7899;i l&#7921;a ch&#7885;n tr&#432;&#7899;c &#273;&#243;.
+    // tour và selectedSchedule được controller đọc lại từ draft trong session để đảm bảo dữ liệu review đúng với lựa chọn trước đó.
     Tour tour = (Tour) request.getAttribute("tour");
     TourSchedule selectedSchedule = (TourSchedule) request.getAttribute("selectedSchedule");
 

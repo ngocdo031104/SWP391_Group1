@@ -1,3 +1,8 @@
+/*
+ * Liên quan đến UCs: Manage User Profile
+ * Tác giả: Đỗ Vũ Minh Ngọc
+ * MSSV: HE182479
+ */
 package Controller;
 
 /**
@@ -63,7 +68,7 @@ public class ProfileController extends HttpServlet {
         List<ActivityLog> activityLogs = userDAO.getActivityLogs(user.getUserId());
         request.setAttribute("activityLogs", activityLogs);
         
-        // Fetch travel preferences
+        // Lấy thông tin sở thích du lịch từ CSDL
         Model.MatchingDAO matchingDAO = new Model.MatchingDAO();
         Entities.TravelPreference myPref = matchingDAO.getPreference(user.getUserId());
         if (myPref == null) {
@@ -71,7 +76,7 @@ public class ProfileController extends HttpServlet {
         }
         request.setAttribute("myPref", myPref);
         
-        // Fetch wishlist count
+        // Lấy số lượng tour trong danh sách yêu thích
         Model.WishlistDAO wishlistDAO = new Model.WishlistDAO();
         int totalFavorites = wishlistDAO.countWishlistTours(user.getUserId());
         request.setAttribute("totalFavorites", totalFavorites);
@@ -143,7 +148,7 @@ public class ProfileController extends HttpServlet {
                 invalidProfile.setGender(gender);
                 invalidProfile.setAddress(address);
 
-                // ── Validate fullName ──────────────────────────────
+                // --- Validate fullName ------------------------------
                 if (fullName.isEmpty()) {
                     sendErrorBack(request, response, invalidUser, invalidProfile, "Họ và tên không được để trống");
                     return;
@@ -157,20 +162,20 @@ public class ProfileController extends HttpServlet {
                     return;
                 }
 
-                // ── Validate phone (tùy chọn) ──────────────────────
+                // --- Validate phone (tùy chọn) ----------------------
                 if (!phone.isEmpty() && !phone.matches("^(03|05|07|08|09)[0-9]{8}$")) {
                     sendErrorBack(request, response, invalidUser, invalidProfile, "Số điện thoại không hợp lệ");
                     return;
                 }
 
-                // ── Validate gender ────────────────────────────────
+                // --- Validate gender --------------------------------
                 List<String> validGenders = Arrays.asList("Male", "Female", "Other");
                 if (!gender.isEmpty() && !validGenders.contains(gender)) {
                     sendErrorBack(request, response, invalidUser, invalidProfile, "Giới tính không hợp lệ");
                     return;
                 }
 
-                // ── Validate dob (tùy chọn) ────────────────────────
+                // --- Validate dob (tùy chọn) ------------------------
                 Date parsedDob = null;
                 if (!dob.isEmpty()) {
                     try {
@@ -192,7 +197,7 @@ public class ProfileController extends HttpServlet {
                 }
                 invalidProfile.setDateOfBirth(parsedDob);
 
-                // ── Validate chiều dài & phòng chống XSS ────────────
+                // --- Validate chiều dài & phòng chống XSS -----------
                 if (address.length() > 255 || biography.length() > 1000) {
                     sendErrorBack(request, response, invalidUser, invalidProfile, "Độ dài địa chỉ hoặc tiểu sử vượt quá giới hạn");
                     return;
@@ -287,7 +292,6 @@ public class ProfileController extends HttpServlet {
         return lower.contains("<script") || lower.contains("javascript:") || lower.contains("onerror=");
     }
 
-    // ─── updateAvatar ─────────────────────────────────────────────────────────
     private void updateAvatar(HttpServletRequest request, HttpServletResponse response, User sessionUser)
             throws ServletException, IOException {
         try {
@@ -355,7 +359,6 @@ public class ProfileController extends HttpServlet {
         doGet(request, response);
     }
 
-    // ─── changePassword ───────────────────────────────────────────────────────
     private void changePassword(HttpServletRequest request, HttpServletResponse response, User sessionUser)
             throws ServletException, IOException {
         try {
@@ -418,7 +421,6 @@ public class ProfileController extends HttpServlet {
         doGet(request, response);
     }
 
-    // ─── updateNotifications ──────────────────────────────────────────────────
     private void updateNotifications(HttpServletRequest request, HttpServletResponse response, User sessionUser)
             throws ServletException, IOException {
         request.setAttribute("successMessage", "Cập nhật cài đặt thông báo thành công");
@@ -426,7 +428,6 @@ public class ProfileController extends HttpServlet {
         doGet(request, response);
     }
 
-    // ─── Helpers ─────────────────────────────────────────────────────────────
     private String getFileName(Part part) {
         String contentDisp = part.getHeader("content-disposition");
         if (contentDisp == null) {

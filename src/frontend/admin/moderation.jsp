@@ -108,30 +108,30 @@
     <main class="main-content theme-light">
         <!-- Top Header -->
         <header class="top-header">
-            <h1>Ki&#7875;m Duy&#7879;t N&#7899;i Dung</h1>
+            <h1>Kiểm Duyệt Nội Dung</h1>
             <jsp:include page="admin-header-right.jsp" />
         </header>
 
         <!-- Tab Buttons -->
         <div class="moderation-tabs">
             <button class="mod-tab active" data-target="tab-reviews">
-                <i data-lucide="star"></i> &#272;&#225;nh Gi&#225; Tour
+                <i data-lucide="star"></i> Đánh Giá Tour
             </button>
             <button class="mod-tab" data-target="tab-posts">
-                <i data-lucide="file-text"></i> B&#224;i Vi&#7871;t C&#7897;ng &#272;&#7891;ng
+                <i data-lucide="file-text"></i> Bài Viết Cộng Đồng
             </button>
             <button class="mod-tab" data-target="tab-comments">
-                <i data-lucide="message-square"></i> B&#236;nh Lu&#7853;n
+                <i data-lucide="message-square"></i> Bình Luận
             </button>
             <button class="mod-tab" data-target="tab-history">
-                <i data-lucide="history"></i> L&#7883;ch S&#7917; Ki&#7875;m Duy&#7879;t
+                <i data-lucide="history"></i> Lịch Sử Kiểm Duyệt
             </button>
         </div>
         <!-- Filter Flagged Content -->
         <div style="margin-bottom: 16px; background: rgba(22, 25, 50, 0.55); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); padding: 12px 18px; border-radius: 8px; border: 1px solid rgba(139, 92, 246, 0.2); display: inline-flex; align-items: center; gap: 10px;">
             <input type="checkbox" id="filter-flagged-only" style="width: 18px; height: 18px; cursor: pointer; accent-color: #8b5cf6;">
             <label for="filter-flagged-only" style="font-weight: 600; color: #9fa9cb; cursor: pointer; font-size: 0.95rem; user-select: none;">
-                <span style="color: #fb923c; display: inline-flex; align-items: center; gap: 6px;"><i class="fa-solid fa-flag"></i> Ch&#7881; hi&#7875;n th&#7883; n&#7899;i dung b&#7883; ng&#432;&#7901;i d&#249;ng b&#225;o c&#225;o vi ph&#7841;m (Flagged)</span>
+                <span style="color: #fb923c; display: inline-flex; align-items: center; gap: 6px;"><i class="fa-solid fa-flag"></i> Chỉ hiển thị nội dung bị người dùng báo cáo vi phạm (Flagged)</span>
             </label>
         </div>
         
@@ -144,12 +144,12 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Tour</th>
-                                <th>T&#225;c gi&#7843;</th>
+                                <th>Tác giả</th>
                                 <th>Sao</th>
-                                <th>N&#7899;i dung d&#225;nh gi&#225;</th>
-                                <th>Ng&#224;y vi&#7871;t</th>
-                                <th>Tr&#7840;ng th&#193;i</th>
-                                <th style="text-align: center;">H&#192;NH &#272;&#7896;NG</th>
+                                <th>Nội dung đánh giá</th>
+                                <th>Ngày viết</th>
+                                <th>Trạng thái</th>
+                                <th style="text-align: center;">HÀNH ĐỘNG</th>
                             </tr>
                         </thead>
                         <tbody id="reviews-tbody">
@@ -168,12 +168,12 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Ti&#234;u &#273;&#7891;</th>
-                                <th>T&#225;c gi&#7843;</th>
-                                <th>N&#7899;i dung b&#224;i vi&#7871;t</th>
-                                <th>Ng&#224;y &#273;&#259;ng</th>
-                                <th>Tr&#7840;ng th&#193;i</th>
-                                <th style="text-align: center;">H&#192;NH &#272;&#7896;NG</th>
+                                <th>Tiêu đề</th>
+                                <th>Tác giả</th>
+                                <th>Nội dung bài viết</th>
+                                <th>Ngày đăng</th>
+                                <th>Trạng thái</th>
+                                <th style="text-align: center;">HÀNH ĐỘNG</th>
                             </tr>
                         </thead>
                         <tbody id="posts-tbody">
@@ -192,12 +192,12 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>B&#224;i vi&#7871;t g&#7889;c</th>
-                                <th>T&#225;c gi&#7843;</th>
-                                <th>N&#7899;i dung b&#236;nh lu&#7853;n</th>
-                                <th>Ng&#224;y vi&#7871;t</th>
-                                <th>Tr&#7840;ng th&#193;i</th>
-                                <th style="text-align: center;">H&#192;NH &#272;&#7896;NG</th>
+                                <th>Bài viết gốc</th>
+                                <th>Tác giả</th>
+                                <th>Nội dung bình luận</th>
+                                <th>Ngày viết</th>
+                                <th>Trạng thái</th>
+                                <th style="text-align: center;">HÀNH ĐỘNG</th>
                             </tr>
                         </thead>
                         <tbody id="comments-tbody">

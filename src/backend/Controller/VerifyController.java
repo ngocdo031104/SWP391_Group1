@@ -1,3 +1,8 @@
+/*
+ * Liên quan đến UCs: Register Account
+ * Tác giả: Đỗ Vũ Minh Ngọc
+ * MSSV: HE182479
+ */
 package Controller;
 
 import Model.UserDAO;
@@ -54,3 +59,4 @@ public class VerifyController extends HttpServlet {
         request.getRequestDispatcher("/views/verify.jsp").forward(request, response);
     }
 }
+

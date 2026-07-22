@@ -1,3 +1,8 @@
+/*
+ * Liên quan đến UCs: Authenticate User
+ * Tác giả: Đỗ Vũ Minh Ngọc
+ * MSSV: HE182479
+ */
 package Controller;
 
 /**

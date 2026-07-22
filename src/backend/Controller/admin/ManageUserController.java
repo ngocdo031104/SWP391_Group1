@@ -1,3 +1,8 @@
+/*
+ * Liên quan đến UCs: Manage User Accounts
+ * Tác giả: Đỗ Vũ Minh Ngọc
+ * MSSV: HE182479
+ */
 package Controller.admin;
 
 import Entities.AuditLog;
@@ -177,7 +182,7 @@ public class ManageUserController extends HttpServlet {
                 String msg = "Đã " + (status ? "mở khóa" : "khóa") + " tài khoản thành công!";
                 request.getSession().setAttribute("successMsg", msg);
                 
-                // Log action
+                // Ghi nhật ký hệ thống (Audit Log)
                 if (currentAdmin != null) {
                     String action = status ? "UNLOCK_USER" : "LOCK_USER";
                     String details = "Admin " + currentAdmin.getEmail() 
@@ -244,7 +249,7 @@ public class ManageUserController extends HttpServlet {
                     request.getSession().setAttribute("errorMsg", msgBuilder.toString().trim());
                 }
 
-                // Log action
+                // Ghi nhật ký hệ thống (Audit Log)
                 if (currentAdmin != null && count > 0) {
                     String details = "Admin " + currentAdmin.getEmail() + " assigned role ID: "
                                      + roleId + " to " + count + " users";
@@ -406,3 +411,4 @@ public class ManageUserController extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/admin/users");
     }
 }
+

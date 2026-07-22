@@ -1,3 +1,8 @@
+/*
+ * Liên quan đến UCs: Schedule Video Calls
+ * Tác giả: Đỗ Vũ Minh Ngọc
+ * MSSV: HE182479
+ */
 package Controller.customer;
 
 import Entities.Message;
@@ -76,7 +81,7 @@ public class VideoCallController extends HttpServlet {
             try {
                 int conversationId = Integer.parseInt(request.getParameter("conversationId"));
                 
-                // BR-03 & BR-05: Check if conversation exists and user is participant
+                // Kiểm tra quyền truy cập hội thoại
                 if (!videoCallDAO.isUserInConversation(user.getUserId(), conversationId)) {
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                     response.getWriter().write("{\"success\": false, \"message\": \"You are not a participant of this conversation.\"}");
@@ -91,7 +96,7 @@ public class VideoCallController extends HttpServlet {
                 } catch (NumberFormatException ignored) {}
                 String meetingUrl = request.getParameter("meetingUrl");
 
-                // Validation
+                // Kiểm tra tính hợp lệ của dữ liệu
                 if (title == null || title.trim().isEmpty() ||
                     dateStr == null || dateStr.trim().isEmpty() ||
                     meetingUrl == null || meetingUrl.trim().isEmpty()) {
@@ -140,7 +145,7 @@ public class VideoCallController extends HttpServlet {
                         Message msg = new Message();
                         msg.setConversationId(conversationId);
                         msg.setSenderId(user.getUserId());
-                        msg.setContent("\uD83D\uDCC5 Đã lên lịch gọi Video: " + title + " vào lúc " + dateStr.replace("T", " ") + ". Tham gia tại: " + meetingUrl);
+                        msg.setContent("\uD83D\uDCC5 ÄĂ£ lên lịch gá»i Video: " + title + " vào lúc " + dateStr.replace("T", " ") + ". Tham gia tại: " + meetingUrl);
                         chatDAO.saveMessage(msg);
                         
                         response.getWriter().write(gson.toJson(savedCall));
@@ -182,7 +187,7 @@ public class VideoCallController extends HttpServlet {
                         Message msg = new Message();
                         msg.setConversationId(conversationId);
                         msg.setSenderId(user.getUserId());
-                        msg.setContent("\u270F\uFE0F Đã cập nhật lịch gọi Video: " + title + " sang lúc " + dateStr.replace("T", " ") + ". Tham gia tại: " + meetingUrl);
+                        msg.setContent("\u270F\uFE0F ÄĂ£ cập nhật lịch gá»i Video: " + title + " sang lúc " + dateStr.replace("T", " ") + ". Tham gia tại: " + meetingUrl);
                         chatDAO.saveMessage(msg);
                         
                         response.getWriter().write(gson.toJson(existing));
@@ -227,7 +232,7 @@ public class VideoCallController extends HttpServlet {
                     Message msg = new Message();
                     msg.setConversationId(conversationId);
                     msg.setSenderId(user.getUserId());
-                    msg.setContent("\u274C Đã hủy lịch gọi Video: " + existing.getTitle());
+                    msg.setContent("\u274C ÄĂ£ hủy lịch gá»i Video: " + existing.getTitle());
                     chatDAO.saveMessage(msg);
                     
                     response.getWriter().write("{\"success\": true}");
@@ -242,3 +247,4 @@ public class VideoCallController extends HttpServlet {
         }
     }
 }
+

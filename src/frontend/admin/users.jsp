@@ -1,3 +1,8 @@
+<%-- 
+    Liên quan đến UCs: Admin Management
+    Tác giả: Đỗ Vũ Minh Ngọc
+    MSSV: HE182479
+--%>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
@@ -142,9 +147,9 @@
     <c:set var="activePage" value="users" scope="request" />
     <jsp:include page="sidebar.jsp" />
 
-    <!-- Main Content Area -->
+    <!-- Vùng nội dung chính -->
     <main class="main-content">
-        <!-- Top Header -->
+        <!-- Tiêu đề trên cùng -->
         <header class="top-header" style="margin-bottom: 24px;">
             <div>
                 <h1 style="font-size: 26px; font-weight: 800; color: #c084fc; text-shadow: 0 0 16px rgba(192, 132, 252, 0.4); margin: 0 0 8px 0;">Danh s&#225;ch ng&#432;&#7901;i d&#249;ng</h1>
@@ -152,57 +157,54 @@
             </div>
             <div class="header-actions">
                 <button class="btn-modern btn-outline" onclick="window.location.reload()">
-                    <i data-lucide="refresh-cw" style="width: 16px;"></i> L&#224;m m&#7899;i
+                    <i data-lucide="refresh-cw" style="width: 16px;"></i> Làm mới
                 </button>
                 <button class="btn-modern btn-outline" id="exportUsersBtn">
-                    <i data-lucide="download" style="width: 16px;"></i> Xu&#7853;t d&#7919; li&#7879;u
-                </button>
-                <button class="btn-modern btn-primary" id="addUserBtn">
-                    <i data-lucide="plus" style="width: 16px;"></i> Th&#234;m ng&#432;&#7901;i d&#249;ng
+                    <i data-lucide="download" style="width: 16px;"></i> Xuất dữ liệu
                 </button>
             </div>
         </header>
 
-        <!-- Stats Grid -->
+        <!-- Lưới thống kê tổng quan -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-icon primary"><i data-lucide="users"></i></div>
                 <div class="stat-info">
-                    <h4>T&#7893;ng ng&#432;&#7901;i d&#249;ng</h4>
-                    <div class="stat-value" style="color: #38bdf8 !important;">${totalUsers}</div>
+                    <h4 style="color: #9fa9cb !important;">T&#7893;ng ng&#432;&#7901;i d&#249;ng</h4>
+                    <div class="stat-value" style="color: #ffffff !important; font-weight: 800;">${totalUsers}</div>
                 </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon success"><i data-lucide="user-check"></i></div>
                 <div class="stat-info">
-                    <h4>&#272;&#259;ng ho&#7841;t &#273;&#7897;ng</h4>
-                    <div class="stat-value" style="color: #34d399 !important;">${activeUsers}</div>
+                    <h4 style="color: #9fa9cb !important;">&#272;&#259;ng ho&#7841;t &#273;&#7897;ng</h4>
+                    <div class="stat-value" style="color: #ffffff !important; font-weight: 800;">${activeUsers}</div>
                 </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon danger"><i data-lucide="lock"></i></div>
                 <div class="stat-info">
-                    <h4>&#272;&#227; kh&#243;a</h4>
-                    <div class="stat-value" style="color: #f87171 !important;">${lockedUsers}</div>
+                    <h4 style="color: #9fa9cb !important;">&#272;&#227; kh&#243;a</h4>
+                    <div class="stat-value" style="color: #ffffff !important; font-weight: 800;">${lockedUsers}</div>
                 </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon warning"><i data-lucide="briefcase"></i></div>
                 <div class="stat-info">
-                    <h4>H&#432;&#7899;ng d&#7851;n vi&#234;n</h4>
-                    <div class="stat-value" style="color: #fbbf24 !important;">${guideUsers}</div>
+                    <h4 style="color: #9fa9cb !important;">H&#432;&#7899;ng d&#7851;n vi&#234;n</h4>
+                    <div class="stat-value" style="color: #ffffff !important; font-weight: 800;">${guideUsers}</div>
                 </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon purple"><i data-lucide="star"></i></div>
                 <div class="stat-info">
-                    <h4>Premium Members</h4>
-                    <div class="stat-value" style="color: #c084fc !important;">${premiumUsers}</div>
+                    <h4 style="color: #9fa9cb !important;">Premium Members</h4>
+                    <div class="stat-value" style="color: #ffffff !important; font-weight: 800;">${premiumUsers}</div>
                 </div>
             </div>
         </div>
 
-        <!-- Filters & Table Card -->
+        <!-- Bộ lọc và Bảng dữ liệu -->
         <div class="modern-card">
             <!-- Filter Bar -->
             <div style="padding: 20px 24px; border-bottom: 1px solid var(--gray-200);">
@@ -221,7 +223,7 @@
                             <option value="Accountant">Accountant</option>
                         </select>
                         <select class="filter-select" id="statusFilter">
-                            <option value="all">T&#7855;t c&#7843; tr&#7840;ng th&#193;i</option>
+                            <option value="all">T&#7855;t c&#7843; tr&#7841;ng th&#225;i</option>
                             <option value="active">Ho&#7841;t &#273;&#7897;ng</option>
                             <option value="locked">&#272;&#227; kh&#243;a</option>
                         </select>
@@ -248,7 +250,7 @@
                 </div>
             </div>
 
-            <!-- Table -->
+            <!-- Bảng dữ liệu chính -->
             <div style="overflow-x: auto;">
                 <table class="modern-table" id="usersTable">
                     <thead>
@@ -426,12 +428,7 @@
         showToast('\u00d0\u00e3 xu\u1ea5t ' + rows.length + ' ngu\u1eddi d\u00f9ng.', 'success');
     }
 
-    function openAddUserModal() {
-        showToast('Ch\u1ee9c n\u0103ng t\u1ea1o ng\u01b0\u1eddi d\u0169ng \u0111ang \u0111\u01b0\u1ee3c ph\u00e1t tri\u1ec3n. Vui l\u00f2ng d\u00f9ng form \u0111\u0103ng k\u00fd c\u00f4ng khai.', 'warning');
-    }
-
     document.getElementById('exportUsersBtn')?.addEventListener('click', exportUsersCSV);
-    document.getElementById('addUserBtn')?.addEventListener('click', openAddUserModal);
 
     // Filtering Logic
     function applyFilters() {

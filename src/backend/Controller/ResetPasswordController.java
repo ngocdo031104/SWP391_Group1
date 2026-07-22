@@ -1,3 +1,8 @@
+/*
+ * Liên quan đến UCs: Recover Password
+ * Tác giả: Đỗ Vũ Minh Ngọc
+ * MSSV: HE182479
+ */
 package Controller;
 
 import Entities.User;
@@ -22,7 +27,7 @@ public class ResetPasswordController extends HttpServlet {
         String token = request.getParameter("token");
         
         if (token == null || token.trim().isEmpty()) {
-            request.setAttribute("errorMessage", "Đường dẫn không hợp lệ.");
+            request.setAttribute("errorMessage", "ÄÆ°á»ng dẫn không hợp lệ.");
             request.getRequestDispatcher("/views/login.jsp").forward(request, response);
             return;
         }
@@ -31,7 +36,7 @@ public class ResetPasswordController extends HttpServlet {
         User user = userDAO.getUserByResetToken(token);
         
         if (user == null || user.getResetTokenExpiry() == null || user.getResetTokenExpiry().getTime() < System.currentTimeMillis()) {
-            request.setAttribute("errorMessage", "Đường dẫn khôi phục mật khẩu không hợp lệ hoặc đã hết hạn.");
+            request.setAttribute("errorMessage", "ÄÆ°á»ng dẫn khôi phục mật khẩu không hợp lệ hoặc đã hết hạn.");
             request.getRequestDispatcher("/views/login.jsp").forward(request, response);
             return;
         }
@@ -80,18 +85,19 @@ public class ResetPasswordController extends HttpServlet {
         try {
             String newPasswordHash = PasswordUtil.hashPassword(newPassword);
             if (userDAO.resetPassword(user.getUserId(), newPasswordHash)) {
-                request.setAttribute("successMessage", "Mật khẩu của bạn đã được thay đổi thành công. Bạn có thể đăng nhập ngay bây giờ.");
+                request.setAttribute("successMessage", "Mật khẩu của bạn đã được thay đổi thành công. Bạn có thể đăng nhập ngay bây giá».");
                 request.getRequestDispatcher("/views/login.jsp").forward(request, response);
             } else {
-                request.setAttribute("errorMessage", "Đã xảy ra lỗi khi đổi mật khẩu. Vui lòng thử lại sau.");
+                request.setAttribute("errorMessage", "ÄĂ£ xảy ra lỗi khi đổi mật khẩu. Vui lòng thử lại sau.");
                 request.setAttribute("token", token);
                 request.getRequestDispatcher("/views/reset-password.jsp").forward(request, response);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("errorMessage", "Đã xảy ra lỗi hệ thống.");
+            request.setAttribute("errorMessage", "ÄĂ£ xảy ra lỗi hệ thống.");
             request.setAttribute("token", token);
             request.getRequestDispatcher("/views/reset-password.jsp").forward(request, response);
         }
     }
 }
+

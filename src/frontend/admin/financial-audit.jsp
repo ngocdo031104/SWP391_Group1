@@ -1,3 +1,8 @@
+<%-- 
+    Liên quan đến UCs: Admin Management
+    Tác giả: Đỗ Vũ Minh Ngọc
+    MSSV: HE182479
+--%>
 <%@ page pageEncoding="UTF-8" contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
@@ -27,11 +32,11 @@
 </head>
 <body class="dashboard-body tb-cosmic">
     <div class="dashboard-wrapper">
-        <!-- Sidebar -->
+        <!-- Thanh menu bên trái (Sidebar) -->
         <c:set var="activePage" value="financial-audit" scope="request" />
         <jsp:include page="/admin/sidebar.jsp" />
 
-        <!-- Main Content Area -->
+        <!-- Vùng nội dung chính -->
         <main class="main-content theme-light">
             <header class="top-header" style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
                 <div>
@@ -46,35 +51,35 @@
             </header>
 
             <div class="container-fluid px-0">
-                <!-- Summary Stats -->
+                <!-- Thống kê tóm tắt -->
                 <div class="row mb-4">
                     <div class="col-md-3">
                         <div class="card shadow-sm text-center py-3" style="border-radius: 12px; border-left: 4px solid var(--gray-500);">
-                            <div class="text-muted small text-uppercase fw-bold mb-1">T&#7893;ng giao d&#7883;ch</div>
-                            <h3 class="mb-0 text-light"><fmt:formatNumber value="${stats.total}" pattern="#,###"/></h3>
+                            <div class="small text-uppercase fw-bold mb-1" style="color: #9fa9cb !important;">T&#7893;ng giao d&#7883;ch</div>
+                            <h3 class="mb-0" style="color: #ffffff !important; font-weight: 700;"><fmt:formatNumber value="${stats.total}" pattern="#,###"/></h3>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="card shadow-sm text-center py-3" style="border-radius: 12px; border-left: 4px solid var(--success);">
-                            <div class="text-muted small text-uppercase fw-bold mb-1">Th&#224;nh c&#244;ng</div>
-                            <h3 class="mb-0 text-success"><fmt:formatNumber value="${stats.success}" pattern="#,###"/></h3>
+                            <div class="small text-uppercase fw-bold mb-1" style="color: #9fa9cb !important;">Th&#224;nh c&#244;ng</div>
+                            <h3 class="mb-0" style="color: #ffffff !important; font-weight: 700;"><fmt:formatNumber value="${stats.success}" pattern="#,###"/></h3>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="card shadow-sm text-center py-3" style="border-radius: 12px; border-left: 4px solid var(--danger);">
-                            <div class="text-muted small text-uppercase fw-bold mb-1">Th&#7845;t b&#7841;i</div>
-                            <h3 class="mb-0 text-danger"><fmt:formatNumber value="${stats.failed}" pattern="#,###"/></h3>
+                            <div class="small text-uppercase fw-bold mb-1" style="color: #9fa9cb !important;">Th&#7845;t b&#7841;i</div>
+                            <h3 class="mb-0" style="color: #ffffff !important; font-weight: 700;"><fmt:formatNumber value="${stats.failed}" pattern="#,###"/></h3>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="card shadow-sm text-center py-3" style="border-radius: 12px; border-left: 4px solid var(--primary);">
-                            <div class="text-muted small text-uppercase fw-bold mb-1">T&#7893;ng doanh thu</div>
-                            <h3 class="mb-0 text-primary"><fmt:formatNumber value="${stats.totalAmount}" pattern="#,###"/> <small class="text-muted fs-6">VND</small></h3>
+                            <div class="small text-uppercase fw-bold mb-1" style="color: #9fa9cb !important;">T&#7893;ng doanh thu</div>
+                            <h3 class="mb-0" style="color: #ffffff !important; font-weight: 700;"><fmt:formatNumber value="${stats.totalAmount}" pattern="#,###"/> <small class="fs-6" style="color: #cbd5e1 !important;">VND</small></h3>
                         </div>
                     </div>
                 </div>
 
-                <!-- Filters -->
+                <!-- Bộ lọc dữ liệu -->
                 <div class="card mb-4 shadow-sm" style="border: 1px solid var(--gray-200); border-radius: 12px;">
                     <div class="card-body">
                         <form action="${pageContext.request.contextPath}/admin/financial-audit" method="GET">
@@ -122,7 +127,7 @@
                     </div>
                 </div>
 
-                <!-- Table -->
+                <!-- Bảng dữ liệu chính -->
                 <div class="card shadow-sm" style="border: 1px solid var(--gray-200); border-radius: 12px; overflow: hidden;">
                     <div class="card-body p-0">
                         <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
@@ -144,7 +149,7 @@
                                     <c:choose>
                                         <c:when test="${not empty logs}">
                                             <c:forEach var="log" items="${logs}">
-                                                <tr <c:if test="${log.isDiscrepancy}">style="background-color: #fff3cd;"</c:if>>
+                                                <tr <c:if test="${log.isDiscrepancy}">style="background-color: rgba(255, 193, 7, 0.15);"</c:if>>
                                                     <td><fmt:formatDate value="${log.createdAt}" pattern="yyyy-MM-dd HH:mm" /></td>
                                                     <td>
                                                         <c:choose>

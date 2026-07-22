@@ -1,3 +1,8 @@
+/*
+ * Liên quan đến UCs: Review Financial Audit Logs
+ * Tác giả: Đỗ Vũ Minh Ngọc
+ * MSSV: HE182479
+ */
 package Controller.admin;
 
 import Entities.FinancialAuditDTO;
@@ -28,7 +33,7 @@ public class FinancialAuditController extends HttpServlet {
         }
 
         User user = (User) session.getAttribute("sessionUser");
-        // Only Admin (1) and Accountant (5) can access this page
+        // Chỉ có Admin và Kế toán được truy cập trang này
         if (user.getRoleId() != 1 && user.getRoleId() != 5) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied: You do not have permission to view this page.");
             return;
@@ -65,7 +70,7 @@ public class FinancialAuditController extends HttpServlet {
         request.setAttribute("totalRecords", totalRecords);
         request.setAttribute("stats", stats);
         
-        // Retain search parameters
+        // Giữ lại các tham số tìm kiếm (Filter)
         request.setAttribute("dateFrom", dateFrom);
         request.setAttribute("dateTo", dateTo);
         request.setAttribute("operator", operator);
@@ -78,3 +83,4 @@ public class FinancialAuditController extends HttpServlet {
         request.getRequestDispatcher("/admin/financial-audit.jsp").forward(request, response);
     }
 }
+

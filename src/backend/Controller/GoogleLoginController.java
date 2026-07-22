@@ -1,3 +1,8 @@
+/*
+ * Liên quan đến UCs: Authenticate User
+ * Tác giả: Đỗ Vũ Minh Ngọc
+ * MSSV: HE182479
+ */
 package Controller;
 
 import Entities.User;
@@ -42,7 +47,7 @@ public class GoogleLoginController extends HttpServlet {
             User user = userDAO.getUserByEmail(email);
 
             if (user == null) {
-                // Đăng ký user mới tự động
+                // ÄÄƒng ký user mới tự động
                 user = new User();
                 user.setEmail(email);
                 user.setFullName(name);
@@ -64,7 +69,7 @@ public class GoogleLoginController extends HttpServlet {
                 return;
             }
 
-            // Đăng nhập
+            // ÄÄƒng nhập
             HttpSession session = request.getSession(true);
             session.setAttribute("sessionUser", user);
             session.setAttribute("userId", user.getUserId());
@@ -91,8 +96,9 @@ public class GoogleLoginController extends HttpServlet {
 
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("errorMessage", "Đăng nhập bằng Google thất bại. Lỗi: " + e.getMessage());
+            request.setAttribute("errorMessage", "ÄÄƒng nhập bằng Google thất bại. Lỗi: " + e.getMessage());
             request.getRequestDispatcher("/views/login.jsp").forward(request, response);
         }
     }
 }
+

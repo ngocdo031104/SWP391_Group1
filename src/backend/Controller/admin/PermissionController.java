@@ -1,3 +1,8 @@
+/*
+ * Liên quan đến UCs: Manage Roles and Permissions
+ * Tác giả: Đỗ Vũ Minh Ngọc
+ * MSSV: HE182479
+ */
 package Controller.admin;
 
 import Entities.User;
@@ -25,7 +30,7 @@ public class PermissionController extends HttpServlet {
             int roleId = Integer.parseInt(request.getParameter("roleId"));
             String[] permissionIds = request.getParameterValues("permissions[]");
             if (permissionIds == null) {
-                // If no permissions selected, array might be null, so we pass empty array to clear all
+                // Xóa tất cả quyền nếu danh sách bị rỗng
                 permissionIds = new String[0];
             }
             
@@ -33,7 +38,7 @@ public class PermissionController extends HttpServlet {
             roleDAO.updateRolePermissions(roleId, permissionIds, adminId);
             
             response.setContentType("application/json");
-            response.getWriter().write("{\"success\": true, \"message\": \"Cập nhật quyền thành công!\"}");
+            response.getWriter().write("{\"success\": true, \"message\": \"Cập nhật quyá»n thành công!\"}");
         } catch (Exception e) {
             e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -42,3 +47,4 @@ public class PermissionController extends HttpServlet {
         }
     }
 }
+

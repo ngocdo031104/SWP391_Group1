@@ -1,3 +1,8 @@
+/*
+ * Liên quan đến UCs: Manage Roles and Permissions
+ * Tác giả: Đỗ Vũ Minh Ngọc
+ * MSSV: HE182479
+ */
 package Controller.admin;
 
 import Entities.Permission;
@@ -72,9 +77,10 @@ public class RoleController extends HttpServlet {
             session.setAttribute("errorMsg", re.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            session.setAttribute("errorMsg", "Đã xảy ra lỗi hệ thống: " + e.getMessage());
+            session.setAttribute("errorMsg", "ÄĂ£ xảy ra lỗi hệ thống: " + e.getMessage());
         }
         
         response.sendRedirect(request.getContextPath() + "/admin/roles");
     }
 }
+
