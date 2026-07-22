@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Liên quan đến UCs: Monitor Fraudulent Transactions
  * Tác giả: Đỗ Vũ Minh Ngọc
  * MSSV: HE182479

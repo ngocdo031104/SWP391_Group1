@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Liên quan đến UCs: Schedule Video Calls
  * Tác giả: Đỗ Vũ Minh Ngọc
  * MSSV: HE182479
