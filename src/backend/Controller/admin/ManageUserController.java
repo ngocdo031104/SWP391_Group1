@@ -171,7 +171,7 @@ public class ManageUserController extends HttpServlet {
 
             User targetUser = userDAO.getUserById(userId);
             if (targetUser != null && "Admin".equalsIgnoreCase(targetUser.getRole().getRoleName()) && !isMaster) {
-                request.getSession().setAttribute("errorMsg", "Bạn không có quyá»n thao tác với tài khoản Admin khác!");
+                request.getSession().setAttribute("errorMsg", "Bạn không có quyền thao tác với tài khoản Admin khác!");
                 response.sendRedirect(request.getContextPath() + "/admin/users");
                 return;
             }
@@ -179,7 +179,7 @@ public class ManageUserController extends HttpServlet {
             boolean success = userDAO.updateUserStatus(userId, status);
             
             if (success) {
-                String msg = "ÄĂ£ " + (status ? "mở khóa" : "khóa") + " tài khoản thành công!";
+                String msg = "Đã " + (status ? "mở khóa" : "khóa") + " tài khoản thành công!";
                 request.getSession().setAttribute("successMsg", msg);
                 
                 // Ghi nhật ký hệ thống (Audit Log)
@@ -210,9 +210,9 @@ public class ManageUserController extends HttpServlet {
             if (userIds != null && roleIdStr != null) {
                 int roleId = Integer.parseInt(roleIdStr);
                 
-                // Chặn Admin thÆ°á»ng cấp quyá»n Admin cho ngÆ°á»i khác
+                // Chặn Admin thường cấp quyền Admin cho người khác
                 if (roleId == 1 && !isMaster) {
-                    request.getSession().setAttribute("errorMsg", "Chỉ Master Admin mới có quyá»n cấp vai trò Admin!");
+                    request.getSession().setAttribute("errorMsg", "Chỉ Master Admin mới có quyền cấp vai trò Admin!");
                     response.sendRedirect(request.getContextPath() + "/admin/users");
                     return;
                 }
@@ -235,7 +235,7 @@ public class ManageUserController extends HttpServlet {
                 
                 StringBuilder msgBuilder = new StringBuilder();
                 if (count > 0) {
-                    msgBuilder.append("ÄĂ£ cập nhật vai trò cho ").append(count).append(" ngÆ°á»i dùng thành công! ");
+                    msgBuilder.append("Đã cập nhật vai trò cho ").append(count).append(" người dùng thành công! ");
                 }
                 if (adminSkipCount > 0) {
                     msgBuilder.append("Không thể đổi vai trò của ").append(adminSkipCount).append(" tài khoản Admin.");
@@ -298,7 +298,7 @@ public class ManageUserController extends HttpServlet {
                         continue;
                     }
                     boolean targetIsAdmin = "Admin".equalsIgnoreCase(userToDelete.getRole().getRoleName());
-                    // Self-protection #2: chặn admin thÆ°á»ng xóa các admin khác để tránh
+                    // Self-protection #2: chặn admin thường xóa các admin khác để tránh
                     // chỉ còn lại 1 admin duy nhất. Master Admin thì được phép.
                     if (targetIsAdmin && !isMaster) {
                         adminSkipCount++;
@@ -316,7 +316,7 @@ public class ManageUserController extends HttpServlet {
                 }
                 
                 if (successCount > 0) {
-                    request.getSession().setAttribute("successMsg", "ÄĂ£ xóa vĩnh viễn " + successCount + " tài khoản!");
+                    request.getSession().setAttribute("successMsg", "Đã xóa vĩnh viễn " + successCount + " tài khoản!");
                     User admin = (User) request.getSession().getAttribute("sessionUser");
                     if (admin != null) {
                         auditLogDAO.insertLog(admin.getUserId(), "BULK_DELETE_USER", null, "Admin deleted " + successCount + " users");
@@ -384,7 +384,7 @@ public class ManageUserController extends HttpServlet {
                 String actionStr = status ? "mở khóa" : "khóa";
                 StringBuilder msgBuilder = new StringBuilder();
                 if (count > 0) {
-                    msgBuilder.append("ÄĂ£ ").append(actionStr).append(" ").append(count).append(" tài khoản! ");
+                    msgBuilder.append("Đã ").append(actionStr).append(" ").append(count).append(" tài khoản! ");
                 }
                 if (adminSkipCount > 0) {
                     msgBuilder.append("Không thể thao tác với ").append(adminSkipCount).append(" tài khoản Admin.");

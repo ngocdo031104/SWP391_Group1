@@ -1,4 +1,4 @@
-﻿<%-- 
+<%-- 
     Liên quan đến UCs: Admin Management
     Tác giả: Đỗ Vũ Minh Ngọc
     MSSV: HE182479
@@ -226,7 +226,7 @@
                             <option value="Accountant">Accountant</option>
                         </select>
                         <select class="filter-select" id="statusFilter">
-                            <option value="all">T&#7855;t c&#7843; tr&#7840;ng th&#193;i</option>
+                            <option value="all">T&#7855;t c&#7843; tr&#7841;ng th&#225;i</option>
                             <option value="active">Ho&#7841;t &#273;&#7897;ng</option>
                             <option value="locked">&#272;&#227; kh&#243;a</option>
                         </select>

@@ -1,4 +1,4 @@
-﻿<%-- 
+<%-- 
     Liên quan đến UCs: Admin Management
     Tác giả: Đỗ Vũ Minh Ngọc
     MSSV: HE182479
@@ -149,7 +149,7 @@
                                     <c:choose>
                                         <c:when test="${not empty logs}">
                                             <c:forEach var="log" items="${logs}">
-                                                <tr <c:if test="${log.isDiscrepancy}">style="background-color: #fff3cd;"</c:if>>
+                                                <tr <c:if test="${log.isDiscrepancy}">style="background-color: rgba(255, 193, 7, 0.15);"</c:if>>
                                                     <td><fmt:formatDate value="${log.createdAt}" pattern="yyyy-MM-dd HH:mm" /></td>
                                                     <td>
                                                         <c:choose>
