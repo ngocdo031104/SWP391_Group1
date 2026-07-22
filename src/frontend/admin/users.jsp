@@ -83,7 +83,7 @@
         .modern-table tr:last-child td { border-bottom: none; }
         .modern-table tr:hover { background: var(--gray-50); }
         .user-cell { display: flex; align-items: center; gap: 12px; }
-        .user-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background: var(--primary-light); display: flex; align-items: center; justify-content: center; color: var(--primary); font-weight: 600; }
+        .user-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; object-position: top; background: var(--primary-light); display: flex; align-items: center; justify-content: center; color: var(--primary); font-weight: 600; }
         .user-info .user-name { font-weight: 600; color: var(--gray-900); }
         .user-info .user-email { font-size: 13px; color: var(--gray-500); margin-top: 2px; }
         
@@ -115,7 +115,7 @@
         .drawer-close { cursor: pointer; color: var(--gray-500); padding: 4px; border-radius: 4px; transition: background 0.2s; background: none; border: none; }
         .drawer-close:hover { background: var(--gray-200); color: var(--gray-900); }
         .drawer-body { padding: 24px; overflow-y: auto; flex: 1; }
-        .drawer-avatar-lg { width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 16px; display: block; object-fit: cover; border: 4px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .drawer-avatar-lg { width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 16px; display: block; object-fit: cover; object-position: top; border: 4px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .drawer-name-center { text-align: center; font-size: 20px; font-weight: 700; color: var(--gray-900); margin-bottom: 4px; }
         .drawer-email-center { text-align: center; font-size: 14px; color: var(--gray-500); margin-bottom: 24px; }
         

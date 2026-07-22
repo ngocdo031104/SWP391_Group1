@@ -1,4 +1,4 @@
-﻿<%-- 
+<%-- 
     Liên quan đến UCs: Manage User Profile
     Tác giả: Đỗ Vũ Minh Ngọc
     MSSV: HE182479
@@ -12,7 +12,7 @@
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt"  prefix="fmt" %>
 <%
-    request.setAttribute("extraCss", "assets/css/tourbuddy.css");
+    request.setAttribute("extraCss", "assets/css/tourbuddy.css?v=" + System.currentTimeMillis());
     request.setAttribute("bodyClass", "profile-page");
 %>
 <jsp:include page="/common/header.jsp" />

@@ -8,7 +8,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>H&#7891; S&#417; H&#432;&#7899;ng D&#7851;n Vi&#234;n &#8212; TourBuddy</title>
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/tourbuddy.css?v=1.4">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/tourbuddy.css?v=<%= System.currentTimeMillis() %>">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     :root {
@@ -34,18 +34,21 @@
         flex-wrap: wrap;
         align-items: flex-end;
         position: relative;
+        z-index: 100;
         margin-bottom: 30px;
     }
     .avatar-container {
         margin-top: -60px;
         margin-right: 24px;
         position: relative;
+        z-index: 10;
     }
     .avatar-img {
         width: 140px; height: 140px;
         border-radius: 50%;
         border: 4px solid white;
         object-fit: cover;
+        object-position: center 15%;
         box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         background: #f0f0f0;
         display: flex; justify-content: center; align-items: center;
