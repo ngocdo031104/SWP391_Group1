@@ -1,6 +1,6 @@
 /*
- * Liên quan đến UCs: Manage Roles and Permissions
- * Tác giả: Đỗ Vũ Minh Ngọc
+ * Li\u00ean quan \u0111\u1ebfn UCs: Manage Roles and Permissions
+ * T\u00e1c gi\u1ea3: \u0110\u1ed7 V\u0169 Minh Ng\u1ecdc
  * MSSV: HE182479
  */
 package Controller.admin;
@@ -30,7 +30,7 @@ public class PermissionController extends HttpServlet {
             int roleId = Integer.parseInt(request.getParameter("roleId"));
             String[] permissionIds = request.getParameterValues("permissions[]");
             if (permissionIds == null) {
-                // Xóa tất cả quyền nếu danh sách bị rỗng
+                // X\u00f3a t\u1ea5t c\u1ea3 quy\u1ec1n n\u1ebfu danh s\u00e1ch b\u1ecb r\u1ed7ng
                 permissionIds = new String[0];
             }
             
@@ -38,7 +38,7 @@ public class PermissionController extends HttpServlet {
             roleDAO.updateRolePermissions(roleId, permissionIds, adminId);
             
             response.setContentType("application/json");
-            response.getWriter().write("{\"success\": true, \"message\": \"Cập nhật quyá»n thành công!\"}");
+            response.getWriter().write("{\"success\": true, \"message\": \"C\u1eadp nh\u1eadt quy\u00e1\u00bb\u0081n th\u00e0nh c\u00f4ng!\"}");
         } catch (Exception e) {
             e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

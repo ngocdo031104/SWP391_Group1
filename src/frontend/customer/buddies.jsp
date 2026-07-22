@@ -1,6 +1,6 @@
-﻿<%-- 
-    Liên quan đến UCs: Match Travel Companions, Manage Buddy Requests
-    Tác giả: Đỗ Vũ Minh Ngọc
+<%-- 
+    Li&#234;n quan &#273;&#7871;n UCs: Match Travel Companions, Manage Buddy Requests
+    T&#225;c gi&#7843;: &#272;&#7895; V&#361; Minh Ng&#7885;c
     MSSV: HE182479
 --%>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
@@ -251,6 +251,9 @@
         margin-bottom: 12px;
         background-color: #e2e8f0;
         object-fit: cover;
+        object-position: center 15%;
+        position: relative;
+        z-index: 10;
     }
     .match-name {
         font-family: 'Outfit', sans-serif;
@@ -580,7 +583,7 @@
         </c:if>
 
         <div class="layout-grid">
-            <!-- Cột nội dung chính bên trái -->
+            <!-- C&#7897;t n&#7897;i dung ch&#237;nh b&#234;n tr&#225;i -->
             <div class="main-column">
                 
                 <div class="buddy-tabs">
@@ -592,7 +595,7 @@
                     <button class="buddy-tab-btn" onclick="switchBuddyTab('friends', this)">B&#7841;n &#273;&#7891;ng h&#224;nh (${acceptedBuddies.size()})</button>
                 </div>
 
-                <!-- Tab: Khám phá bạn đồng hành -->
+                <!-- Tab: Kh&#225;m ph&#225; b&#7841;n &#273;&#7891;ng h&#224;nh -->
                 <div class="buddy-tab-content active" id="buddy-tab-discover">
                     <div class="matches-header">
                         <h3>G&#7907;i &#253; h&#224;ng &#273;&#7847;u cho b&#7841;n <i data-lucide="info" style="width: 16px; color: #94a3b8;"></i></h3>
@@ -619,7 +622,7 @@
                             <div class="match-card" data-match="${m.matchPercentage}" data-id="${m.user.userId}">
                                 <div class="match-card-cover">
                                     <div class="match-badge">${m.matchPercentage}% Ph&#249; h&#7907;p</div>
-                                    <button class="btn-heart"><i data-lucide="heart" style="width: 16px;"></i></button>
+                                    <button class="btn-heart" onclick="toggleHeart(this, ${m.user.userId})"><i data-lucide="heart" style="width: 16px;"></i></button>
                                 </div>
                                 <div class="match-card-body">
                                     <c:choose>
@@ -693,7 +696,7 @@
                     </div>
                 </div>
 
-                <!-- Tab: Lời mời đã nhận -->
+                <!-- Tab: L&#7901;i m&#7901;i &#273;&#227; nh&#7853;n -->
                 <div class="buddy-tab-content" id="buddy-tab-received">
                     <div class="request-list">
                         <c:if test="${empty receivedRequests}">
@@ -741,7 +744,7 @@
                     </div>
                 </div>
 
-                <!-- Tab: Lời mời đã gửi -->
+                <!-- Tab: L&#7901;i m&#7901;i &#273;&#227; g&#7917;i -->
                 <div class="buddy-tab-content" id="buddy-tab-sent">
                     <div class="request-list">
                         <c:if test="${empty sentRequests}">
@@ -780,7 +783,7 @@
                     </div>
                 </div>
 
-                <!-- Tab: Danh sách bạn bè -->
+                <!-- Tab: Danh s&#225;ch b&#7841;n b&#232; -->
                 <div class="buddy-tab-content" id="buddy-tab-friends">
                     <div class="request-list">
                         <c:if test="${empty acceptedBuddies}">
@@ -958,10 +961,6 @@
 </div>
 
 <script>
-    if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
-    }
-    
     function switchBuddyTab(tabId, btn) {
         document.querySelectorAll('.buddy-tab-content').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.buddy-tab-btn').forEach(b => b.classList.remove('active'));
@@ -993,19 +992,76 @@
         document.getElementById('profileModal').classList.remove('active');
     }
 
+    function toggleHeart(btn, userId) {
+        let favorites = JSON.parse(localStorage.getItem('buddyFavorites')) || [];
+        const isFavorited = favorites.includes(userId);
+        
+        let icon = btn.querySelector('svg') || btn.querySelector('i');
+        
+        if (isFavorited) {
+            favorites = favorites.filter(id => id !== userId);
+            btn.style.color = '#64748b';
+            if (icon) icon.style.fill = 'none';
+        } else {
+            favorites.push(userId);
+            btn.style.color = '#ef4444';
+            if (icon) icon.style.fill = '#ef4444';
+        }
+        
+        localStorage.setItem('buddyFavorites', JSON.stringify(favorites));
+        sortMatches(); // Re-sort automatically when clicking heart
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+        
+        let favorites = JSON.parse(localStorage.getItem('buddyFavorites')) || [];
+        var grid = document.querySelector('.match-grid');
+        if (!grid) return;
+        
+        var cards = Array.from(grid.querySelectorAll('.match-card'));
+        
+        // Restore visual heart state
+        cards.forEach(function(card) {
+            var id = parseInt(card.dataset.id);
+            if (favorites.includes(id)) {
+                var btn = card.querySelector('.btn-heart');
+                if (btn) {
+                    btn.style.color = '#ef4444';
+                    var icon = btn.querySelector('svg') || btn.querySelector('i');
+                    if (icon) icon.style.fill = '#ef4444';
+                }
+            }
+        });
+        
+        sortMatches(); // Run sort on initial load
+    });
+
     function sortMatches() {
         var sortBy = document.getElementById('matchSortSelect').value;
         var grid = document.querySelector('.match-grid');
+        if (!grid) return;
         var cards = Array.from(grid.querySelectorAll('.match-card'));
+        let favorites = JSON.parse(localStorage.getItem('buddyFavorites')) || [];
         
         cards.sort(function(a, b) {
+            var idA = parseInt(a.dataset.id) || 0;
+            var idB = parseInt(b.dataset.id) || 0;
+            
+            var favA = favorites.includes(idA) ? 1 : 0;
+            var favB = favorites.includes(idB) ? 1 : 0;
+            
+            if (favA !== favB) {
+                return favB - favA; // Favorites always at the top
+            }
+            
             if (sortBy === 'match') {
                 var matchA = parseFloat(a.dataset.match) || 0;
                 var matchB = parseFloat(b.dataset.match) || 0;
                 return matchB - matchA; // Descending match %
             } else if (sortBy === 'newest') {
-                var idA = parseInt(a.dataset.id) || 0;
-                var idB = parseInt(b.dataset.id) || 0;
                 return idB - idA; // Descending ID (newest user first)
             }
             return 0;

@@ -1,6 +1,6 @@
 <%-- 
-    Liên quan đến UCs: Admin Management
-    Tác giả: Đỗ Vũ Minh Ngọc
+    Li&#234;n quan &#273;&#7871;n UCs: Admin Management
+    T&#225;c gi&#7843;: &#272;&#7895; V&#361; Minh Ng&#7885;c
     MSSV: HE182479
 --%>
 <%@ page pageEncoding="UTF-8" contentType="text/html;charset=UTF-8" language="java" %>
@@ -32,11 +32,11 @@
 </head>
 <body class="dashboard-body tb-cosmic">
     <div class="dashboard-wrapper">
-        <!-- Thanh menu bên trái (Sidebar) -->
+        <!-- Thanh menu b&#234;n tr&#225;i (Sidebar) -->
         <c:set var="activePage" value="financial-audit" scope="request" />
         <jsp:include page="/admin/sidebar.jsp" />
 
-        <!-- Vùng nội dung chính -->
+        <!-- V&#249;ng n&#7897;i dung ch&#237;nh -->
         <main class="main-content theme-light">
             <header class="top-header" style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
                 <div>
@@ -51,7 +51,7 @@
             </header>
 
             <div class="container-fluid px-0">
-                <!-- Thống kê tóm tắt -->
+                <!-- Th&#7889;ng k&#234; t&#243;m t&#7855;t -->
                 <div class="row mb-4">
                     <div class="col-md-3">
                         <div class="card shadow-sm text-center py-3" style="border-radius: 12px; border-left: 4px solid var(--gray-500);">
@@ -79,7 +79,7 @@
                     </div>
                 </div>
 
-                <!-- Bộ lọc dữ liệu -->
+                <!-- B&#7897; l&#7885;c d&#7919; li&#7879;u -->
                 <div class="card mb-4 shadow-sm" style="border: 1px solid var(--gray-200); border-radius: 12px;">
                     <div class="card-body">
                         <form action="${pageContext.request.contextPath}/admin/financial-audit" method="GET">
@@ -127,7 +127,7 @@
                     </div>
                 </div>
 
-                <!-- Bảng dữ liệu chính -->
+                <!-- B&#7843;ng d&#7919; li&#7879;u ch&#237;nh -->
                 <div class="card shadow-sm" style="border: 1px solid var(--gray-200); border-radius: 12px; overflow: hidden;">
                     <div class="card-body p-0">
                         <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
