@@ -286,7 +286,7 @@
                 <select id="modal-guide-select" class="form-control" required>
                     <option value="">-- Ch&#7885;n Guide --</option>
                     <c:forEach var="guide" items="${guides}">
-                        <option value="${guide.user.userId}">${guide.user.fullName} (${guide.yearsOfExperience} n&#259;m kinh nghi&#7879;m, &#11088;${guide.rating})</option>
+                        <option value="${guide.user.userId}">${guide.user.fullName} (ID: #${guide.user.userId})</option>
                     </c:forEach>
                 </select>
             </div>
