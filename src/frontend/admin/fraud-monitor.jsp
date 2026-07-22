@@ -1,4 +1,4 @@
-﻿<%-- 
+<%-- 
     Liên quan đến UCs: Admin Management
     Tác giả: Đỗ Vũ Minh Ngọc
     MSSV: HE182479
@@ -197,55 +197,7 @@
                                                     </td>
                                                 </tr>
 
-                                                <!-- Action Modal -->
-                                                <div class="modal fade" id="actionModal${txn.paymentId}" tabindex="-1" aria-hidden="true">
-                                                    <div class="modal-dialog">
-                                                        <div class="modal-content">
-                                                            <form action="${pageContext.request.contextPath}/admin/fraud-monitor" method="POST">
-                                                                <div class="modal-header">
-                                                                    <h5 class="modal-title">Ki&#7875;m duy&#7879;t Giao d&#7883;ch #${txn.paymentId}</h5>
-                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="&#272;&#243;ng"></button>
-                                                                </div>
-                                                                <div class="modal-body">
-                                                                    <input type="hidden" name="action" value="updateStatus">
-                                                                    <input type="hidden" name="paymentId" value="${txn.paymentId}">
-                                                                    
-                                                                    <div class="mb-3">
-                                                                        <strong>M&#227; GD:</strong> <c:out value="${txn.transactionRef}" />
-                                                                    </div>
-                                                                    <div class="mb-3">
-                                                                        <strong>Ph&#7843;n h&#7891;i c&#7893;ng TT:</strong> <br>
-                                                                        <small class="text-muted"><c:out value="${txn.gatewayResponse}" /></small>
-                                                                    </div>
-                                                                    <div class="mb-3">
-                                                                        <strong>L&#253; do gian l&#7853;n:</strong> <br>
-                                                                        <span class="text-danger"><c:out value="${txn.fraudReason}" /></span>
-                                                                    </div>
-                                                                    
-                                                                    <hr>
-                                                                    <div class="mb-3">
-                                                                        <label class="form-label">&#272;&#7893;i Tr&#7841;ng th&#225;i</label>
-                                                                        <select class="form-select" name="newStatus" required>
-                                                                            <option value="Normal" <c:if test="${txn.reviewStatus == 'Normal'}">selected</c:if>>B&#236;nh th&#432;&#7901;ng</option>
-                                                                            <option value="Under Review" <c:if test="${txn.reviewStatus == 'Under Review'}">selected</c:if>>&#272;ang xem x&#233;t</option>
-                                                                            <option value="Suspicious" <c:if test="${txn.reviewStatus == 'Suspicious'}">selected</c:if>>&#272;&#225;ng ng&#7901;</option>
-                                                                            <option value="Cleared" <c:if test="${txn.reviewStatus == 'Cleared'}">selected</c:if>>&#272;&#227; x&#243;a &#225;n</option>
-                                                                        </select>
-                                                                    </div>
-                                                                    <div class="mb-3">
-                                                                        <label class="form-label">Ghi ch&#250; (Comment)</label>
-                                                                        <textarea class="form-control" name="comment" rows="2" placeholder="Th&#234;m ghi ch&#250; cho l&#7847;n ki&#7875;m duy&#7879;t n&#224;y..."></textarea>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="modal-footer">
-                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">&#272;&#243;ng</button>
-                                                                    <button type="submit" class="btn btn-primary">L&#432;u thay &#273;&#7893;i</button>
-                                                                </div>
-                                                             </form>
-                                                         </div>
-                                                     </div>
-                                                 </div>
-                                             </c:forEach>
+                                            </c:forEach>
                                          </c:when>
                                          <c:otherwise>
                                              <tr>
@@ -289,8 +241,62 @@
                      </c:if>
                  </div>
              </div>
+             
          </main>
      </div>
+     
+     <!-- Action Modals (Placed as direct child of body to fix Bootstrap backdrop z-index issues) -->
+     <c:if test="${not empty transactions}">
+         <c:forEach var="txn" items="${transactions}">
+             <div class="modal fade" id="actionModal${txn.paymentId}" tabindex="-1" aria-hidden="true">
+                 <div class="modal-dialog">
+                     <div class="modal-content">
+                         <form action="${pageContext.request.contextPath}/admin/fraud-monitor" method="POST">
+                             <div class="modal-header">
+                                 <h5 class="modal-title">Ki&#7875;m duy&#7879;t Giao d&#7883;ch #${txn.paymentId}</h5>
+                                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="&#272;&#243;ng"></button>
+                             </div>
+                             <div class="modal-body">
+                                 <input type="hidden" name="action" value="updateStatus">
+                                 <input type="hidden" name="paymentId" value="${txn.paymentId}">
+                                 
+                                 <div class="mb-3">
+                                     <strong>M&#227; GD:</strong> <c:out value="${txn.transactionRef}" />
+                                 </div>
+                                 <div class="mb-3">
+                                     <strong>Ph&#7843;n h&#7891;i c&#7893;ng TT:</strong> <br>
+                                     <small class="text-muted"><c:out value="${txn.gatewayResponse}" /></small>
+                                 </div>
+                                 <div class="mb-3">
+                                     <strong>L&#253; do gian l&#7853;n:</strong> <br>
+                                     <span class="text-danger"><c:out value="${txn.fraudReason}" /></span>
+                                 </div>
+                                 
+                                 <hr>
+                                 <div class="mb-3">
+                                     <label class="form-label">&#272;&#7893;i Tr&#7841;ng th&#225;i</label>
+                                     <select class="form-select" name="newStatus" required>
+                                         <option value="Normal" <c:if test="${txn.reviewStatus == 'Normal'}">selected</c:if>>B&#236;nh th&#432;&#7901;ng</option>
+                                         <option value="Under Review" <c:if test="${txn.reviewStatus == 'Under Review'}">selected</c:if>>&#272;ang xem x&#233;t</option>
+                                         <option value="Suspicious" <c:if test="${txn.reviewStatus == 'Suspicious'}">selected</c:if>>&#272;&#225;ng ng&#7901;</option>
+                                         <option value="Cleared" <c:if test="${txn.reviewStatus == 'Cleared'}">selected</c:if>>&#272;&#227; x&#243;a &#225;n</option>
+                                     </select>
+                                 </div>
+                                 <div class="mb-3">
+                                     <label class="form-label">Ghi ch&#250; (Comment)</label>
+                                     <textarea class="form-control" name="comment" rows="2" placeholder="Th&#234;m ghi ch&#250; cho l&#7847;n ki&#7875;m duy&#7879;t n&#224;y..."></textarea>
+                                 </div>
+                             </div>
+                             <div class="modal-footer">
+                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">&#272;&#243;ng</button>
+                                 <button type="submit" class="btn btn-primary">L&#432;u thay &#273;&#7893;i</button>
+                             </div>
+                          </form>
+                      </div>
+                  </div>
+              </div>
+          </c:forEach>
+     </c:if>
      
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="${pageContext.request.contextPath}/js/tb-ui.js?v=1.0"></script>

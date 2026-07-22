@@ -162,16 +162,16 @@ public class ManageUserController extends HttpServlet {
             User currentAdmin = (User) request.getSession().getAttribute("sessionUser");
             boolean isMaster = isMasterAdmin(currentAdmin);
             
-            // Self-protection: admin khĂ´ng Ä‘Æ°á»£c tá»± khĂ³a chĂ­nh mĂ¬nh, ká»ƒ cáº£ Master Admin.
+            // Self-protection: admin không được tự khóa chính mình, kể cả Master Admin.
             if (currentAdmin != null && userId == currentAdmin.getUserId()) {
-                request.getSession().setAttribute("errorMsg", "Báº¡n khĂ´ng thá»ƒ tá»± thay Ä‘á»•i tráº¡ng thĂ¡i tĂ i khoáº£n cá»§a chĂ­nh mĂ¬nh.");
+                request.getSession().setAttribute("errorMsg", "Bạn không thể tự thay đổi trạng thái tài khoản của chính mình.");
                 response.sendRedirect(request.getContextPath() + "/admin/users");
                 return;
             }
 
             User targetUser = userDAO.getUserById(userId);
             if (targetUser != null && "Admin".equalsIgnoreCase(targetUser.getRole().getRoleName()) && !isMaster) {
-                request.getSession().setAttribute("errorMsg", "Báº¡n khĂ´ng cĂ³ quyá»n thao tĂ¡c vá»›i tĂ i khoáº£n Admin khĂ¡c!");
+                request.getSession().setAttribute("errorMsg", "Bạn không có quyền thao tác với tài khoản Admin khác!");
                 response.sendRedirect(request.getContextPath() + "/admin/users");
                 return;
             }
@@ -179,7 +179,7 @@ public class ManageUserController extends HttpServlet {
             boolean success = userDAO.updateUserStatus(userId, status);
             
             if (success) {
-                String msg = "ÄĂ£ " + (status ? "má»Ÿ khĂ³a" : "khĂ³a") + " tĂ i khoáº£n thĂ nh cĂ´ng!";
+                String msg = "Đã " + (status ? "mở khóa" : "khóa") + " tài khoản thành công!";
                 request.getSession().setAttribute("successMsg", msg);
                 
                 // Ghi nhật ký hệ thống (Audit Log)
@@ -191,10 +191,10 @@ public class ManageUserController extends HttpServlet {
                     auditLogDAO.insertLog(currentAdmin.getUserId(), action, null, details);
                 }
             } else {
-                request.getSession().setAttribute("errorMsg", "Cáº­p nháº­t tráº¡ng thĂ¡i tháº¥t báº¡i!");
+                request.getSession().setAttribute("errorMsg", "Cập nhật trạng thái thất bại!");
             }
         } catch (NumberFormatException e) {
-            request.getSession().setAttribute("errorMsg", "Dá»¯ liá»‡u khĂ´ng há»£p lá»‡!");
+            request.getSession().setAttribute("errorMsg", "Dữ liệu không hợp lệ!");
         }
         response.sendRedirect(request.getContextPath() + "/admin/users");
     }
@@ -210,9 +210,9 @@ public class ManageUserController extends HttpServlet {
             if (userIds != null && roleIdStr != null) {
                 int roleId = Integer.parseInt(roleIdStr);
                 
-                // Cháº·n Admin thÆ°á»ng cáº¥p quyá»n Admin cho ngÆ°á»i khĂ¡c
+                // Chặn Admin thường cấp quyền Admin cho người khác
                 if (roleId == 1 && !isMaster) {
-                    request.getSession().setAttribute("errorMsg", "Chá»‰ Master Admin má»›i cĂ³ quyá»n cáº¥p vai trĂ² Admin!");
+                    request.getSession().setAttribute("errorMsg", "Chỉ Master Admin mới có quyền cấp vai trò Admin!");
                     response.sendRedirect(request.getContextPath() + "/admin/users");
                     return;
                 }
@@ -235,14 +235,14 @@ public class ManageUserController extends HttpServlet {
                 
                 StringBuilder msgBuilder = new StringBuilder();
                 if (count > 0) {
-                    msgBuilder.append("ÄĂ£ cáº­p nháº­t vai trĂ² cho ").append(count).append(" ngÆ°á»i dĂ¹ng thĂ nh cĂ´ng! ");
+                    msgBuilder.append("Đã cập nhật vai trò cho ").append(count).append(" người dùng thành công! ");
                 }
                 if (adminSkipCount > 0) {
-                    msgBuilder.append("KhĂ´ng thá»ƒ Ä‘á»•i vai trĂ² cá»§a ").append(adminSkipCount).append(" tĂ i khoáº£n Admin.");
+                    msgBuilder.append("Không thể đổi vai trò của ").append(adminSkipCount).append(" tài khoản Admin.");
                 }
 
                 if (msgBuilder.length() == 0) {
-                    request.getSession().setAttribute("errorMsg", "KhĂ´ng cĂ³ thay Ä‘á»•i nĂ o Ä‘Æ°á»£c Ă¡p dá»¥ng.");
+                    request.getSession().setAttribute("errorMsg", "Không có thay đổi nào được áp dụng.");
                 } else if (count > 0) {
                     request.getSession().setAttribute("successMsg", msgBuilder.toString().trim());
                 } else {
@@ -256,10 +256,10 @@ public class ManageUserController extends HttpServlet {
                     auditLogDAO.insertLog(currentAdmin.getUserId(), "BULK_ASSIGN_ROLE", null, details);
                 }
             } else {
-                request.getSession().setAttribute("errorMsg", "Dá»¯ liá»‡u khĂ´ng há»£p lá»‡!");
+                request.getSession().setAttribute("errorMsg", "Dữ liệu không hợp lệ!");
             }
         } catch (NumberFormatException e) {
-            request.getSession().setAttribute("errorMsg", "Dá»¯ liá»‡u khĂ´ng há»£p lá»‡!");
+            request.getSession().setAttribute("errorMsg", "Dữ liệu không hợp lệ!");
         }
         response.sendRedirect(request.getContextPath() + "/admin/users");
     }
@@ -285,8 +285,8 @@ public class ManageUserController extends HttpServlet {
                 for (String idStr : userIds) {
                     int userId = Integer.parseInt(idStr);
 
-                    // Self-protection #1: khĂ´ng admin nĂ o Ä‘Æ°á»£c xĂ³a chĂ­nh mĂ¬nh,
-                    // ká»ƒ cáº£ Master Admin â€” trĂ¡nh khĂ³a há»‡ thá»‘ng vÄ©nh viá»…n.
+                    // Self-protection #1: không admin nào được xóa chính mình,
+                    // kể cả Master Admin — tránh khóa hệ thống vĩnh viễn.
                     if (currentAdmin != null && userId == currentAdmin.getUserId()) {
                         selfSkipCount++;
                         continue;
@@ -298,8 +298,8 @@ public class ManageUserController extends HttpServlet {
                         continue;
                     }
                     boolean targetIsAdmin = "Admin".equalsIgnoreCase(userToDelete.getRole().getRoleName());
-                    // Self-protection #2: cháº·n admin thÆ°á»ng xĂ³a cĂ¡c admin khĂ¡c Ä‘á»ƒ trĂ¡nh
-                    // chá»‰ cĂ²n láº¡i 1 admin duy nháº¥t. Master Admin thĂ¬ Ä‘Æ°á»£c phĂ©p.
+                    // Self-protection #2: chặn admin thường xóa các admin khác để tránh
+                    // chỉ còn lại 1 admin duy nhất. Master Admin thì được phép.
                     if (targetIsAdmin && !isMaster) {
                         adminSkipCount++;
                         continue;
@@ -316,7 +316,7 @@ public class ManageUserController extends HttpServlet {
                 }
                 
                 if (successCount > 0) {
-                    request.getSession().setAttribute("successMsg", "ÄĂ£ xĂ³a vÄ©nh viá»…n " + successCount + " tĂ i khoáº£n!");
+                    request.getSession().setAttribute("successMsg", "Đã xóa vĩnh viễn " + successCount + " tài khoản!");
                     User admin = (User) request.getSession().getAttribute("sessionUser");
                     if (admin != null) {
                         auditLogDAO.insertLog(admin.getUserId(), "BULK_DELETE_USER", null, "Admin deleted " + successCount + " users");
@@ -325,26 +325,26 @@ public class ManageUserController extends HttpServlet {
                 
                 StringBuilder errorMsgBuilder = new StringBuilder();
                 if (selfSkipCount > 0) {
-                    errorMsgBuilder.append("KhĂ´ng thá»ƒ tá»± xĂ³a chĂ­nh tĂ i khoáº£n Ä‘ang Ä‘Äƒng nháº­p. ");
+                    errorMsgBuilder.append("Không thể tự xóa chính tài khoản đang đăng nhập. ");
                 }
                 if (adminSkipCount > 0) {
-                    errorMsgBuilder.append("KhĂ´ng thá»ƒ xĂ³a ").append(adminSkipCount).append(" tĂ i khoáº£n vĂ¬ lĂ  Admin. ");
+                    errorMsgBuilder.append("Không thể xóa ").append(adminSkipCount).append(" tài khoản vì là Admin. ");
                 }
                 if (bookingErrorCount > 0) {
-                    errorMsgBuilder.append("KhĂ´ng thá»ƒ xĂ³a ").append(bookingErrorCount).append(" tĂ i khoáº£n vĂ¬ Ä‘ang cĂ³ Booking. ");
+                    errorMsgBuilder.append("Không thể xóa ").append(bookingErrorCount).append(" tài khoản vì đang có Booking. ");
                 }
                 if (otherErrorCount > 0) {
-                    errorMsgBuilder.append("KhĂ´ng thá»ƒ xĂ³a ").append(otherErrorCount).append(" tĂ i khoáº£n do rĂ ng buá»™c dá»¯ liá»‡u khĂ¡c.");
+                    errorMsgBuilder.append("Không thể xóa ").append(otherErrorCount).append(" tài khoản do ràng buộc dữ liệu khác.");
                 }
                 
                 if (errorMsgBuilder.length() > 0) {
                     request.getSession().setAttribute("errorMsg", errorMsgBuilder.toString().trim());
                 }
             } else {
-                request.getSession().setAttribute("errorMsg", "Dá»¯ liá»‡u khĂ´ng há»£p lá»‡!");
+                request.getSession().setAttribute("errorMsg", "Dữ liệu không hợp lệ!");
             }
         } catch (NumberFormatException e) {
-            request.getSession().setAttribute("errorMsg", "Dá»¯ liá»‡u khĂ´ng há»£p lá»‡!");
+            request.getSession().setAttribute("errorMsg", "Dữ liệu không hợp lệ!");
         }
         response.sendRedirect(request.getContextPath() + "/admin/users");
     }
@@ -364,7 +364,7 @@ public class ManageUserController extends HttpServlet {
                 for (String idStr : userIds) {
                     int userId = Integer.parseInt(idStr);
 
-                    // Self-protection: khĂ´ng admin nĂ o Ä‘Æ°á»£c tá»± khĂ³a chĂ­nh mĂ¬nh trong bulk action.
+                    // Self-protection: không admin nào được tự khóa chính mình trong bulk action.
                     if (currentAdmin != null && userId == currentAdmin.getUserId()) {
                         adminSkipCount++;
                         continue;
@@ -381,13 +381,13 @@ public class ManageUserController extends HttpServlet {
                     }
                 }
                 
-                String actionStr = status ? "má»Ÿ khĂ³a" : "khĂ³a";
+                String actionStr = status ? "mở khóa" : "khóa";
                 StringBuilder msgBuilder = new StringBuilder();
                 if (count > 0) {
-                    msgBuilder.append("ÄĂ£ ").append(actionStr).append(" ").append(count).append(" tĂ i khoáº£n! ");
+                    msgBuilder.append("Đã ").append(actionStr).append(" ").append(count).append(" tài khoản! ");
                 }
                 if (adminSkipCount > 0) {
-                    msgBuilder.append("KhĂ´ng thá»ƒ thao tĂ¡c vá»›i ").append(adminSkipCount).append(" tĂ i khoáº£n Admin.");
+                    msgBuilder.append("Không thể thao tác với ").append(adminSkipCount).append(" tài khoản Admin.");
                 }
                 
                 if (count > 0 && adminSkipCount == 0) {
@@ -403,10 +403,10 @@ public class ManageUserController extends HttpServlet {
                     auditLogDAO.insertLog(currentAdmin.getUserId(), status ? "BULK_UNLOCK_USER" : "BULK_LOCK_USER", null, logMsg);
                 }
             } else {
-                request.getSession().setAttribute("errorMsg", "Dá»¯ liá»‡u khĂ´ng há»£p lá»‡!");
+                request.getSession().setAttribute("errorMsg", "Dữ liệu không hợp lệ!");
             }
         } catch (NumberFormatException e) {
-            request.getSession().setAttribute("errorMsg", "Dá»¯ liá»‡u khĂ´ng há»£p lá»‡!");
+            request.getSession().setAttribute("errorMsg", "Dữ liệu không hợp lệ!");
         }
         response.sendRedirect(request.getContextPath() + "/admin/users");
     }

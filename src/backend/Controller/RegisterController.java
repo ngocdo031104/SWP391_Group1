@@ -65,13 +65,13 @@ public class RegisterController extends HttpServlet {
         // Xác thực định dạng Email
         // ==========================
         if (email == null || email.isEmpty()) {
-            request.setAttribute("emailError", "Email khĂ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng");
+            request.setAttribute("emailError", "Email không được để trống");
             hasError = true;
         } else if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
-            request.setAttribute("emailError", "Äá»‹nh dáº¡ng email khĂ´ng há»£p lá»‡");
+            request.setAttribute("emailError", "Äá»‹nh dạng email không hợp lệ");
             hasError = true;
         } else if (userDAO.checkEmailExists(email)) {
-            request.setAttribute("emailError", "Email Ä‘Ă£ Ä‘Æ°á»£c Ä‘Äƒng kĂ½");
+            request.setAttribute("emailError", "Email đã được đăng ký");
             hasError = true;
         }
 
@@ -79,15 +79,15 @@ public class RegisterController extends HttpServlet {
         // Xác thực Mật khẩu (độ dài, ký tự)
         // ==========================
         if (password == null || password.isEmpty()) {
-            request.setAttribute("passwordError", "Máº­t kháº©u khĂ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng");
+            request.setAttribute("passwordError", "Mật khẩu không được để trống");
             hasError = true;
         } else if (password.length() < 8) {
-            request.setAttribute("passwordError", "Máº­t kháº©u pháº£i cĂ³ Ă­t nháº¥t 8 kĂ½ tá»±");
+            request.setAttribute("passwordError", "Mật khẩu phải có ít nhất 8 ký tự");
             hasError = true;
         } else if (!password.matches(".*[A-Za-z].*")
                 || !password.matches(".*[0-9].*")) {
             request.setAttribute("passwordError",
-                    "Máº­t kháº©u pháº£i chá»©a Ă­t nháº¥t 1 chá»¯ cĂ¡i vĂ  1 chá»¯ sá»‘");
+                    "Mật khẩu phải chứa ít nhất 1 chữ cái và 1 chữ số");
             hasError = true;
         }
 
@@ -96,11 +96,11 @@ public class RegisterController extends HttpServlet {
         // ==========================
         if (confirmPassword == null || confirmPassword.isEmpty()) {
             request.setAttribute("confirmError",
-                    "Vui lĂ²ng nháº­p láº¡i máº­t kháº©u");
+                    "Vui lòng nhập lại mật khẩu");
             hasError = true;
         } else if (password != null && !password.equals(confirmPassword)) {
             request.setAttribute("confirmError",
-                    "Máº­t kháº©u xĂ¡c nháº­n khĂ´ng khá»›p");
+                    "Mật khẩu xác nhận không khớp");
             hasError = true;
         }
 
@@ -109,15 +109,15 @@ public class RegisterController extends HttpServlet {
         // ==========================
         if (fullName == null || fullName.isEmpty()) {
             request.setAttribute("nameError",
-                    "Há» vĂ  tĂªn khĂ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng");
+                    "Há» và tên không được để trống");
             hasError = true;
         } else if (fullName.length() < 2 || fullName.length() > 100) {
             request.setAttribute("nameError",
-                    "Há» vĂ  tĂªn pháº£i tá»« 2 Ä‘áº¿n 100 kĂ½ tá»±");
+                    "Há» và tên phải từ 2 đến 100 ký tự");
             hasError = true;
         } else if (!fullName.matches("^[\\p{L} .'-]+$")) {
             request.setAttribute("nameError",
-                    "Há» vĂ  tĂªn chá»‰ Ä‘Æ°á»£c chá»©a chá»¯ cĂ¡i vĂ  khoáº£ng tráº¯ng");
+                    "Há» và tên chỉ được chứa chữ cái và khoảng trắng");
             hasError = true;
         }
 
@@ -126,11 +126,11 @@ public class RegisterController extends HttpServlet {
         // ==========================
         if (phone == null || phone.isEmpty()) {
             request.setAttribute("phoneError",
-                    "Sá»‘ Ä‘iá»‡n thoáº¡i khĂ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng");
+                    "Số điện thoại không được để trống");
             hasError = true;
         } else if (!phone.matches("^0[0-9]{9}$")) {
             request.setAttribute("phoneError",
-                    "Sá»‘ Ä‘iá»‡n thoáº¡i pháº£i gá»“m 10 chá»¯ sá»‘ vĂ  báº¯t Ä‘áº§u báº±ng 0");
+                    "Số điện thoại phải gồm 10 chữ số và bắt đầu bằng 0");
             hasError = true;
         }
 
@@ -139,7 +139,7 @@ public class RegisterController extends HttpServlet {
         // ==========================
         if (dob == null || dob.isEmpty()) {
             request.setAttribute("dobError",
-                    "NgĂ y sinh khĂ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng");
+                    "Ngày sinh không được để trống");
             hasError = true;
         } else {
             try {
@@ -148,7 +148,7 @@ public class RegisterController extends HttpServlet {
 
                 if (parsedDob.after(today)) {
                     request.setAttribute("dobError",
-                            "NgĂ y sinh khĂ´ng Ä‘Æ°á»£c á»Ÿ tÆ°Æ¡ng lai");
+                            "Ngày sinh không được ở tương lai");
                     hasError = true;
                 } else {
                     Calendar cal = Calendar.getInstance();
@@ -156,14 +156,14 @@ public class RegisterController extends HttpServlet {
 
                     if (parsedDob.after(new Date(cal.getTimeInMillis()))) {
                         request.setAttribute("dobError",
-                                "Báº¡n pháº£i tá»« 13 tuá»•i trá»Ÿ lĂªn Ä‘á»ƒ Ä‘Äƒng kĂ½");
+                                "Bạn phải từ 13 tuổi trở lên để đăng ký");
                         hasError = true;
                     }
                 }
 
             } catch (IllegalArgumentException e) {
                 request.setAttribute("dobError",
-                        "Äá»‹nh dáº¡ng ngĂ y sinh khĂ´ng há»£p lá»‡");
+                        "Äá»‹nh dạng ngày sinh không hợp lệ");
                 hasError = true;
             }
         }
@@ -173,14 +173,14 @@ public class RegisterController extends HttpServlet {
         // ==========================
         if (gender == null || gender.isEmpty()) {
             request.setAttribute("genderError",
-                    "Vui lĂ²ng chá»n giá»›i tĂ­nh");
+                    "Vui lòng chá»n giới tính");
             hasError = true;
         } else if (!gender.equals("Male")
                 && !gender.equals("Female")
                 && !gender.equals("Other")) {
 
             request.setAttribute("genderError",
-                    "Giá»›i tĂ­nh khĂ´ng há»£p lá»‡");
+                    "Giới tính không hợp lệ");
             hasError = true;
         }
 
@@ -189,18 +189,18 @@ public class RegisterController extends HttpServlet {
         // ==========================
         if (role == null || role.isEmpty()) {
             request.setAttribute("roleError",
-                    "Vui lĂ²ng chá»n vai trĂ²");
+                    "Vui lòng chá»n vai trò");
             hasError = true;
         } else if (!role.equals("Customer")
                 && !role.equals("Guide")) {
 
             request.setAttribute("roleError",
-                    "Vai trĂ² khĂ´ng há»£p lá»‡");
+                    "Vai trò không hợp lệ");
             hasError = true;
         }
 
         // ==========================
-        // Náº¿u cĂ³ lá»—i
+        // Nếu có lỗi
         // ==========================
         if (hasError) {
 
@@ -253,7 +253,7 @@ public class RegisterController extends HttpServlet {
                 } catch (Exception e) {
                     e.printStackTrace();
                     Logger.getLogger(RegisterController.class.getName()).log(Level.SEVERE, "Failed to send email", e);
-                    request.getSession().setAttribute("emailError", "Lá»—i gá»­i mail: " + e.getMessage() + " - " + e.getClass().getName());
+                    request.getSession().setAttribute("emailError", "Lỗi gửi mail: " + e.getMessage() + " - " + e.getClass().getName());
                 }
                 
                 response.sendRedirect(request.getContextPath() + "/verify");
@@ -261,7 +261,7 @@ public class RegisterController extends HttpServlet {
 
                 request.setAttribute(
                         "errorMessage",
-                        "ÄÄƒng kĂ½ khĂ´ng thĂ nh cĂ´ng. Vui lĂ²ng thá»­ láº¡i."
+                        "ÄÄƒng ký không thành công. Vui lòng thử lại."
                 );
 
                 request.getRequestDispatcher("/views/register.jsp")
@@ -275,7 +275,7 @@ public class RegisterController extends HttpServlet {
 
             request.setAttribute(
                     "errorMessage",
-                    "Lá»—i há»‡ thá»‘ng khi Ä‘Äƒng kĂ½. Vui lĂ²ng thá»­ láº¡i sau."
+                    "Lỗi hệ thống khi đăng ký. Vui lòng thử lại sau."
             );
 
             request.getRequestDispatcher("/views/register.jsp")

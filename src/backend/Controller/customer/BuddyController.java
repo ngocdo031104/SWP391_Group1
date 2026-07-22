@@ -56,7 +56,7 @@ public class BuddyController extends HttpServlet {
                 myPref = new TravelPreference();
                 myPref.setDestination("Any Destination");
                 myPref.setTravelStyle("Explorer");
-                myPref.setLanguages("Tiáº¿ng Viá»‡t");
+                myPref.setLanguages("Tiếng Việt");
             }
             
             List<MatchedUser> topMatches = matchingDAO.getTopMatches(currentUserId);
@@ -128,18 +128,18 @@ public class BuddyController extends HttpServlet {
                     try {
                         boolean sent = buddyRequestDAO.sendRequest(currentUserId, receiverId);
                         if (sent) {
-                            session.setAttribute("successMsg", "ÄĂ£ gá»­i lá»i má»i káº¿t ná»‘i thĂ nh cĂ´ng!");
+                            session.setAttribute("successMsg", "ÄĂ£ gửi lá»i má»i kết nối thành công!");
                             Notification notif = new Notification();
                             notif.setUserId(receiverId);
                             notif.setSenderId(currentUserId);
-                            notif.setTitle("Lá»i má»i káº¿t ná»‘i má»›i");
-                            notif.setContent(sessionUser.getFullName() + " vá»«a gá»­i cho báº¡n má»™t lá»i má»i káº¿t ná»‘i Buddy. HĂ£y kiá»ƒm tra vĂ  pháº£n há»“i nhĂ©!");
+                            notif.setTitle("Lá»i má»i kết nối mới");
+                            notif.setContent(sessionUser.getFullName() + " vừa gửi cho bạn một lá»i má»i kết nối Buddy. Hãy kiểm tra và phản hồi nhé!");
                             notif.setChannel("In-App");
                             notif.setCategory("Buddy Request");
                             NotificationDAO notifDAO = new NotificationDAO();
                             notifDAO.insertNotification(notif);
                         } else {
-                            session.setAttribute("errorMsg", "KhĂ´ng thá»ƒ gá»­i lá»i má»i. Vui lĂ²ng thá»­ láº¡i.");
+                            session.setAttribute("errorMsg", "Không thể gửi lá»i má»i. Vui lòng thử lại.");
                         }
                     } catch (Exception ex) {
                         session.setAttribute("errorMsg", "DB Error: " + ex.getMessage());
@@ -151,20 +151,20 @@ public class BuddyController extends HttpServlet {
                     BuddyRequest reqToAccept = buddyRequestDAO.getRequestById(reqIdAccept);
                     boolean accepted = buddyRequestDAO.updateRequestStatus(reqIdAccept, "Accepted");
                     if (accepted) {
-                        session.setAttribute("successMsg", "ÄĂ£ cháº¥p nháº­n lá»i má»i káº¿t ná»‘i!");
+                        session.setAttribute("successMsg", "ÄĂ£ chấp nhận lá»i má»i kết nối!");
                         if (reqToAccept != null) {
                             Notification notif = new Notification();
                             notif.setUserId(reqToAccept.getSenderId());
                             notif.setSenderId(currentUserId);
-                            notif.setTitle("Lá»i má»i káº¿t báº¡n Ä‘Æ°á»£c cháº¥p nháº­n");
-                            notif.setContent(sessionUser.getFullName() + " Ä‘Ă£ cháº¥p nháº­n lá»i má»i káº¿t ná»‘i Buddy cá»§a báº¡n. KhĂ¡m phĂ¡ chuyáº¿n Ä‘i ngay!");
+                            notif.setTitle("Lá»i má»i kết bạn được chấp nhận");
+                            notif.setContent(sessionUser.getFullName() + " đã chấp nhận lá»i má»i kết nối Buddy của bạn. Khám phá chuyến đi ngay!");
                             notif.setChannel("In-App");
                             notif.setCategory("System Announcement");
                             NotificationDAO notifDAO = new NotificationDAO();
                             notifDAO.insertNotification(notif);
                         }
                     } else {
-                        session.setAttribute("errorMsg", "Lá»—i khi cháº¥p nháº­n lá»i má»i.");
+                        session.setAttribute("errorMsg", "Lỗi khi chấp nhận lá»i má»i.");
                     }
                     break;
 
@@ -172,9 +172,9 @@ public class BuddyController extends HttpServlet {
                     int reqIdReject = Integer.parseInt(request.getParameter("requestId"));
                     boolean rejected = buddyRequestDAO.updateRequestStatus(reqIdReject, "Rejected");
                     if (rejected) {
-                        session.setAttribute("successMsg", "ÄĂ£ tá»« chá»‘i lá»i má»i.");
+                        session.setAttribute("successMsg", "ÄĂ£ từ chối lá»i má»i.");
                     } else {
-                        session.setAttribute("errorMsg", "Lá»—i khi tá»« chá»‘i lá»i má»i.");
+                        session.setAttribute("errorMsg", "Lỗi khi từ chối lá»i má»i.");
                     }
                     break;
 
@@ -182,9 +182,9 @@ public class BuddyController extends HttpServlet {
                     int reqIdCancel = Integer.parseInt(request.getParameter("requestId"));
                     boolean cancelled = buddyRequestDAO.cancelRequest(reqIdCancel, currentUserId);
                     if (cancelled) {
-                        session.setAttribute("successMsg", "ÄĂ£ há»§y lá»i má»i gá»­i Ä‘i.");
+                        session.setAttribute("successMsg", "ÄĂ£ hủy lá»i má»i gửi đi.");
                     } else {
-                        session.setAttribute("errorMsg", "KhĂ´ng thá»ƒ há»§y lá»i má»i. Lá»i má»i cĂ³ thá»ƒ Ä‘Ă£ Ä‘Æ°á»£c cháº¥p nháº­n hoáº·c bá»‹ tá»« chá»‘i.");
+                        session.setAttribute("errorMsg", "Không thể hủy lá»i má»i. Lá»i má»i có thể đã được chấp nhận hoặc bị từ chối.");
                     }
                     break;
 
@@ -192,14 +192,14 @@ public class BuddyController extends HttpServlet {
                     int targetId = Integer.parseInt(request.getParameter("targetId"));
                     boolean unfriended = buddyRequestDAO.unfriendBuddy(currentUserId, targetId);
                     if (unfriended) {
-                        session.setAttribute("successMsg", "ÄĂ£ há»§y káº¿t báº¡n thĂ nh cĂ´ng.");
+                        session.setAttribute("successMsg", "ÄĂ£ hủy kết bạn thành công.");
                     } else {
-                        session.setAttribute("errorMsg", "Lá»—i khi há»§y káº¿t báº¡n.");
+                        session.setAttribute("errorMsg", "Lỗi khi hủy kết bạn.");
                     }
                     break;
             }
         } catch (Exception e) {
-            session.setAttribute("errorMsg", "ÄĂ£ cĂ³ lá»—i xáº£y ra: " + e.getMessage());
+            session.setAttribute("errorMsg", "ÄĂ£ có lỗi xảy ra: " + e.getMessage());
         }
 
         response.sendRedirect(request.getContextPath() + "/customer/buddies");

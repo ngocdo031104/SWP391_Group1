@@ -145,7 +145,7 @@ public class VideoCallController extends HttpServlet {
                         Message msg = new Message();
                         msg.setConversationId(conversationId);
                         msg.setSenderId(user.getUserId());
-                        msg.setContent("\uD83D\uDCC5 ÄĂ£ lĂªn lá»‹ch gá»i Video: " + title + " vĂ o lĂºc " + dateStr.replace("T", " ") + ". Tham gia táº¡i: " + meetingUrl);
+                        msg.setContent("\uD83D\uDCC5 ÄĂ£ lên lịch gá»i Video: " + title + " vào lúc " + dateStr.replace("T", " ") + ". Tham gia tại: " + meetingUrl);
                         chatDAO.saveMessage(msg);
                         
                         response.getWriter().write(gson.toJson(savedCall));
@@ -187,7 +187,7 @@ public class VideoCallController extends HttpServlet {
                         Message msg = new Message();
                         msg.setConversationId(conversationId);
                         msg.setSenderId(user.getUserId());
-                        msg.setContent("\u270F\uFE0F ÄĂ£ cáº­p nháº­t lá»‹ch gá»i Video: " + title + " sang lĂºc " + dateStr.replace("T", " ") + ". Tham gia táº¡i: " + meetingUrl);
+                        msg.setContent("\u270F\uFE0F ÄĂ£ cập nhật lịch gá»i Video: " + title + " sang lúc " + dateStr.replace("T", " ") + ". Tham gia tại: " + meetingUrl);
                         chatDAO.saveMessage(msg);
                         
                         response.getWriter().write(gson.toJson(existing));
@@ -232,7 +232,7 @@ public class VideoCallController extends HttpServlet {
                     Message msg = new Message();
                     msg.setConversationId(conversationId);
                     msg.setSenderId(user.getUserId());
-                    msg.setContent("\u274C ÄĂ£ há»§y lá»‹ch gá»i Video: " + existing.getTitle());
+                    msg.setContent("\u274C ÄĂ£ hủy lịch gá»i Video: " + existing.getTitle());
                     chatDAO.saveMessage(msg);
                     
                     response.getWriter().write("{\"success\": true}");

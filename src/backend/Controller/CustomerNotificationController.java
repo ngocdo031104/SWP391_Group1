@@ -33,7 +33,7 @@ public class CustomerNotificationController extends HttpServlet {
 
         String path = request.getServletPath();
 
-        // --- ÄĂ¡nh dáº¥u má»™t thĂ´ng bĂ¡o Ä‘Ă£ Ä‘á»c (AJAX) ---
+        // --- ÄĂ¡nh dấu một thông báo đã Ä‘á»c (AJAX) ---
         if (path.equals("/customer/notifications/read")) {
             NotificationDAO dao = new NotificationDAO();
             try {
@@ -55,7 +55,7 @@ public class CustomerNotificationController extends HttpServlet {
             return;
         }
 
-        // --- ÄĂ¡nh dáº¥u táº¥t cáº£ Ä‘Ă£ Ä‘á»c ---
+        // --- ÄĂ¡nh dấu tất cả đã Ä‘á»c ---
         if (path.equals("/customer/notifications/read-all")) {
             NotificationDAO dao = new NotificationDAO();
             try {
@@ -67,7 +67,7 @@ public class CustomerNotificationController extends HttpServlet {
             return;
         }
 
-        // --- Xem danh sĂ¡ch thĂ´ng bĂ¡o (táº¡o DAO má»›i má»—i request) ---
+        // --- Xem danh sách thông báo (tạo DAO mới mỗi request) ---
         NotificationDAO dao = new NotificationDAO();
         try {
             String category = request.getParameter("category");

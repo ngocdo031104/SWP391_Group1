@@ -60,7 +60,7 @@ public class ProfileController extends HttpServlet {
 
         session.setAttribute("sessionUser", user);
         
-        // Náº¿u khĂ´ng cĂ³ dá»¯ liá»‡u nháº­p lá»—i Ä‘Æ°á»£c giá»¯ láº¡i, láº¥y dá»¯ liá»‡u gá»‘c tá»« DB
+        // Nếu không có dữ liệu nhập lỗi được giữ lại, lấy dữ liệu gốc từ DB
         if (request.getAttribute("user") == null) {
             request.setAttribute("user", user);
         }
@@ -119,7 +119,7 @@ public class ProfileController extends HttpServlet {
         }
     }
 
-    // â”€â”€â”€ updateProfile â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ─── updateProfile ────────────────────────────────────────────────────────
     private void updateProfile(HttpServletRequest request, HttpServletResponse response, User sessionUser)
             throws ServletException, IOException {
         try {
@@ -138,7 +138,7 @@ public class ProfileController extends HttpServlet {
                 String gender = trim(request.getParameter("gender"));
                 String address = trim(request.getParameter("address"));
 
-                // Táº¡o má»™t báº£n sao táº¡m Ä‘á»ƒ lÆ°u trá»¯ dá»¯ liá»‡u lá»—i gá»­i ngÆ°á»£c vá» JSP náº¿u validate tháº¥t báº¡i
+                // Tạo một bản sao tạm để lưu trữ dữ liệu lỗi gửi ngược về JSP nếu validate thất bại
                 User invalidUser = new User();
                 invalidUser.setUserId(user.getUserId());
                 invalidUser.setFullName(fullName);
@@ -148,66 +148,66 @@ public class ProfileController extends HttpServlet {
                 invalidProfile.setGender(gender);
                 invalidProfile.setAddress(address);
 
-                // â”€â”€ Validate fullName â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                // --- Validate fullName ------------------------------
                 if (fullName.isEmpty()) {
-                    sendErrorBack(request, response, invalidUser, invalidProfile, "Há» vĂ  tĂªn khĂ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng");
+                    sendErrorBack(request, response, invalidUser, invalidProfile, "Họ và tên không được để trống");
                     return;
                 }
                 if (fullName.length() < 2 || fullName.length() > 100) {
-                    sendErrorBack(request, response, invalidUser, invalidProfile, "Há» vĂ  tĂªn pháº£i tá»« 2 Ä‘áº¿n 100 kĂ½ tá»±");
+                    sendErrorBack(request, response, invalidUser, invalidProfile, "Họ và tên phải từ 2 đến 100 ký tự");
                     return;
                 }
                 if (!fullName.matches("^[\\p{L} ]+$")) {
-                    sendErrorBack(request, response, invalidUser, invalidProfile, "Há» vĂ  tĂªn chá»‰ Ä‘Æ°á»£c chá»©a chá»¯ cĂ¡i vĂ  khoáº£ng tráº¯ng");
+                    sendErrorBack(request, response, invalidUser, invalidProfile, "Họ và tên chỉ được chứa chữ cái và khoảng trắng");
                     return;
                 }
 
-                // â”€â”€ Validate phone (tĂ¹y chá»n) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                // --- Validate phone (tùy chọn) ----------------------
                 if (!phone.isEmpty() && !phone.matches("^(03|05|07|08|09)[0-9]{8}$")) {
-                    sendErrorBack(request, response, invalidUser, invalidProfile, "Sá»‘ Ä‘iá»‡n thoáº¡i khĂ´ng há»£p lá»‡");
+                    sendErrorBack(request, response, invalidUser, invalidProfile, "Số điện thoại không hợp lệ");
                     return;
                 }
 
-                // â”€â”€ Validate gender â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                // --- Validate gender --------------------------------
                 List<String> validGenders = Arrays.asList("Male", "Female", "Other");
                 if (!gender.isEmpty() && !validGenders.contains(gender)) {
-                    sendErrorBack(request, response, invalidUser, invalidProfile, "Giá»›i tĂ­nh khĂ´ng há»£p lá»‡");
+                    sendErrorBack(request, response, invalidUser, invalidProfile, "Giới tính không hợp lệ");
                     return;
                 }
 
-                // â”€â”€ Validate dob (tĂ¹y chá»n) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                // --- Validate dob (tùy chọn) ------------------------
                 Date parsedDob = null;
                 if (!dob.isEmpty()) {
                     try {
                         parsedDob = Date.valueOf(dob);
                         if (parsedDob.after(new Date(System.currentTimeMillis()))) {
-                            sendErrorBack(request, response, invalidUser, invalidProfile, "NgĂ y sinh khĂ´ng Ä‘Æ°á»£c á»Ÿ tÆ°Æ¡ng lai");
+                            sendErrorBack(request, response, invalidUser, invalidProfile, "Ngày sinh không được ở tương lai");
                             return;
                         }
                         java.util.Calendar cal = java.util.Calendar.getInstance();
                         cal.add(java.util.Calendar.YEAR, -13);
                         if (parsedDob.after(new Date(cal.getTimeInMillis()))) {
-                            sendErrorBack(request, response, invalidUser, invalidProfile, "Báº¡n pháº£i tá»« 13 tuá»•i trá»Ÿ lĂªn");
+                            sendErrorBack(request, response, invalidUser, invalidProfile, "Bạn phải từ 13 tuổi trở lên");
                             return;
                         }
                     } catch (IllegalArgumentException e) {
-                        sendErrorBack(request, response, invalidUser, invalidProfile, "Äá»‹nh dáº¡ng ngĂ y sinh khĂ´ng há»£p lá»‡");
+                        sendErrorBack(request, response, invalidUser, invalidProfile, "Định dạng ngày sinh không hợp lệ");
                         return;
                     }
                 }
                 invalidProfile.setDateOfBirth(parsedDob);
 
-                // â”€â”€ Validate chiá»u dĂ i & phĂ²ng chá»‘ng XSS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                // --- Validate chiều dài & phòng chống XSS -----------
                 if (address.length() > 255 || biography.length() > 1000) {
-                    sendErrorBack(request, response, invalidUser, invalidProfile, "Äá»™ dĂ i Ä‘á»‹a chá»‰ hoáº·c tiá»ƒu sá»­ vÆ°á»£t quĂ¡ giá»›i háº¡n");
+                    sendErrorBack(request, response, invalidUser, invalidProfile, "Độ dài địa chỉ hoặc tiểu sử vượt quá giới hạn");
                     return;
                 }
                 if (containsXss(address) || containsXss(biography)) {
-                    sendErrorBack(request, response, invalidUser, invalidProfile, "Ná»™i dung chá»©a kĂ½ tá»± khĂ´ng há»£p lá»‡ (XSS)");
+                    sendErrorBack(request, response, invalidUser, invalidProfile, "Nội dung chứa ký tự không hợp lệ (XSS)");
                     return;
                 }
 
-                // Cáº­p nháº­t dá»¯ liá»‡u tháº­t náº¿u pass táº¥t cáº£ táº§ng kiá»ƒm tra
+                // Cập nhật dữ liệu thật nếu pass tất cả tầng kiểm tra
                 user.setFullName(fullName);
                 user.setPhoneNumber(phone);
                 profile.setBiography(biography);
@@ -255,29 +255,29 @@ public class ProfileController extends HttpServlet {
                 
                 boolean savedPref = matchingDAO.savePreference(pref);
                 if (!savedPref) {
-                     sendErrorBack(request, response, user, profile, "KhĂ´ng thá»ƒ lÆ°u sá»Ÿ thĂ­ch du lá»‹ch");
+                     sendErrorBack(request, response, user, profile, "Không thể lưu sở thích du lịch");
                      return;
                 }
-                request.setAttribute("successMessage", "Cáº­p nháº­t sá»Ÿ thĂ­ch du lá»‹ch thĂ nh cĂ´ng");
+                request.setAttribute("successMessage", "Cập nhật sở thích du lịch thành công");
                 request.setAttribute("activeTab", "preferences");
                 doGet(request, response);
                 return;
             }
 
-            // Tiáº¿n hĂ nh cáº­p nháº­t Database
+            // Tiến hành cập nhật Database
             boolean success = userDAO.updateProfile(user, profile);
             request.setAttribute(success ? "successMessage" : "errorMessage",
-                    success ? "Cáº­p nháº­t thĂ´ng tin thĂ nh cĂ´ng" : "KhĂ´ng thá»ƒ cáº­p nháº­t thĂ´ng tin");
+                    success ? "Cập nhật thông tin thành công" : "Không thể cập nhật thông tin");
             request.setAttribute("activeTab", "info");
 
         } catch (Exception ex) {
             ex.printStackTrace();
-            request.setAttribute("errorMessage", "CĂ³ lá»—i xáº£y ra: " + ex.getMessage());
+            request.setAttribute("errorMessage", "Có lỗi xảy ra: " + ex.getMessage());
         }
         doGet(request, response);
     }
 
-    // Helper Ä‘Ă³ng gĂ³i viá»‡c gá»­i tráº£ data lá»—i vá» Form
+    // Helper đóng gói việc gửi trả data lỗi về Form
     private void sendErrorBack(HttpServletRequest req, HttpServletResponse res, User invUser, UserProfile invProfile, String errMsg) 
             throws ServletException, IOException {
         invUser.setProfile(invProfile);
@@ -292,34 +292,33 @@ public class ProfileController extends HttpServlet {
         return lower.contains("<script") || lower.contains("javascript:") || lower.contains("onerror=");
     }
 
-    // â”€â”€â”€ updateAvatar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     private void updateAvatar(HttpServletRequest request, HttpServletResponse response, User sessionUser)
             throws ServletException, IOException {
         try {
             Part part = request.getPart("avatar");
 
             if (part == null || part.getSize() == 0) {
-                request.setAttribute("errorMessage", "Vui lĂ²ng chá»n file áº£nh");
+                request.setAttribute("errorMessage", "Vui lòng chọn file ảnh");
                 doGet(request, response);
                 return;
             }
 
             String contentType = part.getContentType();
             if (contentType == null || !contentType.startsWith("image/")) {
-                request.setAttribute("errorMessage", "Chá»‰ cháº¥p nháº­n file áº£nh (JPG, PNG, GIF, WebP)");
+                request.setAttribute("errorMessage", "Chỉ chấp nhận file ảnh (JPG, PNG, GIF, WebP)");
                 doGet(request, response);
                 return;
             }
 
             if (part.getSize() > 2 * 1024 * 1024) {
-                request.setAttribute("errorMessage", "KĂ­ch thÆ°á»›c áº£nh khĂ´ng Ä‘Æ°á»£c vÆ°á»£t quĂ¡ 2 MB");
+                request.setAttribute("errorMessage", "Kích thước ảnh không được vượt quá 2 MB");
                 doGet(request, response);
                 return;
             }
 
             String originalFileName = getFileName(part);
             if (originalFileName == null || originalFileName.trim().isEmpty() || !originalFileName.contains(".")) {
-                request.setAttribute("errorMessage", "TĂªn file khĂ´ng há»£p lá»‡");
+                request.setAttribute("errorMessage", "Tên file không hợp lệ");
                 doGet(request, response);
                 return;
             }
@@ -328,7 +327,7 @@ public class ProfileController extends HttpServlet {
             List<String> validExtensions = Arrays.asList(".jpg", ".jpeg", ".png", ".gif", ".webp");
 
             if (!validExtensions.contains(extension)) {
-                request.setAttribute("errorMessage", "Chá»‰ cháº¥p nháº­n JPG, PNG, GIF hoáº·c WebP");
+                request.setAttribute("errorMessage", "Chỉ chấp nhận JPG, PNG, GIF hoặc WebP");
                 doGet(request, response);
                 return;
             }
@@ -351,16 +350,15 @@ public class ProfileController extends HttpServlet {
 
             boolean success = userDAO.updateProfile(user, profile);
             request.setAttribute(success ? "successMessage" : "errorMessage",
-                    success ? "Cáº­p nháº­t áº£nh Ä‘áº¡i diá»‡n thĂ nh cĂ´ng" : "KhĂ´ng thá»ƒ lÆ°u áº£nh");
+                    success ? "Cập nhật ảnh đại diện thành công" : "Không thể lưu ảnh");
 
         } catch (Exception ex) {
             ex.printStackTrace();
-            request.setAttribute("errorMessage", "Lá»—i táº£i áº£nh: " + ex.getMessage());
+            request.setAttribute("errorMessage", "Lỗi tải ảnh: " + ex.getMessage());
         }
         doGet(request, response);
     }
 
-    // â”€â”€â”€ changePassword â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     private void changePassword(HttpServletRequest request, HttpServletResponse response, User sessionUser)
             throws ServletException, IOException {
         try {
@@ -369,28 +367,28 @@ public class ProfileController extends HttpServlet {
             String confirmPassword = trim(request.getParameter("confirmNewPassword"));
 
             if (currentPassword.isEmpty() || newPassword.isEmpty() || confirmPassword.isEmpty()) {
-                request.setAttribute("errorMessage", "Vui lĂ²ng nháº­p Ä‘áº§y Ä‘á»§ cĂ¡c trÆ°á»ng máº­t kháº©u");
+                request.setAttribute("errorMessage", "Vui lòng nhập đầy đủ các trường mật khẩu");
                 doGet(request, response);
                 return;
             }
 
             if (newPassword.length() < 8) {
-                request.setAttribute("errorMessage", "Máº­t kháº©u má»›i pháº£i cĂ³ Ă­t nháº¥t 8 kĂ½ tá»±");
+                request.setAttribute("errorMessage", "Mật khẩu mới phải có ít nhất 8 ký tự");
                 doGet(request, response);
                 return;
             }
             if (!newPassword.matches(".*[A-Za-z].*") || !newPassword.matches(".*[0-9].*")) {
-                request.setAttribute("errorMessage", "Máº­t kháº©u má»›i pháº£i chá»©a Ă­t nháº¥t 1 chá»¯ cĂ¡i vĂ  1 chá»¯ sá»‘");
+                request.setAttribute("errorMessage", "Mật khẩu mới phải chứa ít nhất 1 chữ cái và 1 chữ số");
                 doGet(request, response);
                 return;
             }
             if (!newPassword.equals(confirmPassword)) {
-                request.setAttribute("errorMessage", "Máº­t kháº©u xĂ¡c nháº­n khĂ´ng khá»›p");
+                request.setAttribute("errorMessage", "Mật khẩu xác nhận không khớp");
                 doGet(request, response);
                 return;
             }
             if (newPassword.equals(currentPassword)) {
-                request.setAttribute("errorMessage", "Máº­t kháº©u má»›i khĂ´ng Ä‘Æ°á»£c trĂ¹ng máº­t kháº©u hiá»‡n táº¡i");
+                request.setAttribute("errorMessage", "Mật khẩu mới không được trùng mật khẩu hiện tại");
                 doGet(request, response);
                 return;
             }
@@ -399,7 +397,7 @@ public class ProfileController extends HttpServlet {
             User dbUser = userDAO.getUserById(sessionUser.getUserId());
 
             if (!PasswordUtil.verifyPassword(currentPassword, dbUser.getPasswordHash())) {
-                request.setAttribute("errorMessage", "Máº­t kháº©u hiá»‡n táº¡i khĂ´ng Ä‘Ăºng");
+                request.setAttribute("errorMessage", "Mật khẩu hiện tại không đúng");
                 doGet(request, response);
                 return;
             }
@@ -413,25 +411,23 @@ public class ProfileController extends HttpServlet {
             }
 
             request.setAttribute(success ? "successMessage" : "errorMessage",
-                    success ? "Äá»•i máº­t kháº©u thĂ nh cĂ´ng" : "KhĂ´ng thá»ƒ Ä‘á»•i máº­t kháº©u");
+                    success ? "Đổi mật khẩu thành công" : "Không thể đổi mật khẩu");
             request.setAttribute("activeTab", "security");
 
         } catch (Exception ex) {
             ex.printStackTrace();
-            request.setAttribute("errorMessage", "CĂ³ lá»—i xáº£y ra: " + ex.getMessage());
+            request.setAttribute("errorMessage", "Có lỗi xảy ra: " + ex.getMessage());
         }
         doGet(request, response);
     }
 
-    // â”€â”€â”€ updateNotifications â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     private void updateNotifications(HttpServletRequest request, HttpServletResponse response, User sessionUser)
             throws ServletException, IOException {
-        request.setAttribute("successMessage", "Cáº­p nháº­t cĂ i Ä‘áº·t thĂ´ng bĂ¡o thĂ nh cĂ´ng");
+        request.setAttribute("successMessage", "Cập nhật cài đặt thông báo thành công");
         request.setAttribute("activeTab", "notifications");
         doGet(request, response);
     }
 
-    // â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     private String getFileName(Part part) {
         String contentDisp = part.getHeader("content-disposition");
         if (contentDisp == null) {
@@ -448,6 +444,6 @@ public class ProfileController extends HttpServlet {
     }
 
     private String trim(String s) {
-        return s == null ? "" : s.trim(); // TRáº¢ Vá»€ Rá»–NG Äá»‚ TRĂNH NULL POINTER EXCEPTION
+        return s == null ? "" : s.trim(); // TRẢ VỀ RỖNG ĐỂ TRÁNH NULL POINTER EXCEPTION
     }
 }

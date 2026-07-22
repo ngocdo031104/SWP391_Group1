@@ -55,7 +55,7 @@ public class RoleController extends HttpServlet {
                 role.setRoleName(roleName);
                 role.setDescription(description);
                 roleDAO.createRole(role, adminId);
-                session.setAttribute("successMsg", "Táº¡o vai trĂ² thĂ nh cĂ´ng!");
+                session.setAttribute("successMsg", "Tạo vai trò thành công!");
             }
             else if ("updateRole".equals(action)) {
                 int roleId = Integer.parseInt(request.getParameter("roleId"));
@@ -66,18 +66,18 @@ public class RoleController extends HttpServlet {
                 role.setRoleName(roleName);
                 role.setDescription(description);
                 roleDAO.updateRole(role, adminId);
-                session.setAttribute("successMsg", "Cáº­p nháº­t vai trĂ² thĂ nh cĂ´ng!");
+                session.setAttribute("successMsg", "Cập nhật vai trò thành công!");
             }
             else if ("deleteRole".equals(action)) {
                 int roleId = Integer.parseInt(request.getParameter("roleId"));
                 roleDAO.deleteRole(roleId, adminId);
-                session.setAttribute("successMsg", "XĂ³a vai trĂ² thĂ nh cĂ´ng!");
+                session.setAttribute("successMsg", "Xóa vai trò thành công!");
             }
         } catch (RoleInUseException | Utils.SystemRoleException re) {
             session.setAttribute("errorMsg", re.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            session.setAttribute("errorMsg", "ÄĂ£ xáº£y ra lá»—i há»‡ thá»‘ng: " + e.getMessage());
+            session.setAttribute("errorMsg", "ÄĂ£ xảy ra lỗi hệ thống: " + e.getMessage());
         }
         
         response.sendRedirect(request.getContextPath() + "/admin/roles");

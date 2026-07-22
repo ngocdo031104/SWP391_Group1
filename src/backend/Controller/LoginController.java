@@ -90,7 +90,7 @@ public class LoginController extends HttpServlet {
 
             request.setAttribute(
                     "errorMessage",
-                    "Email khĂ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng"
+                    "Email không được để trống"
             );
 
             request.getRequestDispatcher("/views/login.jsp")
@@ -103,7 +103,7 @@ public class LoginController extends HttpServlet {
 
             request.setAttribute(
                     "errorMessage",
-                    "Máº­t kháº©u khĂ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng"
+                    "Mật khẩu không được để trống"
             );
 
             request.getRequestDispatcher("/views/login.jsp")
@@ -113,7 +113,7 @@ public class LoginController extends HttpServlet {
 
         try {
 
-            // Hash password trÆ°á»›c khi so sĂ¡nh DB
+            // Hash password trước khi so sánh DB
             String passwordHash =
                     PasswordUtil.hashPassword(password);
 
@@ -124,7 +124,7 @@ public class LoginController extends HttpServlet {
 
                 request.setAttribute(
                         "errorMessage",
-                        "Email hoáº·c máº­t kháº©u khĂ´ng Ä‘Ăºng"
+                        "Email hoặc mật khẩu không đúng"
                 );
 
                 request.getRequestDispatcher("/views/login.jsp")
@@ -135,7 +135,7 @@ public class LoginController extends HttpServlet {
             if (!user.isIsVerified()) {
                 request.setAttribute(
                         "errorMessage",
-                        "TĂ i khoáº£n chÆ°a Ä‘Æ°á»£c xĂ¡c thá»±c. Vui lĂ²ng kiá»ƒm tra email cá»§a báº¡n Ä‘á»ƒ láº¥y mĂ£ xĂ¡c nháº­n."
+                        "Tài khoản chưa được xác thực. Vui lòng kiểm tra email của bạn để lấy mã xác nhận."
                 );
 
                 request.getRequestDispatcher("/views/login.jsp")
@@ -143,7 +143,7 @@ public class LoginController extends HttpServlet {
                 return;
             }
 
-            // Táº¡o Session
+            // Tạo Session
             HttpSession session =
                     request.getSession(true);
 
@@ -218,7 +218,7 @@ public class LoginController extends HttpServlet {
 
             request.setAttribute(
                     "errorMessage",
-                    "CĂ³ lá»—i xáº£y ra khi Ä‘Äƒng nháº­p"
+                    "Có lỗi xảy ra khi đăng nhập"
             );
 
             request.getRequestDispatcher("/views/login.jsp")
