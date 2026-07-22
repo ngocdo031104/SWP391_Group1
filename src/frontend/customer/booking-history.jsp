@@ -1,11 +1,11 @@
-&#65279;<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
+﻿<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
-<%
-    // D&#432;&#417;ng l&#224;m &#273;o&#7841;n n&#224;y
-    // Ch&#7913;c n&#259;ng: M&#224;n h&#236;nh hi&#7875;n th&#7883; l&#7883;ch s&#7917; &#273;&#7863;t tour c&#7911;a kh&#225;ch h&#224;ng.
-%>
+<%--
+    Người làm: Dương
+    Ý nghĩa: Màn hình hiển thị lịch sử đặt tour của khách hàng.
+--%>
 <jsp:include page="/common/header.jsp"/>
 
 <style>

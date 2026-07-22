@@ -66,7 +66,8 @@ public class CouponDAO extends DBContext {
         return false;
     }
 
-    // Dương làm phần này: lấy tất cả coupon để hiển thị trên bảng admin
+    // Người làm đoạn này: Dương
+    // Lấy tất cả danh sách coupon trong hệ thống để hiển thị trên bảng quản lý (Admin).
     public java.util.List<Coupon> getAllCoupons() {
         java.util.List<Coupon> list = new java.util.ArrayList<>();
         String sql = "SELECT * FROM Coupon ORDER BY CreatedAt DESC";
@@ -96,7 +97,8 @@ public class CouponDAO extends DBContext {
         return list;
     }
 
-    // Dương làm phần này: thêm mới coupon
+    // Người làm đoạn này: Dương
+    // Thêm mới một coupon vào cơ sở dữ liệu.
     public boolean createCoupon(Coupon coupon) {
         String sql = "INSERT INTO Coupon (CouponCode, DiscountType, DiscountValue, MinOrderAmount, MaxDiscountAmount, MaxUses, StartDate, EndDate, IsActive, CreatedBy) "
                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -130,7 +132,8 @@ public class CouponDAO extends DBContext {
         return false;
     }
 
-    // Dương làm phần này: cập nhật coupon
+    // Người làm đoạn này: Dương
+    // Cập nhật thông tin chi tiết của một coupon có sẵn.
     public boolean updateCoupon(Coupon coupon) {
         String sql = "UPDATE Coupon SET CouponCode=?, DiscountType=?, DiscountValue=?, MinOrderAmount=?, MaxDiscountAmount=?, MaxUses=?, StartDate=?, EndDate=?, IsActive=? "
                    + "WHERE CouponID=?";
@@ -160,7 +163,8 @@ public class CouponDAO extends DBContext {
         return false;
     }
 
-    // Dương làm phần này: đổi trạng thái kích hoạt của coupon
+    // Người làm đoạn này: Dương
+    // Đổi trạng thái kích hoạt (Active/Inactive) của coupon.
     public boolean toggleStatus(int couponId, boolean newStatus) {
         String sql = "UPDATE Coupon SET IsActive = ? WHERE CouponID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -192,7 +196,8 @@ public class CouponDAO extends DBContext {
         return false;
     }
 
-    // Dương làm phần này: xóa coupon
+    // Người làm đoạn này: Dương
+    // Xóa một coupon khỏi hệ thống dựa trên ID.
     public boolean deleteCoupon(int couponId) {
         String sql = "DELETE FROM Coupon WHERE CouponID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {

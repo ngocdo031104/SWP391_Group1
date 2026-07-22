@@ -1,6 +1,12 @@
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
+<%--
+    Người làm: Dương
+    Ngày tạo file: 2026-07-21
+    Ý nghĩa: Giao diện quản lý yêu cầu hoàn tiền (Refund Management).
+    Hiển thị danh sách các yêu cầu hủy tour cần hoàn tiền, cho phép Kế toán thực hiện Duyệt (kèm ghi chú/mã giao dịch) hoặc Từ chối (kèm lý do).
+--%>
 
 <c:if test="${empty sessionScope.sessionUser
     || (sessionScope.sessionUser.role.roleName ne 'Accountant'

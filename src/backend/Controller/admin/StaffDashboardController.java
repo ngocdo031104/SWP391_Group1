@@ -1,7 +1,6 @@
 package Controller.admin;
 
 // Nguoi lam: Duong
-// UC11: Staff dashboard - trang chu sau khi Staff dang nhap.
 // Hien thi tong quan: so luong booking theo trang thai, loi tat den cac chuc nang chinh.
 
 import Entities.User;

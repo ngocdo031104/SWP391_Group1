@@ -1,17 +1,18 @@
 &#65279;<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
-&#65279;
+
 <%@ page import="java.util.List" %>
 <%@ page import="java.text.NumberFormat" %>
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="java.util.Locale" %>
 <%@ page import="Entities.Tour" %>
 <%@ page import="Entities.TourSchedule" %>
+<%--
+    Người làm: Dương
+    Thời gian tạo: 04/06/2026
+    Chức năng: Màn Customer tạo booking cho tour đã chọn.
+    Ý nghĩa: Chỉ hiển thị lịch khởi hành của tour hiện tại, nhập số người và thông tin người tham gia; không nhập coupon ở bước này.
+--%>
 <%
-    // Ng&#432;&#7901;i l&#224;m: D&#432;&#417;ng
-    // Th&#7901;i gian t&#7841;o: 04/06/2026
-    // Ch&#7913;c n&#259;ng: M&#224;n Customer t&#7841;o booking cho tour &#273;&#227; ch&#7885;n.
-    // &#221; ngh&#297;a: Ch&#7881; hi&#7875;n th&#7883; l&#7883;ch kh&#7903;i h&#224;nh c&#7911;a tour hi&#7879;n t&#7841;i, nh&#7853;p s&#7889; ng&#432;&#7901;i v&#224; th&#244;ng tin ng&#432;&#7901;i tham gia; kh&#244;ng nh&#7853;p coupon &#7903; b&#432;&#7899;c n&#224;y.
-
     // Khai b&#225;o CSS/JS ri&#234;ng cho m&#224;n t&#7841;o booking &#273;&#7875; header.jsp t&#7921; nh&#250;ng &#273;&#250;ng t&#224;i nguy&#234;n c&#7911;a trang n&#224;y.
     request.setAttribute("extraCss", "css/customer-booking-create.css");
     request.setAttribute("extraScript", "js/customer-booking-create.js");

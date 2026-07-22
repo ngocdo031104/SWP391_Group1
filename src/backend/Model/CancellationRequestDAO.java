@@ -81,9 +81,9 @@ public class CancellationRequestDAO extends DBContext {
         }
         return list;
     }
-        // UC40/41: Lay danh sach CancellationRequest theo status cho Accountant.
-    // JOIN Booking + [User] + TourSchedule + Tour de hien thi du thong tin.
-    // status: "Pending", "Approved", "Rejected"
+    // Người làm đoạn này: Dương
+    // Lấy danh sách yêu cầu hủy tour theo trạng thái (Pending, Approved, Rejected) dành cho Kế toán.
+    // Thực hiện JOIN với Booking, User, TourSchedule, Tour để hiển thị đầy đủ thông tin trên trang quản lý.
     public List<CancellationRequest> getRequestsByStatusForAccountant(String status) {
         List<CancellationRequest> list = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
@@ -135,9 +135,9 @@ public class CancellationRequestDAO extends DBContext {
         return list;
     }
 
-    // UC40: Cap nhat trang thai xu ly cua CancellationRequest (Approved/Rejected).
-    // processedBy: UserID cua Accountant xu ly.
-    // notes: Ghi chu ly do.
+    // Người làm đoạn này: Dương
+    // Cập nhật trạng thái xử lý yêu cầu hủy (Duyệt/Từ chối).
+    // Ghi nhận ID kế toán viên xử lý và ghi chú lý do.
     public boolean processRequest(int requestId, int processedBy, String status, String notes) {
         String sql = "UPDATE CancellationRequest SET Status = ?, ProcessedBy = ?, ProcessedAt = SYSDATETIME(), Notes = ? " +
                      "WHERE RequestID = ? AND Status = 'Pending'";
