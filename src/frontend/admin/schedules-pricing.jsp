@@ -287,15 +287,15 @@
                     </div>
                     <div class="form-group">
                         <label>Gi&#225; Ng&#432;&#7901;i L&#7899;n * (&#8363;) <small style="color: var(--text-gray); font-size: 0.8rem; font-weight: normal;">(T&#7913; 12 tu&#7893;i tr&#7903; l&#234;n)</small></label>
-                        <input type="number" name="priceAdult" id="form-schedule-price-adult" class="form-control" min="0" required>
+                        <input type="number" name="priceAdult" id="form-schedule-price-adult" class="form-control" min="1" placeholder="Nh&#7853;p gi&#225; ng&#432;&#7901;i l&#7899;n (* > 0)" required>
                     </div>
                     <div class="form-group">
                         <label>Gi&#225; Tr&#7867; Em (&#8363;) <small style="color: var(--text-gray); font-size: 0.8rem; font-weight: normal;">(T&#7913; 2 &#273;&#7871;n 11 tu&#7893;i)</small></label>
-                        <input type="number" name="priceChild" id="form-schedule-price-child" class="form-control" min="0" value="0">
+                        <input type="number" name="priceChild" id="form-schedule-price-child" class="form-control" min="0" placeholder="&#272;&#7875; tr&#7889;ng n&#7871;u kh&#244;ng &#225;p d&#7909;ng">
                     </div>
                     <div class="form-group">
                         <label>Gi&#225; Tr&#7867; S&#417; Sinh (&#8363;) <small style="color: var(--text-gray); font-size: 0.8rem; font-weight: normal;">(D&#432;&#7899;i 2 tu&#7893;i)</small></label>
-                        <input type="number" name="priceInfant" id="form-schedule-price-infant" class="form-control" min="0" value="0">
+                        <input type="number" name="priceInfant" id="form-schedule-price-infant" class="form-control" min="0" placeholder="&#272;&#7875; tr&#7889;ng n&#7871;u kh&#244;ng cho tr&#7867; s&#417; sinh &#273;i">
                         <span id="infant-warning" style="display: none; color: var(--error-red); font-size: 0.8rem; margin-top: 0.25rem; font-weight: 500;">
                             <i class="fa-solid fa-triangle-exclamation"></i> Tour m&#7841;o hi&#7875;m - Kh&#244;ng cho ph&#233;p Tr&#7867; s&#417; sinh tham gia.
                         </span>
@@ -559,9 +559,12 @@
         document.getElementById("schedule-action").value = "addSchedule";
         document.getElementById("form-schedule-id").value = "";
         document.getElementById("form-schedule-tour-id").value = tourId;
+        document.getElementById("form-schedule-price-adult").value = "";
+        document.getElementById("form-schedule-price-child").value = "";
+        document.getElementById("form-schedule-price-infant").value = "";
         document.getElementById("available-seats-group").style.display = "none";
         
-        // Ki?m tra r\u00e0ng bu?c tr? so sinh d?i v?i tour m?o hi?m
+        // Kiểm tra ràng buộc trẻ sơ sinh đối với tour mạo hiểm
         checkInfantRestriction();
         
         openModal("schedule-modal");
@@ -587,12 +590,12 @@
         document.getElementById("form-schedule-guide").value = s.guideId || "0";
         document.getElementById("form-schedule-tourstatus").value = s.tourStatus || "Preparing";
         
-        document.getElementById("form-schedule-price-adult").value = s.priceAdult;
-        document.getElementById("form-schedule-price-child").value = s.priceChild;
-        document.getElementById("form-schedule-price-infant").value = s.priceInfant;
+        document.getElementById("form-schedule-price-adult").value = (s.priceAdult && s.priceAdult > 0) ? s.priceAdult : "";
+        document.getElementById("form-schedule-price-child").value = (s.priceChild && s.priceChild > 0) ? s.priceChild : "";
+        document.getElementById("form-schedule-price-infant").value = (s.priceInfant && s.priceInfant > 0) ? s.priceInfant : "";
         document.getElementById("form-schedule-notes").value = s.notes || "";
 
-        // Ki?m tra r\u00e0ng bu?c tr? so sinh d?i v?i tour m?o hi?m
+        // Kiểm tra ràng buộc trẻ sơ sinh đối với tour mạo hiểm
         checkInfantRestriction();
 
         openModal("schedule-modal");
@@ -607,9 +610,9 @@
         const depVal = document.getElementById("form-schedule-dep").value;
         const retVal = document.getElementById("form-schedule-ret").value;
         const totalSeats = parseInt(document.getElementById("form-schedule-seats").value) || 0;
-        const priceAdult = parseFloat(document.getElementById("form-schedule-price-adult").value) || 0;
-        const priceChild = parseFloat(document.getElementById("form-schedule-price-child").value) || 0;
-        const priceInfant = parseFloat(document.getElementById("form-schedule-price-infant").value) || 0;
+        const priceAdultRaw = document.getElementById("form-schedule-price-adult").value.trim();
+        const priceChildRaw = document.getElementById("form-schedule-price-child").value.trim();
+        const priceInfantRaw = document.getElementById("form-schedule-price-infant").value.trim();
 
         if (!depVal || !retVal) {
             alert("Vui l&#242;ng ch&#7885;n &#273;&#7847;y &#273;&#7911; ng&#224;y kh&#7903;i h&#224;nh v&#224; ng&#224;y v&#7870;!");
@@ -657,19 +660,26 @@
             }
         }
 
+        if (!priceAdultRaw || parseFloat(priceAdultRaw) <= 0) {
+            alert("Gi&#225; ng&#432;&#7901;i l&#7899;n b&#785f;t bu&#7897;c ph&#7843;i l&#7899;n h&#417;n 0!");
+            return;
+        }
+        if ((priceChildRaw !== "" && parseFloat(priceChildRaw) < 0) || (priceInfantRaw !== "" && parseFloat(priceInfantRaw) < 0)) {
+            alert("Gi&#225; v&#233; c&#7845;u h&#236;nh kh&#244;ng &#273;&#432;&#7901;c l&#224; s&#7889; &#226;m!");
+            return;
+        }
+
+        const priceInfant = priceInfantRaw !== "" ? parseFloat(priceInfantRaw) : 0;
+
         // 4. Kh&#243;a/ch&#7885;n gi&#225; tr&#7883; s&#417; sinh &#273;&#7889;i v&#7899;i c&#225;c tour m&#7841;o hi&#7875;m (Bi&#7875;n/N&#250;i)
         const catId = parseInt(selectedOpt.getAttribute("data-category-id")) || 0;
-        if ((catId === 1 || catId === 2) && priceInfant > 0) {
+        if ((catId === 1 || catId === 2) && priceInfantRaw !== "" && priceInfant > 0) {
             alert("Tour thu&#7897;c danh m&#7909;c m&#7841;o hi&#7875;m (Bi&#7875;n & &#272;&#7843;o / N&#250;i & R&#7915;ng), kh&#244;ng cho ph&#233;p tr&#7867; s&#417; sinh tham gia!");
             return;
         }
 
         if (totalSeats <= 0) {
             alert("T&#7893;ng s&#7889; ch&#7895; ph&#7843;i l&#7899;n h&#417;n 0!");
-            return;
-        }
-        if (priceAdult < 0 || priceChild < 0 || priceInfant < 0) {
-            alert("Gi&#225; v&#233; c&#7845;u h&#236;nh kh&#244;ng &#273;&#432;&#7901;c &#226;m!");
             return;
         }
 

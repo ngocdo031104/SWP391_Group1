@@ -169,18 +169,22 @@ public class AdminSchedulePricingController extends HttpServlet {
                 String depStr = request.getParameter("departureDate");
                 String retStr = request.getParameter("returnDate");
                 int totalSeats = parseInt(request.getParameter("totalSeats"), 0);
-                double priceAdult = parseDouble(request.getParameter("priceAdult"), 0.0);
-                double priceChild = parseDouble(request.getParameter("priceChild"), 0.0);
-                double priceInfant = parseDouble(request.getParameter("priceInfant"), 0.0);
+                String priceAdultParam = request.getParameter("priceAdult");
+                String priceChildParam = request.getParameter("priceChild");
+                String priceInfantParam = request.getParameter("priceInfant");
+
+                double priceAdult = parseDouble(priceAdultParam, 0.0);
+                double priceChild = (priceChildParam != null && !priceChildParam.trim().isEmpty()) ? parseDouble(priceChildParam, 0.0) : 0.0;
+                double priceInfant = (priceInfantParam != null && !priceInfantParam.trim().isEmpty()) ? parseDouble(priceInfantParam, 0.0) : 0.0;
                 String transportation = request.getParameter("transportation");
                 String status = request.getParameter("status"); // Open, Full, Closed, Cancelled
                 int guideId = parseInt(request.getParameter("guideId"), 0);
                 String tourStatus = request.getParameter("tourStatus"); // Scheduled, InProgress, Completed, Cancelled
 
                 // Validation
-                if (tourId <= 0 || depStr == null || retStr == null || totalSeats <= 0 || priceAdult < 0) {
+                if (tourId <= 0 || depStr == null || retStr == null || totalSeats <= 0 || priceAdult <= 0 || priceChild < 0 || priceInfant < 0) {
                     result.addProperty("status", "error");
-                    result.addProperty("message", "Vui lòng nhập đầy đủ thông tin hợp lệ (Ngày, số chỗ > 0, giá lớn hơn 0).");
+                    result.addProperty("message", "Vui lòng nhập đầy đủ thông tin hợp lệ (Số chỗ > 0, giá người lớn phải > 0 và các giá không được âm).");
                 } else {
                     Date departureDate = Date.valueOf(depStr);
                     Date returnDate = Date.valueOf(retStr);
