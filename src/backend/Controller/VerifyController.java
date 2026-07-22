@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Liên quan đến UCs: Register Account
  * Tác giả: Đỗ Vũ Minh Ngọc
  * MSSV: HE182479
