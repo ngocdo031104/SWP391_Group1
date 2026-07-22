@@ -38,7 +38,7 @@ public class PermissionController extends HttpServlet {
             roleDAO.updateRolePermissions(roleId, permissionIds, adminId);
             
             response.setContentType("application/json");
-            response.getWriter().write("{\"success\": true, \"message\": \"Cáº­p nháº­t quyá»n thĂ nh cĂ´ng!\"}");
+            response.getWriter().write("{\"success\": true, \"message\": \"Cập nhật quyá»n thành công!\"}");
         } catch (Exception e) {
             e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

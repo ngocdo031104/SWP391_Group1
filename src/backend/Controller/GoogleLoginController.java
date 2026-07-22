@@ -47,7 +47,7 @@ public class GoogleLoginController extends HttpServlet {
             User user = userDAO.getUserByEmail(email);
 
             if (user == null) {
-                // ÄÄƒng kĂ½ user má»›i tá»± Ä‘á»™ng
+                // ÄÄƒng ký user mới tự động
                 user = new User();
                 user.setEmail(email);
                 user.setFullName(name);
@@ -58,18 +58,18 @@ public class GoogleLoginController extends HttpServlet {
                 profile.setAvatarUrl(picture);
 
                 userDAO.register(user, profile);
-                userDAO.verifyUser(email); // XĂ¡c thá»±c luĂ´n vĂ¬ email tá»« Google lĂ  chĂ­nh xĂ¡c
+                userDAO.verifyUser(email); // Xác thực luôn vì email từ Google là chính xác
                 
                 user = userDAO.getUserByEmail(email); // Get back the inserted user with ID
             }
 
             if (!user.isIsActive()) {
-                request.setAttribute("errorMessage", "TĂ i khoáº£n cá»§a báº¡n Ä‘Ă£ bá»‹ khĂ³a.");
+                request.setAttribute("errorMessage", "Tài khoản của bạn đã bị khóa.");
                 request.getRequestDispatcher("/views/login.jsp").forward(request, response);
                 return;
             }
 
-            // ÄÄƒng nháº­p
+            // ÄÄƒng nhập
             HttpSession session = request.getSession(true);
             session.setAttribute("sessionUser", user);
             session.setAttribute("userId", user.getUserId());
@@ -96,7 +96,7 @@ public class GoogleLoginController extends HttpServlet {
 
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("errorMessage", "ÄÄƒng nháº­p báº±ng Google tháº¥t báº¡i. Lá»—i: " + e.getMessage());
+            request.setAttribute("errorMessage", "ÄÄƒng nhập bằng Google thất bại. Lỗi: " + e.getMessage());
             request.getRequestDispatcher("/views/login.jsp").forward(request, response);
         }
     }
