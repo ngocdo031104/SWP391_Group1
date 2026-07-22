@@ -157,13 +157,10 @@
             </div>
             <div class="header-actions">
                 <button class="btn-modern btn-outline" onclick="window.location.reload()">
-                    <i data-lucide="refresh-cw" style="width: 16px;"></i> L&#224;m m&#7899;i
+                    <i data-lucide="refresh-cw" style="width: 16px;"></i> Làm mới
                 </button>
                 <button class="btn-modern btn-outline" id="exportUsersBtn">
-                    <i data-lucide="download" style="width: 16px;"></i> Xu&#7853;t d&#7919; li&#7879;u
-                </button>
-                <button class="btn-modern btn-primary" id="addUserBtn">
-                    <i data-lucide="plus" style="width: 16px;"></i> Th&#234;m ng&#432;&#7901;i d&#249;ng
+                    <i data-lucide="download" style="width: 16px;"></i> Xuất dữ liệu
                 </button>
             </div>
         </header>
@@ -431,12 +428,7 @@
         showToast('\u00d0\u00e3 xu\u1ea5t ' + rows.length + ' ngu\u1eddi d\u00f9ng.', 'success');
     }
 
-    function openAddUserModal() {
-        showToast('Ch\u1ee9c n\u0103ng t\u1ea1o ng\u01b0\u1eddi d\u0169ng \u0111ang \u0111\u01b0\u1ee3c ph\u00e1t tri\u1ec3n. Vui l\u00f2ng d\u00f9ng form \u0111\u0103ng k\u00fd c\u00f4ng khai.', 'warning');
-    }
-
     document.getElementById('exportUsersBtn')?.addEventListener('click', exportUsersCSV);
-    document.getElementById('addUserBtn')?.addEventListener('click', openAddUserModal);
 
     // Filtering Logic
     function applyFilters() {
