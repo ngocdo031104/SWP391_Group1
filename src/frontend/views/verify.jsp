@@ -1,6 +1,6 @@
-﻿<%-- 
-    Liên quan đến UCs: Register Account
-    Tác giả: Đỗ Vũ Minh Ngọc
+&#65279;<%-- 
+    Li&#234;n quan &#273;&#7871;n UCs: Register Account
+    T&#225;c gi&#7843;: &#272;&#7895; V&#361; Minh Ng&#7885;c
     MSSV: HE182479
 --%>
 &#65279;<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
@@ -12,9 +12,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>X&#225;c th&#7921;c t&#224;i kho&#7843;n | TourBuddy</title>
-    <!-- Thư viện icon FontAwesome -->
+    <!-- Th&#432; vi&#7879;n icon FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Phông chữ Google Fonts -->
+    <!-- Ph&#244;ng ch&#7919; Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {

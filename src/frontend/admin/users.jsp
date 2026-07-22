@@ -1,6 +1,6 @@
 <%-- 
-    Liên quan đến UCs: Admin Management
-    Tác giả: Đỗ Vũ Minh Ngọc
+    Li&#234;n quan &#273;&#7871;n UCs: Admin Management
+    T&#225;c gi&#7843;: &#272;&#7895; V&#361; Minh Ng&#7885;c
     MSSV: HE182479
 --%>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
@@ -45,7 +45,7 @@
         .btn-outline { background: white; color: var(--gray-700); border: 1px solid var(--gray-200); }
         .btn-outline:hover { background: var(--gray-50); border-color: var(--gray-500); }
 
-        /* Sidebar override (users.jsp) — đảm bảo chữ menu luôn đọc được */
+        /* Sidebar override (users.jsp) &#8212; &#273;&#7843;m b&#7843;o ch&#7919; menu lu&#244;n &#273;&#7885;c &#273;&#432;&#7907;c */
         .sidebar-menu a { color: #cbd5e1 !important; opacity: 1 !important; }
         .sidebar-menu a:hover { color: #ffffff !important; background-color: rgba(255,255,255,0.05) !important; }
         .sidebar-menu li.active a { color: #38bdf8 !important; }
@@ -147,9 +147,9 @@
     <c:set var="activePage" value="users" scope="request" />
     <jsp:include page="sidebar.jsp" />
 
-    <!-- Vùng nội dung chính -->
+    <!-- V&#249;ng n&#7897;i dung ch&#237;nh -->
     <main class="main-content">
-        <!-- Tiêu đề trên cùng -->
+        <!-- Ti&#234;u &#273;&#7873; tr&#234;n c&#249;ng -->
         <header class="top-header" style="margin-bottom: 24px;">
             <div>
                 <h1 style="font-size: 26px; font-weight: 800; color: #c084fc; text-shadow: 0 0 16px rgba(192, 132, 252, 0.4); margin: 0 0 8px 0;">Danh s&#225;ch ng&#432;&#7901;i d&#249;ng</h1>
@@ -157,15 +157,15 @@
             </div>
             <div class="header-actions">
                 <button class="btn-modern btn-outline" onclick="window.location.reload()">
-                    <i data-lucide="refresh-cw" style="width: 16px;"></i> Làm mới
+                    <i data-lucide="refresh-cw" style="width: 16px;"></i> L&#224;m m&#7899;i
                 </button>
                 <button class="btn-modern btn-outline" id="exportUsersBtn">
-                    <i data-lucide="download" style="width: 16px;"></i> Xuất dữ liệu
+                    <i data-lucide="download" style="width: 16px;"></i> Xu&#7845;t d&#7919; li&#7879;u
                 </button>
             </div>
         </header>
 
-        <!-- Lưới thống kê tổng quan -->
+        <!-- L&#432;&#7899;i th&#7889;ng k&#234; t&#7893;ng quan -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-icon primary"><i data-lucide="users"></i></div>
@@ -204,7 +204,7 @@
             </div>
         </div>
 
-        <!-- Bộ lọc và Bảng dữ liệu -->
+        <!-- B&#7897; l&#7885;c v&#224; B&#7843;ng d&#7919; li&#7879;u -->
         <div class="modern-card">
             <!-- Filter Bar -->
             <div style="padding: 20px 24px; border-bottom: 1px solid var(--gray-200);">
@@ -250,7 +250,7 @@
                 </div>
             </div>
 
-            <!-- Bảng dữ liệu chính -->
+            <!-- B&#7843;ng d&#7919; li&#7879;u ch&#237;nh -->
             <div style="overflow-x: auto;">
                 <table class="modern-table" id="usersTable">
                     <thead>

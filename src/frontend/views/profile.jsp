@@ -1,6 +1,6 @@
 <%-- 
-    Liên quan đến UCs: Manage User Profile
-    Tác giả: Đỗ Vũ Minh Ngọc
+    Li&#234;n quan &#273;&#7871;n UCs: Manage User Profile
+    T&#225;c gi&#7843;: &#272;&#7895; V&#361; Minh Ng&#7885;c
     MSSV: HE182479
 --%>
 &#65279;<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
@@ -111,12 +111,12 @@
 
 <div class="profile-wrapper">
 
-  <!-- Ảnh bìa trang cá nhân -->
+  <!-- &#7842;nh b&#236;a trang c&#225; nh&#226;n -->
   <div class="profile-cover"></div>
 
   <div class="profile-body">
 
-    <!-- Phần đầu trang hồ sơ -->
+    <!-- Ph&#7847;n &#273;&#7847;u trang h&#7891; s&#417; -->
     <div class="profile-header fade-up">
       <div class="avatar-wrap">
         <c:choose>
@@ -160,7 +160,7 @@
       </div>
     </div>
 
-    <!-- Thống kê hoạt động -->
+    <!-- Th&#7889;ng k&#234; ho&#7841;t &#273;&#7897;ng -->
     <div class="stats-row fade-up" style="animation-delay:.1s;margin-top:24px">
       <div class="stat-card">
         <div class="stat-value">${not empty totalBookings ? totalBookings : 0}</div>
@@ -176,7 +176,7 @@
       </div>
     </div>
 
-    <!-- Tiến độ hoàn thiện hồ sơ -->
+    <!-- Ti&#7871;n &#273;&#7897; ho&#224;n thi&#7879;n h&#7891; s&#417; -->
     <div class="profile-completion card fade-up" style="padding:16px 20px;margin-bottom:0">
       <p>&#272;&#7897; ho&#224;n thi&#7879;n h&#7891; s&#417;: <strong id="pct">0%</strong></p>
       <div class="progress-bar-wrap">
@@ -184,7 +184,7 @@
       </div>
     </div>
 
-    <!-- Hiển thị thông báo lỗi từ Server -->
+    <!-- Hi&#7875;n th&#7883; th&#244;ng b&#225;o l&#7895;i t&#7915; Server -->
     <c:if test="${not empty successMessage}">
       <div class="alert alert-success fade-up" style="margin-top:16px">
         <i class="fa fa-circle-check"></i> ${successMessage}

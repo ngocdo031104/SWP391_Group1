@@ -1,6 +1,6 @@
 <%-- 
-    Liên quan đến UCs: Match Travel Companions, Manage Buddy Requests
-    Tác giả: Đỗ Vũ Minh Ngọc
+    Li&#234;n quan &#273;&#7871;n UCs: Match Travel Companions, Manage Buddy Requests
+    T&#225;c gi&#7843;: &#272;&#7895; V&#361; Minh Ng&#7885;c
     MSSV: HE182479
 --%>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
@@ -583,7 +583,7 @@
         </c:if>
 
         <div class="layout-grid">
-            <!-- Cột nội dung chính bên trái -->
+            <!-- C&#7897;t n&#7897;i dung ch&#237;nh b&#234;n tr&#225;i -->
             <div class="main-column">
                 
                 <div class="buddy-tabs">
@@ -595,7 +595,7 @@
                     <button class="buddy-tab-btn" onclick="switchBuddyTab('friends', this)">B&#7841;n &#273;&#7891;ng h&#224;nh (${acceptedBuddies.size()})</button>
                 </div>
 
-                <!-- Tab: Khám phá bạn đồng hành -->
+                <!-- Tab: Kh&#225;m ph&#225; b&#7841;n &#273;&#7891;ng h&#224;nh -->
                 <div class="buddy-tab-content active" id="buddy-tab-discover">
                     <div class="matches-header">
                         <h3>G&#7907;i &#253; h&#224;ng &#273;&#7847;u cho b&#7841;n <i data-lucide="info" style="width: 16px; color: #94a3b8;"></i></h3>
@@ -696,7 +696,7 @@
                     </div>
                 </div>
 
-                <!-- Tab: Lời mời đã nhận -->
+                <!-- Tab: L&#7901;i m&#7901;i &#273;&#227; nh&#7853;n -->
                 <div class="buddy-tab-content" id="buddy-tab-received">
                     <div class="request-list">
                         <c:if test="${empty receivedRequests}">
@@ -744,7 +744,7 @@
                     </div>
                 </div>
 
-                <!-- Tab: Lời mời đã gửi -->
+                <!-- Tab: L&#7901;i m&#7901;i &#273;&#227; g&#7917;i -->
                 <div class="buddy-tab-content" id="buddy-tab-sent">
                     <div class="request-list">
                         <c:if test="${empty sentRequests}">
@@ -783,7 +783,7 @@
                     </div>
                 </div>
 
-                <!-- Tab: Danh sách bạn bè -->
+                <!-- Tab: Danh s&#225;ch b&#7841;n b&#232; -->
                 <div class="buddy-tab-content" id="buddy-tab-friends">
                     <div class="request-list">
                         <c:if test="${empty acceptedBuddies}">

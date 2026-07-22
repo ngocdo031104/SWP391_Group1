@@ -1,6 +1,6 @@
-﻿<%-- 
-    Liên quan đến UCs: Manage User Accounts
-    Tác giả: Đỗ Vũ Minh Ngọc
+&#65279;<%-- 
+    Li&#234;n quan &#273;&#7871;n UCs: Manage User Accounts
+    T&#225;c gi&#7843;: &#272;&#7895; V&#361; Minh Ng&#7885;c
     MSSV: HE182479
 --%>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
@@ -47,7 +47,7 @@
 
         <section class="view-panel active">
             <div class="detail-grid">
-                <!-- Cột trái: Ảnh đại diện và thông tin cơ bản -->
+                <!-- C&#7897;t tr&#225;i: &#7842;nh &#273;&#7841;i di&#7879;n v&#224; th&#244;ng tin c&#417; b&#7843;n -->
                 <div class="detail-card">
                     <div style="text-align: center;">
                         <c:choose>
@@ -69,7 +69,7 @@
                     </div>
                 </div>
 
-                <!-- Cột phải: Thông tin chi tiết -->
+                <!-- C&#7897;t ph&#7843;i: Th&#244;ng tin chi ti&#7871;t -->
                 <div class="detail-card">
                     <h3 style="margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px;">Th&#244;ng Tin Chi Ti&#7871;t</h3>
                     

@@ -1,6 +1,6 @@
-﻿<%-- 
-    Liên quan đến UCs: Manage Roles and Permissions
-    Tác giả: Đỗ Vũ Minh Ngọc
+&#65279;<%-- 
+    Li&#234;n quan &#273;&#7871;n UCs: Manage Roles and Permissions
+    T&#225;c gi&#7843;: &#272;&#7895; V&#361; Minh Ng&#7885;c
     MSSV: HE182479
 --%>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
@@ -91,7 +91,7 @@
 
             <div class="role-management-container" style="display: flex; gap: 30px; margin-top: 20px; align-items: stretch; height: calc(100vh - 120px);">
                 
-                <!-- Khung bên trái -->
+                <!-- Khung b&#234;n tr&#225;i -->
                 <div class="left-panel" style="width: 280px; background: rgba(22, 25, 50, 0.58); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-radius: 16px; padding: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); display: flex; flex-direction: column; border: 1px solid rgba(139, 92, 246, 0.2);">
                     <h3 style="color: #f8fafc; margin-top: 0; margin-bottom: 20px; font-size: 18px; font-weight: 600;">Danh s&#225;ch vai tr&#242;</h3>
                     
@@ -124,7 +124,7 @@
                     </div>
                 </div>
 
-                <!-- Khung bên phải -->
+                <!-- Khung b&#234;n ph&#7843;i -->
                 <div class="right-panel" style="flex: 1; background: rgba(22, 25, 50, 0.58); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-radius: 16px; padding: 25px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); border: 1px solid rgba(139, 92, 246, 0.2); display: flex; flex-direction: column;">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px;">
                         <div>
@@ -203,7 +203,7 @@
     </main>
 </div>
 
-<!-- Các hộp thoại popup -->
+<!-- C&#225;c h&#7897;p tho&#7841;i popup -->
 <div id="roleModal" class="modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(15, 23, 42, 0.5); backdrop-filter: blur(4px);">
     <div class="modal-content" style="margin: 10% auto; padding: 30px; width: 400px;">
         <h3 id="roleModalTitle" style="margin-top: 0; margin-bottom: 20px; color: #f8fafc; font-size: 20px; font-weight: 600;">T&#7841;o Vai Tr&#242;</h3>
@@ -343,7 +343,7 @@
     let currentRoleId = null;
     let initialPermissions = [];
 
-    // openCreateRoleModal â€” má»Ÿ modal táº¡o vai trĂ², reset form vá» cháº¿ Ä‘á»™ create.
+    // openCreateRoleModal &#226;&#8364;&#8221; m&#225;&#187;&#376; modal t&#225;&#186;&#161;o vai tr&#258;&#178;, reset form v&#225;&#187;&#129; ch&#225;&#186;&#191; &#196;&#8216;&#225;&#187;&#8482; create.
     function openCreateRoleModal() {
         document.getElementById('roleModalTitle').textContent = 'T\u1ea1o Vai Tr\u00f2';
         document.getElementById('roleActionInput').value = 'createRole';
@@ -353,7 +353,7 @@
         document.getElementById('roleModal').style.display = 'block';
     }
 
-    // openEditRoleModal â€” má»Ÿ modal sá»­a vai trĂ² dá»±a trĂªn vai trĂ² Ä‘ang Ä‘Æ°á»£c chá»n trong sidebar.
+    // openEditRoleModal &#226;&#8364;&#8221; m&#225;&#187;&#376; modal s&#225;&#187;&#173;a vai tr&#258;&#178; d&#225;&#187;&#177;a tr&#258;&#170;n vai tr&#258;&#178; &#196;&#8216;ang &#196;&#8216;&#198;&#176;&#225;&#187;&#163;c ch&#225;&#187;&#141;n trong sidebar.
     function openEditRoleModal() {
         if (!currentRoleId) {
             showToast('warning', 'Vui l\u00f2ng ch\u1ecdn m\u1ed9t vai tr\u00f2 \u0111\u1ec3 s\u1eeda.');
@@ -372,7 +372,7 @@
         document.getElementById('roleModal').style.display = 'block';
     }
 
-    // openDeleteRoleModal â€” má»Ÿ modal xĂ¡c nháº­n xĂ³a vai trĂ² Ä‘ang chá»n.
+    // openDeleteRoleModal &#226;&#8364;&#8221; m&#225;&#187;&#376; modal x&#258;&#161;c nh&#225;&#186;&#173;n x&#258;&#179;a vai tr&#258;&#178; &#196;&#8216;ang ch&#225;&#187;&#141;n.
     function openDeleteRoleModal() {
         if (!currentRoleId) {
             showToast('warning', 'Vui l\u00f2ng ch\u1ecdn m\u1ed9t vai tr\u00f2 \u0111\u1ec3 x\u00f3a.');
