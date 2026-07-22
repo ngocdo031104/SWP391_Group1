@@ -1,6 +1,6 @@
-﻿<%-- 
-    Liên quan đến UCs: Recover Password
-    Tác giả: Đỗ Vũ Minh Ngọc
+&#65279;<%-- 
+    Li&#234;n quan &#273;&#7871;n UCs: Recover Password
+    T&#225;c gi&#7843;: &#272;&#7895; V&#361; Minh Ng&#7885;c
     MSSV: HE182479
 --%>
 &#65279;<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
@@ -21,7 +21,7 @@
 </head>
 <body>
 
-<!-- Thanh điều hướng (Navbar) -->
+<!-- Thanh &#273;i&#7873;u h&#432;&#7899;ng (Navbar) -->
 <nav class="navbar">
   <a href="${pageContext.request.contextPath}/home" class="logo" id="nav-logo">
     <div class="logo-icon">T</div>
@@ -33,10 +33,10 @@
   </div>
 </nav>
 
-<!-- Bố cục trang xác thực -->
+<!-- B&#7889; c&#7909;c trang x&#225;c th&#7921;c -->
 <div class="auth-wrapper" style="padding-top:68px">
 
-  <!-- Cột trái: Hình ảnh giới thiệu -->
+  <!-- C&#7897;t tr&#225;i: H&#236;nh &#7843;nh gi&#7899;i thi&#7879;u -->
   <div class="auth-hero">
     <div class="auth-hero-content">
       <h1>B&#7843;o m&#7853;t<br><em>T&#224;i kho&#7843;n</em></h1>
@@ -44,7 +44,7 @@
     </div>
   </div>
 
-  <!-- Cột phải: Khung nhập liệu -->
+  <!-- C&#7897;t ph&#7843;i: Khung nh&#7853;p li&#7879;u -->
   <div class="auth-panel">
     <div class="auth-form-wrap fade-up">
 
@@ -53,7 +53,7 @@
         Vui l&#242;ng nh&#7853;p m&#7853;t kh&#7849;u m&#7899;i c&#7911;a b&#7841;n b&#234;n d&#432;&#7899;i. M&#7853;t kh&#7849;u ph&#7843;i c&#243; &#237;t nh&#7845;t 8 k&#253; t&#7921;.
       </p>
 
-      <!-- Hiển thị thông báo lỗi từ Server -->
+      <!-- Hi&#7875;n th&#7883; th&#244;ng b&#225;o l&#7895;i t&#7915; Server -->
       <c:if test="${not empty errorMessage}">
         <div class="alert alert-error fade-up">
           <i class="fa fa-circle-exclamation"></i> ${errorMessage}

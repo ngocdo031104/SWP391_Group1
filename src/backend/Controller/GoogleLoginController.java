@@ -1,6 +1,6 @@
 /*
- * Liên quan đến UCs: Authenticate User
- * Tác giả: Đỗ Vũ Minh Ngọc
+ * Li\u00ean quan \u0111\u1ebfn UCs: Authenticate User
+ * T\u00e1c gi\u1ea3: \u0110\u1ed7 V\u0169 Minh Ng\u1ecdc
  * MSSV: HE182479
  */
 package Controller;
@@ -47,7 +47,7 @@ public class GoogleLoginController extends HttpServlet {
             User user = userDAO.getUserByEmail(email);
 
             if (user == null) {
-                // ÄÄƒng ký user mới tự động
+                // \u00c4\u0090\u00c4\u0192ng k\u00fd user m\u1edbi t\u1ef1 \u0111\u1ed9ng
                 user = new User();
                 user.setEmail(email);
                 user.setFullName(name);
@@ -58,18 +58,18 @@ public class GoogleLoginController extends HttpServlet {
                 profile.setAvatarUrl(picture);
 
                 userDAO.register(user, profile);
-                userDAO.verifyUser(email); // Xác thực luôn vì email từ Google là chính xác
+                userDAO.verifyUser(email); // X\u00e1c th\u1ef1c lu\u00f4n v\u00ec email t\u1eeb Google l\u00e0 ch\u00ednh x\u00e1c
                 
                 user = userDAO.getUserByEmail(email); // Get back the inserted user with ID
             }
 
             if (!user.isIsActive()) {
-                request.setAttribute("errorMessage", "Tài khoản của bạn đã bị khóa.");
+                request.setAttribute("errorMessage", "T\u00e0i kho\u1ea3n c\u1ee7a b\u1ea1n \u0111\u00e3 b\u1ecb kh\u00f3a.");
                 request.getRequestDispatcher("/views/login.jsp").forward(request, response);
                 return;
             }
 
-            // ÄÄƒng nhập
+            // \u00c4\u0090\u00c4\u0192ng nh\u1eadp
             HttpSession session = request.getSession(true);
             session.setAttribute("sessionUser", user);
             session.setAttribute("userId", user.getUserId());
@@ -96,7 +96,7 @@ public class GoogleLoginController extends HttpServlet {
 
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("errorMessage", "ÄÄƒng nhập bằng Google thất bại. Lỗi: " + e.getMessage());
+            request.setAttribute("errorMessage", "\u00c4\u0090\u00c4\u0192ng nh\u1eadp b\u1eb1ng Google th\u1ea5t b\u1ea1i. L\u1ed7i: " + e.getMessage());
             request.getRequestDispatcher("/views/login.jsp").forward(request, response);
         }
     }

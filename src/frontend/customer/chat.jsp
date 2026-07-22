@@ -1,6 +1,6 @@
-﻿<%-- 
-    Liên quan đến UCs: Exchange Messages, Schedule Video Calls
-    Tác giả: Đỗ Vũ Minh Ngọc
+&#65279;<%-- 
+    Li&#234;n quan &#273;&#7871;n UCs: Exchange Messages, Schedule Video Calls
+    T&#225;c gi&#7843;: &#272;&#7895; V&#361; Minh Ng&#7885;c
     MSSV: HE182479
 --%>
 &#65279;<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
@@ -355,7 +355,7 @@
 </style>
 
 <div class="chat-container">
-    <!-- Thanh menu bên trái (Sidebar) -->
+    <!-- Thanh menu b&#234;n tr&#225;i (Sidebar) -->
     <div class="chat-sidebar">
         <div class="chat-sidebar-header">
             <h2>Tin nh&#7855;n</h2>
@@ -397,7 +397,7 @@
         </div>
     </div>
 
-    <!-- Khung chat chính -->
+    <!-- Khung chat ch&#237;nh -->
     <div class="chat-main">
         <div id="emptyChat" class="empty-state">
             <i data-lucide="message-circle" style="width: 64px; height: 64px;"></i>
@@ -425,7 +425,7 @@
             </div>
 
             <div class="chat-history" id="chatHistory">
-                <!-- Tin nhắn sẽ được load vào đây qua JS -->
+                <!-- Tin nh&#7855;n s&#7869; &#273;&#432;&#7907;c load v&#224;o &#273;&#226;y qua JS -->
             </div>
 
             <div class="chat-input-area">
@@ -441,7 +441,7 @@
     </div>
 </div>
 
-<!-- Hộp thoại tạo nhóm chat -->
+<!-- H&#7897;p tho&#7841;i t&#7841;o nh&#243;m chat -->
 <div class="modal-overlay" id="createGroupModal">
     <div class="modal-content">
         <div class="modal-header">
@@ -479,7 +479,7 @@
     </div>
 </div>
 
-<!-- Hộp thoại lên lịch gọi Video -->
+<!-- H&#7897;p tho&#7841;i l&#234;n l&#7883;ch g&#7885;i Video -->
 <div class="modal-overlay" id="scheduleModal">
     <div class="modal-content">
         <div class="modal-header">

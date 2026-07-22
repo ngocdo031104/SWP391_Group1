@@ -1,6 +1,6 @@
 /*
- * Liên quan đến UCs: Review Financial Audit Logs
- * Tác giả: Đỗ Vũ Minh Ngọc
+ * Li\u00ean quan \u0111\u1ebfn UCs: Review Financial Audit Logs
+ * T\u00e1c gi\u1ea3: \u0110\u1ed7 V\u0169 Minh Ng\u1ecdc
  * MSSV: HE182479
  */
 package Controller.admin;
@@ -33,7 +33,7 @@ public class FinancialAuditController extends HttpServlet {
         }
 
         User user = (User) session.getAttribute("sessionUser");
-        // Chỉ có Admin và Kế toán được truy cập trang này
+        // Ch\u1ec9 c\u00f3 Admin v\u00e0 K\u1ebf to\u00e1n \u0111\u01b0\u1ee3c truy c\u1eadp trang n\u00e0y
         if (user.getRoleId() != 1 && user.getRoleId() != 5) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied: You do not have permission to view this page.");
             return;
@@ -70,7 +70,7 @@ public class FinancialAuditController extends HttpServlet {
         request.setAttribute("totalRecords", totalRecords);
         request.setAttribute("stats", stats);
         
-        // Giữ lại các tham số tìm kiếm (Filter)
+        // Gi\u1eef l\u1ea1i c\u00e1c tham s\u1ed1 t\u00ecm ki\u1ebfm (Filter)
         request.setAttribute("dateFrom", dateFrom);
         request.setAttribute("dateTo", dateTo);
         request.setAttribute("operator", operator);
