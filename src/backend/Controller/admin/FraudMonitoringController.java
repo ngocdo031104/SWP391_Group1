@@ -65,7 +65,7 @@ public class FraudMonitoringController extends HttpServlet {
         int totalRecords = paymentDAO.getTotalFraudulentTransactions(dateFrom, dateTo, bookingId, transactionRef, gateway, paymentStatus, reviewStatus);
         int totalPages = (int) Math.ceil((double) totalRecords / PAGE_SIZE);
         
-        Map<String, Object> stats = paymentDAO.getFraudulentStats();
+        Map<String, Object> stats = paymentDAO.getFraudulentStats(dateFrom, dateTo, bookingId, transactionRef, gateway, paymentStatus, reviewStatus);
 
         request.setAttribute("transactions", transactions);
         request.setAttribute("currentPage", page);

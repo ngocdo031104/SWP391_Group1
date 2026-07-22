@@ -376,37 +376,76 @@ public class PaymentDAO extends DBContext {
         return 0;
     }
 
-    public java.util.Map<String, Object> getFraudulentStats() {
+    public java.util.Map<String, Object> getFraudulentStats(String dateFrom, String dateTo, String bookingId, String transactionRef, String gateway, String paymentStatus, String reviewStatus) {
         java.util.Map<String, Object> stats = new java.util.HashMap<>();
         stats.put("suspicious", 0);
         stats.put("duplicate", 0);
         stats.put("mismatch", 0);
         stats.put("successCount", 0);
+        stats.put("total", 0.0);
         
-        String sql = "SELECT " +
-            "SUM(CASE WHEN (SELECT COUNT(*) FROM Payment p2 WHERE p2.BookingID = p.BookingID AND p2.Status = 'Success') > 1 THEN 1 ELSE 0 END) as DuplicateCount, " +
-            "SUM(CASE WHEN p.Amount <> b.TotalAmount THEN 1 ELSE 0 END) as MismatchCount, " +
-            "COUNT(*) as SuspiciousCount " +
-            "FROM Payment p " +
-            "JOIN Booking b ON p.BookingID = b.BookingID " +
-            "WHERE (p.Amount <> b.TotalAmount OR (SELECT COUNT(*) FROM Payment p2 WHERE p2.BookingID = p.BookingID AND p2.Status = 'Success') > 1)";
+        StringBuilder sql = new StringBuilder(
+            "SELECT " +
+            "SUM(CASE WHEN Sub.SuccessCount > 1 THEN 1 ELSE 0 END) as DuplicateCount, " +
+            "SUM(CASE WHEN Sub.Amount <> Sub.ExpectedAmount THEN 1 ELSE 0 END) as MismatchCount, " +
+            "COUNT(*) as SuspiciousCount, " +
+            "SUM(Sub.Amount) as TotalAmount, " +
+            "SUM(CASE WHEN Sub.Status = 'Success' THEN 1 ELSE 0 END) as SuccessCount " +
+            "FROM (" +
+            "  SELECT p.PaymentID, p.Amount, b.TotalAmount as ExpectedAmount, p.Status, fa.Status as ReviewStatus, " +
+            "  p.PaidAt, p.BookingID, p.TransactionRef, p.PaymentMethod, " +
+            "  (SELECT COUNT(*) FROM Payment p2 WHERE p2.BookingID = p.BookingID AND p2.Status = 'Success') as SuccessCount " +
+            "  FROM Payment p " +
+            "  JOIN Booking b ON p.BookingID = b.BookingID " +
+            "  LEFT JOIN FraudAlert fa ON p.PaymentID = fa.PaymentID " +
+            ") Sub " +
+            "WHERE (Sub.Amount <> Sub.ExpectedAmount OR Sub.SuccessCount > 1) "
+        );
 
-        try (PreparedStatement ps = connection.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                stats.put("suspicious", rs.getInt("SuspiciousCount"));
-                stats.put("duplicate", rs.getInt("DuplicateCount"));
-                stats.put("mismatch", rs.getInt("MismatchCount"));
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(PaymentDAO.class.getName()).log(Level.SEVERE, null, ex);
+        if (dateFrom != null && !dateFrom.trim().isEmpty()) {
+            sql.append(" AND CAST(Sub.PaidAt AS DATE) >= ? ");
         }
-        
-        String sqlSuccess = "SELECT COUNT(*) FROM Payment WHERE Status = 'Success'";
-        try (PreparedStatement ps = connection.prepareStatement(sqlSuccess);
-             ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                stats.put("successCount", rs.getInt(1));
+        if (dateTo != null && !dateTo.trim().isEmpty()) {
+            sql.append(" AND CAST(Sub.PaidAt AS DATE) <= ? ");
+        }
+        if (bookingId != null && !bookingId.trim().isEmpty()) {
+            sql.append(" AND Sub.BookingID = ? ");
+        }
+        if (transactionRef != null && !transactionRef.trim().isEmpty()) {
+            sql.append(" AND Sub.TransactionRef LIKE ? ");
+        }
+        if (gateway != null && !gateway.trim().isEmpty()) {
+            sql.append(" AND Sub.PaymentMethod LIKE ? ");
+        }
+        if (paymentStatus != null && !paymentStatus.trim().isEmpty()) {
+            sql.append(" AND Sub.Status = ? ");
+        }
+        if (reviewStatus != null && !reviewStatus.trim().isEmpty()) {
+            if ("Pending".equals(reviewStatus)) {
+                sql.append(" AND (Sub.ReviewStatus IS NULL OR Sub.ReviewStatus = 'Pending') ");
+            } else {
+                sql.append(" AND Sub.ReviewStatus = ? ");
+            }
+        }
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            int paramIndex = 1;
+            if (dateFrom != null && !dateFrom.trim().isEmpty()) ps.setString(paramIndex++, dateFrom);
+            if (dateTo != null && !dateTo.trim().isEmpty()) ps.setString(paramIndex++, dateTo);
+            if (bookingId != null && !bookingId.trim().isEmpty()) ps.setInt(paramIndex++, Integer.parseInt(bookingId));
+            if (transactionRef != null && !transactionRef.trim().isEmpty()) ps.setString(paramIndex++, "%" + transactionRef + "%");
+            if (gateway != null && !gateway.trim().isEmpty()) ps.setString(paramIndex++, "%" + gateway + "%");
+            if (paymentStatus != null && !paymentStatus.trim().isEmpty()) ps.setString(paramIndex++, paymentStatus);
+            if (reviewStatus != null && !reviewStatus.trim().isEmpty() && !"Pending".equals(reviewStatus)) ps.setString(paramIndex++, reviewStatus);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    stats.put("suspicious", rs.getInt("SuspiciousCount"));
+                    stats.put("duplicate", rs.getInt("DuplicateCount"));
+                    stats.put("mismatch", rs.getInt("MismatchCount"));
+                    stats.put("successCount", rs.getInt("SuccessCount"));
+                    stats.put("total", rs.getDouble("TotalAmount"));
+                }
             }
         } catch (SQLException ex) {
             Logger.getLogger(PaymentDAO.class.getName()).log(Level.SEVERE, null, ex);
