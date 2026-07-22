@@ -1,6 +1,6 @@
 /*
- * Liên quan đến UCs: Register Account
- * Tác giả: Đỗ Vũ Minh Ngọc
+ * Li\u00ean quan \u0111\u1ebfn UCs: Register Account
+ * T\u00e1c gi\u1ea3: \u0110\u1ed7 V\u0169 Minh Ng\u1ecdc
  * MSSV: HE182479
  */
 package Controller;
@@ -45,14 +45,14 @@ public class VerifyController extends HttpServlet {
                     session.removeAttribute("verify_email");
                     session.removeAttribute("verify_otp");
                     
-                    request.setAttribute("successMessage", "Xác thực thành công! Vui lòng đăng nhập.");
+                    request.setAttribute("successMessage", "X\u00e1c th\u1ef1c th\u00e0nh c\u00f4ng! Vui l\u00f2ng \u0111\u0103ng nh\u1eadp.");
                     request.getRequestDispatcher("/views/login.jsp").forward(request, response);
                     return;
                 } else {
-                    request.setAttribute("errorMessage", "Mã xác thực không đúng. Vui lòng thử lại.");
+                    request.setAttribute("errorMessage", "M\u00e3 x\u00e1c th\u1ef1c kh\u00f4ng \u0111\u00fang. Vui l\u00f2ng th\u1eed l\u1ea1i.");
                 }
             } else {
-                request.setAttribute("errorMessage", "Phiên xác thực đã hết hạn. Vui lòng đăng ký lại.");
+                request.setAttribute("errorMessage", "Phi\u00ean x\u00e1c th\u1ef1c \u0111\u00e3 h\u1ebft h\u1ea1n. Vui l\u00f2ng \u0111\u0103ng k\u00fd l\u1ea1i.");
             }
         }
         

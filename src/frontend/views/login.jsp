@@ -1,6 +1,6 @@
-﻿<%-- 
-    Liên quan đến UCs: Authenticate User
-    Tác giả: Đỗ Vũ Minh Ngọc
+&#65279;<%-- 
+    Li&#234;n quan &#273;&#7871;n UCs: Authenticate User
+    T&#225;c gi&#7843;: &#272;&#7895; V&#361; Minh Ng&#7885;c
     MSSV: HE182479
 --%>
 &#65279;<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
@@ -21,7 +21,7 @@
 </head>
 <body>
 
-<!-- Thanh điều hướng (Navbar) -->
+<!-- Thanh &#273;i&#7873;u h&#432;&#7899;ng (Navbar) -->
 <nav class="navbar">
   <a href="${pageContext.request.contextPath}/home" class="logo" id="nav-logo">
     <div class="logo-icon">T</div>
@@ -34,10 +34,10 @@
   </div>
 </nav>
 
-<!-- Bố cục trang xác thực -->
+<!-- B&#7889; c&#7909;c trang x&#225;c th&#7921;c -->
 <div class="auth-wrapper" style="padding-top:68px">
 
-  <!-- Cột trái: Hình ảnh giới thiệu -->
+  <!-- C&#7897;t tr&#225;i: H&#236;nh &#7843;nh gi&#7899;i thi&#7879;u -->
   <div class="auth-hero">
     <div class="auth-hero-content">
       <h1>Kh&#225;m ph&#225; <em>th&#7871; gi&#7899;i</em><br>c&#249;ng TourBuddy</h1>
@@ -50,7 +50,7 @@
     </div>
   </div>
 
-  <!-- Cột phải: Khung nhập liệu -->
+  <!-- C&#7897;t ph&#7843;i: Khung nh&#7853;p li&#7879;u -->
   <div class="auth-panel">
     <div class="auth-form-wrap fade-up">
 
@@ -60,7 +60,7 @@
         <a href="${pageContext.request.contextPath}/register">&#272;&#259;ng k&#253; ngay</a>
       </p>
 
-      <!-- Hiển thị thông báo lỗi từ Server -->
+      <!-- Hi&#7875;n th&#7883; th&#244;ng b&#225;o l&#7895;i t&#7915; Server -->
       <c:if test="${not empty errorMessage}">
         <div class="alert alert-error fade-up">
           <i class="fa fa-circle-exclamation"></i> ${errorMessage}

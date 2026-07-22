@@ -1,6 +1,6 @@
-﻿<%-- 
-    Liên quan đến UCs: Register Account
-    Tác giả: Đỗ Vũ Minh Ngọc
+&#65279;<%-- 
+    Li&#234;n quan &#273;&#7871;n UCs: Register Account
+    T&#225;c gi&#7843;: &#272;&#7895; V&#361; Minh Ng&#7885;c
     MSSV: HE182479
 --%>
 &#65279;<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
@@ -82,7 +82,7 @@
 
 <div class="auth-wrapper" style="padding-top:68px">
 
-  <!-- Cột trái: Hình ảnh giới thiệu -->
+  <!-- C&#7897;t tr&#225;i: H&#236;nh &#7843;nh gi&#7899;i thi&#7879;u -->
   <div class="auth-hero">
     <div class="auth-hero-content">
       <h1>Tham gia c&#7897;ng &#273;&#7891;ng <em>du l&#7883;ch</em></h1>
@@ -95,7 +95,7 @@
     </div>
   </div>
 
-  <!-- Khung bên phải -->
+  <!-- Khung b&#234;n ph&#7843;i -->
   <div class="auth-panel" style="align-items:flex-start;padding-top:52px">
     <div class="auth-form-wrap fade-up" style="max-width:460px">
 
@@ -110,7 +110,7 @@
         </div>
       </c:if>
 
-      <!-- Thanh tiến trình các bước -->
+      <!-- Thanh ti&#7871;n tr&#236;nh c&#225;c b&#432;&#7899;c -->
       <div class="step-indicator fade-up fade-up-2">
         <div>
           <div class="step-dot active" id="sd1">1</div>
@@ -132,7 +132,7 @@
       method="post"
       id="regForm">
 
-        <!-- Bước 1: Thông tin tài khoản -->
+        <!-- B&#432;&#7899;c 1: Th&#244;ng tin t&#224;i kho&#7843;n -->
         <div class="step-block active fade-up fade-up-3" id="step1">
 
           <div class="form-group">
@@ -162,7 +162,7 @@
               <button type="button" class="toggle-pwd"
                       onclick="togglePwd('password','ti1')"><i id="ti1" class="fa fa-eye"></i></button>
             </div>
-            <!-- Thanh đo độ mạnh mật khẩu -->
+            <!-- Thanh &#273;o &#273;&#7897; m&#7841;nh m&#7853;t kh&#7849;u -->
             <div class="strength-bar">
               <div class="strength-seg" id="seg1"></div>
               <div class="strength-seg" id="seg2"></div>
