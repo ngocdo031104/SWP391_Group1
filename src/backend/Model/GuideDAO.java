@@ -102,32 +102,38 @@ public class GuideDAO extends DBContext {
      */
     public List<GuideProfile> getAllGuides() {
         List<GuideProfile> list = new ArrayList<>();
-        String sql = "SELECT gp.GuideProfileID, gp.UserID, gp.YearsOfExperience, gp.TotalToursLed, gp.Rating, gp.Bio, gp.Specialization, gp.Languages, gp.Certifications, gp.EmergencyPhone, gp.IsActive as ProfileActive, gp.CreatedAt as ProfileCreated, gp.UpdatedAt as ProfileUpdated, "
-                   + "u.Email, u.FullName, u.PhoneNumber, u.IsActive as UserActive, u.IsVerified, u.CreatedAt as UserCreated, u.RoleID, "
+        String sql = "SELECT gp.GuideProfileID, gp.YearsOfExperience, gp.TotalToursLed, gp.Rating, gp.Bio, gp.Specialization, gp.Languages, gp.Certifications, gp.EmergencyPhone, gp.IsActive as ProfileActive, gp.CreatedAt as ProfileCreated, gp.UpdatedAt as ProfileUpdated, "
+                   + "u.UserID, u.Email, u.FullName, u.PhoneNumber, u.IsActive as UserActive, u.IsVerified, u.CreatedAt as UserCreated, u.RoleID, "
                    + "up.AvatarURL "
-                   + "FROM GuideProfile gp "
-                   + "JOIN [User] u ON gp.UserID = u.UserID "
+                   + "FROM [User] u "
+                   + "LEFT JOIN GuideProfile gp ON gp.UserID = u.UserID "
                    + "LEFT JOIN UserProfile up ON u.UserID = up.UserID "
-                   + "WHERE u.RoleID = 3 AND gp.IsActive = 1 "
-                   + "ORDER BY gp.Rating DESC, gp.YearsOfExperience DESC";
+                   + "WHERE u.RoleID = 3 AND u.IsActive = 1 "
+                   + "ORDER BY u.FullName ASC";
 
         try (PreparedStatement ps = connection.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 GuideProfile gp = new GuideProfile();
-                gp.setGuideProfileId(rs.getInt("GuideProfileID"));
-                gp.setUserId(rs.getInt("UserID"));
-                gp.setYearsOfExperience(rs.getInt("YearsOfExperience"));
-                gp.setTotalToursLed(rs.getInt("TotalToursLed"));
-                gp.setRating(rs.getDouble("Rating"));
-                gp.setBio(rs.getString("Bio"));
-                gp.setSpecialization(rs.getString("Specialization"));
-                gp.setLanguages(rs.getString("Languages"));
-                gp.setCertifications(rs.getString("Certifications"));
-                gp.setEmergencyPhone(rs.getString("EmergencyPhone"));
-                gp.setIsActive(rs.getBoolean("ProfileActive"));
-                gp.setCreatedAt(rs.getTimestamp("ProfileCreated"));
-                gp.setUpdatedAt(rs.getTimestamp("ProfileUpdated"));
+                int guideProfileId = rs.getInt("GuideProfileID");
+                if (!rs.wasNull()) {
+                    gp.setGuideProfileId(guideProfileId);
+                    gp.setYearsOfExperience(rs.getInt("YearsOfExperience"));
+                    gp.setTotalToursLed(rs.getInt("TotalToursLed"));
+                    gp.setRating(rs.getDouble("Rating"));
+                    gp.setBio(rs.getString("Bio"));
+                    gp.setSpecialization(rs.getString("Specialization"));
+                    gp.setLanguages(rs.getString("Languages"));
+                    gp.setCertifications(rs.getString("Certifications"));
+                    gp.setEmergencyPhone(rs.getString("EmergencyPhone"));
+                    gp.setIsActive(rs.getBoolean("ProfileActive"));
+                    gp.setCreatedAt(rs.getTimestamp("ProfileCreated"));
+                    gp.setUpdatedAt(rs.getTimestamp("ProfileUpdated"));
+                } else {
+                    gp.setYearsOfExperience(0);
+                    gp.setRating(5.0);
+                    gp.setIsActive(true);
+                }
 
                 // Gán thông tin User
                 User u = new User();
@@ -140,9 +146,11 @@ public class GuideDAO extends DBContext {
                 u.setIsVerified(rs.getBoolean("IsVerified"));
                 u.setCreatedAt(rs.getTimestamp("UserCreated"));
 
+                gp.setUserId(u.getUserId());
+
                 // Gán Profile
                 UserProfile up = new UserProfile();
-                up.setUserId(rs.getInt("UserID"));
+                up.setUserId(u.getUserId());
                 up.setAvatarUrl(rs.getString("AvatarURL"));
                 u.setProfile(up);
 
@@ -153,6 +161,37 @@ public class GuideDAO extends DBContext {
             LOGGER.log(Level.SEVERE, "Lỗi khi lấy danh sách toàn bộ Guides", ex);
         }
         return list;
+    }
+
+    /**
+     * Kiểm tra xem Hướng dẫn viên có bị trùng lịch dẫn đoàn với đợt khởi hành khác hay không.
+     * 
+     * @param guideId ID của Hướng dẫn viên
+     * @param scheduleId ID của lịch khởi hành đang xét
+     * @return true nếu bị trùng lịch (bận), false nếu rảnh.
+     */
+    public boolean isGuideBusy(int guideId, int scheduleId) {
+        String sql = "SELECT COUNT(*) FROM TourSchedule ts2 "
+                   + "JOIN TourSchedule ts1 ON ts1.ScheduleID = ? "
+                   + "WHERE ts2.GuideID = ? "
+                   + "  AND ts2.ScheduleID <> ts1.ScheduleID "
+                   + "  AND ISNULL(ts2.TourStatus, '') <> 'Cancelled' "
+                   + "  AND ISNULL(ts2.Status, '') <> 'Cancelled' "
+                   + "  AND CAST(ts2.DepartureDate AS DATE) <= CAST(ISNULL(ts1.ReturnDate, ts1.DepartureDate) AS DATE) "
+                   + "  AND CAST(ISNULL(ts2.ReturnDate, ts2.DepartureDate) AS DATE) >= CAST(ts1.DepartureDate AS DATE)";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, scheduleId);
+            ps.setInt(2, guideId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Lỗi kiểm tra trùng lịch HDV guideId=" + guideId + ", scheduleId=" + scheduleId, ex);
+        }
+        return false;
     }
 
     /**

@@ -145,6 +145,15 @@ public class StaffTourAssignmentController extends HttpServlet {
                         return;
                     }
 
+                    // Kiểm tra trùng lịch dẫn đoàn của HDV
+                    if (guideDAO.isGuideBusy(guideId, scheduleId)) {
+                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        result.addProperty("status", "error");
+                        result.addProperty("message", "Hướng dẫn viên này đã có lịch dẫn đoàn trùng với thời gian chuyến đi này!");
+                        out.print(result.toString());
+                        return;
+                    }
+
                     // Phân công guide
                     boolean success = guideDAO.assignGuideToSchedule(scheduleId, guideId, currentUser.getUserId(), notes);
 
