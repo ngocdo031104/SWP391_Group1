@@ -1,0 +1,55 @@
+@startuml GuideAssignmentExecutionFlow
+title Guide Assignment / Execution & Attendance / Incident & Completion
+
+skinparam swimlaneWidth same
+skinparam activityBackgroundColor #F8F8F8
+skinparam activityBorderColor #2F6FED
+skinparam conditionStyle diamond
+
+|#LightBlue|Staff|
+|#Lavender|System|
+|#LightBlue|Tour Guide|
+|#Wheat|Customer|
+
+|Staff|
+:Step 1: Assign Tour Guide to Schedule;
+
+|System|
+:Step 2: Save TourAssignment Record\nand send notification;
+
+|Tour Guide|
+:Step 3: Receive notification\nand access dashboard;
+
+|Customer|
+:Step 4: Arrive at meeting point;
+
+|Tour Guide|
+:Step 5: Check customer attendance;
+
+|System|
+:Step 6: Record attendance data;
+
+|Tour Guide|
+:Step 7: Update tour status to In-Progress;
+
+|System|
+:Step 8: Update schedule status in DB\nstatus = IN_PROGRESS;
+
+|Tour Guide|
+:Step 9: Log operation\nand report incidents;
+
+|System|
+:Step 10: Save incident and operation logs;
+
+|Tour Guide|
+:Step 11: Update tour status to Completed;
+
+|System|
+:Step 12: Update schedule status to Completed\nstatus = COMPLETED;
+
+|Customer|
+:Step 13: Submit tour review and rating;
+
+stop
+
+@enduml
