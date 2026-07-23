@@ -67,12 +67,23 @@
         if (index === 0) {
             return '<input type="hidden" name="participantAgeType" value="Adult"><div class="leader-age-fixed">Ng\u01B0\u1EDDi l\u1EDBn (12 tu\u1ED5i tr\u1EDF l\u00EAn)</div>';
         }
-        const value = currentAgeType || 'Adult';
-        return '<select name="participantAgeType" aria-label="\u0110\u1ED9 tu\u1ED5i ng\u01B0\u1EDDi tham gia">' +
-            '<option value="Adult"' + (value === 'Adult' ? ' selected' : '') + '>Ng\u01B0\u1EDDi l\u1EDBn (12 tu\u1ED5i tr\u1EDF l\u00EAn)</option>' +
-            '<option value="Child"' + (value === 'Child' ? ' selected' : '') + '>Tr\u1EBB em (2 - d\u01B0\u1EDBi 12 tu\u1ED5i)</option>' +
-            '<option value="Infant"' + (value === 'Infant' ? ' selected' : '') + '>Tr\u1EBB s\u01A1 sinh (d\u01B0\u1EDBi 2 tu\u1ED5i)</option>' +
-            '</select>';
+        const form = document.getElementById('booking-create-form');
+        const catId = form ? parseInt(form.dataset.tourCategoryId || '0', 10) : 0;
+        const isAdventure = (catId === 1 || catId === 2);
+        
+        let value = currentAgeType || 'Adult';
+        if (isAdventure && value === 'Infant') {
+            value = 'Adult';
+        }
+
+        let options = '<option value="Adult"' + (value === 'Adult' ? ' selected' : '') + '>Ng\u01B0\u1EDDi l\u1EDBn (12 tu\u1ED5i tr\u1EDF l\u00EAn)</option>' +
+            '<option value="Child"' + (value === 'Child' ? ' selected' : '') + '>Tr\u1EBB em (2 - d\u01B0\u1EDBi 12 tu\u1ED5i)</option>';
+            
+        if (!isAdventure) {
+            options += '<option value="Infant"' + (value === 'Infant' ? ' selected' : '') + '>Tr\u1EBB s\u01A1 sinh (d\u01B0\u1EDBi 2 tu\u1ED5i)</option>';
+        }
+
+        return '<select name="participantAgeType" aria-label="\u0110\u1ED9 tu\u1ED5i ng\u01B0\u1EDDi tham gia">' + options + '</select>';
     }
 
     // updateBookingSummary \u0111\u1EBFm s\u1ED1 Adult/Child/Infant hi\u1EC7n t\u1EA1i v\u00E0 t\u00EDnh l\u1EA1i t\u1ED5ng ti\u1EC1n tour theo l\u1ECBch \u0111ang ch\u1ECDn.
