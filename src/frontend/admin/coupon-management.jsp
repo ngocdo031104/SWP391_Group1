@@ -328,8 +328,16 @@
         document.getElementById('minOrderAmount').value = "0";
         document.getElementById('maxDiscountAmount').value = "";
         document.getElementById('maxUses').value = "";
-        document.getElementById('startDate').value = "";
-        document.getElementById('endDate').value = "";
+        
+        // Thiết lập không cho chọn ngày trong quá khứ
+        const today = new Date().toISOString().split('T')[0];
+        const startDateInput = document.getElementById('startDate');
+        const endDateInput = document.getElementById('endDate');
+        startDateInput.value = "";
+        startDateInput.min = today;
+        endDateInput.value = "";
+        endDateInput.min = today;
+        
         document.getElementById('isActive').checked = false; // Mặc định chưa kích hoạt
         toggleMaxDiscountVisibility();
         couponModal.show();
@@ -353,14 +361,31 @@
                 document.getElementById('minOrderAmount').value = c.minOrderAmount;
                 document.getElementById('maxDiscountAmount').value = c.maxDiscountAmount == null ? '' : c.maxDiscountAmount;
                 document.getElementById('maxUses').value = c.maxUses == null ? '' : c.maxUses;
-                document.getElementById('startDate').value = c.startDate || '';
-                document.getElementById('endDate').value = c.endDate || '';
+                
+                const startDateInput = document.getElementById('startDate');
+                const endDateInput = document.getElementById('endDate');
+                startDateInput.value = c.startDate || '';
+                endDateInput.value = c.endDate || '';
+                
+                // Bỏ giới hạn min hôm nay khi sửa (vì coupon có thể tạo từ hôm qua)
+                startDateInput.removeAttribute('min'); 
+                if (c.startDate) {
+                    endDateInput.min = c.startDate;
+                } else {
+                    endDateInput.removeAttribute('min');
+                }
+
                 document.getElementById('isActive').checked = !!c.isActive;
                 toggleMaxDiscountVisibility();
                 couponModal.show();
             })
             .catch(() => alert('L\u1ed7i k\u1ebft n\u1ed1i khi t\u1ea3i coupon.'));
     }
+
+    // Cập nhật ngày kết thúc tối thiểu khi chọn ngày bắt đầu
+    document.getElementById('startDate').addEventListener('change', function() {
+        document.getElementById('endDate').min = this.value;
+    });
 
     // G?n handler cho t?t c? n\u00fat edit \u0097 an to\u00e0n, kh\u00f4ng nh\u00fang d? li?u v\u00e0o onclick.
     document.querySelectorAll('.edit-coupon-btn').forEach(btn => {
