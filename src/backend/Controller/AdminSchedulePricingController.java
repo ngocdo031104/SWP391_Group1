@@ -35,6 +35,16 @@ public class AdminSchedulePricingController extends HttpServlet {
 
     private static final Logger LOGGER = Logger.getLogger(AdminSchedulePricingController.class.getName());
 
+    /**
+     * Xử lý yêu cầu HTTP GET.
+     * 1. Kiểm tra quyền hạn Admin/Super Admin.
+     * 2. Phục vụ yêu cầu AJAX:
+     *    - action = "getSchedules": Trả về JSON danh sách lịch trình của một tour xác định.
+     *    - action = "getCoupons": Trả về JSON toàn bộ danh sách mã giảm giá.
+     * 3. Phục vụ yêu cầu GET thông thường:
+     *    - Đọc dữ liệu từ DB (Tours, Guides, Coupons) đưa vào request attribute.
+     *    - Chuyển tiếp (forward) yêu cầu hiển thị trang JSP quản lý lịch trình & giá.
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -51,11 +61,13 @@ public class AdminSchedulePricingController extends HttpServlet {
             return;
         }
 
+        // 2. Xử lý các yêu cầu AJAX lấy dữ liệu
         String ajax = request.getParameter("ajax");
         if ("true".equalsIgnoreCase(ajax)) {
             response.setContentType("application/json;charset=UTF-8");
             String action = request.getParameter("action");
 
+            // Lấy danh sách lịch trình của Tour
             if ("getSchedules".equalsIgnoreCase(action)) {
                 int tourId = parseInt(request.getParameter("tourId"), 0);
                 TourScheduleDAO scheduleDAO = null;
@@ -67,7 +79,7 @@ public class AdminSchedulePricingController extends HttpServlet {
                     JsonArray jsonArray = new JsonArray();
                     for (TourSchedule s : schedules) {
                         JsonObject sJson = gson.toJsonTree(s).getAsJsonObject();
-                        // Trả về thêm tên HDV để hiển thị
+                        // Trả về thêm tên HDV để hiển thị trực quan
                         sJson.addProperty("guideName", s.getGuide() != null ? s.getGuide().getFullName() : "Chưa phân công");
                         sJson.addProperty("departureStr", s.getDepartureDate().toString());
                         sJson.addProperty("returnStr", s.getReturnDate().toString());
@@ -89,6 +101,7 @@ public class AdminSchedulePricingController extends HttpServlet {
                 return;
             }
 
+            // Lấy danh sách mã giảm giá
             if ("getCoupons".equalsIgnoreCase(action)) {
                 CouponDAO couponDAO = null;
                 try {
@@ -111,7 +124,7 @@ public class AdminSchedulePricingController extends HttpServlet {
             }
         }
 
-        // Tải trang bình thường (Forwarding)
+        // 3. Tải trang thông thường: Truy vấn danh sách tour, hướng dẫn viên và coupon để hiển thị lên Form
         TourDAO tourDAO = null;
         GuideDAO guideDAO = null;
         CouponDAO couponDAO = null;
@@ -138,6 +151,12 @@ public class AdminSchedulePricingController extends HttpServlet {
         request.getRequestDispatcher("/admin/schedules-pricing.jsp").forward(request, response);
     }
 
+    /**
+     * Xử lý các yêu cầu HTTP POST để cập nhật cơ sở dữ liệu.
+     * Hỗ trợ các chức năng:
+     * - Quản lý Lịch trình (Schedule): Thêm (addSchedule), Sửa (editSchedule), Xóa (deleteSchedule).
+     * - Quản lý Mã giảm giá (Coupon): Thêm (addCoupon), Sửa (editCoupon), Bật/Tắt (toggleCouponStatus), Xóa (deleteCoupon).
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -145,7 +164,7 @@ public class AdminSchedulePricingController extends HttpServlet {
         response.setContentType("application/json;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
 
-        // Kiểm tra quyền Admin
+        // 1. Kiểm tra quyền hạn Admin
         User sessionUser = (User) request.getSession().getAttribute("sessionUser");
         String userRole = (String) request.getSession().getAttribute("userRole");
         if (sessionUser == null || (sessionUser.getRoleId() != 1 && !"Admin".equals(userRole))) {
@@ -160,6 +179,7 @@ public class AdminSchedulePricingController extends HttpServlet {
         JsonObject result = new JsonObject();
         Gson gson = new Gson();
 
+        // 2. Thêm hoặc cập nhật một Lịch trình Tour (Schedule)
         if ("addSchedule".equalsIgnoreCase(action) || "editSchedule".equalsIgnoreCase(action)) {
             TourScheduleDAO scheduleDAO = null;
             try {
@@ -177,11 +197,11 @@ public class AdminSchedulePricingController extends HttpServlet {
                 double priceChild = (priceChildParam != null && !priceChildParam.trim().isEmpty()) ? parseDouble(priceChildParam, 0.0) : 0.0;
                 double priceInfant = (priceInfantParam != null && !priceInfantParam.trim().isEmpty()) ? parseDouble(priceInfantParam, 0.0) : 0.0;
                 String transportation = request.getParameter("transportation");
-                String status = request.getParameter("status"); // Open, Full, Closed, Cancelled
+                String status = request.getParameter("status"); // Booking status: Open, Full, Closed, Cancelled
                 int guideId = parseInt(request.getParameter("guideId"), 0);
-                String tourStatus = request.getParameter("tourStatus"); // Scheduled, InProgress, Completed, Cancelled
+                String tourStatus = request.getParameter("tourStatus"); // Tour trip status: Scheduled, InProgress, Completed, Cancelled
 
-                // Validation
+                // Kiểm định tính hợp lệ của dữ liệu đầu vào
                 if (tourId <= 0 || depStr == null || retStr == null || totalSeats <= 0 || priceAdult <= 0 || priceChild < 0 || priceInfant < 0) {
                     result.addProperty("status", "error");
                     result.addProperty("message", "Vui lòng nhập đầy đủ thông tin hợp lệ (Số chỗ > 0, giá người lớn phải > 0 và các giá không được âm).");
@@ -212,13 +232,13 @@ public class AdminSchedulePricingController extends HttpServlet {
 
                         boolean success = false;
                         if ("addSchedule".equalsIgnoreCase(action)) {
-                            sched.setAvailableSeats(totalSeats); // Mặc định số chỗ còn trống bằng tổng số chỗ khi mới tạo
+                            sched.setAvailableSeats(totalSeats); // Mặc định số chỗ trống ban đầu bằng tổng số chỗ
                             int newId = scheduleDAO.insertSchedule(sched);
                             success = newId > 0;
                         } else {
                             int scheduleId = parseInt(request.getParameter("scheduleId"), 0);
                             sched.setScheduleId(scheduleId);
-                            // Lấy availableSeats gửi từ form hoặc tự tính toán
+                            // Lấy số chỗ còn trống được gửi từ client hoặc tự cập nhật
                             int availableSeats = parseInt(request.getParameter("availableSeats"), totalSeats);
                             if (availableSeats > totalSeats) {
                                 availableSeats = totalSeats;
@@ -243,7 +263,9 @@ public class AdminSchedulePricingController extends HttpServlet {
             } finally {
                 if (scheduleDAO != null) scheduleDAO.close();
             }
-        } else if ("deleteSchedule".equalsIgnoreCase(action)) {
+        } 
+        // 3. Xử lý yêu cầu Xóa một Lịch trình
+        else if ("deleteSchedule".equalsIgnoreCase(action)) {
             TourScheduleDAO scheduleDAO = null;
             try {
                 scheduleDAO = new TourScheduleDAO();
@@ -254,6 +276,7 @@ public class AdminSchedulePricingController extends HttpServlet {
                     result.addProperty("message", "Lịch trình không tồn tại.");
                 } else {
                     String tourStatus = schedule.getTourStatus();
+                    // Chỉ cho phép xóa lịch trình nếu chuyến đi chưa diễn ra hoặc đã hoàn tất/hủy bỏ
                     if (tourStatus != null && !tourStatus.equalsIgnoreCase("Preparing") 
                             && !tourStatus.equalsIgnoreCase("Completed") 
                             && !tourStatus.equalsIgnoreCase("Cancelled")) {
@@ -282,15 +305,17 @@ public class AdminSchedulePricingController extends HttpServlet {
             } finally {
                 if (scheduleDAO != null) scheduleDAO.close();
             }
-        } else if ("addCoupon".equalsIgnoreCase(action) || "editCoupon".equalsIgnoreCase(action)) {
+        } 
+        // 4. Thêm hoặc Sửa thông tin mã giảm giá (Coupon)
+        else if ("addCoupon".equalsIgnoreCase(action) || "editCoupon".equalsIgnoreCase(action)) {
             CouponDAO couponDAO = null;
             try {
                 couponDAO = new CouponDAO();
                 String code = request.getParameter("couponCode");
-                String discType = request.getParameter("discountType");
+                String discType = request.getParameter("discountType"); // Percentage (Phần trăm) hoặc Fixed (Số tiền cố định)
                 double discVal = parseDouble(request.getParameter("discountValue"), 0.0);
-                double minOrder = parseDouble(request.getParameter("minOrderAmount"), 0.0);
-                String maxUsesStr = request.getParameter("maxUses");
+                double minOrder = parseDouble(request.getParameter("minOrderAmount"), 0.0); // Giá trị đơn hàng tối thiểu
+                String maxUsesStr = request.getParameter("maxUses"); // Số lượt sử dụng tối đa
                 Integer maxUses = (maxUsesStr == null || maxUsesStr.trim().isEmpty()) ? null : parseInt(maxUsesStr, 0);
                 String startStr = request.getParameter("startDate");
                 String endStr = request.getParameter("endDate");
@@ -346,7 +371,9 @@ public class AdminSchedulePricingController extends HttpServlet {
             } finally {
                 if (couponDAO != null) couponDAO.close();
             }
-        } else if ("toggleCouponStatus".equalsIgnoreCase(action)) {
+        } 
+        // 5. Bật/Tắt kích hoạt trạng thái sử dụng của Mã giảm giá
+        else if ("toggleCouponStatus".equalsIgnoreCase(action)) {
             CouponDAO couponDAO = null;
             try {
                 couponDAO = new CouponDAO();
@@ -367,7 +394,9 @@ public class AdminSchedulePricingController extends HttpServlet {
             } finally {
                 if (couponDAO != null) couponDAO.close();
             }
-        } else if ("deleteCoupon".equalsIgnoreCase(action)) {
+        } 
+        // 6. Xóa mã giảm giá
+        else if ("deleteCoupon".equalsIgnoreCase(action)) {
             CouponDAO couponDAO = null;
             try {
                 couponDAO = new CouponDAO();
@@ -397,6 +426,9 @@ public class AdminSchedulePricingController extends HttpServlet {
         }
     }
 
+    /**
+     * Chuyển chuỗi dạng String thành số nguyên int một cách an toàn.
+     */
     private int parseInt(String value, int defaultVal) {
         try {
             if (value != null && !value.trim().isEmpty()) {
@@ -406,6 +438,9 @@ public class AdminSchedulePricingController extends HttpServlet {
         return defaultVal;
     }
 
+    /**
+     * Chuyển chuỗi dạng String thành số thực double một cách an toàn.
+     */
     private double parseDouble(String value, double defaultVal) {
         try {
             if (value != null && !value.trim().isEmpty()) {

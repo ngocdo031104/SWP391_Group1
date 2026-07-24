@@ -32,6 +32,17 @@ import jakarta.servlet.http.HttpSession;
 public class StaffTourAssignmentController extends HttpServlet {
     private static final Logger LOGGER = Logger.getLogger(StaffTourAssignmentController.class.getName());
 
+    /**
+     * Xử lý yêu cầu HTTP GET.
+     * 1. Xác thực thông tin người dùng từ session (chỉ Staff/Admin được phép).
+     * 2. Nếu action = "list" (mặc định):
+     *    - Lấy danh sách TourSchedule chưa có Hướng dẫn viên (Guide).
+     *    - Lấy danh sách tất cả Hướng dẫn viên (GuideProfile) đang hoạt động.
+     *    - Lấy danh sách lịch sử phân công (TourAssignment).
+     *    - Lưu vào request attributes và chuyển hướng sang trang tour-assignments.jsp.
+     * 3. Nếu action = "details":
+     *    - Lấy thông tin chi tiết về lịch trình khởi hành cụ thể, danh sách HDV, các phân công liên quan.
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -51,12 +62,10 @@ public class StaffTourAssignmentController extends HttpServlet {
         TourScheduleDAO scheduleDAO = new TourScheduleDAO();
 
         try {
+            // Hiển thị danh sách chính
             if ("list".equals(action)) {
-                // Lấy danh sách tourschedule chưa có guide
                 List<TourSchedule> unassignedSchedules = scheduleDAO.getUnassignedSchedules();
-                // Lấy danh sách guides
                 List<GuideProfile> guides = guideDAO.getAllGuides();
-                // Lấy danh sách assignment lịch sử
                 List<TourAssignment> assignments = guideDAO.getAllAssignments();
 
                 request.setAttribute("unassignedSchedules", unassignedSchedules);
@@ -64,6 +73,7 @@ public class StaffTourAssignmentController extends HttpServlet {
                 request.setAttribute("assignments", assignments);
                 request.getRequestDispatcher("/views/staff/tour-assignments.jsp").forward(request, response);
 
+            // Hiển thị chi tiết phân công cho một scheduleId cụ thể
             } else if ("details".equals(action)) {
                 String scheduleIdStr = request.getParameter("scheduleId");
                 if (scheduleIdStr != null && !scheduleIdStr.isEmpty()) {
@@ -79,7 +89,7 @@ public class StaffTourAssignmentController extends HttpServlet {
                         request.getRequestDispatcher("/views/staff/tour-assignments.jsp").forward(request, response);
                         return;
                     } catch (NumberFormatException e) {
-                        // Fall through to redirect
+                        // Bỏ qua lỗi định dạng và quay về trang danh sách chính
                     }
                 }
                 response.sendRedirect(request.getContextPath() + "/staff/tour-assignments");
@@ -92,6 +102,12 @@ public class StaffTourAssignmentController extends HttpServlet {
         }
     }
 
+    /**
+     * Xử lý các yêu cầu HTTP POST để cập nhật phân công (phản hồi định dạng JSON).
+     * Hỗ trợ các hành động:
+     * - "assign": Phân công một Hướng dẫn viên vào Lịch khởi hành cụ thể (bao gồm kiểm tra bận trùng lịch, gửi thông báo hệ thống notification).
+     * - "unassign": Hủy phân công hướng dẫn viên khỏi Lịch khởi hành.
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

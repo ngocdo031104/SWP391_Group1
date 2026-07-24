@@ -40,6 +40,7 @@ public class DetailController extends HttpServlet {
      * - Trang chủ (HomePage.jsp)
      * - Trang khám phá (tourdiscovery.jsp)
      * - Hoặc các tour liên quan ở cuối trang.
+     * Nạp toàn bộ dữ liệu chi tiết của Tour và các đề xuất tour liên quan, mã giảm giá để hiển thị ở UI.
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -47,10 +48,8 @@ public class DetailController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
-        // Thiết lập bộ mã UTF-8 để đảm bảo khi đọc tham số tiếng Việt từ URL hoặc request không bị lỗi hiển thị.
-        request.setCharacterEncoding("UTF-8");
         
-        // Đọc tham số "id" của tour từ query string (?id=X)
+        // 1. Đọc và kiểm tra tham số "id" của tour từ query string (?id=X)
         String idStr = request.getParameter("id");
         int id;
         if (idStr != null && !idStr.trim().isEmpty()) {
@@ -67,18 +66,16 @@ public class DetailController extends HttpServlet {
         
         TourDAO tourDAO = null;
         try {
-            // Khởi tạo đối tượng truy cập cơ sở dữ liệu
             tourDAO = new TourDAO();
             
-            // Gọi DAO nạp thông tin chi tiết tour bằng ID.
-            // Hàm getTourById(id) đã được viết để nạp kèm tất cả Itineraries, Inclusions, FAQs, Reviews.
+            // 2. Gọi DAO nạp thông tin chi tiết tour bằng ID.
+            // Hàm getTourById(id) tự động nạp kèm danh sách lịch trình (itinerary), dịch vụ đi kèm (inclusion), danh mục và đánh giá
             Tour tour = tourDAO.getTourById(id);
             
             if (tour != null) {
-                // Đưa đối tượng tour vào request attribute để trang detail.jsp có thể đọc ra hiển thị.
                 request.setAttribute("tour", tour);
                 
-                // Nạp thêm danh sách tất cả các tour trong hệ thống để làm phần gợi ý "Hành Trình Tương Tự Bạn Sẽ Thích" ở cuối trang.
+                // 3. Nạp thêm danh sách tất cả các tour trong hệ thống để làm phần gợi ý "Hành Trình Tương Tự Bạn Sẽ Thích" ở cuối trang.
                 List<Tour> tours = tourDAO.searchTours(null, null, null, null);
                 if (tours != null) {
                     for (Tour t : tours) {
@@ -86,14 +83,13 @@ public class DetailController extends HttpServlet {
                         t.setSchedules(tourDAO.getSchedulesByTourId(t.getTourId()));
                     }
                 }
-                // Đưa danh sách tour gợi ý vào request attribute.
                 request.setAttribute("tours", tours);
                 
-                // Nạp danh sách các mã giảm giá hoạt động để sử dụng trong booking sidebar
+                // 4. Nạp danh sách các mã giảm giá hoạt động để hiển thị ở Booking Sidebar
                 List<Coupon> activeCoupons = tourDAO.getActiveCoupons(10);
                 request.setAttribute("activeCoupons", activeCoupons);
                 
-                // Nạp wishlist nếu người dùng đã đăng nhập
+                // 5. Nạp danh sách các ID Tour trong Wishlist nếu người dùng đã đăng nhập, phục vụ thả tim nhanh
                 Entities.User sessionUser = (Entities.User) request.getSession().getAttribute("sessionUser");
                 if (sessionUser != null) {
                     Model.WishlistDAO wishlistDAO = new Model.WishlistDAO();
@@ -101,11 +97,11 @@ public class DetailController extends HttpServlet {
                     request.setAttribute("wishlistTourIds", wishlistTourIds);
                     wishlistDAO.close();
                 }
-                // Chuyển tiếp yêu cầu (forward) sang trang giao diện detail.jsp
+                
+                // Chuyển tiếp yêu cầu sang trang hiển thị chi tiết tour
                 request.getRequestDispatcher("/views/detail.jsp").forward(request, response);
                 return;
             } else {
-                // Nếu không tìm thấy Tour với ID tương ứng trong DB, chuyển hướng người dùng về Trang chủ.
                 response.sendRedirect(request.getContextPath() + "/home");
                 return;
             }
@@ -114,7 +110,6 @@ public class DetailController extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/home");
             return;
         } finally {
-            // Đảm bảo đóng kết nối cơ sở dữ liệu an toàn để tránh rò rỉ kết nối (connection leak).
             if (tourDAO != null) {
                 tourDAO.close();
             }
@@ -122,14 +117,15 @@ public class DetailController extends HttpServlet {
     }
 
     /**
-     * Phương thức doPost được gọi khi người dùng nhấn nút "Gửi Đánh Giá" từ biểu mẫu
-     * "Chia Sẻ Trải Nghiệm Của Bạn" ở cuối trang detail.jsp.
+     * Phương thức doPost được gọi khi người dùng gửi đánh giá mới (Review) từ biểu mẫu.
+     * Hỗ trợ lưu trữ ý kiến bình luận, số sao đánh giá (1-5) và ảnh chụp trải nghiệm thực tế (nếu có).
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         
+        // 1. Kiểm tra trạng thái đăng nhập, chỉ người dùng đã đăng nhập mới được đánh giá tour
         jakarta.servlet.http.HttpSession session = request.getSession(false);
         User sessionUser = (session != null) ? (User) session.getAttribute("sessionUser") : null;
         if (sessionUser == null) {
@@ -137,14 +133,14 @@ public class DetailController extends HttpServlet {
             return;
         }
         
-        // Đọc giá trị gửi lên từ form
+        // 2. Đọc giá trị gửi lên từ form bình luận/đánh giá
         String formName = request.getParameter("name");
         String formEmail = request.getParameter("email");
         String content = request.getParameter("content"); 
         String ratingStr = request.getParameter("rating"); 
         String tourIdStr = request.getParameter("tourId"); 
         
-        // Sử dụng sessionUser làm nguồn xác thực, fallback về form nếu sessionUser thiếu
+        // Lấy thông tin họ tên & email của user đã đăng nhập, nếu thiếu sẽ sử dụng dữ liệu điền từ Form
         String name = (sessionUser.getFullName() != null && !sessionUser.getFullName().trim().isEmpty()) ? sessionUser.getFullName() : formName;
         String email = (sessionUser.getEmail() != null && !sessionUser.getEmail().trim().isEmpty()) ? sessionUser.getEmail() : formEmail;
         
@@ -160,10 +156,10 @@ public class DetailController extends HttpServlet {
                 }
             }
         } catch (NumberFormatException e) {
-            // Bỏ qua lỗi định dạng số nếu có
+            // Fallback giá trị mặc định khi định dạng số sai
         }
         
-        // Xử lý upload ảnh thật từ file input có name="reviewImage"
+        // 3. Xử lý tải ảnh đính kèm đánh giá (nếu có tải tệp file)
         String imageUrl = null;
         try {
             Part filePart = request.getPart("reviewImage");
@@ -180,22 +176,22 @@ public class DetailController extends HttpServlet {
                     dir.mkdirs();
                 }
                 filePart.write(uploadDir + File.separator + uniqueName);
-                imageUrl = request.getContextPath() + "/assets/images/" + uniqueName;
+                imageUrl = request.getContextPath() + "/assets/images/" + uniqueName; // URL ảnh lưu DB
             }
         } catch (Exception e) {
             System.err.println("Error uploading review image: " + e.getMessage());
         }
         
+        // 4. Lưu đánh giá vào DB thông qua DAO
         TourDAO tourDAO = null;
         try {
             tourDAO = new TourDAO();
-            // Kiểm tra tính hợp lệ của dữ liệu trước khi chèn vào DB
             if (content == null || content.trim().isEmpty()) {
                 session.setAttribute("reviewError", "Vui lòng nhập nội dung đánh giá!");
             } else if (name == null || name.trim().isEmpty() || email == null || email.trim().isEmpty()) {
                 session.setAttribute("reviewError", "Vui lòng cung cấp đầy đủ họ tên và email!");
             } else {
-                // Gọi hàm insertReview của DAO (phương thức 6 tham số có kèm imageUrl)
+                // Gọi DAO ghi nhận đánh giá của người dùng
                 boolean success = tourDAO.insertReview(name.trim(), email.trim(), tourId, rating, content.trim(), imageUrl);
                 if (success) {
                     session.setAttribute("reviewSuccess", "Cảm ơn bạn đã gửi đánh giá! Đang chờ ban quản trị kiểm duyệt.");
@@ -206,15 +202,12 @@ public class DetailController extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            // Đảm bảo đóng kết nối DB
             if (tourDAO != null) {
                 tourDAO.close();
             }
         }
         
-        // Sau khi thêm đánh giá thành công, dùng kỹ thuật PRG (Post-Redirect-Get) chuyển hướng (Redirect)
-        // người dùng quay trở lại chính trang chi tiết của tour đó (?id=tourId) để tránh hiện tượng
-        // người dùng nhấn F5 bị gửi lại đánh giá lần thứ 2.
+        // 5. Áp dụng kỹ thuật PRG (Post-Redirect-Get) để tránh lỗi gửi lại form khi người dùng tải lại trang F5
         response.sendRedirect(request.getContextPath() + "/detail?id=" + tourId);
     }
 }
