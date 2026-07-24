@@ -353,9 +353,9 @@
             <div id="bulkRoleInputs"></div>
             <select name="newRoleId" class="filter-select" style="width: 100%; margin-bottom: 24px;">
                 <option value="1">Admin</option>
+                <option value="2">Staff</option>
+                <option value="3">Guide</option>
                 <option value="4">Customer</option>
-                <option value="2">Guide</option>
-                <option value="3">Staff</option>
                 <option value="5">Accountant</option>
             </select>
             <div style="display: flex; justify-content: flex-end; gap: 12px;">

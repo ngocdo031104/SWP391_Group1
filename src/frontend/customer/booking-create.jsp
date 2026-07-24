@@ -15,7 +15,7 @@
 <%
     // Khai b&#225;o CSS/JS ri&#234;ng cho m&#224;n t&#7841;o booking &#273;&#7875; header.jsp t&#7921; nh&#250;ng &#273;&#250;ng t&#224;i nguy&#234;n c&#7911;a trang n&#224;y.
     request.setAttribute("extraCss", "css/customer-booking-create.css");
-    request.setAttribute("extraScript", "js/customer-booking-create.js");
+    request.setAttribute("extraScript", "js/customer-booking-create.js?v=2");
     request.setAttribute("bodyClass", "booking-page");
 
     // tour l&#224; tour &#273;&#227; &#273;&#432;&#7907;c ch&#7885;n t&#7915; trang detail th&#244;ng qua tourId, d&#249;ng &#273;&#7875; hi&#7875;n th&#7883; t&#234;n tour v&#224; gi&#225; tham kh&#7843;o.
@@ -82,7 +82,7 @@
             </div>
 
             <%-- Form g&#7917;i v&#7873; BookingCreateController &#273;&#7875; validate r&#7891;i l&#432;u booking draft v&#224;o session. --%>
-            <form method="post" action="${pageContext.request.contextPath}/customer/booking/create" id="booking-create-form" data-base-price="<%= sideBase %>" novalidate>
+            <form method="post" action="${pageContext.request.contextPath}/customer/booking/create" id="booking-create-form" data-base-price="<%= sideBase %>" data-tour-category-id="<%= tour != null ? tour.getCategoryId() : 0 %>" novalidate>
                 <input type="hidden" name="action" value="review">
                 <input type="hidden" name="tourId" value="<%= tour != null ? tour.getTourId() : 0 %>">
 
@@ -146,7 +146,9 @@
                     <div><dt>Th&#7901;i gian</dt><dd><%= tour != null ? tour.getDurationDays() : 0 %> ng&#224;y</dd></div>
                     <div><dt>Ng&#432;&#7901;i l&#7899;n</dt><dd><span id="summary-adult-count">1</span> x <span id="summary-adult-price"><%= money.format(sideBase) %></span> &#273;</dd></div>
                     <div><dt>Tr&#7867; em</dt><dd><span id="summary-child-count">0</span> x <span id="summary-child-price">0</span> &#273;</dd></div>
+                    <% if (tour == null || (tour.getCategoryId() != 1 && tour.getCategoryId() != 2)) { %>
                     <div><dt>Tr&#7867; s&#417; sinh</dt><dd><span id="summary-infant-count">0</span> x <span id="summary-infant-price">0</span> &#273;</dd></div>
+                    <% } %>
                 </dl>
                 <div class="summary-total"><span>T&#7841;m t&#237;nh ti&#7873;n tour</span><strong id="summary-base-amount"><%= money.format(sideBase) %> &#273;</strong></div>
             </div>

@@ -140,7 +140,11 @@ public class BookingFlowSupport {
     // Nếu coupon là FixedAmount thì giảm số tiền cố định nhưng không vượt quá baseAmount.
     public static double calculateDiscount(double baseAmount, Coupon coupon) {
         if ("Percentage".equalsIgnoreCase(coupon.getDiscountType())) {
-            return baseAmount * coupon.getDiscountValue() / 100.0;
+            double discount = baseAmount * coupon.getDiscountValue() / 100.0;
+            if (coupon.getMaxDiscountAmount() != null && discount > coupon.getMaxDiscountAmount()) {
+                return coupon.getMaxDiscountAmount();
+            }
+            return discount;
         }
         return Math.min(baseAmount, coupon.getDiscountValue());
     }
