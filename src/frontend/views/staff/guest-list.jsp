@@ -16,72 +16,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Danh S&#225;ch Kh&#225;ch - Staff Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/lucide@latest" defer></script>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-dashboard.css?v=1.6">
-    <style>
-        :root {
-            --primary: #2563EB; --primary-light: #EFF6FF;
-            --success: #10B981; --success-light: #D1FAE5;
-            --warning: #F59E0B; --warning-light: #FEF3C7;
-            --danger: #EF4444;  --danger-light: #FEE2E2;
-            --purple: #9333EA;  --purple-light: #F3E8FF;
-            --gray-50: #F8FAFC; --gray-100: #F1F5F9; --gray-200: #E2E8F0;
-            --gray-500: #64748B; --gray-700: #334155; --gray-900: #0F172A;
-        }
-        body.dashboard-body { background: var(--gray-50); font-family: 'Inter', sans-serif; }
-
-        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-        .page-header h1 { margin: 0; font-size: 24px; font-weight: 700; color: var(--gray-900); }
-        .page-header p { margin: 4px 0 0; color: var(--gray-500); font-size: 14px; }
-
-        .card { background: #fff; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid var(--gray-100); overflow: hidden; margin-bottom: 24px; }
-        .card-header { padding: 16px 24px; border-bottom: 1px solid var(--gray-100); display: flex; justify-content: space-between; align-items: center; }
-        .card-header h3 { margin: 0; font-size: 16px; font-weight: 600; color: var(--gray-900); display: flex; align-items: center; gap: 8px; }
-
-        .badge { padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
-        .badge-success { background: var(--success-light); color: var(--success); }
-        .badge-warning { background: var(--warning-light); color: var(--warning); }
-        .badge-danger { background: var(--danger-light); color: var(--danger); }
-        .badge-secondary { background: var(--gray-100); color: var(--gray-500); }
-        .badge-primary { background: var(--primary-light); color: var(--primary); }
-
-        .table-modern { width: 100%; border-collapse: collapse; }
-        .table-modern th { background: var(--gray-50); padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: .5px; border-bottom: 1px solid var(--gray-200); }
-        .table-modern td { padding: 14px 16px; border-bottom: 1px solid var(--gray-100); color: var(--gray-700); vertical-align: middle; }
-        .table-modern tr:last-child td { border-bottom: none; }
-        .table-modern tr:hover { background: var(--gray-50); }
-
-        .btn { padding: 8px 16px; border-radius: 8px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; border: none; cursor: pointer; transition: all .2s; font-size: 14px; text-decoration: none; }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: #1D4ED8; }
-        .btn-outline { background: white; color: var(--gray-700); border: 1px solid var(--gray-200); }
-        .btn-outline:hover { background: var(--gray-50); }
-        .btn-sm { padding: 6px 12px; font-size: 13px; }
-
-        .stat-card { background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid var(--gray-100); display: flex; align-items: center; gap: 16px; }
-        .stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .stat-icon.success { background: var(--success-light); color: var(--success); }
-        .stat-icon.primary { background: var(--primary-light); color: var(--primary); }
-        .stat-icon.warning { background: var(--warning-light); color: var(--warning); }
-        .stat-info h4 { margin: 0; font-size: 13px; color: var(--gray-500); font-weight: 500; }
-        .stat-info .stat-value { margin: 4px 0 0; font-size: 24px; font-weight: 700; color: #ffffff; }
-
-        .empty-state { text-align: center; padding: 40px 20px; color: var(--gray-500); }
-        .empty-state i { width: 48px; height: 48px; color: var(--gray-300); margin-bottom: 12px; }
-
-        .breadcrumb { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; font-size: 14px; }
-        .breadcrumb a { color: var(--gray-500); text-decoration: none; }
-        .breadcrumb a:hover { color: var(--primary); }
-        .breadcrumb span { color: var(--gray-500); }
-
-        .guest-item { display: flex; align-items: center; gap: 16px; padding: 12px 16px; border-bottom: 1px solid var(--gray-100); }
-        .guest-item:last-child { border-bottom: none; }
-        .guest-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
-        .guest-info { flex: 1; }
-        .guest-name { font-weight: 600; color: var(--gray-900); }
-        .guest-email { font-size: 13px; color: var(--gray-500); }
-        .guest-meta { display: flex; gap: 12px; font-size: 13px; color: var(--gray-500); }
-    </style>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/staff-guest-list.css?v=1.2">
 </head>
 <body class="dashboard-body">
 
@@ -103,8 +40,8 @@
 
                     <div class="page-header">
                         <div>
-                            <h1>Danh S&#225;ch Kh&#225;ch</h1>
-                            <p>${schedule.tour.tourName} - <fmt:formatDate value="${schedule.departureDate}" pattern="dd/MM/yyyy"/></p>
+                            <h1 style="color: #0F172A;">Danh S&#225;ch Kh&#225;ch</h1>
+                            <p style="color: #64748B;">${schedule.tour.tourName} - <fmt:formatDate value="${schedule.departureDate}" pattern="dd/MM/yyyy"/></p>
                         </div>
                     </div>
 
@@ -132,6 +69,18 @@
                         </div>
                     </div>
 
+                    <div class="guest-filter-bar">
+                        <div class="search-box">
+                            <i data-lucide="search"></i>
+                            <input type="text" id="guestSearchInput" placeholder="T&#236;m theo t&#234;n h&#224;nh kh&#225;ch...">
+                        </div>
+                        <select id="guestCheckinFilter">
+                            <option value="all">T&#7845;t c&#7843; check-in</option>
+                            <option value="true">&#10004; &#272;&#227; check-in</option>
+                            <option value="false">&#9203; Ch&#432;a check-in</option>
+                        </select>
+                    </div>
+
                     <div class="card">
                         <div class="card-header">
                             <h3><i data-lucide="list" style="color:var(--primary);"></i> Danh S&#225;ch H&#224;nh Kh&#225;ch</h3>
@@ -146,36 +95,60 @@
                                 </c:when>
                                 <c:otherwise>
                                     <c:forEach var="p" items="${participants}">
-                                        <div class="guest-item">
+                                        <div class="guest-item" data-name="${fn:toLowerCase(p.fullName)}" data-status="${p.bookingStatus}" data-checkin="${p.checkedIn}">
                                             <div class="guest-avatar">
                                                 ${fn:substring(p.fullName, 0, 1)}
                                             </div>
-                                            <div class="guest-info">
-                                                <div class="guest-name">${p.fullName}</div>
-                                                <div class="guest-email">${p.email}</div>
-                                                <div class="guest-meta">
-                                                    <span><i data-lucide="phone" style="width:12px;height:12px;"></i> ${p.phoneNumber}</span>
-                                                    <span><i data-lucide="calendar" style="width:12px;height:12px;"></i> ${p.bookingCode}</span>
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <c:choose>
-                                                    <c:when test="${p.checkedIn}">
-                                                        <span class="badge badge-success">
-                                                            <i data-lucide="check" style="width:12px;height:12px;"></i>
-                                                            &#272;&#227; check-in
-                                                        </span>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <span class="badge badge-warning">
-                                                            <i data-lucide="clock" style="width:12px;height:12px;"></i>
-                                                            Ch&#432;a check-in
-                                                        </span>
-                                                    </c:otherwise>
-                                                </c:choose>
-                                            </div>
+                                             <div class="guest-info">
+                                                 <div class="guest-name">${p.fullName}</div>
+                                                 <div class="guest-email">${p.email}</div>
+                                                 <div class="guest-meta">
+                                                     <span><i data-lucide="phone" style="width:12px;height:12px;"></i> ${p.phoneNumber}</span>
+                                                     <span><i data-lucide="calendar" style="width:12px;height:12px;"></i> ${p.bookingCode}</span>
+                                                 </div>
+                                             </div>
+                                             <div style="display: flex; gap: 8px; align-items: center;">
+                                                 <c:choose>
+                                                     <c:when test="${p.bookingStatus == 'Cancelled'}">
+                                                         <span class="badge badge-danger">
+                                                             <i data-lucide="x" style="width:12px;height:12px;"></i>
+                                                             Đã hủy đơn
+                                                         </span>
+                                                     </c:when>
+                                                     <c:when test="${p.bookingStatus == 'PendingPayment'}">
+                                                         <span class="badge badge-warning" style="background: var(--warning-light); color: var(--warning);">
+                                                             <i data-lucide="clock" style="width:12px;height:12px;"></i>
+                                                             Chờ TT
+                                                         </span>
+                                                     </c:when>
+                                                 </c:choose>
+                                                 <c:choose>
+                                                     <c:when test="${p.checkedIn}">
+                                                         <span class="badge badge-success">
+                                                             <i data-lucide="check" style="width:12px;height:12px;"></i>
+                                                             &#272;&#227; check-in
+                                                         </span>
+                                                     </c:when>
+                                                     <c:otherwise>
+                                                         <span class="badge badge-warning">
+                                                             <i data-lucide="clock" style="width:12px;height:12px;"></i>
+                                                             Ch&#432;a check-in
+                                                         </span>
+                                                     </c:otherwise>
+                                                 </c:choose>
+                                             </div>
                                         </div>
                                     </c:forEach>
+                                    <c:if test="${not empty participants[0].bookingNotes}">
+                                        <div style="padding:16px 24px; background: linear-gradient(to right, #f8fafc, #ffffff); border-top:1px solid var(--gray-100); display:flex; align-items:flex-start; gap:12px; font-size:14px; color:#334155; border-left:4px solid ${participants[0].bookingStatus == 'Cancelled' ? 'var(--danger)' : 'var(--primary)'}; margin:0;">
+                                            <i data-lucide="message-square" style="width:20px;height:20px; flex-shrink:0; margin-top:2px; color: ${participants[0].bookingStatus == 'Cancelled' ? 'var(--danger)' : 'var(--primary)'};"></i>
+                                            <div style="font-size:15px; line-height:1.6;"><strong>Ghi chú đơn:</strong> ${participants[0].bookingNotes}</div>
+                                        </div>
+                                    </c:if>
+                                    <div id="noResultsMsg" class="no-results-msg">
+                                        <i data-lucide="search-x" style="width:48px;height:48px;margin-bottom:12px;color:var(--gray-300);"></i>
+                                        <p style="font-size: 15px; font-weight: 500;">Kh&#244;ng t&#236;m th&#7845;y h&#224;nh kh&#225;ch ph&#249; h&#7907;p.</p>
+                                    </div>
                                 </c:otherwise>
                             </c:choose>
                         </div>
@@ -259,7 +232,47 @@
 </div>
 
 <script>
-    lucide.createIcons();
+    document.addEventListener("DOMContentLoaded", () => {
+        if(window.lucide) {
+            lucide.createIcons();
+        }
+    });
+
+    // Real-time filter for guest list
+    (function() {
+        var searchInput = document.getElementById('guestSearchInput');
+        var checkinFilter = document.getElementById('guestCheckinFilter');
+        if (!searchInput || !checkinFilter) return;
+
+        function filterGuests() {
+            var keyword = searchInput.value.toLowerCase().trim();
+            var checkin = checkinFilter.value;
+            var items = document.querySelectorAll('.guest-item[data-name]');
+            var visibleCount = 0;
+
+            items.forEach(function(item) {
+                var name = item.getAttribute('data-name') || '';
+                var itemCheckin = item.getAttribute('data-checkin') || '';
+                var matchName = !keyword || name.indexOf(keyword) !== -1;
+                var matchCheckin = checkin === 'all' || itemCheckin === checkin;
+
+                if (matchName && matchCheckin) {
+                    item.classList.remove('hidden-by-filter');
+                    visibleCount++;
+                } else {
+                    item.classList.add('hidden-by-filter');
+                }
+            });
+
+            var noResults = document.getElementById('noResultsMsg');
+            if (noResults) {
+                noResults.style.display = visibleCount === 0 && items.length > 0 ? 'block' : 'none';
+            }
+        }
+
+        searchInput.addEventListener('input', filterGuests);
+        checkinFilter.addEventListener('change', filterGuests);
+    })();
 </script>
 </body>
 </html>

@@ -1,363 +1,408 @@
-&#65279;<%-- 
-    Li&#234;n quan &#273;&#7871;n UCs: View Notifications
-    T&#225;c gi&#7843;: &#272;&#7895; V&#361; Minh Ng&#7885;c
-    MSSV: HE182479
---%>
-&#65279;<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
-<%@taglib prefix="c" uri="jakarta.tags.core"%>
-<%@taglib prefix="fmt" uri="jakarta.tags.fmt"%>
-<%
-    request.setAttribute("bodyClass", "notifications-page");
-%>
-<jsp:include page="/common/header.jsp" />
-<style>
-    .notifications-page {
-        background-color: #f8fafc;
-        font-family: 'Inter', sans-serif;
-    }
-    /* Header Override for solid background */
-    #navbar {
-        background-color: white !important;
-        border-bottom: 1px solid #e2e8f0;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    }
-    #navbar .nav-link, #navbar .logo, #navbar .btn-login-text, #navbar .notification-bell, #navbar .mobile-nav-toggle {
-        color: #0f172a !important;
-    }
+&#65279;<%-- Li&#234;n quan &#273;&#7871;n UCs: View Notifications T&#225;c gi&#7843;: &#272;&#7895; V&#361; Minh
+    Ng&#7885;c MSSV: HE182479 --%>
+    &#65279;<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
+        <%@taglib prefix="c" uri="jakarta.tags.core" %>
+            <%@taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+                <% request.setAttribute("bodyClass", "notifications-page" ); %>
+                    <jsp:include page="/common/header.jsp" />
+                    <style>
+                        .notifications-page {
+                            background-color: #f8fafc;
+                            font-family: 'Inter', sans-serif;
+                        }
 
-    .container {
-        max-width: 900px;
-        margin: 0 auto;
-        padding: 0 20px;
-    }
+                        /* Header Override for solid background */
+                        #navbar {
+                            background-color: white !important;
+                            border-bottom: 1px solid #e2e8f0;
+                            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+                        }
 
-    .hero-section {
-        background: linear-gradient(135deg, var(--primary-color, #4f46e5), #a855f7);
-        padding: 40px 20px;
-        color: white;
-        border-radius: 12px;
-        margin-bottom: 30px;
-        text-align: left;
-        box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
+                        #navbar .nav-link,
+                        #navbar .logo,
+                        #navbar .btn-login-text,
+                        #navbar .notification-bell,
+                        #navbar .mobile-nav-toggle {
+                            color: #0f172a !important;
+                        }
 
-    .hero-section h1 {
-        font-family: 'Outfit', sans-serif;
-        font-size: 32px;
-        margin: 0;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
+                        .container {
+                            max-width: 900px;
+                            margin: 0 auto;
+                            padding: 0 20px;
+                        }
 
-    .hero-section .badge {
-        background-color: #ef4444;
-        color: white;
-        padding: 4px 10px;
-        border-radius: 20px;
-        font-size: 14px;
-        font-weight: 600;
-        vertical-align: middle;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    }
+                        .hero-section {
+                            background: linear-gradient(135deg, var(--primary-color, #4f46e5), #a855f7);
+                            padding: 40px 20px;
+                            color: white;
+                            border-radius: 12px;
+                            margin-bottom: 30px;
+                            text-align: left;
+                            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                        }
 
-    .btn-read-all {
-        background-color: rgba(255, 255, 255, 0.2);
-        color: white;
-        text-decoration: none;
-        padding: 8px 16px;
-        border-radius: 6px;
-        font-size: 14px;
-        font-weight: 500;
-        transition: background-color 0.2s;
-        border: 1px solid rgba(255, 255, 255, 0.4);
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-    }
-    .btn-read-all:hover {
-        background-color: rgba(255, 255, 255, 0.3);
-    }
+                        .hero-section h1 {
+                            font-family: 'Outfit', sans-serif;
+                            font-size: 32px;
+                            margin: 0;
+                            display: flex;
+                            align-items: center;
+                            gap: 10px;
+                        }
 
-    .filter-bar {
-        display: flex;
-        gap: 15px;
-        margin-bottom: 30px;
-        background: white;
-        padding: 20px;
-        border-radius: 12px;
-        align-items: center;
-        flex-wrap: wrap;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        border: 1px solid #e2e8f0;
-    }
-    .filter-bar input[type="text"], .filter-bar select {
-        padding: 10px 15px;
-        border: 1px solid #cbd5e1;
-        border-radius: 6px;
-        flex: 1;
-        min-width: 150px;
-        font-family: 'Inter', sans-serif;
-        font-size: 14px;
-        outline: none;
-        transition: border-color 0.2s;
-    }
-    .filter-bar input[type="text"]:focus, .filter-bar select:focus {
-        border-color: var(--primary-color, #4f46e5);
-    }
-    .filter-bar button {
-        padding: 10px 20px;
-        background-color: var(--primary-color, #4f46e5);
-        color: white;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        font-weight: 500;
-        font-family: 'Inter', sans-serif;
-        transition: background-color 0.2s;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-    }
-    .filter-bar button:hover {
-        background-color: #4338ca;
-    }
+                        .hero-section .badge {
+                            background-color: #ef4444;
+                            color: white;
+                            padding: 4px 10px;
+                            border-radius: 20px;
+                            font-size: 14px;
+                            font-weight: 600;
+                            vertical-align: middle;
+                            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+                        }
 
-    .notification-list {
-        list-style: none;
-        padding: 0;
-        margin: 0 0 50px 0;
-    }
-    .notification-item {
-        background: white;
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        margin-bottom: 15px;
-        padding: 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-        transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .notification-item:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 12px rgba(0,0,0,0.05);
-    }
-    .notification-item.unread {
-        background-color: #f0f5ff;
-        border-left: 4px solid var(--primary-color, #4f46e5);
-    }
-    .notification-content {
-        flex: 1;
-        margin-right: 20px;
-    }
-    .notification-title {
-        font-family: 'Outfit', sans-serif;
-        font-weight: 600;
-        font-size: 18px;
-        margin: 0 0 8px 0;
-        color: #0f172a;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    .cat-badge {
-        display: inline-block;
-        padding: 4px 10px;
-        border-radius: 12px;
-        font-size: 12px;
-        font-weight: 500;
-        background: #e2e8f0;
-        color: #475569;
-    }
-    .notification-body {
-        color: #475569;
-        margin: 0 0 12px 0;
-        font-size: 15px;
-        line-height: 1.5;
-    }
-    .notification-meta {
-        font-size: 13px;
-        color: #94a3b8;
-        display: flex;
-        align-items: center;
-        gap: 15px;
-    }
-    .meta-item {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-    }
-    .btn-read {
-        background-color: white;
-        color: var(--primary-color, #4f46e5);
-        text-decoration: none;
-        padding: 6px 12px;
-        border-radius: 6px;
-        font-size: 13px;
-        font-weight: 500;
-        border: 1px solid var(--primary-color, #4f46e5);
-        transition: all 0.2s;
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        white-space: nowrap;
-    }
-    .btn-read:hover {
-        background-color: var(--primary-color, #4f46e5);
-        color: white;
-    }
-    .empty-state {
-        text-align: center;
-        color: #64748b;
-        padding: 60px 20px;
-        background: white;
-        border-radius: 12px;
-        border: 1px dashed #cbd5e1;
-    }
-</style>
+                        .btn-read-all {
+                            background-color: rgba(255, 255, 255, 0.2);
+                            color: white;
+                            text-decoration: none;
+                            padding: 8px 16px;
+                            border-radius: 6px;
+                            font-size: 14px;
+                            font-weight: 500;
+                            transition: background-color 0.2s;
+                            border: 1px solid rgba(255, 255, 255, 0.4);
+                            display: inline-flex;
+                            align-items: center;
+                            gap: 6px;
+                        }
 
-<main style="min-height: 80vh; padding-top: 120px;">
-    <div class="container">
-        
-        <div class="hero-section">
-            <h1>
-                <i data-lucide="bell" style="width: 28px; height: 28px;"></i> Th&#244;ng B&#225;o C&#7911;a T&#244;i
-                <c:if test="${unreadCount > 0}">
-                    <span class="badge">${unreadCount} m&#7899;i</span>
-                </c:if>
-            </h1>
+                        .btn-read-all:hover {
+                            background-color: rgba(255, 255, 255, 0.3);
+                        }
 
-        </div>
-        
-        <form class="filter-bar" method="get" action="${pageContext.request.contextPath}/customer/notifications">
-            <div style="position: relative; flex: 2; min-width: 200px;">
-                <i data-lucide="search" style="position: absolute; left: 12px; top: 10px; width: 18px; height: 18px; color: #94a3b8;"></i>
-                <input type="text" name="keyword" placeholder="T&#236;m ki&#7871;m th&#244;ng b&#225;o..." value="${currentKeyword}" style="padding-left: 38px; width: 100%; box-sizing: border-box;">
-            </div>
-            <select name="category" style="flex: 1;">
-                <option value="All" ${currentCategory == 'All' || empty currentCategory ? 'selected' : ''}>T&#7845;t c&#7843; th&#7875; lo&#7841;i</option>
-                <option value="System Announcement" ${currentCategory == 'System Announcement' ? 'selected' : ''}>Th&#244;ng b&#225;o h&#7879; th&#7889;ng</option>
-                <option value="Booking" ${currentCategory == 'Booking' ? 'selected' : ''}>&#272;&#7863;t ch&#7895;</option>
-                <option value="Payment" ${currentCategory == 'Payment' ? 'selected' : ''}>Thanh to&#225;n</option>
-                <option value="Tour Update" ${currentCategory == 'Tour Update' ? 'selected' : ''}>C&#7853;p nh&#7853;t Tour</option>
-                <option value="Promotion" ${currentCategory == 'Promotion' ? 'selected' : ''}>Khuy&#7871;n m&#227;i</option>
-                <option value="Account Activity" ${currentCategory == 'Account Activity' ? 'selected' : ''}>Ho&#7841;t &#273;&#7897;ng t&#224;i kho&#7843;n</option>
-            </select>
-            <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: #475569; flex: 1; min-width: 120px;">
-                <input type="checkbox" name="unreadOnly" ${currentUnreadOnly ? 'checked' : ''} style="width: 18px; height: 18px; accent-color: var(--primary-color, #4f46e5);"> Ch&#7881; ch&#432;a &#273;&#7885;c
-            </label>
-            <button type="submit">
-                <i data-lucide="filter" style="width: 16px; height: 16px;"></i> L&#7885;c
-            </button>
-        </form>
+                        .filter-bar {
+                            display: flex;
+                            gap: 15px;
+                            margin-bottom: 30px;
+                            background: white;
+                            padding: 20px;
+                            border-radius: 12px;
+                            align-items: center;
+                            flex-wrap: wrap;
+                            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+                            border: 1px solid #e2e8f0;
+                        }
 
-        <c:choose>
-            <c:when test="${empty notifications}">
-                <div class="empty-state">
-                    <i data-lucide="bell-off" style="width: 48px; height: 48px; color: #cbd5e1; margin-bottom: 15px;"></i>
-                    <p style="font-size: 18px; margin: 0;">B&#7841;n ch&#432;a c&#243; th&#244;ng b&#225;o n&#224;o.</p>
-                </div>
-            </c:when>
-            <c:otherwise>
-                <ul class="notification-list">
-                    <c:forEach var="notif" items="${notifications}">
-                        <li class="notification-item ${notif.isRead ? '' : 'unread'}"
-                            <c:if test="${!notif.isRead}">
-                                style="cursor: pointer;"
-                                onclick="markAsRead(${notif.notificationId}, this)"
-                            </c:if>
-                        >
-                            <div class="notification-content">
-                                <h3 class="notification-title">
-                                    ${notif.title}
-                                    <c:if test="${notif.category != null}">
-                                        <span class="cat-badge">${notif.category}</span>
+                        .filter-bar input[type="text"],
+                        .filter-bar select {
+                            padding: 10px 15px;
+                            border: 1px solid #cbd5e1;
+                            border-radius: 6px;
+                            flex: 1;
+                            min-width: 150px;
+                            font-family: 'Inter', sans-serif;
+                            font-size: 14px;
+                            outline: none;
+                            transition: border-color 0.2s;
+                        }
+
+                        .filter-bar input[type="text"]:focus,
+                        .filter-bar select:focus {
+                            border-color: var(--primary-color, #4f46e5);
+                        }
+
+                        .filter-bar button {
+                            padding: 10px 20px;
+                            background-color: var(--primary-color, #4f46e5);
+                            color: white;
+                            border: none;
+                            border-radius: 6px;
+                            cursor: pointer;
+                            font-weight: 500;
+                            font-family: 'Inter', sans-serif;
+                            transition: background-color 0.2s;
+                            display: flex;
+                            align-items: center;
+                            gap: 6px;
+                        }
+
+                        .filter-bar button:hover {
+                            background-color: #4338ca;
+                        }
+
+                        .notification-list {
+                            list-style: none;
+                            padding: 0;
+                            margin: 0 0 50px 0;
+                        }
+
+                        .notification-item {
+                            background: white;
+                            border: 1px solid #e2e8f0;
+                            border-radius: 12px;
+                            margin-bottom: 15px;
+                            padding: 20px;
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: flex-start;
+                            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+                            transition: transform 0.2s, box-shadow 0.2s;
+                        }
+
+                        .notification-item:hover {
+                            transform: translateY(-2px);
+                            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+                        }
+
+                        .notification-item.unread {
+                            background-color: #f0f5ff;
+                            border-left: 4px solid var(--primary-color, #4f46e5);
+                        }
+
+                        .notification-content {
+                            flex: 1;
+                            margin-right: 20px;
+                        }
+
+                        .notification-title {
+                            font-family: 'Outfit', sans-serif;
+                            font-weight: 600;
+                            font-size: 18px;
+                            margin: 0 0 8px 0;
+                            color: #0f172a;
+                            display: flex;
+                            align-items: center;
+                            gap: 10px;
+                        }
+
+                        .cat-badge {
+                            display: inline-block;
+                            padding: 4px 10px;
+                            border-radius: 12px;
+                            font-size: 12px;
+                            font-weight: 500;
+                            background: #e2e8f0;
+                            color: #475569;
+                        }
+
+                        .notification-body {
+                            color: #475569;
+                            margin: 0 0 12px 0;
+                            font-size: 15px;
+                            line-height: 1.5;
+                        }
+
+                        .notification-meta {
+                            font-size: 13px;
+                            color: #94a3b8;
+                            display: flex;
+                            align-items: center;
+                            gap: 15px;
+                        }
+
+                        .meta-item {
+                            display: flex;
+                            align-items: center;
+                            gap: 4px;
+                        }
+
+                        .btn-read {
+                            background-color: white;
+                            color: var(--primary-color, #4f46e5);
+                            text-decoration: none;
+                            padding: 6px 12px;
+                            border-radius: 6px;
+                            font-size: 13px;
+                            font-weight: 500;
+                            border: 1px solid var(--primary-color, #4f46e5);
+                            transition: all 0.2s;
+                            display: inline-flex;
+                            align-items: center;
+                            gap: 5px;
+                            white-space: nowrap;
+                        }
+
+                        .btn-read:hover {
+                            background-color: var(--primary-color, #4f46e5);
+                            color: white;
+                        }
+
+                        .empty-state {
+                            text-align: center;
+                            color: #64748b;
+                            padding: 60px 20px;
+                            background: white;
+                            border-radius: 12px;
+                            border: 1px dashed #cbd5e1;
+                        }
+                    </style>
+
+                    <main style="min-height: 80vh; padding-top: 120px;">
+                        <div class="container">
+
+                            <div class="hero-section">
+                                <h1>
+                                    <i data-lucide="bell" style="width: 28px; height: 28px;"></i> Th&#244;ng B&#225;o
+                                    C&#7911;a T&#244;i
+                                    <c:if test="${unreadCount > 0}">
+                                        <span class="badge">${unreadCount} m&#7899;i</span>
                                     </c:if>
-                                </h3>
-                                <div class="notification-body">
-                                    ${notif.content}
-                                </div>
-                                <div class="notification-meta">
-                                    <span class="meta-item"><i data-lucide="calendar" style="width: 14px; height: 14px;"></i> <fmt:formatDate value="${notif.createdAt}" pattern="dd/MM/yyyy HH:mm"/></span>
-                                    <c:if test="${notif.senderName != null}">
-                                        <span class="meta-item"><i data-lucide="user" style="width: 14px; height: 14px;"></i> T&#7915;: ${notif.senderName}</span>
-                                    </c:if>
-                                </div>
+                                </h1>
+
                             </div>
-                        </li>
-                    </c:forEach>
-                </ul>
-            </c:otherwise>
-        </c:choose>
-        
-        <div style="margin-bottom: 50px; text-align: center;">
-            <a href="${pageContext.request.contextPath}/" style="color: #64748b; text-decoration: none; font-weight: 500; font-size: 15px;">&larr; Quay l&#7841;i trang ch&#7911;</a>
-        </div>
-    </div>
-</main>
 
-<script>
-    if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
-    }
+                            <form class="filter-bar" method="get"
+                                action="${pageContext.request.contextPath}/customer/notifications">
+                                <div style="position: relative; flex: 2; min-width: 200px;">
+                                    <i data-lucide="search"
+                                        style="position: absolute; left: 12px; top: 10px; width: 18px; height: 18px; color: #94a3b8;"></i>
+                                    <input type="text" name="keyword"
+                                        placeholder="T&#236;m ki&#7871;m th&#244;ng b&#225;o..."
+                                        value="${currentKeyword}"
+                                        style="padding-left: 38px; width: 100%; box-sizing: border-box;">
+                                </div>
+                                <select name="category" style="flex: 1;">
+                                    <option value="All" ${currentCategory=='All' || empty currentCategory ? 'selected'
+                                        : '' }>T&#7845;t c&#7843; th&#7875; lo&#7841;i</option>
+                                    <option value="System Announcement" ${currentCategory=='System Announcement'
+                                        ? 'selected' : '' }>Th&#244;ng b&#225;o h&#7879; th&#7889;ng</option>
+                                    <option value="Booking" ${currentCategory=='Booking' ? 'selected' : '' }>
+                                        &#272;&#7863;t ch&#7895;</option>
+                                    <option value="Payment" ${currentCategory=='Payment' ? 'selected' : '' }>Thanh
+                                        to&#225;n</option>
+                                    <option value="Tour Update" ${currentCategory=='Tour Update' ? 'selected' : '' }>
+                                        C&#7853;p nh&#7853;t Tour</option>
+                                    <option value="Promotion" ${currentCategory=='Promotion' ? 'selected' : '' }>
+                                        Khuy&#7871;n m&#227;i</option>
+                                    <option value="Account Activity" ${currentCategory=='Account Activity' ? 'selected'
+                                        : '' }>Ho&#7841;t &#273;&#7897;ng t&#224;i kho&#7843;n</option>
+                                </select>
+                                <label
+                                    style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: #475569; flex: 1; min-width: 120px;">
+                                    <input type="checkbox" name="unreadOnly" ${currentUnreadOnly ? 'checked' : '' }
+                                        style="width: 18px; height: 18px; accent-color: var(--primary-color, #4f46e5);">
+                                    Ch&#7881; ch&#432;a &#273;&#7885;c
+                                </label>
+                                <button type="submit">
+                                    <i data-lucide="filter" style="width: 16px; height: 16px;"></i> L&#7885;c
+                                </button>
+                            </form>
 
-    // S\u1ed1 l\u01b0\u1ee3ng th\u00f4ng b\u00e1o ch\u01b0a \u0111\u1ecdc hi\u1ec7n t\u1ea1i tr\u00ean trang
-    let unreadOnPage = ${unreadCount};
+                            <c:choose>
+                                <c:when test="${empty notifications}">
+                                    <div class="empty-state">
+                                        <i data-lucide="bell-off"
+                                            style="width: 48px; height: 48px; color: #cbd5e1; margin-bottom: 15px;"></i>
+                                        <p style="font-size: 18px; margin: 0;">B&#7841;n ch&#432;a c&#243; th&#244;ng
+                                            b&#225;o n&#224;o.</p>
+                                    </div>
+                                </c:when>
+                                <c:otherwise>
+                                    <ul class="notification-list">
+                                        <c:forEach var="notif" items="${notifications}">
+                                            <li class="notification-item ${notif.isRead ? '' : 'unread'}" <c:if
+                                                test="${!notif.isRead}">
+                                                style="cursor: pointer;"
+                                                onclick="markAsRead(${notif.notificationId}, this)"
+                                                </c:if>
+                                                >
+                                                <div class="notification-content">
+                                                    <h3 class="notification-title">
+                                                        ${notif.title}
+                                                        <c:if test="${notif.category != null}">
+                                                            <span class="cat-badge">${notif.category}</span>
+                                                        </c:if>
+                                                    </h3>
+                                                    <div class="notification-body">
+                                                        ${notif.content}
+                                                    </div>
+                                                    <div class="notification-meta">
+                                                        <span class="meta-item"><i data-lucide="calendar"
+                                                                style="width: 14px; height: 14px;"></i>
+                                                            <fmt:formatDate value="${notif.createdAt}"
+                                                                pattern="dd/MM/yyyy HH:mm" />
+                                                        </span>
+                                                        <c:if test="${notif.senderName != null}">
+                                                            <span class="meta-item"><i data-lucide="user"
+                                                                    style="width: 14px; height: 14px;"></i> T&#7915;:
+                                                                ${notif.senderName}</span>
+                                                        </c:if>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </c:forEach>
+                                    </ul>
+                                </c:otherwise>
+                            </c:choose>
 
-    // C\u1eadp nh\u1eadt badge tr\u00ean header ngay khi trang load
-    (function syncHeaderBadge() {
-        const badge = document.getElementById('notification-count');
-        if (!badge) return;
-        if (unreadOnPage > 0) {
-            badge.innerText = unreadOnPage;
-            badge.style.display = 'flex';
-        } else {
-            badge.style.display = 'none';
-        }
-    })();
+                            <div style="margin-bottom: 50px; text-align: center;">
+                                <a href="${pageContext.request.contextPath}/"
+                                    style="color: #64748b; text-decoration: none; font-weight: 500; font-size: 15px;">&larr;
+                                    Quay l&#7841;i trang ch&#7911;</a>
+                            </div>
+                        </div>
+                    </main>
 
-    function markAsRead(notifId, element) {
-        // Tr\u00e1nh click nhi\u1ec1u l\u1ea7n v\u00e0o c\u00f9ng 1 th\u00f4ng b\u00e1o
-        if (!element.classList.contains('unread')) return;
+                    <script>
+                        if (typeof lucide !== 'undefined') {
+                            lucide.createIcons();
+                        }
 
-        // L\u1ea1c quan: c\u1eadp nh\u1eadt UI tr\u01b0\u1edbc, r\u1ed3i m\u1edbi g\u1ecdi server
-        element.classList.remove('unread');
-        element.style.cursor = 'default';
-        element.onclick = null;
+                        // S\u1ed1 l\u01b0\u1ee3ng th\u00f4ng b\u00e1o ch\u01b0a \u0111\u1ecdc hi\u1ec7n t\u1ea1i tr\u00ean trang
+                        let unreadOnPage = ${ unreadCount };
 
-        // C\u1eadp nh\u1eadt badge header
-        unreadOnPage = Math.max(0, unreadOnPage - 1);
-        const headerBadge = document.getElementById('notification-count');
-        if (headerBadge) {
-            if (unreadOnPage === 0) {
-                headerBadge.style.display = 'none';
-            } else {
-                headerBadge.innerText = unreadOnPage;
-                headerBadge.style.display = 'flex';
-            }
-        }
+                        // C\u1eadp nh\u1eadt badge tr\u00ean header ngay khi trang load
+                        (function syncHeaderBadge() {
+                            const badge = document.getElementById('notification-count');
+                            if (!badge) return;
+                            if (unreadOnPage > 0) {
+                                badge.innerText = unreadOnPage;
+                                badge.style.display = 'flex';
+                            } else {
+                                badge.style.display = 'none';
+                            }
+                        })();
 
-        // C\u1eadp nh\u1eadt badge trong hero section
-        const heroBadge = document.querySelector('.hero-section .badge');
-        if (heroBadge) {
-            if (unreadOnPage === 0) {
-                heroBadge.style.display = 'none';
-            } else {
-                heroBadge.innerText = unreadOnPage + ' m\u1edbi';
-            }
-        }
+                        function markAsRead(notifId, element) {
+                            // Tr\u00e1nh click nhi\u1ec1u l\u1ea7n v\u00e0o c\u00f9ng 1 th\u00f4ng b\u00e1o
+                            if (!element.classList.contains('unread')) return;
 
-        // G\u1ecdi server l\u01b0u tr\u1ea1ng th\u00e1i \u0111\u00e3 \u0111\u1ecdc v\u00e0o DB
-        const ctx = (typeof APP_CONTEXT !== 'undefined') ? APP_CONTEXT : '';
-        fetch(ctx + '/customer/notifications/read?id=' + notifId + '&t=' + new Date().getTime(), {
-            method: 'GET'
-        }).catch(err => console.error('markAsRead error:', err));
-    }
-</script>
-<jsp:include page="/common/footer.jsp" />
+                            // L\u1ea1c quan: c\u1eadp nh\u1eadt UI tr\u01b0\u1edbc, r\u1ed3i m\u1edbi g\u1ecdi server
+                            element.classList.remove('unread');
+                            element.style.cursor = 'default';
+                            element.onclick = null;
 
+                            // C\u1eadp nh\u1eadt badge header
+                            unreadOnPage = Math.max(0, unreadOnPage - 1);
+                            const headerBadge = document.getElementById('notification-count');
+                            if (headerBadge) {
+                                if (unreadOnPage === 0) {
+                                    headerBadge.style.display = 'none';
+                                } else {
+                                    headerBadge.innerText = unreadOnPage;
+                                    headerBadge.style.display = 'flex';
+                                }
+                            }
+
+                            // C\u1eadp nh\u1eadt badge trong hero section
+                            const heroBadge = document.querySelector('.hero-section .badge');
+                            if (heroBadge) {
+                                if (unreadOnPage === 0) {
+                                    heroBadge.style.display = 'none';
+                                } else {
+                                    heroBadge.innerText = unreadOnPage + ' m\u1edbi';
+                                }
+                            }
+
+                            // G\u1ecdi server l\u01b0u tr\u1ea1ng th\u00e1i \u0111\u00e3 \u0111\u1ecdc v\u00e0o DB
+                            const ctx = (typeof APP_CONTEXT !== 'undefined') ? APP_CONTEXT : '';
+                            fetch(ctx + '/customer/notifications/read?id=' + notifId + '&t=' + new Date().getTime(), {
+                                method: 'GET'
+                            }).catch(err => console.error('markAsRead error:', err));
+                        }
+                    </script>
+                    <jsp:include page="/common/footer.jsp" />

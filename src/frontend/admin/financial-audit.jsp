@@ -19,7 +19,7 @@
     <link href="${pageContext.request.contextPath}/css/admin-dashboard.css?v=2.3" rel="stylesheet">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/tb-ui.css?v=1.0">
 
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-space-overrides.css?v=1.0">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-space-overrides.css?v=1.2">
     <style>
         .badge-review { background-color: #ffc107; color: #212529; }
         .badge-suspicious { background-color: #dc3545; }
