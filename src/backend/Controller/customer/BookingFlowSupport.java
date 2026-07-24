@@ -136,7 +136,7 @@ public class BookingFlowSupport {
         return amount;
     }
     // Hàm calculateDiscount tính số tiền giảm từ coupon.
-    // Nếu coupon là Percentage thì giảm theo phần trăm của baseAmount.
+    // Nếu coupon là Percentage thì giảm theo phần trăm của baseAmount, Nhưng không vượt quá MaxDiscountAmount.
     // Nếu coupon là FixedAmount thì giảm số tiền cố định nhưng không vượt quá baseAmount.
     public static double calculateDiscount(double baseAmount, Coupon coupon) {
         if ("Percentage".equalsIgnoreCase(coupon.getDiscountType())) {
@@ -151,7 +151,6 @@ public class BookingFlowSupport {
 
     // Hàm calculateVatAmount tính VATAmount theo VATRate lấy từ database.
     // taxableAmount là số tiền chịu thuế sau khi trừ coupon; vatRatePercent là phần trăm VAT đọc từ DB.
-    // Không fix cứng mức thuế trong code để khi DB đổi VATRate thì luồng booking dùng đúng rate mới.
     public static double calculateVatAmount(double taxableAmount, double vatRatePercent) {
         return Math.max(0, taxableAmount) * vatRatePercent / 100.0;
     }

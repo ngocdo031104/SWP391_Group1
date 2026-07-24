@@ -25,7 +25,7 @@
     <!-- Stylesheets -->
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-dashboard.css?v=2.3">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/tb-ui.css?v=1.0">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-space-overrides.css?v=1.0">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-space-overrides.css?v=1.2">
     <style>
         .search-bar-group { display: flex; gap: 12px; margin-bottom: 20px; max-width: 600px; }
         .search-input { flex: 1; padding: 10px 14px; border: 1px solid var(--border-color, #e2e8f0); border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 0.9rem; outline: none; background-color: #ffffff; color: #334155; }

@@ -26,6 +26,7 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
     <!-- Bootstrap CSS (for DataTables styling only) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Stylesheets -->
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-dashboard.css?v=2.3">
     <style>
@@ -35,9 +36,15 @@
         .badge-active { background: rgba(16, 185, 129, 0.2); color: #10b981; padding: 6px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; border: 1px solid rgba(16, 185, 129, 0.3); }
         .badge-inactive { background: rgba(239, 68, 68, 0.2); color: #ef4444; padding: 6px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; border: 1px solid rgba(239, 68, 68, 0.3); }
         .btn-close { filter: invert(1); }
+        .coupon-usage-panel { margin: 24px 0; padding: 20px; border: 1px solid rgba(139, 92, 246, 0.25); border-radius: 14px; background: rgba(15, 17, 35, 0.72); }
+        .coupon-usage-panel h3 { margin: 0; color: #f8fafc; font: 700 1.05rem 'Outfit', sans-serif; }
+        .coupon-usage-panel p { margin: 4px 0 0; color: #9fa9cb; font-size: 0.85rem; }
+        .coupon-usage-total { color: #67e8f9; font-size: 0.9rem; font-weight: 700; }
+        .coupon-chart-wrap { height: 260px; margin-top: 16px; }
+        .coupon-chart-empty { display: none; padding: 56px 16px; color: #9fa9cb; text-align: center; }
     </style>
 
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-space-overrides.css?v=1.0">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-space-overrides.css?v=1.2">
 </head>
 <body class="dashboard-body tb-cosmic">
 
@@ -101,6 +108,8 @@
                 </button>
             </div>
 
+
+
             <!-- Custom Filters & Search -->
             <div class="row mb-3 filter-card-row">
                 <div class="col-md-3">
@@ -149,7 +158,7 @@
                 </thead>
                 <tbody>
                     <c:forEach var="c" items="${coupons}">
-                        <tr>
+                        <tr data-coupon-code="<c:out value='${c.couponCode}'/>" data-used-count="${c.usedCount}">
                             <td>${c.couponId}</td>
                             <td><strong>${c.couponCode}</strong></td>
                             <td>${c.discountType == 'Percentage' ? 'Ph&#7847;n Tr&#259;m (%)' : 'C&#7889; &#272;&#7883;nh (VN&#272;)'}</td>
@@ -315,6 +324,8 @@
             table.search('').columns().search('').draw();
         });
     });
+
+
 
     const couponModal = new bootstrap.Modal(document.getElementById('couponModal'));
 

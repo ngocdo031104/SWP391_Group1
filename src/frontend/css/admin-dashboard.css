@@ -2038,10 +2038,12 @@ body.users-body main.main-content h4 {
 }
 body.users-body main.main-content .text-muted { color: #64748b !important; }
 body.users-body main.main-content .card { background: #ffffff; color: #0f172a; }
-body.dashboard-body h1, body.dashboard-body h2,
-body.dashboard-body h3, body.dashboard-body h4,
-body.analytics-body h1, body.analytics-body h2,
-body.analytics-body h3, body.analytics-body h4 {
+/* Chỉ giao diện admin dark mới dùng heading sáng.
+   Staff cũng dùng dashboard-body nhưng nền trang là màu sáng. */
+body.dashboard-body.tb-cosmic h1, body.dashboard-body.tb-cosmic h2,
+body.dashboard-body.tb-cosmic h3, body.dashboard-body.tb-cosmic h4,
+body.analytics-body.tb-cosmic h1, body.analytics-body.tb-cosmic h2,
+body.analytics-body.tb-cosmic h3, body.analytics-body.tb-cosmic h4 {
   color: #f8fafc !important;
 }
 

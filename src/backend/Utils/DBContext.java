@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 /**
  * DBContext manages the database connection to Microsoft SQL Server for the TourBuddy application.
  */
-public class DBContext {
+public class DBContext implements AutoCloseable {
     protected Connection connection;
 
     public DBContext() {
