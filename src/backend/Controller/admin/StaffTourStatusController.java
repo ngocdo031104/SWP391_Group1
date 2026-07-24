@@ -31,6 +31,12 @@ import jakarta.servlet.http.HttpSession;
 public class StaffTourStatusController extends HttpServlet {
     private static final Logger LOGGER = Logger.getLogger(StaffTourStatusController.class.getName());
 
+    /**
+     * Xử lý yêu cầu HTTP GET.
+     * 1. Xác thực thông tin phân quyền của nhân viên.
+     * 2. Nếu action = "list": Lấy danh sách toàn bộ các lịch khởi hành đã được phân công HDV để hiển thị trên bảng điều khiển.
+     * 3. Nếu action = "logs": Truy vấn nhật ký vận hành chi tiết (TourOperationLog) của chuyến đi.
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -50,7 +56,6 @@ public class StaffTourStatusController extends HttpServlet {
 
         try {
             if ("list".equals(action)) {
-                // Lấy danh sách tour có guide đang hoạt động
                 List<TourSchedule> schedules = scheduleDAO.getAssignedSchedules();
                 request.setAttribute("schedules", schedules);
                 request.getRequestDispatcher("/views/staff/tour-status.jsp").forward(request, response);
@@ -71,7 +76,7 @@ public class StaffTourStatusController extends HttpServlet {
                         request.getRequestDispatcher("/views/staff/tour-status.jsp").forward(request, response);
                         return;
                     } catch (NumberFormatException e) {
-                        // Fall through
+                        // Bỏ qua lỗi định dạng
                     }
                 }
                 response.sendRedirect(request.getContextPath() + "/staff/tour-status");
@@ -84,6 +89,10 @@ public class StaffTourStatusController extends HttpServlet {
         }
     }
 
+    /**
+     * Xử lý các yêu cầu HTTP POST để cập nhật trạng thái vận hành tour (Preparing, InProgress, Completed, Cancelled).
+     * Yêu cầu trả về phản hồi dạng JSON. Đồng thời ghi nhận vào log và gửi thông báo cho HDV được phân công.
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -117,7 +126,7 @@ public class StaffTourStatusController extends HttpServlet {
                 return;
             }
 
-            // Validate status
+            // Kiểm tra trạng thái mới có hợp lệ hay không
             if (!"Preparing".equals(newStatus) && !"Scheduled".equals(newStatus) &&
                 !"InProgress".equals(newStatus) && !"Completed".equals(newStatus) &&
                 !"Cancelled".equals(newStatus)) {
@@ -133,10 +142,11 @@ public class StaffTourStatusController extends HttpServlet {
 
                 GuideDAO guideDAO = new GuideDAO();
                 try {
+                    // Cập nhật trạng thái tour và ghi log
                     boolean success = guideDAO.updateTourStatus(scheduleId, newStatus, notes, currentUser.getUserId());
 
                     if (success) {
-                        // Gửi notification cho guide nếu tour được cập nhật
+                        // Gửi thông báo notification hệ thống cho hướng dẫn viên
                         sendStatusNotification(scheduleId, newStatus, currentUser);
 
                         result.addProperty("status", "success");

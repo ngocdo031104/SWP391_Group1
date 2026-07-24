@@ -21,6 +21,14 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet(name = "TourDiscoveryController", urlPatterns = {"/tourdiscovery"})
 public class TourDiscoveryController extends HttpServlet {
 
+    /**
+     * Xử lý yêu cầu HTTP GET.
+     * Thực hiện tìm kiếm và lọc tour du lịch dựa trên các tham số tìm kiếm gửi từ Header hoặc Trang chủ:
+     * - dest: Điểm đến mong muốn.
+     * - date: Ngày khởi hành mong muốn.
+     * - budget: Ngân sách tối đa của khách hàng.
+     * Nạp thêm dữ liệu phụ trợ (Wishlist, Categories, Distinct Destinations, Departure Cities) chuyển tiếp sang JSP hiển thị.
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -43,7 +51,6 @@ public class TourDiscoveryController extends HttpServlet {
             
             Double maxPrice = null;
             // Ép kiểu ngân sách từ chuỗi sang Double để truyền vào query DB.
-            // Nếu có lỗi định dạng (do nhập linh tinh) hoặc không truyền thì coi như không lọc theo ngân sách.
             if (budgetStr != null && !budgetStr.trim().isEmpty()) {
                 try {
                     maxPrice = Double.parseDouble(budgetStr);
@@ -53,11 +60,9 @@ public class TourDiscoveryController extends HttpServlet {
             }
             
             // Tìm kiếm các tour khớp với điều kiện lọc ban đầu từ database SQL Server.
-            // Việc tìm kiếm này sử dụng dynamic query (Prepared Statement) để tránh lỗi SQL Injection.
             List<Tour> tours = tourDAO.searchTours(dest, null, maxPrice, departureDate);
             
             // Đối với mỗi tour tìm được, phải nạp kèm danh sách lịch trình (schedules) tương lai
-            // để client-side có thể biết ngày khởi hành gần nhất cũng như tính toán số ghế trống.
             if (tours != null) {
                 for (Tour tour : tours) {
                     tour.setSchedules(tourDAO.getSchedulesByTourId(tour.getTourId()));
@@ -100,10 +105,13 @@ public class TourDiscoveryController extends HttpServlet {
         request.getRequestDispatcher("/views/tourdiscovery.jsp").forward(request, response);
     }
 
+    /**
+     * Xử lý yêu cầu HTTP POST.
+     * Chuyển tiếp yêu cầu trực tiếp về phương thức doGet để cùng xử lý quy trình lọc và tìm kiếm tour.
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Chuyển hướng POST request về doGet để xử lý chung
         doGet(request, response);
     }
 }

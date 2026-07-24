@@ -1,6 +1,6 @@
 <%-- 
-    Li&#234;n quan &#273;&#7871;n UCs: Manage User Profile
-    T&#225;c gi&#7843;: &#272;&#7895; V&#361; Minh Ng&#7885;c
+    Liên quan đến UCs: Manage User Profile
+    Tác giả: Đỗ Vũ Minh Ngọc
     MSSV: HE182479
 --%>
 &#65279;<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
