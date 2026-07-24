@@ -1,6 +1,6 @@
 /*
- * Li\u00ean quan \u0111\u1ebfn UCs: Exchange Messages
- * T\u00e1c gi\u1ea3: \u0110\u1ed7 V\u0169 Minh Ng\u1ecdc
+ * Liên quan đến UCs: Exchange Messages
+ * Tác giả: Đỗ Vũ Minh Ngọc
  * MSSV: HE182479
  */
 package Controller.customer;
