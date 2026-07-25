@@ -1,4 +1,4 @@
-<%-- 
+﻿<%-- 
     Liên quan đến UCs: Match Travel Companions, Manage Buddy Requests
     Tác giả: Đỗ Vũ Minh Ngọc
     MSSV: HE182479
@@ -974,7 +974,7 @@
         document.getElementById('modalAvatar').src = btn.getAttribute('data-avatar');
         document.getElementById('modalLocation').textContent = btn.getAttribute('data-address');
         document.getElementById('modalBio').textContent = btn.getAttribute('data-bio');
-        document.getElementById('modalEmail').textContent = btn.getAttribute('data-email') || 'Ch\u01b0a c\u1eadp nh\u1eadt email';
+        document.getElementById('modalEmail').textContent = btn.getAttribute('data-email') || 'Chưa cập nhật email';
         
         document.getElementById('m-style').textContent = btn.getAttribute('data-style');
         document.getElementById('m-dest').textContent = btn.getAttribute('data-dest');

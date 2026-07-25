@@ -1,4 +1,4 @@
-&#65279;<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
+﻿&#65279;<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
@@ -604,7 +604,7 @@
         document.getElementById('cancelModal').style.display = 'none';
         document.body.style.overflow = '';
     }
-    // \u0110\u00f3ng modal khi click ra ngo\u00e0i
+    // Đóng modal khi click ra ngoài
     document.getElementById('cancelModal').addEventListener('click', function(e) {
         if(e.target === this) {
             closeCancelModal();

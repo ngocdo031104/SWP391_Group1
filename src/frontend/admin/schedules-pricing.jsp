@@ -1,4 +1,4 @@
-<%-- 
+﻿<%-- 
     Màn hình 21: Manage Tour Schedule and Pricing - Quản lý lịch khởi hành & giá tour
     Tác giả: Dương Quang Sơn
     MSSV: HE186525
@@ -390,7 +390,7 @@
         document.getElementById(tabId).classList.add("active");
     }
 
-    // \u00d0\u00f3ng/M? Modal
+    // Ðóng/M? Modal
     function openModal(modalId) {
         document.getElementById(modalId).classList.add("open");
     }
@@ -398,12 +398,12 @@
         document.getElementById(modalId).classList.remove("open");
     }
 
-    // \u00d0?nh d?ng s? th\u00e0nh VND
+    // Ð?nh d?ng s? thành VND
     function formatVND(amount) {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
     }
 
-    // -- LOGIC L?CH TR\u00ccNH --
+    // -- LOGIC L?CH TRÌNH --
     function loadSchedules(tourId) {
         const tbody = document.getElementById("schedules-table-body");
         if (!tourId) {
@@ -487,7 +487,7 @@
                                     </div>
                                 </div>
                             </td>
-                            <td>\${s.transportation || 'Chua r\u00f5'}</td>
+                            <td>\${s.transportation || 'Chua rõ'}</td>
                             <td>
                                 <span class="badge \${badgeClass}">\${s.status}</span>
                             </td>
@@ -500,7 +500,7 @@
                                     <button class="btn-icon edit" title="S?a" onclick="openEditScheduleModal(\${JSON.stringify(s).replace(/"/g, '&quot;')})">
                                         <i data-lucide="edit-3"></i>
                                     </button>
-                                    <button class="btn-icon delete" title="X\u00f3a" onclick="deleteSchedule(\${s.scheduleId}, '\${s.tourStatus}')">
+                                    <button class="btn-icon delete" title="Xóa" onclick="deleteSchedule(\${s.scheduleId}, '\${s.tourStatus}')">
                                         <i data-lucide="trash-2"></i>
                                     </button>
                                 </div>
@@ -744,7 +744,7 @@
         });
     }
 
-    // -- LOGIC M\u00c3 GI?M GI\u00c1 (COUPONS) --
+    // -- LOGIC MÃ GI?M GIÁ (COUPONS) --
     function adjustDiscountInput(type) {
         const label = document.getElementById("label-discount-value");
         if (type === "Percentage") {

@@ -1,4 +1,4 @@
-<%-- 
+﻿<%-- 
     Liên quan đến UCs: Admin Management
     Tác giả: Đỗ Vũ Minh Ngọc
     MSSV: HE182479
@@ -389,8 +389,8 @@
 <script>
     lucide.createIcons();
 
-    // Export users CSV -- NOTE: JSP EL parser s? fail khi th?y chu?i c\u00f3 d?ng "${"..."}" b\u00ean trong script.
-    // To\u00e0n b? do?n n\u00e0y ch? d\u00f9ng n?i chu?i b?ng '+', KH\u00d4NG d\u00f9ng template literal.
+    // Export users CSV -- NOTE: JSP EL parser s? fail khi th?y chu?i có d?ng "${"..."}" bên trong script.
+    // Toàn b? do?n này ch? dùng n?i chu?i b?ng '+', KHÔNG dùng template literal.
     function exportUsersCSV() {
         const rows = Array.from(document.querySelectorAll('#usersTableBody tr'))
             .filter(function (row) { return row.style.display !== 'none'; })
@@ -404,7 +404,7 @@
                 };
             });
         if (rows.length === 0) {
-            showToast('Kh\u00f4ng c\u00f3 ngu\u1eddi d\u00f9ng n\u00e0o \u0111\u1ec3 xu\u7853t.', 'error');
+            showToast('Không có nguời dùng nào để xu硓t.', 'error');
             return;
         }
         const header = ['UserID', 'FullName', 'Email', 'Role', 'Status'];
@@ -416,7 +416,7 @@
             lines.push([r.id, r.name, r.email, r.role, r.status].map(escapeCSV).join(','));
         });
         const csv = lines.join('\n');
-        const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+        const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
@@ -425,7 +425,7 @@
         link.click();
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
-        showToast('\u00d0\u00e3 xu\u1ea5t ' + rows.length + ' ngu\u1eddi d\u00f9ng.', 'success');
+        showToast('Ðã xuất ' + rows.length + ' nguời dùng.', 'success');
     }
 
     document.getElementById('exportUsersBtn')?.addEventListener('click', exportUsersCSV);
@@ -533,8 +533,8 @@
         const checkedBoxes = document.querySelectorAll('.row-checkbox:checked');
         if (checkedBoxes.length === 0) return;
         
-        const actionStr = status ? 'm\u1edf kh\u00f3a' : 'kh\u00f3a';
-        if (confirm('B\u1ea1n c\u00f3 ch\u1eafc mu\u1ed1n ' + actionStr + ' ' + checkedBoxes.length + ' t\u00e0i kho\u1ea3n n\u00e0y?')) {
+        const actionStr = status ? 'mở khóa' : 'khóa';
+        if (confirm('Bạn có chắc muốn ' + actionStr + ' ' + checkedBoxes.length + ' tài khoản này?')) {
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = '?action=bulkToggleStatus&status=' + status;
@@ -555,7 +555,7 @@
         const checkedBoxes = document.querySelectorAll('.row-checkbox:checked');
         if (checkedBoxes.length === 0) return;
         
-        if (confirm('B\u1ea1n c\u00f3 th\u1ef1c s\u1ef1 mu\u1ed1n x\u00f3a v\u0129nh vi\u1ec5n ' + checkedBoxes.length + ' t\u00e0i kho\u1ea3n n\u00e0y? H\u00e0nh \u0111\u1ed9ng n\u00e0y kh\u00f4ng th\u1ec3 ho\u00e0n t\u00e1c v\u00e0 s\u1ebd x\u00f3a to\u00e0n b\u1ed9 d\u1eef li\u1ec7u h\u1ed3 s\u01a1 li\u00ean quan!')) {
+        if (confirm('Bạn có thực sự muốn xóa vĩnh viễn ' + checkedBoxes.length + ' tài khoản này? Hành động này không thể hoàn tác và sẽ xóa toàn bộ dữ liệu hồ sơ liên quan!')) {
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = '?action=bulkDeleteUsers';
@@ -597,11 +597,11 @@
                 if(res.status === 'success') {
                     renderDrawer(res.data, res.stats);
                 } else {
-                    drawerBody.innerHTML = `<div style="color: var(--danger); padding: 20px;">L\u1ed7i: \${res.message}</div>`;
+                    drawerBody.innerHTML = `<div style="color: var(--danger); padding: 20px;">Lỗi: \${res.message}</div>`;
                 }
             })
             .catch(err => {
-                drawerBody.innerHTML = `<div style="color: var(--danger); padding: 20px;">L\u1ed7i k\u1ebft n\u1ed1i m\u00e1y ch\u1ee7!</div>`;
+                drawerBody.innerHTML = `<div style="color: var(--danger); padding: 20px;">Lỗi kết nối máy chủ!</div>`;
             });
     }
 
@@ -612,9 +612,9 @@
 
     function renderDrawer(user, stats) {
         const avatarUrl = user.profile?.avatarUrl || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.fullName) + '&background=EFF6FF&color=2563EB';
-        const dob = user.profile?.dateOfBirth ? new Date(user.profile.dateOfBirth).toLocaleDateString('vi-VN') : 'Ch\u01b0a c\u1eadp nh\u1eadt';
-        const address = user.profile?.address || 'Ch\u01b0a c\u1eadp nh\u1eadt';
-        const interests = user.profile?.travelInterests || 'Ch\u01b0a c\u1eadp nh\u1eadt';
+        const dob = user.profile?.dateOfBirth ? new Date(user.profile.dateOfBirth).toLocaleDateString('vi-VN') : 'Chưa cập nhật';
+        const address = user.profile?.address || 'Chưa cập nhật';
+        const interests = user.profile?.travelInterests || 'Chưa cập nhật';
 
         drawerBody.innerHTML = `
             <img src="\${avatarUrl}" alt="Avatar" class="drawer-avatar-lg">
@@ -622,28 +622,28 @@
             <div class="drawer-email-center">\${user.email}</div>
 
             <div class="drawer-section">
-                <h4><i data-lucide="user" style="width:16px;"></i> Th\u00f4ng tin c\u00e1 nh\u00e2n</h4>
+                <h4><i data-lucide="user" style="width:16px;"></i> Thông tin cá nhân</h4>
                 <div class="info-grid">
-                    <div class="info-item"><label>S\u1ed1 \u0111i\u1ec7n tho\u1ea1i</label><span>\${user.phoneNumber || 'Ch\u01b0a c\u1eadp nh\u1eadt'}</span></div>
-                    <div class="info-item"><label>Ng\u00e0y sinh</label><span>\${dob}</span></div>
-                    <div class="info-item"><label>Gi\u1edbi t\u00ednh</label><span>\${user.profile?.gender || 'Ch\u01b0a c\u1eadp nh\u1eadt'}</span></div>
-                    <div class="info-item"><label>\u0110\u1ecba ch\u1ec9</label><span>\${address}</span></div>
+                    <div class="info-item"><label>Số điện thoại</label><span>\${user.phoneNumber || 'Chưa cập nhật'}</span></div>
+                    <div class="info-item"><label>Ngày sinh</label><span>\${dob}</span></div>
+                    <div class="info-item"><label>Giới tính</label><span>\${user.profile?.gender || 'Chưa cập nhật'}</span></div>
+                    <div class="info-item"><label>Địa chỉ</label><span>\${address}</span></div>
                 </div>
             </div>
 
             <div class="drawer-section">
-                <h4><i data-lucide="map" style="width:16px;"></i> Th\u00f4ng tin du l\u1ecbch</h4>
+                <h4><i data-lucide="map" style="width:16px;"></i> Thông tin du lịch</h4>
                 <div class="info-grid" style="grid-template-columns: 1fr;">
-                    <div class="info-item"><label>S\u1edf th\u00edch & Ho\u1ea1t \u0111\u1ed9ng</label><span>\${interests}</span></div>
+                    <div class="info-item"><label>Sở thích & Hoạt động</label><span>\${interests}</span></div>
                 </div>
             </div>
 
             <div class="drawer-section">
-                <h4><i data-lucide="bar-chart-2" style="width:16px;"></i> Th\u1ed1ng k\u00ea ho\u1ea1t \u0111\u1ed9ng</h4>
+                <h4><i data-lucide="bar-chart-2" style="width:16px;"></i> Thống kê hoạt động</h4>
                 <div class="stats-boxes">
                     <div class="stat-box">
                         <span class="num">\${stats.trips}</span>
-                        <span class="label">Chuy\u1ebfn \u0111i</span>
+                        <span class="label">Chuyến đi</span>
                     </div>
                     <div class="stat-box">
                         <span class="num">\${stats.bookings}</span>
@@ -655,7 +655,7 @@
                     </div>
                     <div class="stat-box">
                         <span class="num">\${stats.companions}</span>
-                        <span class="label">B\u1ea1n \u0111\u1ed3ng h\u00e0nh</span>
+                        <span class="label">Bạn đồng hành</span>
                     </div>
                 </div>
             </div>
@@ -665,8 +665,8 @@
 
     // Confirm Action
     function confirmToggleStatus(form, isCurrentlyActive) {
-        const actionText = isCurrentlyActive ? 'KH\u00d3A' : 'M\u1EDE KH\u00d3A';
-        if (confirm('B\u1ea1n c\u00f3 ch\u1eafc ch\u1eafn mu\u1ed1n ' + actionText + ' t\u00e0i kho\u1ea3n n\u00e0y?')) {
+        const actionText = isCurrentlyActive ? 'KHÓA' : 'MỞ KHÓA';
+        if (confirm('Bạn có chắc chắn muốn ' + actionText + ' tài khoản này?')) {
             form.submit();
         }
     }

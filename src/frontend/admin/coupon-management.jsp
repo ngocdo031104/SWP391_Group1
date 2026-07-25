@@ -1,4 +1,4 @@
-<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
+﻿<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
@@ -290,21 +290,21 @@
             language: {
                 url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/vi.json'
             },
-            pageLength: 10,       // C? d?nh 10 d\u00f2ng m?i trang, kh\u00f4ng cho d?i
-            order: [[7, 'asc']],  // M?c d?nh s?p x?p theo Ng\u00e0y B?t \u00d0?u
-            dom: 'rt<"row"<"col-sm-12 d-flex justify-content-center"p>>', // ?n info (i), m?c d?nh search (f), length (l). Ch? gi? table(t) v\u00e0 pagination(p)
-            // Ch? cho ph\u00e9p s?p x?p ? c?t Ng\u00e0y B?t \u00d0?u (7) v\u00e0 Ng\u00e0y K?t Th\u00fac (8)
+            pageLength: 10,       // C? d?nh 10 dòng m?i trang, không cho d?i
+            order: [[7, 'asc']],  // M?c d?nh s?p x?p theo Ngày B?t Ð?u
+            dom: 'rt<"row"<"col-sm-12 d-flex justify-content-center"p>>', // ?n info (i), m?c d?nh search (f), length (l). Ch? gi? table(t) và pagination(p)
+            // Ch? cho phép s?p x?p ? c?t Ngày B?t Ð?u (7) và Ngày K?t Thúc (8)
             columnDefs: [
                 { orderable: false, targets: [0, 1, 2, 3, 4, 5, 6, 9, 10] },
                 { orderable: true,  targets: [7, 8] }
             ]
         });
 
-        // Duong l\u00e0m ph?n n\u00e0y: \u00c1p d?ng b? l?c t\u00f9y ch?nh theo lo?i gi?m v\u00e0 tr?ng th\u00e1i
-        // B?ng sau khi th\u00eam c?t "Gi?m T?i \u00d0a":
-        // 0=ID, 1=M\u00e3, 2=Lo?i Gi?m, 3=Gi\u00e1 Tr?, 4=Gi?m T?i \u00d0a, 5=\u00d0on T?i Thi?u,
-        // 6=\u00d0\u00e3 D\u00f9ng/T?i \u00d0a, 7=Ng\u00e0y B?t \u00d0?u, 8=Ng\u00e0y K?t Th\u00fac, 9=Tr?ng Th\u00e1i, 10=Thao T\u00e1c
-        // Duong l\u00e0m ph?n n\u00e0y: \u00c1p d?ng t\u00ecm ki?m v\u00e0 b? l?c t\u00f9y ch?nh
+        // Duong làm ph?n này: Áp d?ng b? l?c tùy ch?nh theo lo?i gi?m và tr?ng thái
+        // B?ng sau khi thêm c?t "Gi?m T?i Ða":
+        // 0=ID, 1=Mã, 2=Lo?i Gi?m, 3=Giá Tr?, 4=Gi?m T?i Ða, 5=Ðon T?i Thi?u,
+        // 6=Ðã Dùng/T?i Ða, 7=Ngày B?t Ð?u, 8=Ngày K?t Thúc, 9=Tr?ng Thái, 10=Thao Tác
+        // Duong làm ph?n này: Áp d?ng tìm ki?m và b? l?c tùy ch?nh
         $('#customSearch').on('keyup change', function() {
             table.search(this.value).draw();
         });
@@ -314,7 +314,7 @@
         });
 
         $('#filterStatus').on('change', function() {
-            table.column(9).search(this.value).draw(); // C?t 9 l\u00e0 Tr?ng Th\u00e1i
+            table.column(9).search(this.value).draw(); // C?t 9 là Tr?ng Thái
         });
 
         $('#resetFilters').on('click', function() {
@@ -331,7 +331,7 @@
 
     // Khởi tạo modal thêm mới coupon (mặc định chưa kích hoạt)
     function openCouponModal() {
-        document.getElementById('couponModalLabel').innerText = "Th\u00eam Coupon M\u1edbi";
+        document.getElementById('couponModalLabel').innerText = "Thêm Coupon Mới";
         document.getElementById('couponId').value = "";
         document.getElementById('couponCode').value = "";
         document.getElementById('discountType').value = "Percentage";
@@ -360,11 +360,11 @@
             .then(r => r.json())
             .then(res => {
                 if (res.status !== 'success' || !res.coupon) {
-                    alert('Kh\u00f4ng t\u1ea3i \u0111\u01b0\u1ee3c coupon: ' + (res.message || 'L\u1ed7i kh\u00f4ng x\u00e1c \u0111\u1ecbnh.'));
+                    alert('Không tải được coupon: ' + (res.message || 'Lỗi không xác định.'));
                     return;
                 }
                 const c = res.coupon;
-                document.getElementById('couponModalLabel').innerText = "C\u1eadp Nh\u1eadt Coupon";
+                document.getElementById('couponModalLabel').innerText = "Cập Nhật Coupon";
                 document.getElementById('couponId').value = c.couponId;
                 document.getElementById('couponCode').value = c.couponCode;
                 document.getElementById('discountType').value = c.discountType;
@@ -390,7 +390,7 @@
                 toggleMaxDiscountVisibility();
                 couponModal.show();
             })
-            .catch(() => alert('L\u1ed7i k\u1ebft n\u1ed1i khi t\u1ea3i coupon.'));
+            .catch(() => alert('Lỗi kết nối khi tải coupon.'));
     }
 
     // Cập nhật ngày kết thúc tối thiểu khi chọn ngày bắt đầu
@@ -398,12 +398,12 @@
         document.getElementById('endDate').min = this.value;
     });
 
-    // G?n handler cho t?t c? n\u00fat edit \u0097 an to\u00e0n, kh\u00f4ng nh\u00fang d? li?u v\u00e0o onclick.
+    // G?n handler cho t?t c? nút edit  an toàn, không nhúng d? li?u vào onclick.
     document.querySelectorAll('.edit-coupon-btn').forEach(btn => {
         btn.addEventListener('click', () => editCoupon(btn.getAttribute('data-id')));
     });
 
-    // Duong l\u00e0m ph?n n\u00e0y: T? d?ng ?n/hi?n v\u00e0 b?t bu?c nh?p tru?ng gi?m t?i da t\u00f9y theo lo?i gi?m gi\u00e1
+    // Duong làm ph?n này: T? d?ng ?n/hi?n và b?t bu?c nh?p tru?ng gi?m t?i da tùy theo lo?i gi?m giá
     function toggleMaxDiscountVisibility() {
         const maxDiscountInput = document.getElementById('maxDiscountAmount');
         if(document.getElementById('discountType').value === 'Percentage') {
@@ -417,7 +417,7 @@
     }
     document.getElementById('discountType').addEventListener('change', toggleMaxDiscountVisibility);
 
-    // Ki?m tra tr\u00f9ng m\u00e3 coupon qua AJAX \u0097 hi?n th? l?i inline ngay du?i input
+    // Ki?m tra trùng mã coupon qua AJAX  hi?n th? l?i inline ngay du?i input
     let _couponCodeDuplicate = false;
 
     function checkCouponCode(code) {
@@ -435,7 +435,7 @@
             .then(r => r.json())
             .then(data => {
                 if (data.exists) {
-                    errEl.textContent = 'M\u00e3 coupon "' + code.trim() + '" d\u00e3 t\u1ed3n t\u1ea1i. Vui l\u00f2ng d\u00f9ng m\u00e3 kh\u00e1c.';
+                    errEl.textContent = 'Mã coupon "' + code.trim() + '" dã tồn tại. Vui lòng dùng mã khác.';
                     errEl.style.display = 'block';
                     inputEl.classList.add('is-invalid');
                     _couponCodeDuplicate = true;
@@ -464,9 +464,9 @@
         _couponCodeDuplicate = false;
     };
 
-    // Duong l\u00e0m ph?n n\u00e0y: Validate ng\u00e0y b?t d?u v\u00e0 k?t th\u00fac tru?c khi submit form
+    // Duong làm ph?n này: Validate ngày b?t d?u và k?t thúc tru?c khi submit form
     document.querySelector('#couponModal form').addEventListener('submit', function(e) {
-        // Ch?n submit n?u m\u00e3 coupon dang b? tr\u00f9ng
+        // Ch?n submit n?u mã coupon dang b? trùng
         if (_couponCodeDuplicate) {
             e.preventDefault();
             document.getElementById('couponCode').focus();
@@ -476,7 +476,7 @@
         const startDateVal = document.getElementById('startDate').value;
         const endDateVal   = document.getElementById('endDate').value;
 
-        if (!startDateVal || !endDateVal) return; // \u00d0? browser t? validate required
+        if (!startDateVal || !endDateVal) return; // Ð? browser t? validate required
 
         const today     = new Date(); today.setHours(0, 0, 0, 0);
         const startDate = new Date(startDateVal);
@@ -485,14 +485,14 @@
         // Ng&#224;y b&#7855;t &#272;&#7847;u ph&#7843;i t&#7913; h&#244;m nay tr&#7903; &#273;i (ch&#7881; ki&#7875;m tra khi t&#7841;o m&#7899;i)
         const isNewCoupon = !document.getElementById('couponId').value;
         if (isNewCoupon && startDate < today) {
-            alert('Ng\u00e0y b\u1ea8t \u0111\u1ea7u kh\u00f4ng \u0111\u01b0\u1ee3c l\u00e0 ng\u00e0y trong qu\u00e1 kh\u1ee9!');
+            alert('Ngày bẨt đầu không được là ngày trong quá khứ!');
             e.preventDefault();
             return;
         }
 
         // Ngày kết thúc phải sau ngày bắt đầu
         if (endDate <= startDate) {
-            alert('Ng\u00e0y k\u1ebft th\u00fac ph\u1ea3i sau ng\u00e0y b\u1eaft \u0111\u1ea7u!');
+            alert('Ngày kết thúc phải sau ngày bắt đầu!');
             e.preventDefault();
             return;
         }

@@ -382,7 +382,7 @@
         const toDateStr = document.getElementById('toDate').value;
         if (fromDateStr && toDateStr) {
             if (new Date(fromDateStr) > new Date(toDateStr)) {
-                alert('T\u1eeb ng\u00e0y kh\u00f4ng th\u1ec3 l\u1edbn h\u01a1n \u0110\u1ebfn ng\u00e0y. Vui l\u00f2ng ch\u1ecdn l\u1ea1i!');
+                alert('Từ ngày không thể lớn hơn Đến ngày. Vui lòng chọn lại!');
                 e.preventDefault();
                 return;
             }
@@ -393,9 +393,9 @@
     const searchInput = document.getElementById('searchName');
     const tableBody = document.querySelector('.booking-table tbody');
 
-    // B\u1ecf d\u1ea5u ti\u1ebfng Vi\u1ec7t \u0111\u1ec3 t\u00ecm ki\u1ebfm kh\u00f4ng ph\u00e2n bi\u1ec7t d\u1ea5u
+    // Bỏ dấu tiếng Việt để tìm kiếm không phân biệt dấu
     function removeDiacritics(str) {
-        return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\u0111/g, 'd').replace(/\u0110/g, 'D');
+        return str.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D');
     }
 
     function filterTableByTourName(keyword) {
