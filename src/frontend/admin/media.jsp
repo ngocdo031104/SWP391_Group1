@@ -1,4 +1,4 @@
-﻿<%-- 
+<%-- 
     Màn hình 22: Manage Tour Media - Quản lý hình ảnh & media của tour
     Tác giả: Dương Quang Sơn
     MSSV: HE186525

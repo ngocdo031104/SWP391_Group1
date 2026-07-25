@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Liên quan đến UCs: Match Travel Companions, Manage Buddy Requests
  * Tác giả: Đỗ Vũ Minh Ngọc
  * MSSV: HE182479

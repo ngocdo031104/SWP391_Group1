@@ -1,4 +1,4 @@
-﻿<%-- 
+<%-- 
     Màn hình 14: View Guide Dashboard - Dashboard hướng dẫn viên: lịch tour được phân công
     Tác giả: Dương Quang Sơn
     MSSV: HE186525

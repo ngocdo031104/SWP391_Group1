@@ -1,4 +1,4 @@
-﻿<%-- 
+<%-- 
     Màn hình 23: View Analytics Dashboard - Dashboard thống kê doanh thu, booking, hiệu suất
     Tác giả: Dương Quang Sơn
     MSSV: HE186525
