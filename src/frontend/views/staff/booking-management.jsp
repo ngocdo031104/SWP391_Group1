@@ -1,4 +1,4 @@
-<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
+﻿<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
     <%@ taglib uri="jakarta.tags.core" prefix="c" %>
         <%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
             <%@ taglib uri="jakarta.tags.functions" prefix="fn" %>
@@ -379,7 +379,7 @@
                             <script>
                                 lucide.createIcons();
 
-                                // Auto-dismiss toast sau 4 gi\u00e2y
+                                // Auto-dismiss toast sau 4 giây
                                 const toast = document.getElementById('toastMsg');
                                 if (toast) setTimeout(() => toast.style.display = 'none', 4000);
 

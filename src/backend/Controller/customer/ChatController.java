@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Liên quan đến UCs: Exchange Messages
  * Tác giả: Đỗ Vũ Minh Ngọc
  * MSSV: HE182479
@@ -44,7 +44,7 @@ public class ChatController extends HttpServlet {
         String action = request.getParameter("action");
 
         if ("history".equals(action)) {
-            // L\u1ea5y l\u1ecbch s\u1eed tin nh\u1eafn c\u1ee7a cu\u1ed9c h\u1ed9i tho\u1ea1i
+            // Lấy lịch sử tin nhắn của cuộc hội thoại
             response.setContentType("application/json;charset=UTF-8");
             try {
                 int conversationId = Integer.parseInt(request.getParameter("conversationId"));
@@ -54,7 +54,7 @@ public class ChatController extends HttpServlet {
                     offset = Integer.parseInt(request.getParameter("offset"));
                 }
                 
-                // \u0110\u00e1nh d\u1ea5u tin nh\u1eafn \u0111\u00e3 \u0111\u01b0\u1ee3c \u0111\u1ecdc
+                // Đánh dấu tin nhắn đã được đọc
                 chatDAO.markConversationAsRead(conversationId, user.getUserId());
                 
                 List<Message> messages = chatDAO.getMessages(conversationId, limit, offset);
@@ -66,12 +66,12 @@ public class ChatController extends HttpServlet {
             return;
         }
 
-        // L\u1ea5y danh s\u00e1ch b\u1ea1n \u0111\u1ed3ng h\u00e0nh \u0111\u1ec3 t\u1ea1o nh\u00f3m chat
+        // Lấy danh sách bạn đồng hành để tạo nhóm chat
         BuddyRequestDAO buddyDAO = new BuddyRequestDAO();
         List<User> buddies = buddyDAO.getAcceptedBuddies(user.getUserId());
         request.setAttribute("buddies", buddies);
 
-        // T\u1ea3i trang chat ch\u00ednh
+        // Tải trang chat chính
         List<Conversation> conversations = chatDAO.getUserConversations(user.getUserId());
         request.setAttribute("conversations", conversations);
         request.getRequestDispatcher("/customer/chat.jsp").forward(request, response);
@@ -80,7 +80,7 @@ public class ChatController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // X\u1eed l\u00fd c\u00e1c h\u00e0nh \u0111\u1ed9ng ph\u1ee5 nh\u01b0 ch\u1eb7n ng\u01b0\u1eddi d\u00f9ng
+        // Xử lý các hành động phụ như chặn người dùng
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("sessionUser");
         if (user == null) {
@@ -90,7 +90,7 @@ public class ChatController extends HttpServlet {
         
         String action = request.getParameter("action");
         if ("create".equals(action)) {
-            // Ki\u1ec3m tra ho\u1eb7c t\u1ea1o m\u1edbi cu\u1ed9c h\u1ed9i tho\u1ea1i
+            // Kiểm tra hoặc tạo mới cuộc hội thoại
             try {
                 int targetUserId = Integer.parseInt(request.getParameter("targetUserId"));
                 int conversationId = chatDAO.getOrCreateDirectConversation(user.getUserId(), targetUserId);

@@ -1,4 +1,4 @@
-<%-- 
+﻿<%-- 
     Liên quan đến UCs: Recover Password
     Tác giả: Đỗ Vũ Minh Ngọc
     MSSV: HE182479
@@ -162,7 +162,7 @@ document.getElementById('resetForm').addEventListener('submit', function(e) {
 
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
-  btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> \u0110ang x\u1eed l\u00fd...';
+  btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Đang xử lý...';
 });
 
 // Clear invalid state on input

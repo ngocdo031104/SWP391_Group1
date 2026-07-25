@@ -1,4 +1,4 @@
-package Model;
+﻿package Model;
 
 import Entities.Booking;
 import Entities.BookingParticipant;
@@ -495,14 +495,14 @@ public class BookingDAO extends DBContext {
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Booking b = mapBooking(rs);
-                    // G\u1eafn th\u00f4ng tin kh\u00e1ch h\u00e0ng v\u00e0o Booking.customer \u0111\u1ec3 JSP truy c\u1eadp qua EL
+                    // Gắn thông tin khách hàng vào Booking.customer để JSP truy cập qua EL
                     User customer = new User();
                     customer.setUserId(rs.getInt("CustomerID"));
                     customer.setFullName(rs.getString("CustomerName"));
                     customer.setEmail(rs.getString("CustomerEmail"));
                     customer.setPhoneNumber(rs.getString("CustomerPhone"));
                     b.setCustomer(customer);
-                    // G\u1eafn th\u00f4ng tin l\u1ecbch kh\u1edfi h\u00e0nh + t\u00ean tour
+                    // Gắn thông tin lịch khởi hành + tên tour
                     Entities.TourSchedule schedule = new Entities.TourSchedule();
                     schedule.setDepartureDate(rs.getDate("DepartureDate"));
                     Entities.Tour tour = new Entities.Tour();

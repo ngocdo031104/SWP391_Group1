@@ -1,4 +1,4 @@
-&#65279;<%-- Li&#234;n quan &#273;&#7871;n UCs: View Notifications T&#225;c gi&#7843;: &#272;&#7895; V&#361; Minh
+﻿&#65279;<%-- Li&#234;n quan &#273;&#7871;n UCs: View Notifications T&#225;c gi&#7843;: &#272;&#7895; V&#361; Minh
     Ng&#7885;c MSSV: HE182479 --%>
     &#65279;<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
         <%@taglib prefix="c" uri="jakarta.tags.core" %>
@@ -352,10 +352,10 @@
                             lucide.createIcons();
                         }
 
-                        // S\u1ed1 l\u01b0\u1ee3ng th\u00f4ng b\u00e1o ch\u01b0a \u0111\u1ecdc hi\u1ec7n t\u1ea1i tr\u00ean trang
+                        // Số lượng thông báo chưa đọc hiện tại trên trang
                         let unreadOnPage = ${ unreadCount };
 
-                        // C\u1eadp nh\u1eadt badge tr\u00ean header ngay khi trang load
+                        // Cập nhật badge trên header ngay khi trang load
                         (function syncHeaderBadge() {
                             const badge = document.getElementById('notification-count');
                             if (!badge) return;
@@ -368,15 +368,15 @@
                         })();
 
                         function markAsRead(notifId, element) {
-                            // Tr\u00e1nh click nhi\u1ec1u l\u1ea7n v\u00e0o c\u00f9ng 1 th\u00f4ng b\u00e1o
+                            // Tránh click nhiều lần vào cùng 1 thông báo
                             if (!element.classList.contains('unread')) return;
 
-                            // L\u1ea1c quan: c\u1eadp nh\u1eadt UI tr\u01b0\u1edbc, r\u1ed3i m\u1edbi g\u1ecdi server
+                            // Lạc quan: cập nhật UI trước, rồi mới gọi server
                             element.classList.remove('unread');
                             element.style.cursor = 'default';
                             element.onclick = null;
 
-                            // C\u1eadp nh\u1eadt badge header
+                            // Cập nhật badge header
                             unreadOnPage = Math.max(0, unreadOnPage - 1);
                             const headerBadge = document.getElementById('notification-count');
                             if (headerBadge) {
@@ -388,17 +388,17 @@
                                 }
                             }
 
-                            // C\u1eadp nh\u1eadt badge trong hero section
+                            // Cập nhật badge trong hero section
                             const heroBadge = document.querySelector('.hero-section .badge');
                             if (heroBadge) {
                                 if (unreadOnPage === 0) {
                                     heroBadge.style.display = 'none';
                                 } else {
-                                    heroBadge.innerText = unreadOnPage + ' m\u1edbi';
+                                    heroBadge.innerText = unreadOnPage + ' mới';
                                 }
                             }
 
-                            // G\u1ecdi server l\u01b0u tr\u1ea1ng th\u00e1i \u0111\u00e3 \u0111\u1ecdc v\u00e0o DB
+                            // Gọi server lưu trạng thái đã đọc vào DB
                             const ctx = (typeof APP_CONTEXT !== 'undefined') ? APP_CONTEXT : '';
                             fetch(ctx + '/customer/notifications/read?id=' + notifId + '&t=' + new Date().getTime(), {
                                 method: 'GET'

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Liên quan đến UCs: Exchange Messages
  * Tác giả: Đỗ Vũ Minh Ngọc
  * MSSV: HE182479
@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @ServerEndpoint(value = "/ws/chat/{userId}")
 public class ChatEndpoint {
 
-    // L\u01b0u tr\u1eef c\u00e1c phi\u00ean WebSocket \u0111ang ho\u1ea1t \u0111\u1ed9ng
+    // Lưu trữ các phiên WebSocket đang hoạt động
     private static final Map<Integer, Session> activeSessions = new ConcurrentHashMap<>();
     private static final Gson gson = new Gson();
     private final ChatDAO chatDAO = new ChatDAO();
@@ -46,7 +46,7 @@ public class ChatEndpoint {
             int senderId = Integer.parseInt(userIdStr);
             JsonObject jsonMsg = gson.fromJson(messageJson, JsonObject.class);
             
-            // \u0110\u1ecbnh d\u1ea1ng d\u1eef li\u1ec7u mong \u0111\u1ee3i t\u1eeb client:
+            // Định dạng dữ liệu mong đợi từ client:
             // { "conversationId": 1, "content": "Hello", "recipientId": 2 }
             
             int conversationId = jsonMsg.has("conversationId") ? jsonMsg.get("conversationId").getAsInt() : -1;
@@ -58,15 +58,15 @@ public class ChatEndpoint {
                 return;
             }
 
-            // T\u1ea1o m\u1edbi h\u1ed9i tho\u1ea1i n\u1ebfu ch\u01b0a t\u1ed3n t\u1ea1i
+            // Tạo mới hội thoại nếu chưa tồn tại
             if (conversationId <= 0 && recipientId > 0) {
                 conversationId = chatDAO.getOrCreateDirectConversation(senderId, recipientId);
             }
 
             if (conversationId > 0) {
-                // Ki\u1ec3m tra danh s\u00e1ch ch\u1eb7n tr\u01b0\u1edbc khi g\u1eedi
+                // Kiểm tra danh sách chặn trước khi gửi
                 if (recipientId > 0 && chatDAO.isBlocked(senderId, recipientId)) {
-                    // G\u1eedi th\u00f4ng b\u00e1o l\u1ed7i v\u1ec1 cho ng\u01b0\u1eddi g\u1eedi
+                    // Gửi thông báo lỗi về cho người gửi
                     JsonObject error = new JsonObject();
                     error.addProperty("type", "error");
                     error.addProperty("message", "Cannot send message. User is blocked.");
@@ -74,7 +74,7 @@ public class ChatEndpoint {
                     return;
                 }
 
-                // L\u01b0u d\u1eef li\u1ec7u v\u00e0o Database
+                // Lưu dữ liệu vào Database
                 Message msg = new Message();
                 msg.setConversationId(conversationId);
                 msg.setSenderId(senderId);
@@ -84,7 +84,7 @@ public class ChatEndpoint {
                 Message savedMsg = chatDAO.saveMessage(msg);
 
                 if (savedMsg != null) {
-                    // Chu\u1ea9n b\u1ecb d\u1eef li\u1ec7u JSON \u0111\u1ec3 ph\u1ea3n h\u1ed3i
+                    // Chuẩn bị dữ liệu JSON để phản hồi
                     JsonObject responseMsg = new JsonObject();
                     responseMsg.addProperty("type", "chatMessage");
                     responseMsg.addProperty("messageId", savedMsg.getMessageId());
@@ -95,11 +95,11 @@ public class ChatEndpoint {
                     
                     String payload = responseMsg.toString();
                     
-                    // Tr\u1ea3 v\u1ec1 cho ng\u01b0\u1eddi g\u1eedi \u0111\u1ec3 x\u00e1c nh\u1eadn \u0111\u00e3 g\u1eedi
+                    // Trả về cho người gửi để xác nhận đã gửi
                     session.getBasicRemote().sendText(payload);
                     
-                    // G\u1eedi cho ng\u01b0\u1eddi nh\u1eadn n\u1ebfu h\u1ecd \u0111ang tr\u1ef1c tuy\u1ebfn
-                    // Broadcast tin nh\u1eafn cho t\u1ea5t c\u1ea3 th\u00e0nh vi\u00ean trong nh\u00f3m
+                    // Gửi cho người nhận nếu họ đang trực tuyến
+                    // Broadcast tin nhắn cho tất cả thành viên trong nhóm
                     if (recipientId > 0) {
                         Session recipientSession = activeSessions.get(recipientId);
                         if (recipientSession != null && recipientSession.isOpen()) {

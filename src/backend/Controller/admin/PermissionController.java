@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Liên quan đến UCs: Manage Roles and Permissions
  * Tác giả: Đỗ Vũ Minh Ngọc
  * MSSV: HE182479
@@ -30,7 +30,7 @@ public class PermissionController extends HttpServlet {
             int roleId = Integer.parseInt(request.getParameter("roleId"));
             String[] permissionIds = request.getParameterValues("permissions[]");
             if (permissionIds == null) {
-                // X\u00f3a t\u1ea5t c\u1ea3 quy\u1ec1n n\u1ebfu danh s\u00e1ch b\u1ecb r\u1ed7ng
+                // Xóa tất cả quyền nếu danh sách bị rỗng
                 permissionIds = new String[0];
             }
             
@@ -38,7 +38,7 @@ public class PermissionController extends HttpServlet {
             roleDAO.updateRolePermissions(roleId, permissionIds, adminId);
             
             response.setContentType("application/json");
-            response.getWriter().write("{\"success\": true, \"message\": \"C\u1eadp nh\u1eadt quy\u00e1\u00bb\u0081n th\u00e0nh c\u00f4ng!\"}");
+            response.getWriter().write("{\"success\": true, \"message\": \"Cập nhật quyá»n thành công!\"}");
         } catch (Exception e) {
             e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

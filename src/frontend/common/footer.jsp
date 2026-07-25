@@ -1,4 +1,4 @@
-<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
+﻿<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 
     <footer class="footer">
         <div class="container footer-main">
@@ -94,7 +94,7 @@
                     })
                     .catch(err => {
                         console.error(err);
-                        alert('C\u00f3 l\u1ed7i h\u1ec7 th\u1ed1ng x\u1ea3y ra. Vui l\u00f2ng th\u1eed l\u1ea1i sau.');
+                        alert('Có lỗi hệ thống xảy ra. Vui lòng thử lại sau.');
                     });
                 });
             }

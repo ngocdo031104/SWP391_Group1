@@ -1,4 +1,4 @@
-<%-- Màn hình 42: Update Tour Status - Cập nhật trạng thái vận hành tour Tác giả: Dương Quang Sơn MSSV: HE186525 Ngày
+﻿<%-- Màn hình 42: Update Tour Status - Cập nhật trạng thái vận hành tour Tác giả: Dương Quang Sơn MSSV: HE186525 Ngày
     tạo: 2026-07-21 --%>
     <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
         <%@ taglib uri="jakarta.tags.core" prefix="c" %>
@@ -806,12 +806,12 @@
                                     })
                                     .catch(err => {
                                         console.error(err);
-                                        alert('\u0110\u00e3 x\u1ea3y ra l\u1ed7i!');
+                                        alert('Đã xảy ra lỗi!');
                                     });
                             }
 
                             function openLogsModal(scheduleId, tourName) {
-                                document.getElementById('logs-content').innerHTML = '<div style="text-align:center;padding:40px;color:var(--gray-500);"><i data-lucide="loader-2" style="animation:spin 1s linear infinite;width:24px;height:24px;"></i><p style="margin-top:10px;">\u0110ang t\u1ea3i...</p></div>';
+                                document.getElementById('logs-content').innerHTML = '<div style="text-align:center;padding:40px;color:var(--gray-500);"><i data-lucide="loader-2" style="animation:spin 1s linear infinite;width:24px;height:24px;"></i><p style="margin-top:10px;">Đang tải...</p></div>';
                                 lucide.createIcons();
                                 document.getElementById('logsModal').classList.add('open');
 
@@ -823,7 +823,7 @@
                                         return fetch('${pageContext.request.contextPath}/staff/tour-status?action=logs&scheduleId=' + scheduleId);
                                     })
                                     .catch(err => {
-                                        document.getElementById('logs-content').innerHTML = '<div style="text-align:center;padding:40px;color:var(--danger);"><i data-lucide="alert-circle"></i><p style="margin-top:10px;">L\u1ed7i khi t\u1ea3i nh\u1eadt k\u00fd</p></div>';
+                                        document.getElementById('logs-content').innerHTML = '<div style="text-align:center;padding:40px;color:var(--danger);"><i data-lucide="alert-circle"></i><p style="margin-top:10px;">Lỗi khi tải nhật ký</p></div>';
                                         lucide.createIcons();
                                     });
                             }

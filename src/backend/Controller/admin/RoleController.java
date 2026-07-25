@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Liên quan đến UCs: Manage Roles and Permissions
  * Tác giả: Đỗ Vũ Minh Ngọc
  * MSSV: HE182479
@@ -55,7 +55,7 @@ public class RoleController extends HttpServlet {
                 role.setRoleName(roleName);
                 role.setDescription(description);
                 roleDAO.createRole(role, adminId);
-                session.setAttribute("successMsg", "T\u1ea1o vai tr\u00f2 th\u00e0nh c\u00f4ng!");
+                session.setAttribute("successMsg", "Tạo vai trò thành công!");
             }
             else if ("updateRole".equals(action)) {
                 int roleId = Integer.parseInt(request.getParameter("roleId"));
@@ -66,18 +66,18 @@ public class RoleController extends HttpServlet {
                 role.setRoleName(roleName);
                 role.setDescription(description);
                 roleDAO.updateRole(role, adminId);
-                session.setAttribute("successMsg", "C\u1eadp nh\u1eadt vai tr\u00f2 th\u00e0nh c\u00f4ng!");
+                session.setAttribute("successMsg", "Cập nhật vai trò thành công!");
             }
             else if ("deleteRole".equals(action)) {
                 int roleId = Integer.parseInt(request.getParameter("roleId"));
                 roleDAO.deleteRole(roleId, adminId);
-                session.setAttribute("successMsg", "X\u00f3a vai tr\u00f2 th\u00e0nh c\u00f4ng!");
+                session.setAttribute("successMsg", "Xóa vai trò thành công!");
             }
         } catch (RoleInUseException | Utils.SystemRoleException re) {
             session.setAttribute("errorMsg", re.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            session.setAttribute("errorMsg", "\u00c4\u0090\u0102\u00a3 x\u1ea3y ra l\u1ed7i h\u1ec7 th\u1ed1ng: " + e.getMessage());
+            session.setAttribute("errorMsg", "ÄĂ£ xảy ra lỗi hệ thống: " + e.getMessage());
         }
         
         response.sendRedirect(request.getContextPath() + "/admin/roles");

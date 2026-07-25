@@ -1,4 +1,4 @@
-<%-- 
+﻿<%-- 
     Liên quan đến UCs: Register Account
     Tác giả: Đỗ Vũ Minh Ngọc
     MSSV: HE182479
@@ -304,7 +304,7 @@
 </div>
 
 <script>
-/* \u2500\u2500 Step navigation \u2500\u2500 */
+/* ── Step navigation ── */
 let currentStep = 1;
 
 function nextStep(from) {
@@ -313,7 +313,7 @@ function nextStep(from) {
 
   document.getElementById('step' + from).classList.remove('active');
   document.getElementById('sd' + from).classList.replace('active','done');
-  document.getElementById('sd' + from).textContent = '\u2713';
+  document.getElementById('sd' + from).textContent = '✓';
   if (from < 3) document.getElementById('sl' + from).classList.add('done');
 
   currentStep = from + 1;
@@ -334,7 +334,7 @@ function prevStep(from) {
   document.getElementById('step' + currentStep).classList.add('active');
 }
 
-/* \u2500\u2500 Validation \u2500\u2500 */
+/* ── Validation ── */
 function validateStep1() {
   let ok = true;
   const email = document.getElementById('email');
@@ -350,9 +350,9 @@ function validateStep1() {
     const pwdErr = document.getElementById('pwdError');
     pwdErr.style.display = 'block';
     if (!pwd.value || pwd.value.length < 8) {
-      pwdErr.textContent = 'M\u1eadt kh\u1ea9u ph\u1ea3i c\u00f3 \u00edt nh\u1ea5t 8 k\u00fd t\u1ef1';
+      pwdErr.textContent = 'Mật khẩu phải có ít nhất 8 ký tự';
     } else {
-      pwdErr.textContent = 'M\u1eadt kh\u1ea9u ph\u1ea3i ch\u1ee9a \u00edt nh\u1ea5t 1 ch\u1eef c\u00e1i v\u00e0 1 ch\u1eef s\u1ed1';
+      pwdErr.textContent = 'Mật khẩu phải chứa ít nhất 1 chữ cái và 1 chữ số';
     }
     ok = false;
   } else { 
@@ -417,12 +417,12 @@ function validateStep2() {
     return ok;
 }
 
-/* \u2500\u2500 Password strength \u2500\u2500 */
+/* ── Password strength ── */
 function checkStrength(pwd) {
   const segs  = [1,2,3,4].map(i => document.getElementById('seg' + i));
   const label = document.getElementById('strengthLabel');
   const colors = ['#C0392B','#E67E22','#F1C40F','#1E7D4B'];
-  const labels = ['R\u1ea5t y\u1ebfu','Y\u1ebfu','Trung b\u00ecnh','M\u1ea1nh'];
+  const labels = ['Rất yếu','Yếu','Trung bình','Mạnh'];
 
   let score = 0;
   if (pwd.length >= 8)               score++;
@@ -433,11 +433,11 @@ function checkStrength(pwd) {
   segs.forEach((s,i) => {
     s.style.background = i < score ? colors[Math.min(score-1,3)] : 'var(--clr-border)';
   });
-  label.textContent = pwd.length ? labels[Math.min(score-1,3)] || 'R\u1ea5t y\u1ebfu' : 'Nh\u1eadp m\u1eadt kh\u1ea9u \u0111\u1ec3 ki\u1ec3m tra \u0111\u1ed9 m\u1ea1nh';
+  label.textContent = pwd.length ? labels[Math.min(score-1,3)] || 'Rất yếu' : 'Nhập mật khẩu để kiểm tra độ mạnh';
   label.style.color = score ? colors[Math.min(score-1,3)] : 'var(--clr-muted)';
 }
 
-/* \u2500\u2500 Toggle password visibility \u2500\u2500 */
+/* ── Toggle password visibility ── */
 function togglePwd(inputId, iconId) {
   const input = document.getElementById(inputId);
   const icon  = document.getElementById(iconId);
@@ -448,7 +448,7 @@ function togglePwd(inputId, iconId) {
 
 document.getElementById('dob').max = new Date().toISOString().split("T")[0];
 
-/* \u2500\u2500 Final submit \u2500\u2500 */
+/* ── Final submit ── */
 document.getElementById('regForm').addEventListener('submit', function(e) {
 
     if (!validateStep1()) {
@@ -473,7 +473,7 @@ document.getElementById('regForm').addEventListener('submit', function(e) {
     setTimeout(() => {
         btn.disabled = true;
         btn.innerHTML =
-            '<i class="fa fa-spinner fa-spin"></i> \u0110ang t\u1ea1o t\u00e0i kho\u1ea3n...';
+            '<i class="fa fa-spinner fa-spin"></i> Đang tạo tài khoản...';
     }, 10);
 });
 </script>
