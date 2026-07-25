@@ -1,4 +1,4 @@
-﻿<%-- 
+<%-- 
     Màn hình 29: Check In Participants - Check-in khách hàng trước khi khởi hành
     Tác giả: Dương Quang Sơn
     MSSV: HE186525

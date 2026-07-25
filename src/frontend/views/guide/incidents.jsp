@@ -1,4 +1,4 @@
-﻿<%-- 
+<%-- 
     Màn hình 43: Report Tour Incident - Ghi nhận & báo cáo sự cố trong tour
     Tác giả: Dương Quang Sơn
     MSSV: HE186525

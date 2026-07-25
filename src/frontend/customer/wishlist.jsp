@@ -1,4 +1,4 @@
-﻿<%-- 
+<%-- 
     Màn hình 15: Manage Favorite Tours - Quản lý danh sách tour yêu thích
     Tác giả: Dương Quang Sơn
     MSSV: HE186525

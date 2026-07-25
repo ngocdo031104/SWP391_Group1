@@ -1,4 +1,4 @@
-﻿<%-- 
+<%-- 
     Màn hình 6: Search and Filter Tours - Tìm kiếm & lọc tour theo điểm đến, ngày, giá, danh mục
     Tác giả: Dương Quang Sơn
     MSSV: HE186525

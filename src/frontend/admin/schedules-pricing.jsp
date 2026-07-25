@@ -1,4 +1,4 @@
-﻿<%-- 
+<%-- 
     Màn hình 21: Manage Tour Schedule and Pricing - Quản lý lịch khởi hành & giá tour
     Tác giả: Dương Quang Sơn
     MSSV: HE186525
