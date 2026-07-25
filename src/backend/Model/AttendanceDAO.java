@@ -22,11 +22,11 @@ public class AttendanceDAO extends DBContext {
     public List<Map<String, Object>> getAttendanceByScheduleId(int scheduleId) {
         List<Map<String, Object>> list = new ArrayList<>();
         String sql = "SELECT bp.ParticipantID, bp.BookingID, bp.FullName, bp.PhoneNumber, bp.Email, bp.AgeType, bp.IsLeader, "
-                   + "       a.CheckedIn, a.CheckInTime, a.Notes "
+                   + "       a.CheckedIn, a.CheckInTime, a.Notes, b.BookingCode, b.Status AS BookingStatus, b.Notes AS BookingNotes "
                    + "FROM BookingParticipant bp "
                    + "JOIN Booking b ON bp.BookingID = b.BookingID "
                    + "LEFT JOIN Attendance a ON bp.ParticipantID = a.ParticipantID AND a.ScheduleID = ? "
-                   + "WHERE b.ScheduleID = ? AND b.Status != 'Cancelled'";
+                   + "WHERE b.ScheduleID = ?";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, scheduleId);
@@ -41,6 +41,9 @@ public class AttendanceDAO extends DBContext {
                     map.put("email", rs.getString("Email"));
                     map.put("ageType", rs.getString("AgeType"));
                     map.put("isLeader", rs.getBoolean("IsLeader"));
+                    map.put("bookingCode", rs.getString("BookingCode"));
+                    map.put("bookingStatus", rs.getString("BookingStatus"));
+                    map.put("bookingNotes", rs.getString("BookingNotes"));
                     
                     // Boolean CheckedIn (bit trong database)
                     // Nếu LEFT JOIN không có bản ghi thì CheckedIn là false

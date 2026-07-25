@@ -1,6 +1,6 @@
 <%-- 
-    Li&#234;n quan &#273;&#7871;n UCs: Admin Management
-    T&#225;c gi&#7843;: &#272;&#7895; V&#361; Minh Ng&#7885;c
+    Liên quan đến UCs: Admin Management
+    Tác giả: Đỗ Vũ Minh Ngọc
     MSSV: HE182479
 --%>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
@@ -20,7 +20,7 @@
     <link href="${pageContext.request.contextPath}/css/admin-dashboard.css?v=2.3" rel="stylesheet">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/tb-ui.css?v=1.0">
 
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-space-overrides.css?v=1.0">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-space-overrides.css?v=1.2">
     <style>
         .badge-review { background-color: #ffc107; color: #212529; }
         .badge-suspicious { background-color: #dc3545; }

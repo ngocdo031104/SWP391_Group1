@@ -1,6 +1,6 @@
-&#65279;<%-- 
-    Li&#234;n quan &#273;&#7871;n UCs: Manage Roles and Permissions
-    T&#225;c gi&#7843;: &#272;&#7895; V&#361; Minh Ng&#7885;c
+<%-- 
+    Liên quan đến UCs: Manage Roles and Permissions
+    Tác giả: Đỗ Vũ Minh Ngọc
     MSSV: HE182479
 --%>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
@@ -59,7 +59,7 @@
         }
     </style>
 
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-space-overrides.css?v=1.0">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-space-overrides.css?v=1.2">
 </head>
 <body class="dashboard-body tb-cosmic">
 

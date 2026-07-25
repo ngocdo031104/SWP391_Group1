@@ -1,3 +1,9 @@
+/*
+ * Màn hình 36: View Guest List and Check-in - Quản lý danh sách hành khách và Check-in (Staff)
+ * Tác giả: Dương Quang Sơn
+ * MSSV: HE186525
+ * Ngày tạo: 2026-07-21
+ */
 package Controller.admin;
 
 import Entities.User;
@@ -19,6 +25,13 @@ import jakarta.servlet.http.HttpSession;
 @WebServlet(name = "StaffGuestListController", urlPatterns = {"/staff/guests"})
 public class StaffGuestListController extends HttpServlet {
 
+    /**
+     * Xử lý yêu cầu HTTP GET.
+     * 1. Xác thực quyền nhân viên (Staff/Admin).
+     * 2. Nếu có tham số action = "details" và scheduleId, lấy danh sách hành khách và thông tin điểm danh (check-in) cho chuyến đi cụ thể.
+     * 3. Mặc định (action không truyền hoặc rỗng): lấy danh sách tất cả các Booking có lịch khởi hành để hiển thị.
+     * 4. Điều hướng tới JSP hiển thị tương ứng.
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -38,8 +51,8 @@ public class StaffGuestListController extends HttpServlet {
         TourScheduleDAO scheduleDAO = new TourScheduleDAO();
 
         try {
+            // Xem chi tiết danh sách hành khách của 1 lịch khởi hành
             if (action != null && "details".equals(action) && scheduleIdStr != null && !scheduleIdStr.isEmpty()) {
-                // Hiển thị danh sách khách của một schedule
                 try {
                     int scheduleId = Integer.parseInt(scheduleIdStr);
                     List<Map<String, Object>> participants = attendanceDAO.getAttendanceByScheduleId(scheduleId);
@@ -57,6 +70,7 @@ public class StaffGuestListController extends HttpServlet {
                         });
                     }
 
+                    // Tính toán số lượng hành khách đã điểm danh check-in
                     int totalCount = participants.size();
                     int checkedInCount = 0;
                     for (Map<String, Object> p : participants) {
@@ -72,7 +86,7 @@ public class StaffGuestListController extends HttpServlet {
                     request.getRequestDispatcher("/views/staff/guest-list.jsp").forward(request, response);
                     return;
                 } catch (NumberFormatException e) {
-                    // Fall through to redirect
+                    // Xử lý khi ID sai định dạng
                 }
             }
 
@@ -88,6 +102,9 @@ public class StaffGuestListController extends HttpServlet {
         }
     }
 
+    /**
+     * Helper kiểm tra quyền của Staff hoặc Admin.
+     */
     private boolean isAuthorized(HttpSession session) {
         if (session == null) return false;
         User user = (User) session.getAttribute("sessionUser");

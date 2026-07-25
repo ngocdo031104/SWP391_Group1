@@ -22,6 +22,13 @@ import jakarta.servlet.http.HttpSession;
 @WebServlet(name = "StaffOperationLogsController", urlPatterns = {"/staff/operation-logs"})
 public class StaffOperationLogsController extends HttpServlet {
 
+    /**
+     * Xử lý yêu cầu HTTP GET.
+     * 1. Xác thực quyền nhân viên (Staff/Admin).
+     * 2. Phân trang nhật ký: Đọc tham số "page", tính toán vị trí offset.
+     * 3. Lấy danh sách nhật ký vận hành tour (TourOperationLog) được phân trang và tổng số lượng log.
+     * 4. Gắn dữ liệu vào request attributes và chuyển tiếp tới JSP hiển thị.
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -69,6 +76,9 @@ public class StaffOperationLogsController extends HttpServlet {
         }
     }
 
+    /**
+     * Helper xác thực người dùng đăng nhập là Nhân viên (Staff) hoặc Admin.
+     */
     private boolean isAuthorized(HttpSession session) {
         if (session == null) return false;
         User user = (User) session.getAttribute("sessionUser");

@@ -1,5 +1,10 @@
+<%-- 
+    Màn hình 7: Manage Tours - Quản lý tour / Dashboard Admin
+    Tác giả: Dương Quang Sơn
+    MSSV: HE186525
+    Ngày tạo: 2026-07-21
+--%>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
-
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt"  prefix="fmt" %>
 <c:if test="${empty sessionUser || (sessionUser.roleId ne 1 && userRole ne 'Admin')}">
@@ -22,7 +27,7 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-space-overrides.css?v=1.1">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-space-overrides.css?v=1.2">
 </head>
 <body class="dashboard-body tb-cosmic">
 
