@@ -801,17 +801,63 @@
 
                             function viewDetails(scheduleId) {
                                 const content = document.getElementById('detail-content');
-                                content.innerHTML = '<div style="text-align:center;padding:40px;"><i data-lucide="loader-2" class="animate-spin" style="width:32px;height:32px;color:var(--primary);"></i></div>';
+                                content.innerHTML = '<div style="text-align:center;padding:40px;"><i data-lucide="loader-2" class="spin" style="width:32px;height:32px;color:var(--primary);"></i><p style="margin-top:12px;color:var(--gray-500);">Đang tải chi tiết...</p></div>';
                                 document.getElementById('detailModal').classList.add('open');
-                                lucide.createIcons();
+                                if (window.lucide) lucide.createIcons();
 
-                                fetch('${pageContext.request.contextPath}/staff/tour-assignments?action=details&scheduleId=' + scheduleId)
-                                    .then(res => res.text())
-                                    .then(html => {
-                                        content.innerHTML = '<div style="padding:20px;text-align:center;color:var(--gray-500);">Đang tải...</div>';
+                                fetch('${pageContext.request.contextPath}/staff/tour-assignments?action=details&scheduleId=' + scheduleId + '&_t=' + Date.now())
+                                    .then(async res => {
+                                        if (!res.ok) {
+                                            const txt = await res.text();
+                                            throw new Error('HTTP ' + res.status + ': ' + txt);
+                                        }
+                                        return res.json();
+                                    })
+                                    .then(data => {
+                                        if (data.status === 'success') {
+                                            const bookedSeats = (data.totalSeats || 0) - (data.availableSeats || 0);
+                                            content.innerHTML = `
+                                                <div style="display:flex;flex-direction:column;gap:16px;">
+                                                    <div style="background:var(--gray-50);padding:16px;border-radius:12px;border:1px solid var(--gray-200);">
+                                                        <h4 style="margin:0 0 8px 0;color:var(--gray-900);font-size:16px;font-weight:700;">\${data.tourName}</h4>
+                                                        <div style="font-size:13px;color:var(--gray-600);display:flex;gap:16px;flex-wrap:wrap;">
+                                                            <span>📅 Khởi hành: <strong>\${formatDate(data.departureDate)}</strong></span>
+                                                            <span>🏁 Kết thúc: <strong>\${formatDate(data.returnDate)}</strong></span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                                                        <div style="padding:12px;border:1px solid var(--gray-200);border-radius:8px;">
+                                                            <div style="font-size:12px;color:var(--gray-500);">Hướng Dẫn Viên</div>
+                                                            <div style="font-weight:600;font-size:14px;color:var(--primary);margin-top:4px;">\${data.guideName || 'Chưa phân công'}</div>
+                                                        </div>
+                                                        <div style="padding:12px;border:1px solid var(--gray-200);border-radius:8px;">
+                                                            <div style="font-size:12px;color:var(--gray-500);">Người Phân Công</div>
+                                                            <div style="font-weight:600;font-size:14px;color:var(--gray-800);margin-top:4px;">\${data.assignedByName || 'Hệ thống'}</div>
+                                                        </div>
+                                                        <div style="padding:12px;border:1px solid var(--gray-200);border-radius:8px;">
+                                                            <div style="font-size:12px;color:var(--gray-500);">Sức Chứa / Đặt Chỗ</div>
+                                                            <div style="font-weight:600;font-size:14px;color:var(--gray-800);margin-top:4px;">\${bookedSeats}/\${data.totalSeats || 0} Ghế</div>
+                                                        </div>
+                                                        <div style="padding:12px;border:1px solid var(--gray-200);border-radius:8px;">
+                                                            <div style="font-size:12px;color:var(--gray-500);">Thời Gian Phân Công</div>
+                                                            <div style="font-weight:600;font-size:13px;color:var(--gray-800);margin-top:4px;">\${data.assignedAt || 'N/A'}</div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div style="padding:12px;border:1px solid var(--gray-200);border-radius:8px;background:var(--gray-50);">
+                                                        <div style="font-size:12px;color:var(--gray-500);margin-bottom:4px;">Chỉ dẫn / Ghi chú phân công:</div>
+                                                        <div style="font-size:13px;color:var(--gray-700);font-style:italic;">\${data.notes ? data.notes : 'Không có ghi chú thêm.'}</div>
+                                                    </div>
+                                                </div>
+                                            `;
+                                        } else {
+                                            content.innerHTML = '<div style="padding:20px;color:var(--danger);text-align:center;">' + (data.message || 'Không thể tải chi tiết') + '</div>';
+                                        }
                                     })
                                     .catch(err => {
-                                        content.innerHTML = '<div style="padding:20px;color:var(--danger);">Lỗi khi tải chi tiết</div>';
+                                        console.error('Fetch error:', err);
+                                        content.innerHTML = '<div style="padding:20px;color:var(--danger);text-align:center;">Lỗi kết nối khi tải chi tiết phân công (' + err.message + ')</div>';
                                     });
                             }
 

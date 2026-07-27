@@ -200,11 +200,13 @@
 
 <script>
     function toggleCheckIn(participantId) {
-        const btn = document.getElementById(`btn-checkin-${participantId}`);
+        const btn = document.getElementById("btn-checkin-" + participantId);
+        if (!btn) return;
         const isChecked = btn.getAttribute("data-checked") === "true";
         const newChecked = !isChecked;
-        const notes = document.getElementById(`notes-${participantId}`).value;
-        const scheduleId = ${assignment.scheduleId};
+        const notesInput = document.getElementById("notes-" + participantId);
+        const notes = notesInput ? notesInput.value : "";
+        const scheduleId = ${not empty assignment ? assignment.scheduleId : (not empty param.scheduleId ? param.scheduleId : 0)};
         
         const params = new URLSearchParams();
         params.append("action", "checkin");
@@ -213,7 +215,7 @@
         params.append("checkedIn", newChecked);
         params.append("notes", notes);
         
-        fetch(`${pageContext.request.contextPath}/guide/dashboard`, {
+        fetch('${pageContext.request.contextPath}/guide/dashboard', {
             method: "POST",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded"
@@ -227,19 +229,21 @@
                 btn.innerText = newChecked ? "Hủy check-in" : "Điểm danh";
                 btn.style.background = newChecked ? "#ef4444" : "#10b981";
                 
-                const statusCell = document.getElementById(`status-cell-${participantId}`);
-                if (newChecked) {
-                    statusCell.innerHTML = `
-                        <span class="badge-status checked-in" style="background: #d1fae5; color: #065f46; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; display: inline-flex; align-items: center; gap: 4px;">
-                            <i class="fa fa-circle-check"></i> Đã check-in (` + data.checkInTime + `)
-                        </span>
-                    `;
-                } else {
-                    statusCell.innerHTML = `
-                        <span class="badge-status pending" style="background: #f1f5f9; color: #64748b; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; display: inline-flex; align-items: center; gap: 4px;">
-                            <i class="fa-regular fa-clock"></i> Chưa điểm danh
-                        </span>
-                    `;
+                const statusCell = document.getElementById("status-cell-" + participantId);
+                if (statusCell) {
+                    if (newChecked) {
+                        statusCell.innerHTML = `
+                            <span class="badge-status checked-in" style="background: #d1fae5; color: #065f46; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; display: inline-flex; align-items: center; gap: 4px;">
+                                <i class="fa fa-circle-check"></i> Đã check-in (` + (data.checkInTime || '') + `)
+                            </span>
+                        `;
+                    } else {
+                        statusCell.innerHTML = `
+                            <span class="badge-status pending" style="background: #f1f5f9; color: #64748b; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; display: inline-flex; align-items: center; gap: 4px;">
+                                <i class="fa-regular fa-clock"></i> Chưa điểm danh
+                            </span>
+                        `;
+                    }
                 }
                 updateProgress();
             } else {
@@ -253,8 +257,9 @@
     }
 
     function saveNotes(participantId) {
-        const notes = document.getElementById(`notes-${participantId}`).value;
-        const scheduleId = ${assignment.scheduleId};
+        const notesInput = document.getElementById("notes-" + participantId);
+        const notes = notesInput ? notesInput.value : "";
+        const scheduleId = ${not empty assignment ? assignment.scheduleId : (not empty param.scheduleId ? param.scheduleId : 0)};
         
         const params = new URLSearchParams();
         params.append("action", "updateNotes");
@@ -262,7 +267,7 @@
         params.append("participantId", participantId);
         params.append("notes", notes);
         
-        fetch(`${pageContext.request.contextPath}/guide/dashboard`, {
+        fetch('${pageContext.request.contextPath}/guide/dashboard', {
             method: "POST",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded"

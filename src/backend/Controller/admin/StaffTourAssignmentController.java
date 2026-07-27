@@ -73,26 +73,72 @@ public class StaffTourAssignmentController extends HttpServlet {
                 request.setAttribute("assignments", assignments);
                 request.getRequestDispatcher("/views/staff/tour-assignments.jsp").forward(request, response);
 
-            // Hiển thị chi tiết phân công cho một scheduleId cụ thể
+            // Hiển thị chi tiết phân công dạng JSON cho AJAX Modal
             } else if ("details".equals(action)) {
                 String scheduleIdStr = request.getParameter("scheduleId");
-                if (scheduleIdStr != null && !scheduleIdStr.isEmpty()) {
-                    try {
+                response.setContentType("application/json;charset=UTF-8");
+                JsonObject json = new JsonObject();
+                try {
+                    if (scheduleIdStr != null && !scheduleIdStr.isEmpty()) {
                         int scheduleId = Integer.parseInt(scheduleIdStr);
                         TourSchedule schedule = scheduleDAO.getScheduleById(scheduleId);
-                        List<GuideProfile> guides = guideDAO.getAllGuides();
-                        List<TourAssignment> assignments = guideDAO.getAssignmentsByScheduleId(scheduleId);
 
-                        request.setAttribute("schedule", schedule);
-                        request.setAttribute("guides", guides);
-                        request.setAttribute("assignments", assignments);
-                        request.getRequestDispatcher("/views/staff/tour-assignments.jsp").forward(request, response);
-                        return;
-                    } catch (NumberFormatException e) {
-                        // Bỏ qua lỗi định dạng và quay về trang danh sách chính
+                        if (schedule != null) {
+                            List<TourAssignment> assignments = null;
+                            try {
+                                assignments = guideDAO.getAssignmentsByScheduleId(scheduleId);
+                            } catch (Exception ex) {
+                                LOGGER.log(Level.WARNING, "Lỗi khi lấy assignments cho scheduleId=" + scheduleId, ex);
+                            }
+
+                            json.addProperty("status", "success");
+                            json.addProperty("scheduleId", schedule.getScheduleId());
+                            json.addProperty("tourName", (schedule.getTour() != null && schedule.getTour().getTourName() != null) ? schedule.getTour().getTourName() : "Tour #" + scheduleId);
+                            json.addProperty("departureDate", schedule.getDepartureDate() != null ? schedule.getDepartureDate().toString() : "");
+                            json.addProperty("returnDate", schedule.getReturnDate() != null ? schedule.getReturnDate().toString() : "");
+                            json.addProperty("statusName", schedule.getStatus() != null ? schedule.getStatus() : "");
+                            json.addProperty("priceAdult", schedule.getPriceAdult());
+                            json.addProperty("totalSeats", schedule.getTotalSeats());
+                            json.addProperty("availableSeats", schedule.getAvailableSeats());
+
+                            if (assignments != null && !assignments.isEmpty()) {
+                                TourAssignment ta = assignments.get(0);
+                                json.addProperty("guideName", (ta.getGuide() != null && ta.getGuide().getFullName() != null) ? ta.getGuide().getFullName() : "Chưa phân công");
+                                json.addProperty("assignedByName", ta.getAssignedByName() != null ? ta.getAssignedByName() : "Hệ thống");
+                                String assignedAtStr = "";
+                                if (ta.getAssignedAt() != null) {
+                                    try {
+                                        assignedAtStr = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(ta.getAssignedAt());
+                                    } catch (Exception ex) {
+                                        assignedAtStr = ta.getAssignedAt().toString();
+                                    }
+                                }
+                                json.addProperty("assignedAt", assignedAtStr);
+                                json.addProperty("notes", ta.getNotes() != null ? ta.getNotes() : "");
+                            } else {
+                                json.addProperty("guideName", "Chưa phân công");
+                                json.addProperty("assignedByName", "Chưa có");
+                                json.addProperty("assignedAt", "");
+                                json.addProperty("notes", "Chưa có phân công cho lịch trình này.");
+                            }
+                        } else {
+                            json.addProperty("status", "error");
+                            json.addProperty("message", "Không tìm thấy thông tin lịch khởi hành!");
+                        }
+                    } else {
+                        json.addProperty("status", "error");
+                        json.addProperty("message", "Thiếu mã lịch trình!");
                     }
+                } catch (Exception e) {
+                    LOGGER.log(Level.SEVERE, "Lỗi khi tải chi tiết phân công", e);
+                    json.addProperty("status", "error");
+                    json.addProperty("message", "Lỗi máy chủ: " + e.getMessage());
                 }
-                response.sendRedirect(request.getContextPath() + "/staff/tour-assignments");
+
+                try (PrintWriter out = response.getWriter()) {
+                    out.print(json.toString());
+                }
+                return;
             } else {
                 response.sendRedirect(request.getContextPath() + "/staff/tour-assignments");
             }
