@@ -445,8 +445,34 @@
                         <% 
                             isLoggedIn = (session.getAttribute("sessionUser") != null);
                             User currentUser = isLoggedIn ? (User) session.getAttribute("sessionUser") : null;
-                            if (isLoggedIn && currentUser != null) {
+                            Boolean hasCompletedBookingObj = (Boolean) request.getAttribute("hasCompletedBooking");
+                            Boolean hasUserReviewedObj = (Boolean) request.getAttribute("hasUserReviewed");
+                            boolean hasCompletedBooking = hasCompletedBookingObj != null && hasCompletedBookingObj;
+                            boolean hasUserReviewed = hasUserReviewedObj != null && hasUserReviewedObj;
+
+                            if (!isLoggedIn) {
                         %>
+                            <div class="login-to-review-wrapper" style="text-align: center; padding: 2rem 1.5rem; background: var(--slate-900); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: var(--radius-md); margin-top: 1rem;">
+                                <i data-lucide="lock" style="width: 2.5rem; height: 2.5rem; color: var(--warning-amber); margin-bottom: 0.75rem; display: block; margin-left: auto; margin-right: auto;"></i>
+                                <h4 style="color: var(--text-light); margin-bottom: 0.5rem; font-weight: 600;">Đánh Giá Dành Cho Khách Trải Nghiệm</h4>
+                                <p style="margin-bottom: 1.25rem; color: var(--slate-400); font-size: 0.9rem;">Vui lòng đăng nhập tài khoản và hoàn thành tour du lịch này để chia sẻ nhận xét thực tế của bạn.</p>
+                                <a href="${pageContext.request.contextPath}/login" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.65rem 1.25rem; border-radius: 8px;">
+                                    <i data-lucide="log-in" style="width: 1.1rem; height: 1.1rem;"></i> Đăng Nhập Để Đánh Giá
+                                </a>
+                            </div>
+                        <% } else if (hasUserReviewed) { %>
+                            <div class="login-to-review-wrapper" style="text-align: center; padding: 2rem 1.5rem; background: rgba(34, 197, 94, 0.08); border: 1px solid rgba(34, 197, 94, 0.25); border-radius: var(--radius-md); margin-top: 1rem;">
+                                <i data-lucide="check-circle-2" style="width: 2.5rem; height: 2.5rem; color: #22c55e; margin-bottom: 0.75rem; display: block; margin-left: auto; margin-right: auto;"></i>
+                                <h4 style="color: #22c55e; margin-bottom: 0.5rem; font-weight: 600;">Cảm Ơn Đánh Giá Của Bạn!</h4>
+                                <p style="color: var(--slate-300); font-size: 0.9rem; margin-bottom: 0;">Bạn đã gửi nhận xét đánh giá cho hành trình này. Nhận xét thực tế của bạn giúp cộng đồng có góc nhìn khách quan hơn.</p>
+                            </div>
+                        <% } else if (!hasCompletedBooking) { %>
+                            <div class="login-to-review-wrapper" style="text-align: center; padding: 2rem 1.5rem; background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: var(--radius-md); margin-top: 1rem;">
+                                <i data-lucide="shield-alert" style="width: 2.5rem; height: 2.5rem; color: #f59e0b; margin-bottom: 0.75rem; display: block; margin-left: auto; margin-right: auto;"></i>
+                                <h4 style="color: #f59e0b; margin-bottom: 0.5rem; font-weight: 600;">Chưa Thể Đánh Giá Hành Trình</h4>
+                                <p style="color: var(--slate-300); font-size: 0.9rem; margin-bottom: 0; line-height: 1.5;">Để chống bình luận rác (spam) và đảm bảo tính minh bạch, chỉ những khách hàng đã đăng ký và <strong>hoàn thành chuyến đi này</strong> (Trạng thái: Completed) mới có thể gửi bình luận đánh giá.</p>
+                            </div>
+                        <% } else { %>
                             <p>Ý kiến của bạn giúp cộng đồng du lịch có thêm những quyết định đúng đắn.</p>
                             
                             <form class="add-review-form" id="new-review-form" action="${pageContext.request.contextPath}/detail" method="POST" enctype="multipart/form-data">
@@ -469,11 +495,11 @@
                                 <div class="form-grid">
                                     <div class="form-group">
                                         <label for="rev-name">Họ & Tên *</label>
-                                        <input type="text" id="rev-name" name="name" value="<%= currentUser.getFullName() %>" readonly style="background-color: var(--slate-100); cursor: not-allowed;" required>
+                                        <input type="text" id="rev-name" name="name" value="<%= currentUser != null ? currentUser.getFullName() : "" %>" readonly style="background-color: var(--slate-100); cursor: not-allowed;" required>
                                     </div>
                                     <div class="form-group">
                                         <label for="rev-email">Email (Sẽ được ẩn) *</label>
-                                        <input type="email" id="rev-email" name="email" value="<%= currentUser.getEmail() %>" readonly style="background-color: var(--slate-100); cursor: not-allowed;" required>
+                                        <input type="email" id="rev-email" name="email" value="<%= currentUser != null ? currentUser.getEmail() : "" %>" readonly style="background-color: var(--slate-100); cursor: not-allowed;" required>
                                     </div>
                                 </div>
 
@@ -482,26 +508,10 @@
                                     <textarea id="rev-text" name="content" rows="4" placeholder="Chia sẻ về lịch trình, dịch vụ ăn uống, hướng dẫn viên và phương tiện di chuyển..." required></textarea>
                                 </div>
 
-                                <div class="form-group">
-                                    <label>Tải lên hình ảnh chuyến đi</label>
-                                    <div class="upload-simulator-btn" id="upload-sim-btn">
-                                        <i data-lucide="camera"></i>
-                                        <span>Chọn hình ảnh từ thiết bị của bạn</span>
-                                    </div>
-                                    <input type="file" id="review-image-input" name="reviewImage" accept="image/*" style="display: none;">
-                                    <div class="uploaded-images-preview" id="uploaded-images-preview-row"></div>
-                                </div>
+
 
                                 <button type="submit" class="btn btn-primary">Gửi Đánh Giá</button>
                             </form>
-                        <% } else { %>
-                            <div class="login-to-review-wrapper" style="text-align: center; padding: 2rem 1rem;">
-                                <i data-lucide="message-square" style="width: 3rem; height: 3rem; color: var(--slate-400); margin-bottom: 1rem; display: block; margin-left: auto; margin-right: auto;"></i>
-                                <p style="margin-bottom: 1.5rem; color: var(--slate-600);">Vui lòng đăng nhập tài khoản để gửi đánh giá và chia sẻ trải nghiệm chuyến đi của bạn.</p>
-                                <a href="${pageContext.request.contextPath}/login" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; border-radius: 8px;">
-                                    <i data-lucide="log-in" style="width: 1.25rem; height: 1.25rem;"></i> Đăng Nhập Để Đánh Giá
-                                </a>
-                            </div>
                         <% } %>
                     </div>
                 </div>

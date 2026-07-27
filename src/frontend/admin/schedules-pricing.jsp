@@ -474,15 +474,15 @@
                             <td>
                                 <div class="price-tag-group">
                                     <div class="price-row">
-                                        <span class="price-type">L?n:</span>
+                                        <span class="price-type">Lớn:</span>
                                         <span class="price-amount">\${formatVND(s.priceAdult)}</span>
                                     </div>
                                     <div class="price-row">
-                                        <span class="price-type">Tr? em:</span>
+                                        <span class="price-type">Trẻ em:</span>
                                         <span class="price-amount">\${formatVND(s.priceChild)}</span>
                                     </div>
                                     <div class="price-row">
-                                        <span class="price-type">So sinh:</span>
+                                        <span class="price-type">Sơ sinh:</span>
                                         <span class="price-amount">\${formatVND(s.priceInfant)}</span>
                                     </div>
                                 </div>
