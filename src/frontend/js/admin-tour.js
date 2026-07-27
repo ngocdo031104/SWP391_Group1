@@ -30,7 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Confirm Modal
     const confirmModal = document.getElementById('confirm-modal');
     const confirmCancelBtn = document.getElementById('confirm-cancel');
-    const confirmDeleteBtn = document.getElementById('confirm-delete');
+    const confirmSoftDeleteBtn = document.getElementById('confirm-soft-delete');
+    const confirmHardDeleteBtn = document.getElementById('confirm-hard-delete');
 
     // Inclusions Selectors
     const inclusionsInputsList = document.getElementById('inclusions-inputs-list');
@@ -334,72 +335,86 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Delete Button Click
         toursTableBody.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                tourIdToDelete = parseInt(btn.getAttribute('data-id'));
-                openConfirmModal();
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const id = parseInt(btn.getAttribute('data-id'), 10);
+                if (id && !isNaN(id)) {
+                    tourIdToDelete = id;
+                    if (confirmSoftDeleteBtn) confirmSoftDeleteBtn.setAttribute('data-id', id);
+                    if (confirmHardDeleteBtn) confirmHardDeleteBtn.setAttribute('data-id', id);
+                    openConfirmModal();
+                } else {
+                    console.error('Không tìm thấy data-id trên nút xóa tour:', btn);
+                }
             });
         });
     }
 
-    /* \u2500\u2500 Toggle Status AJAX Call \u2500\u2500 */
+    /* ── Toggle Status AJAX Call ── */
     function toggleTourStatus(tourId, newStatus) {
         const params = new URLSearchParams();
         params.append('action', 'toggle-status');
         params.append('tourId', tourId);
         params.append('status', newStatus);
 
-        fetch('tours', {
+        fetch(window.location.pathname, {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
             body: params.toString()
         })
         .then(res => {
-            if (!res.ok) throw new Error('Ph\u1ea3n h\u1ed3i m\u1ea1ng kh\u00f4ng h\u1ee3p l\u1ec7');
+            if (!res.ok) throw new Error('Phản hồi mạng không hợp lệ (' + res.status + ')');
             return res.json();
         })
         .then(data => {
             if (data.status === 'success') {
-                showToast(data.message || 'C\u1eadp nh\u1eadt tr\u1ea1ng th\u00e1i th\u00e0nh c\u00f4ng!');
+                showToast(data.message || 'Cập nhật trạng thái thành công!');
                 fetchTours();
             } else {
-                showToast(data.message || 'L\u1ed7i c\u1eadp nh\u1eadt tr\u1ea1ng th\u00e1i', 'error');
+                showToast(data.message || 'Lỗi cập nhật trạng thái', 'error');
             }
         })
         .catch(err => {
             console.error(err);
-            showToast('L\u1ed7i k\u1ebft n\u1ed1i m\u00e1y ch\u1ee7', 'error');
+            showToast('Lỗi kết nối máy chủ', 'error');
         });
     }
 
-    /* \u2500\u2500 Delete Tour AJAX Call \u2500\u2500 */
-    function performDeleteTour(tourId) {
+    /* ── Delete Tour AJAX Call (Hỗ trợ soft-delete và hard-delete) ── */
+    function performDeleteTour(tourId, deleteAction = 'soft-delete') {
+        if (!tourId || isNaN(tourId)) {
+            showToast('Không xác định được ID tour cần xử lý', 'error');
+            return;
+        }
+
         const params = new URLSearchParams();
-        params.append('action', 'delete');
+        params.append('action', deleteAction);
         params.append('tourId', tourId);
 
-        fetch('tours', {
+        fetch(window.location.pathname, {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
             body: params.toString()
         })
         .then(res => {
-            if (!res.ok) throw new Error('Ph\u1ea3n h\u1ed3i m\u1ea1ng kh\u00f4ng h\u1ee3p l\u1ec7');
+            if (!res.ok) throw new Error('Phản hồi từ máy chủ không hợp lệ (' + res.status + ')');
             return res.json();
         })
         .then(data => {
+            closeConfirmModal();
             if (data.status === 'success') {
-                showToast(data.message || 'X\u00f3a tour th\u00e0nh c\u00f4ng!');
-                closeConfirmModal();
+                showToast(data.message || 'Đã xử lý tour thành công!', 'success');
                 fetchTours();
             } else {
-                showToast(data.message || 'L\u1ed7i khi x\u00f3a tour', 'error');
-                closeConfirmModal();
+                showToast(data.message || 'Không thể xử lý tour này', 'error');
+                // Nếu báo lỗi (do tour đang có khách đặt), hiển thị thông báo alert trực tiếp
+                alert(data.message || 'Không thể xóa vĩnh viễn tour này vì đã có khách đặt chỗ (booking)!');
             }
         })
         .catch(err => {
-            console.error(err);
-            showToast('L\u1ed7i k\u1ebft n\u1ed1i m\u00e1y ch\u1ee7 khi x\u00f3a tour', 'error');
+            console.error('Lỗi khi xử lý tour:', err);
             closeConfirmModal();
+            showToast('Lỗi kết nối máy chủ khi xử lý tour', 'error');
         });
     }
 
@@ -616,11 +631,33 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target === confirmModal) closeConfirmModal();
     });
 
-    confirmDeleteBtn.addEventListener('click', () => {
-        if (tourIdToDelete) {
-            performDeleteTour(tourIdToDelete);
-        }
-    });
+    if (confirmSoftDeleteBtn) {
+        confirmSoftDeleteBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = tourIdToDelete || parseInt(confirmSoftDeleteBtn.getAttribute('data-id'), 10);
+            if (targetId && !isNaN(targetId) && targetId > 0) {
+                performDeleteTour(targetId, 'soft-delete');
+            } else {
+                console.error('Không tìm thấy tourIdToDelete hợp lệ:', tourIdToDelete);
+                showToast('Không thể xác định tour cần xử lý', 'error');
+                closeConfirmModal();
+            }
+        });
+    }
+
+    if (confirmHardDeleteBtn) {
+        confirmHardDeleteBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = tourIdToDelete || parseInt(confirmHardDeleteBtn.getAttribute('data-id'), 10);
+            if (targetId && !isNaN(targetId) && targetId > 0) {
+                performDeleteTour(targetId, 'hard-delete');
+            } else {
+                console.error('Không tìm thấy tourIdToDelete hợp lệ:', tourIdToDelete);
+                showToast('Không thể xác định tour cần xử lý', 'error');
+                closeConfirmModal();
+            }
+        });
+    }
 
     function openConfirmModal() {
         confirmModal.classList.add('open');

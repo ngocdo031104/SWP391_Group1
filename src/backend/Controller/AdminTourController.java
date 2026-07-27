@@ -401,25 +401,57 @@ public class AdminTourController extends HttpServlet {
                 }
                 
             } 
-            // 3. Xử lý yêu cầu Xóa Tour
-            else if ("delete".equalsIgnoreCase(action)) {
+            // 3. Xử lý yêu cầu Xóa Tour (Tạm ngưng hoặc Xóa vĩnh viễn)
+            else if ("delete".equalsIgnoreCase(action) || "soft-delete".equalsIgnoreCase(action)) {
                 int tourId = parseInt(request.getParameter("tourId"), 0);
-                // DAO thực hiện transaction xóa + cascade các bảng liên quan (inclusion, itinerary, ...)
-                // Trả false nếu có ràng buộc FK (booking, schedule đang tham chiếu)
-                boolean success = tourDAO.deleteTour(tourId);
                 Gson gson = new Gson();
                 try (PrintWriter out = response.getWriter()) {
                     JsonObject resp = new JsonObject();
-                    if (success) {
-                        resp.addProperty("status", "success");
-                        resp.addProperty("message", "Xóa tour thành công!");
-                    } else {
+                    if (tourId <= 0) {
                         resp.addProperty("status", "error");
-                        resp.addProperty("message", "Không thể xóa tour (tour này có thể đang có lịch trình hoặc đơn đặt).");
+                        resp.addProperty("message", "ID tour không hợp lệ.");
+                    } else {
+                        // Chuyển status tour sang 'Inactive' (IsDeleted = 0) để tạm ngưng & ẩn khỏi website công khai
+                        boolean success = tourDAO.deleteTour(tourId);
+                        if (success) {
+                            resp.addProperty("status", "success");
+                            resp.addProperty("message", "Đã chuyển tour sang trạng thái Tạm Ngưng và ẩn khỏi website công khai!");
+                        } else {
+                            resp.addProperty("status", "error");
+                            resp.addProperty("message", "Không thể cập nhật trạng thái tour.");
+                        }
                     }
                     out.print(gson.toJson(resp));
                 }
                 
+            } else if ("hard-delete".equalsIgnoreCase(action) || "permanent-delete".equalsIgnoreCase(action)) {
+                int tourId = parseInt(request.getParameter("tourId"), 0);
+                Gson gson = new Gson();
+                try (PrintWriter out = response.getWriter()) {
+                    JsonObject resp = new JsonObject();
+                    if (tourId <= 0) {
+                        resp.addProperty("status", "error");
+                        resp.addProperty("message", "ID tour không hợp lệ.");
+                    } else {
+                        boolean hasBookings = tourDAO.hasBookings(tourId);
+                        if (hasBookings) {
+                            // Tour đã có lượt book -> TỪ CHỐI XÓA VĨNH VIỄN. Chỉ cho phép ngưng hoạt động (soft-delete)
+                            resp.addProperty("status", "error");
+                            resp.addProperty("message", "Không thể xóa vĩnh viễn tour này vì đã có khách đặt chỗ (booking)! Tour này chỉ được phép chuyển sang trạng thái Tạm Ngưng.");
+                        } else {
+                            // Tour chưa từng có lượt book -> Xóa sạch hoàn toàn dữ liệu khỏi Database
+                            boolean success = tourDAO.hardDeleteTour(tourId);
+                            if (success) {
+                                resp.addProperty("status", "success");
+                                resp.addProperty("message", "Đã xóa vĩnh viễn tour khỏi cơ sở dữ liệu hệ thống!");
+                            } else {
+                                resp.addProperty("status", "error");
+                                resp.addProperty("message", "Không thể xóa vĩnh viễn tour khỏi CSDL.");
+                            }
+                        }
+                    }
+                    out.print(gson.toJson(resp));
+                }
             } 
             // 4. Thay đổi trạng thái hiển thị nhanh (Bật/Tắt) không cần reload trang
             else if ("toggle-status".equalsIgnoreCase(action)) {

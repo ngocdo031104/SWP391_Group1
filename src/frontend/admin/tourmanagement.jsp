@@ -387,17 +387,38 @@
 
 <!-- Delete Confirmation Modal -->
 <div class="modal-overlay confirm-overlay" id="confirm-modal">
-    <div class="modal-content">
-        <div class="confirm-body">
-            <div class="confirm-icon">
+    <div class="modal-content" style="max-width: 480px;">
+        <div class="confirm-body" style="padding: 1.5rem 1.5rem 1rem;">
+            <div class="confirm-icon" style="margin-bottom: 0.75rem;">
                 <i data-lucide="alert-triangle" style="width: 2.25rem; height: 2.25rem;"></i>
             </div>
+<<<<<<< HEAD
+            <h4>T&#249;y Ch&#7885;n X&#243;a Tour</h4>
+            <p style="margin-bottom: 1rem; font-size: 0.85rem; color: var(--slate-400);">Vui l&#242;ng ch&#7885;n ph&#432;&#417;ng th&#7913;c x&#7917; l&#253; cho tour du l&#7883;ch n&#224;y:</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 0.75rem; text-align: left;">
+                <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: var(--radius-md); padding: 0.75rem 0.9rem;">
+                    <strong style="color: #f59e0b; font-size: 0.85rem; display: block; margin-bottom: 0.2rem;">&#128993; T&#7841;m Ng&#432;ng (&#7849;n kh&#7887;i Web)</strong>
+                    <span style="font-size: 0.8rem; color: var(--slate-400); line-height: 1.3; display: block;">&#7849;n tour kh&#7887;i trang web cho kh&#225;ch, nh&#432;ng v&#7855;n gi&#7919; l&#7841;i trong b&#7843;ng qu&#7843;n l&#253; &#273;&#7875; b&#7853;t l&#78ea;i khi c&#7847;n.</span>
+                </div>
+                <div style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: var(--radius-md); padding: 0.75rem 0.9rem;">
+                    <strong style="color: var(--danger); font-size: 0.85rem; display: block; margin-bottom: 0.2rem;">&#128308; X&#243;a V&#297;nh Vi&#7877;n</strong>
+                    <span style="font-size: 0.8rem; color: var(--slate-400); line-height: 1.3; display: block;">Ch&#7881; cho ph&#233;p x&#243;a v&#297;nh vi&#7877;n kh&#7887;i CSDL n&#7871;u tour ch&#432;a t&#432;&#7853;ng c&#243; ai &#273;&#7863;t. N&#7871;u tour &#273;&#227; c&#243; kh&#225;ch &#273;&#7863;t v&#233;, h&#7879; th&#7889;ng s&#7869; t&#7915; ch&#7889;i x&#243;a v&#297;nh vi&#7877;n.</span>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer" style="padding: 0.75rem 1.5rem 1.5rem; gap: 0.5rem; justify-content: flex-end;">
+            <button type="button" class="btn btn-secondary" style="flex: 1;" id="confirm-cancel">H&#7911;y B&#7887;</button>
+            <button type="button" class="btn" style="flex: 1.2; background-color: #f59e0b; border-color: #f59e0b; color: #fff;" id="confirm-soft-delete">&#128993; T&#7841;m Ng&#432;ng</button>
+            <button type="button" class="btn btn-primary" style="flex: 1.2; background-color: var(--danger); border-color: var(--danger);" id="confirm-hard-delete">&#128308; X&#243;a V&#297;nh Vi&#7877;n</button>
+=======
             <h4>Xác Nhận Xóa Tour?</h4>
             <p>Hành động này sẽ xóa vĩnh viễn tour du lịch khỏi hệ thống và không thể phục hồi. Bạn có chắc chắn muốn tiếp tục?</p>
         </div>
         <div class="modal-footer" style="padding-top: 0;">
             <button class="btn btn-secondary" style="flex: 1;" id="confirm-cancel">Hủy Bỏ</button>
             <button class="btn btn-primary" style="flex: 1; background-color: var(--danger); border-color: var(--danger);" id="confirm-delete">Đồng Ý Xóa</button>
+>>>>>>> 3c06b318bddf73beb7b917f82690536d3e0e38ae
         </div>
     </div>
 </div>
@@ -419,6 +440,6 @@
 }
 </style>
 
-<script src="${pageContext.request.contextPath}/js/admin-tour.js?v=1.3"></script>
+<script src="${pageContext.request.contextPath}/js/admin-tour.js?v=1.7"></script>
 </body>
 </html>

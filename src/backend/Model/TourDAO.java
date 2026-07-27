@@ -1078,10 +1078,26 @@ public class TourDAO extends DBContext {
     }
 
     /**
-     * Deletes a Tour (hard delete).
-     * @param tourId ID of the tour to delete
-     * @return true if successful
+     * HÀM: hasBookings
+     * - Tác dụng: Kiểm tra xem 1 tour có lượt đặt chỗ (Booking) nào hay không (thông qua bảng TourSchedule).
+     * - Tham số: tourId - ID của tour cần kiểm tra.
+     * - Trả về: true nếu có ít nhất 1 booking, false nếu chưa từng có ai đặt.
      */
+    public boolean hasBookings(int tourId) {
+        String sql = "SELECT COUNT(*) FROM Booking b JOIN TourSchedule s ON b.ScheduleID = s.ScheduleID WHERE s.TourID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, tourId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, "hasBookings failed", ex);
+        }
+        return false;
+    }
+
     /**
      * HÀM: deleteTour
      * - Tác dụng: SOFT DELETE - không xóa vật lý, chỉ set Status='Inactive' và IsDeleted=1.
@@ -1090,12 +1106,80 @@ public class TourDAO extends DBContext {
      * - Nối đi đâu: AdminTourController.doPost() với action="delete".
      */
     public boolean deleteTour(int tourId) {
-        String sql = "UPDATE Tour SET Status = 'Inactive', IsDeleted = 1, UpdatedAt = GETDATE() WHERE TourID = ?";
+        String sql = "UPDATE Tour SET Status = 'Inactive', IsDeleted = 0, UpdatedAt = GETDATE() WHERE TourID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, tourId);
             return ps.executeUpdate() > 0;
         } catch (SQLException ex) {
             Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, "deleteTour failed", ex);
+        }
+        return false;
+    }
+
+    /**
+     * HÀM: softDeletePermanent
+     * - Tác dụng: Ẩn vĩnh viễn tour khỏi trang quản lý Admin (IsDeleted = 1) đối với tour đã từng phát sinh booking.
+     */
+    public boolean softDeletePermanent(int tourId) {
+        String sql = "UPDATE Tour SET Status = 'Inactive', IsDeleted = 1, UpdatedAt = GETDATE() WHERE TourID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, tourId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, "softDeletePermanent failed", ex);
+        }
+        return false;
+    }
+
+    /**
+     * HÀM: hardDeleteTour
+     * - Tác dụng: XÓA VĨNH VIỄN 1 tour và tất cả dữ liệu liên quan khỏi CSDL khi tour chưa từng có booking.
+     */
+    public boolean hardDeleteTour(int tourId) {
+        try {
+            connection.setAutoCommit(false); // Bat Transaction
+
+            try (PreparedStatement ps = connection.prepareStatement("DELETE FROM Wishlist WHERE TourID = ?")) {
+                ps.setInt(1, tourId); ps.executeUpdate();
+            }
+            try (PreparedStatement ps = connection.prepareStatement("DELETE FROM TourMedia WHERE TourID = ?")) {
+                ps.setInt(1, tourId); ps.executeUpdate();
+            }
+            try (PreparedStatement ps = connection.prepareStatement("DELETE FROM TourInclusion WHERE TourID = ?")) {
+                ps.setInt(1, tourId); ps.executeUpdate();
+            }
+            try (PreparedStatement ps = connection.prepareStatement("DELETE FROM TourItinerary WHERE TourID = ?")) {
+                ps.setInt(1, tourId); ps.executeUpdate();
+            }
+            try (PreparedStatement ps = connection.prepareStatement("DELETE FROM TourFAQ WHERE TourID = ?")) {
+                ps.setInt(1, tourId); ps.executeUpdate();
+            }
+            try (PreparedStatement ps = connection.prepareStatement("DELETE FROM Review WHERE TourID = ?")) {
+                ps.setInt(1, tourId); ps.executeUpdate();
+            }
+            try (PreparedStatement ps = connection.prepareStatement("DELETE FROM TourSchedule WHERE TourID = ?")) {
+                ps.setInt(1, tourId); ps.executeUpdate();
+            }
+            try (PreparedStatement ps = connection.prepareStatement("DELETE FROM Tour WHERE TourID = ?")) {
+                ps.setInt(1, tourId);
+                int rows = ps.executeUpdate();
+                if (rows == 0) {
+                    connection.rollback();
+                    return false;
+                }
+            }
+
+            connection.commit();
+            return true;
+        } catch (SQLException ex) {
+            try {
+                if (connection != null) connection.rollback();
+            } catch (SQLException rEx) {}
+            Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, "hardDeleteTour failed", ex);
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException ex) {}
         }
         return false;
     }
@@ -1111,7 +1195,7 @@ public class TourDAO extends DBContext {
      * - Nối đi đâu: AdminTourController.doPost() với action="toggle-status".
      */
     public boolean updateTourStatus(int tourId, String status) {
-        String sql = "UPDATE Tour SET Status = ?, UpdatedAt = GETDATE() WHERE TourID = ?";
+        String sql = "UPDATE Tour SET Status = ?, IsDeleted = 0, UpdatedAt = GETDATE() WHERE TourID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, status);
             ps.setInt(2, tourId);
