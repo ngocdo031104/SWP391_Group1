@@ -1,6 +1,6 @@
-&#65279;<%-- Li&#234;n quan &#273;&#7871;n UCs: View Notifications T&#225;c gi&#7843;: &#272;&#7895; V&#361; Minh
-    Ng&#7885;c MSSV: HE182479 --%>
-    &#65279;<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
+﻿<%-- Liên quan đến UCs: View Notifications Tác giả: Đỗ Vũ Minh
+    Ngọc MSSV: HE182479 --%>
+    ﻿<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
         <%@taglib prefix="c" uri="jakarta.tags.core" %>
             <%@taglib prefix="fmt" uri="jakarta.tags.fmt" %>
                 <% request.setAttribute("bodyClass", "notifications-page" ); %>
@@ -246,10 +246,10 @@
 
                             <div class="hero-section">
                                 <h1>
-                                    <i data-lucide="bell" style="width: 28px; height: 28px;"></i> Th&#244;ng B&#225;o
-                                    C&#7911;a T&#244;i
+                                    <i data-lucide="bell" style="width: 28px; height: 28px;"></i> Thông Báo
+                                    Của Tôi
                                     <c:if test="${unreadCount > 0}">
-                                        <span class="badge">${unreadCount} m&#7899;i</span>
+                                        <span class="badge">${unreadCount} mới</span>
                                     </c:if>
                                 </h1>
 
@@ -261,34 +261,34 @@
                                     <i data-lucide="search"
                                         style="position: absolute; left: 12px; top: 10px; width: 18px; height: 18px; color: #94a3b8;"></i>
                                     <input type="text" name="keyword"
-                                        placeholder="T&#236;m ki&#7871;m th&#244;ng b&#225;o..."
+                                        placeholder="Tìm kiếm thông báo..."
                                         value="${currentKeyword}"
                                         style="padding-left: 38px; width: 100%; box-sizing: border-box;">
                                 </div>
                                 <select name="category" style="flex: 1;">
                                     <option value="All" ${currentCategory=='All' || empty currentCategory ? 'selected'
-                                        : '' }>T&#7845;t c&#7843; th&#7875; lo&#7841;i</option>
+                                        : '' }>Tất cả thể loại</option>
                                     <option value="System Announcement" ${currentCategory=='System Announcement'
-                                        ? 'selected' : '' }>Th&#244;ng b&#225;o h&#7879; th&#7889;ng</option>
+                                        ? 'selected' : '' }>Thông báo hệ thống</option>
                                     <option value="Booking" ${currentCategory=='Booking' ? 'selected' : '' }>
-                                        &#272;&#7863;t ch&#7895;</option>
+                                        Đặt chỗ</option>
                                     <option value="Payment" ${currentCategory=='Payment' ? 'selected' : '' }>Thanh
-                                        to&#225;n</option>
+                                        toán</option>
                                     <option value="Tour Update" ${currentCategory=='Tour Update' ? 'selected' : '' }>
-                                        C&#7853;p nh&#7853;t Tour</option>
+                                        Cập nhật Tour</option>
                                     <option value="Promotion" ${currentCategory=='Promotion' ? 'selected' : '' }>
-                                        Khuy&#7871;n m&#227;i</option>
+                                        Khuyến mãi</option>
                                     <option value="Account Activity" ${currentCategory=='Account Activity' ? 'selected'
-                                        : '' }>Ho&#7841;t &#273;&#7897;ng t&#224;i kho&#7843;n</option>
+                                        : '' }>Hoạt động tài khoản</option>
                                 </select>
                                 <label
                                     style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: #475569; flex: 1; min-width: 120px;">
                                     <input type="checkbox" name="unreadOnly" ${currentUnreadOnly ? 'checked' : '' }
                                         style="width: 18px; height: 18px; accent-color: var(--primary-color, #4f46e5);">
-                                    Ch&#7881; ch&#432;a &#273;&#7885;c
+                                    Chỉ chưa đọc
                                 </label>
                                 <button type="submit">
-                                    <i data-lucide="filter" style="width: 16px; height: 16px;"></i> L&#7885;c
+                                    <i data-lucide="filter" style="width: 16px; height: 16px;"></i> Lọc
                                 </button>
                             </form>
 
@@ -297,8 +297,8 @@
                                     <div class="empty-state">
                                         <i data-lucide="bell-off"
                                             style="width: 48px; height: 48px; color: #cbd5e1; margin-bottom: 15px;"></i>
-                                        <p style="font-size: 18px; margin: 0;">B&#7841;n ch&#432;a c&#243; th&#244;ng
-                                            b&#225;o n&#224;o.</p>
+                                        <p style="font-size: 18px; margin: 0;">Bạn chưa có thông
+                                            báo nào.</p>
                                     </div>
                                 </c:when>
                                 <c:otherwise>
@@ -328,7 +328,7 @@
                                                         </span>
                                                         <c:if test="${notif.senderName != null}">
                                                             <span class="meta-item"><i data-lucide="user"
-                                                                    style="width: 14px; height: 14px;"></i> T&#7915;:
+                                                                    style="width: 14px; height: 14px;"></i> Từ:
                                                                 ${notif.senderName}</span>
                                                         </c:if>
                                                     </div>
@@ -342,7 +342,7 @@
                             <div style="margin-bottom: 50px; text-align: center;">
                                 <a href="${pageContext.request.contextPath}/"
                                     style="color: #64748b; text-decoration: none; font-weight: 500; font-size: 15px;">&larr;
-                                    Quay l&#7841;i trang ch&#7911;</a>
+                                    Quay lại trang chủ</a>
                             </div>
                         </div>
                     </main>
@@ -352,10 +352,10 @@
                             lucide.createIcons();
                         }
 
-                        // S\u1ed1 l\u01b0\u1ee3ng th\u00f4ng b\u00e1o ch\u01b0a \u0111\u1ecdc hi\u1ec7n t\u1ea1i tr\u00ean trang
+                        // Số lượng thông báo chưa đọc hiện tại trên trang
                         let unreadOnPage = ${ unreadCount };
 
-                        // C\u1eadp nh\u1eadt badge tr\u00ean header ngay khi trang load
+                        // Cập nhật badge trên header ngay khi trang load
                         (function syncHeaderBadge() {
                             const badge = document.getElementById('notification-count');
                             if (!badge) return;
@@ -368,15 +368,15 @@
                         })();
 
                         function markAsRead(notifId, element) {
-                            // Tr\u00e1nh click nhi\u1ec1u l\u1ea7n v\u00e0o c\u00f9ng 1 th\u00f4ng b\u00e1o
+                            // Tránh click nhiều lần vào cùng 1 thông báo
                             if (!element.classList.contains('unread')) return;
 
-                            // L\u1ea1c quan: c\u1eadp nh\u1eadt UI tr\u01b0\u1edbc, r\u1ed3i m\u1edbi g\u1ecdi server
+                            // Lạc quan: cập nhật UI trước, rồi mới gọi server
                             element.classList.remove('unread');
                             element.style.cursor = 'default';
                             element.onclick = null;
 
-                            // C\u1eadp nh\u1eadt badge header
+                            // Cập nhật badge header
                             unreadOnPage = Math.max(0, unreadOnPage - 1);
                             const headerBadge = document.getElementById('notification-count');
                             if (headerBadge) {
@@ -388,17 +388,17 @@
                                 }
                             }
 
-                            // C\u1eadp nh\u1eadt badge trong hero section
+                            // Cập nhật badge trong hero section
                             const heroBadge = document.querySelector('.hero-section .badge');
                             if (heroBadge) {
                                 if (unreadOnPage === 0) {
                                     heroBadge.style.display = 'none';
                                 } else {
-                                    heroBadge.innerText = unreadOnPage + ' m\u1edbi';
+                                    heroBadge.innerText = unreadOnPage + ' mới';
                                 }
                             }
 
-                            // G\u1ecdi server l\u01b0u tr\u1ea1ng th\u00e1i \u0111\u00e3 \u0111\u1ecdc v\u00e0o DB
+                            // Gọi server lưu trạng thái đã đọc vào DB
                             const ctx = (typeof APP_CONTEXT !== 'undefined') ? APP_CONTEXT : '';
                             fetch(ctx + '/customer/notifications/read?id=' + notifId + '&t=' + new Date().getTime(), {
                                 method: 'GET'

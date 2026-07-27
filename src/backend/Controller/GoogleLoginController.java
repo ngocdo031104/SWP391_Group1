@@ -47,7 +47,7 @@ public class GoogleLoginController extends HttpServlet {
             User user = userDAO.getUserByEmail(email);
 
             if (user == null) {
-                // \u00c4\u0090\u00c4\u0192ng k\u00fd user m\u1edbi t\u1ef1 \u0111\u1ed9ng
+                // ÄÄƒng ký user mới tự động
                 user = new User();
                 user.setEmail(email);
                 user.setFullName(name);
@@ -58,18 +58,18 @@ public class GoogleLoginController extends HttpServlet {
                 profile.setAvatarUrl(picture);
 
                 userDAO.register(user, profile);
-                userDAO.verifyUser(email); // X\u00e1c th\u1ef1c lu\u00f4n v\u00ec email t\u1eeb Google l\u00e0 ch\u00ednh x\u00e1c
+                userDAO.verifyUser(email); // Xác thực luôn vì email từ Google là chính xác
                 
                 user = userDAO.getUserByEmail(email); // Get back the inserted user with ID
             }
 
             if (!user.isIsActive()) {
-                request.setAttribute("errorMessage", "T\u00e0i kho\u1ea3n c\u1ee7a b\u1ea1n \u0111\u00e3 b\u1ecb kh\u00f3a.");
+                request.setAttribute("errorMessage", "Tài khoản của bạn đã bị khóa.");
                 request.getRequestDispatcher("/views/login.jsp").forward(request, response);
                 return;
             }
 
-            // \u00c4\u0090\u00c4\u0192ng nh\u1eadp
+            // ÄÄƒng nhập
             HttpSession session = request.getSession(true);
             session.setAttribute("sessionUser", user);
             session.setAttribute("userId", user.getUserId());
@@ -96,7 +96,7 @@ public class GoogleLoginController extends HttpServlet {
 
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("errorMessage", "\u00c4\u0090\u00c4\u0192ng nh\u1eadp b\u1eb1ng Google th\u1ea5t b\u1ea1i. L\u1ed7i: " + e.getMessage());
+            request.setAttribute("errorMessage", "ÄÄƒng nhập bằng Google thất bại. Lỗi: " + e.getMessage());
             request.getRequestDispatcher("/views/login.jsp").forward(request, response);
         }
     }
