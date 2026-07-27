@@ -65,7 +65,7 @@ public class BookingReviewController extends HttpServlet {
             Tour tour = tourDAO.getTourById(draft.tourId);
             // tour dùng để render card tour ở màn xác nhận.
             request.setAttribute("tour", tour);
-            // Dương làm đoạn này: lấy lịch đã chọn trực tiếp từ TourScheduleDAO bằng ScheduleID + TourID.
+            // lấy lịch đã chọn trực tiếp từ TourScheduleDAO bằng ScheduleID + TourID.
             // Mục đích là màn xác nhận luôn có DepartureDate đúng từ bảng TourSchedule, kể cả khi TourDAO không nạp lịch đó.
             request.setAttribute("selectedSchedule", tourScheduleDAO.getScheduleByIdForTour(draft.scheduleId, draft.tourId));
             // draft chứa participant và tổng tiền đã tính ở bước create.
@@ -101,7 +101,7 @@ public class BookingReviewController extends HttpServlet {
 
         String action = request.getParameter("action");
 
-        // Dương làm đoạn này: Xử lý áp dụng mã khuyến mãi ngay tại màn hình review trước khi tạo booking
+        // Xử lý áp dụng mã khuyến mãi ngay tại màn hình review trước khi tạo booking
         if ("applyCoupon".equals(action)) {
             CouponDAO couponDAO = null;
             String couponCode = BookingFlowSupport.safeTrim(request.getParameter("couponCode")).toUpperCase();
@@ -150,7 +150,7 @@ public class BookingReviewController extends HttpServlet {
             return;
         }
 
-        // Dương làm đoạn này: bookingNote lấy từ ghi chú khách nhập ở màn create booking.
+        // bookingNote lấy từ ghi chú khách nhập ở màn create booking.
         // Nếu khách không nhập ghi chú, hệ thống dùng note mặc định để nhân viên vẫn biết nguồn tạo đơn.
         String bookingNote = BookingFlowSupport.safeTrim(draft.customerNote);
         if (bookingNote.isEmpty()) {
@@ -175,7 +175,7 @@ public class BookingReviewController extends HttpServlet {
         BookingDAO bookingDAO = null;
         try {
             bookingDAO = new BookingDAO();
-            // Dương làm đoạn này: dọn các booking PendingPayment đã quá 10 phút trước khi giữ slot mới.
+            // dọn các booking PendingPayment đã quá 10 phút trước khi giữ slot mới.
             bookingDAO.releaseExpiredPendingPaymentBookings(BookingFlowSupport.PAYMENT_HOLD_MINUTES);
             boolean created = bookingDAO.createBooking(booking);
             if (!created) {
@@ -187,7 +187,7 @@ public class BookingReviewController extends HttpServlet {
             // Sau khi DB tạo booking thành công, lưu bookingId/bookingCode vào draft để màn payment sử dụng.
             draft.bookingId = booking.getBookingId();
             draft.bookingCode = booking.getBookingCode();
-            // Dương làm đoạn này: lưu mốc giữ slot 10 phút để màn payment có bộ đếm ngược thống nhất với server.
+            // lưu mốc giữ slot 10 phút để màn payment có bộ đếm ngược thống nhất với server.
             draft.paymentHoldStartedAtMillis = System.currentTimeMillis();
             draft.paymentExpiresAtMillis = draft.paymentHoldStartedAtMillis + BookingFlowSupport.PAYMENT_HOLD_MINUTES * 60L * 1000L;
             session.setAttribute("bookingDraft", draft);

@@ -45,7 +45,7 @@ public class BookingPaymentController extends HttpServlet {
         BookingDAO bookingDAO = null;
         try {
             bookingDAO = new BookingDAO();
-            // Dương làm đoạn này: nếu booking PendingPayment quá 10 phút thì nhả slot trước khi hiển thị QR.
+            // nếu booking PendingPayment quá 10 phút thì nhả slot trước khi hiển thị QR.
             bookingDAO.releaseExpiredPendingPaymentBookings(BookingFlowSupport.PAYMENT_HOLD_MINUTES);
             Booking booking = bookingDAO.getBookingByCode(draft.bookingCode);
             if (booking == null || "Cancelled".equalsIgnoreCase(booking.getStatus())) {
@@ -100,7 +100,7 @@ public class BookingPaymentController extends HttpServlet {
         BookingDAO bookingDAO = null;
         try {
             bookingDAO = new BookingDAO();
-            // Cập nhật lại số tiền nếu có thay đổi (chỉ mang tính an toàn)
+            // Cập nhật lại số tiền nếu có thay đổi
             bookingDAO.updateBookingFinancials(draft.bookingId, draft.discountAmount, draft.vatAmount, draft.totalAmount, draft.couponId);
             session.setAttribute("bookingDraft", draft);
             forwardPayment(request, response, draft, "Đã làm mới thông tin. Vui lòng chuyển khoản đúng số tiền và nội dung booking để SePay xác nhận tự động.");
@@ -122,7 +122,7 @@ public class BookingPaymentController extends HttpServlet {
             tourScheduleDAO = new TourScheduleDAO();
             Tour tour = tourDAO.getTourById(draft.tourId);
             request.setAttribute("tour", tour);
-            // Dương làm đoạn này: lấy lịch thanh toán trực tiếp từ TourScheduleDAO để hiển thị đúng DepartureDate của booking.
+            // lấy lịch thanh toán trực tiếp từ TourScheduleDAO để hiển thị đúng DepartureDate của booking.
             request.setAttribute("selectedSchedule", tourScheduleDAO.getScheduleByIdForTour(draft.scheduleId, draft.tourId));
             request.setAttribute("draft", draft);
             request.setAttribute("errorMessage", errorMessage);
