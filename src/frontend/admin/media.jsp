@@ -178,14 +178,14 @@
         const captionText = document.getElementById("lightbox-caption-text");
         
         container.innerHTML = '';
-        captionText.innerText = caption || 'Kh\u00f4ng c\u00f3 m\u00f4 t?';
+        captionText.innerText = caption || 'Không có mô t?';
 
         if (mediaType === 'Image') {
             container.innerHTML = '<img src="' + mediaUrl + '" alt="Preview Image" class="lightbox-media">';
         } else {
-            // Ki?m tra xem l\u00e0 link file MP4 tr?c ti?p hay YouTube
+            // Ki?m tra xem là link file MP4 tr?c ti?p hay YouTube
             if (mediaUrl.includes('youtube.com') || mediaUrl.includes('youtu.be') || mediaUrl.includes('embed')) {
-                // Chu?n h\u00f3a link YouTube sang link nh\u00fang iframe
+                // Chu?n hóa link YouTube sang link nhúng iframe
                 let embedUrl = mediaUrl;
                 if (mediaUrl.includes('watch?v=')) {
                     let videoId = '';
@@ -295,7 +295,7 @@
                                     
                                     <div class="overlay-footer">
                                         <div class="sort-controls">
-                                            <button class="btn-sort" title="Di chuy?n l\u00ean" onclick="shiftOrder(\${idx}, -1)" \${idx === 0 ? 'disabled style="opacity:0.3;"' : ''}>
+                                            <button class="btn-sort" title="Di chuy?n lên" onclick="shiftOrder(\${idx}, -1)" \${idx === 0 ? 'disabled style="opacity:0.3;"' : ''}>
                                                 <i data-lucide="arrow-left" style="width:14px; height:14px;"></i>
                                             </button>
                                             <button class="btn-sort" title="Di chuy?n xu?ng" onclick="shiftOrder(\${idx}, 1)" \${idx === mediaList.length - 1 ? 'disabled style="opacity:0.3;"' : ''}>
@@ -344,12 +344,12 @@
         }
 
         document.getElementById("media-form").reset();
-        document.getElementById("media-modal-title").innerText = "Th\u00eam Media Asset";
+        document.getElementById("media-modal-title").innerText = "Thêm Media Asset";
         document.getElementById("media-action").value = "addMedia";
         document.getElementById("form-media-id").value = "";
         document.getElementById("form-media-tour-id").value = tourId;
         
-        // G\u00e1n sortOrder m?c d?nh b?ng s? lu?ng hi?n t?i
+        // Gán sortOrder m?c d?nh b?ng s? lu?ng hi?n t?i
         document.getElementById("form-media-sort").value = currentMediaList.length;
 
         document.getElementById("form-media-source").value = "url";
@@ -448,7 +448,7 @@
         });
     }
 
-    // Ho\u00e1n d?i nhanh v? tr\u00ed (SortOrder) c?a 2 card k? c?n
+    // Hoán d?i nhanh v? trí (SortOrder) c?a 2 card k? c?n
     function shiftOrder(currentIndex, direction) {
         const targetIndex = currentIndex + direction;
         if (targetIndex < 0 || targetIndex >= currentMediaList.length) return;
@@ -456,7 +456,7 @@
         const currentMedia = currentMediaList[currentIndex];
         const targetMedia = currentMediaList[targetIndex];
 
-        // Ho\u00e1n d?i sortOrder t?m th?i
+        // Hoán d?i sortOrder t?m th?i
         const tempOrder = currentMedia.sortOrder;
         currentMedia.sortOrder = targetMedia.sortOrder;
         targetMedia.sortOrder = tempOrder;

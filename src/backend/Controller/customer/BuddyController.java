@@ -51,17 +51,17 @@ public class BuddyController extends HttpServlet {
 
         try {
             TravelPreference myPref = matchingDAO.getPreference(currentUserId);
-            // Kh\u1edfi t\u1ea1o s\u1edf th\u00edch m\u1eb7c \u0111\u1ecbnh n\u1ebfu ch\u01b0a c\u00f3
+            // Khởi tạo sở thích mặc định nếu chưa có
             if (myPref == null) {
                 myPref = new TravelPreference();
                 myPref.setDestination("Any Destination");
                 myPref.setTravelStyle("Explorer");
-                myPref.setLanguages("Ti\u1ebfng Vi\u1ec7t");
+                myPref.setLanguages("Tiếng Việt");
             }
             
             List<MatchedUser> topMatches = matchingDAO.getTopMatches(currentUserId);
             
-            // T\u00ednh to\u00e1n ph\u1ea7n tr\u0103m ho\u00e0n thi\u1ec7n h\u1ed3 s\u01a1
+            // Tính toán phần trăm hoàn thiện hồ sơ
             int completeness = 40;
             if (myPref.getDestination() != null && !myPref.getDestination().isEmpty()) completeness += 15;
             if (myPref.getTravelStyle() != null && !myPref.getTravelStyle().isEmpty()) completeness += 15;
@@ -72,7 +72,7 @@ public class BuddyController extends HttpServlet {
             request.setAttribute("topMatches", topMatches);
             request.setAttribute("completeness", completeness);
             
-            // L\u1ea5y danh s\u00e1ch y\u00eau c\u1ea7u gh\u00e9p c\u1eb7p cho c\u00e1c tab
+            // Lấy danh sách yêu cầu ghép cặp cho các tab
             List<BuddyRequest> receivedRequests = buddyRequestDAO.getReceivedRequests(currentUserId);
             request.setAttribute("receivedRequests", receivedRequests);
             List<BuddyRequest> sentRequests = buddyRequestDAO.getSentRequests(currentUserId);
@@ -80,7 +80,7 @@ public class BuddyController extends HttpServlet {
             List<User> acceptedBuddies = buddyRequestDAO.getAcceptedBuddies(currentUserId);
             request.setAttribute("acceptedBuddies", acceptedBuddies);
             
-            // L\u1ea5y s\u1edf th\u00edch du l\u1ecbch c\u1ee7a nh\u1eefng ng\u01b0\u1eddi \u0111\u00e3 \u0111\u01b0\u1ee3c gh\u00e9p c\u1eb7p
+            // Lấy sở thích du lịch của những người đã được ghép cặp
             java.util.Map<Integer, TravelPreference> friendPrefs = new java.util.HashMap<>();
             for (User u : acceptedBuddies) {
                 TravelPreference p = matchingDAO.getPreference(u.getUserId());
@@ -199,7 +199,7 @@ public class BuddyController extends HttpServlet {
                     break;
             }
         } catch (Exception e) {
-            session.setAttribute("errorMsg", "\u00c4\u0090\u0102\u00a3 c\u00f3 l\u1ed7i x\u1ea3y ra: " + e.getMessage());
+            session.setAttribute("errorMsg", "ÄĂ£ có lỗi xảy ra: " + e.getMessage());
         }
 
         response.sendRedirect(request.getContextPath() + "/customer/buddies");

@@ -611,7 +611,7 @@
 </div><!-- /profile-wrapper -->
 
 <script>
-/* \u2500\u2500 Tabs \u2500\u2500 */
+/* ── Tabs ── */
 function switchTab(name, btn) {
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -626,7 +626,7 @@ if (serverActiveTab) {
   if (targetBtn) switchTab(serverActiveTab, targetBtn);
 }
 
-/* \u2500\u2500 Avatar preview \u2500\u2500 */
+/* ── Avatar preview ── */
 function previewAvatar(input) {
   if (!input.files[0]) return;
   const reader = new FileReader();
@@ -651,7 +651,7 @@ function previewAvatar(input) {
   form.submit();
 }
 
-/* \u2500\u2500 Profile completion \u2500\u2500 */
+/* ── Profile completion ── */
 const fields = ['fullName','phone','dob','gender','address','bio'];
 function calcCompletion() {
   const filled = fields.filter(id => {
@@ -664,11 +664,11 @@ function calcCompletion() {
 
   // Bio counter
   const bio = document.getElementById('bio');
-  if (bio) document.getElementById('bioCount').textContent = bio.value.length + ' / 1000 k\u00fd t\u1ef1';
+  if (bio) document.getElementById('bioCount').textContent = bio.value.length + ' / 1000 ký tự';
 }
 calcCompletion();
 
-/* \u2500\u2500 Tags Initialization \u2500\u2500 */
+/* ── Tags Initialization ── */
 var tagInputs = document.querySelectorAll('input[type="hidden"][id$="TagsInput"]');
 for (var i = 0; i < tagInputs.length; i++) {
   var input = tagInputs[i];
@@ -713,7 +713,7 @@ if (dobInputProfile) {
   dobInputProfile.max = new Date().toISOString().split("T")[0];
 }
 
-/* \u2500\u2500 Password strength (profile) \u2500\u2500 */
+/* ── Password strength (profile) ── */
 function checkStrengthProfile(pwd) {
   const segs = [1,2,3,4].map(i => document.getElementById('ps' + i));
   const colors = ['#C0392B','#E67E22','#F1C40F','#1E7D4B'];
@@ -727,7 +727,7 @@ function checkStrengthProfile(pwd) {
   });
 }
 
-/* \u2500\u2500 Toggle password \u2500\u2500 */
+/* ── Toggle password ── */
 function togglePwd(inputId, iconId) {
   const input = document.getElementById(inputId);
   const icon  = document.getElementById(iconId);
@@ -736,7 +736,7 @@ function togglePwd(inputId, iconId) {
   icon.classList.toggle('fa-eye-slash');
 }
 
-/* \u2500\u2500 Password form submit \u2500\u2500 */
+/* ── Password form submit ── */
 document.getElementById('pwdForm').addEventListener('submit', function(e) {
   const np = document.getElementById('newPwd').value;
   const cp = document.getElementById('confirmPwd').value;
@@ -748,14 +748,14 @@ document.getElementById('pwdForm').addEventListener('submit', function(e) {
   document.getElementById('pwdMatchErr').style.display = 'none';
   const btn = document.getElementById('savePwdBtn');
   btn.disabled = true;
-  btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> \u0110ang c\u1eadp nh\u1eadt...';
+  btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Đang cập nhật...';
 });
 
-/* \u2500\u2500 Profile form submit \u2500\u2500 */
+/* ── Profile form submit ── */
 document.getElementById('profileForm').addEventListener('submit', function() {
   const btn = document.getElementById('saveInfoBtn');
   btn.disabled = true;
-  btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> \u0110ang l\u01b0u...';
+  btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Đang lưu...';
 });
 
 function resetForm() {
@@ -768,7 +768,7 @@ function shareProfile() {
     navigator.share({ title: 'TourBuddy Profile', url: window.location.href });
   } else {
     navigator.clipboard.writeText(window.location.href);
-    alert('\u0110\u00e3 sao ch\u00e9p link h\u1ed3 s\u01a1!');
+    alert('Đã sao chép link hồ sơ!');
   }
 }
 </script>

@@ -358,7 +358,7 @@
         const scheduleId = ${assignment.scheduleId};
 
         if (!title.trim() || !description.trim()) {
-            alert('Vui l\u00f2ng \u0111i\u1ec1n \u0111\u1ea7y \u0111\u1ee7 ti\u00eau \u0111\u1ec1 v\u00e0 m\u00f4 t\u1ea3 s\u1ef1 c\u1ed1!');
+            alert('Vui lòng điền đầy đủ tiêu đề và mô tả sự cố!');
             return;
         }
 
@@ -388,12 +388,12 @@
         })
         .catch(err => {
             console.error(err);
-            alert('L\u1ed7i h\u1ec7 th\u1ed1ng khi b\u00e1o c\u00e1o s\u1ef1 c\u1ed1!');
+            alert('Lỗi hệ thống khi báo cáo sự cố!');
         });
     }
 
     function resolveIncident(incidentId) {
-        if (!confirm('B\u1ea1n c\u00f3 ch\u1eafc ch\u1eafn mu\u1ed1n \u0111\u00e1nh d\u1ea5u s\u1ef1 c\u1ed1 n\u00e0y \u0111\u00e3 \u0111\u01b0\u1ee3c gi\u1ea3i quy\u1ebft?')) {
+        if (!confirm('Bạn có chắc chắn muốn đánh dấu sự cố này đã được giải quyết?')) {
             return;
         }
 
@@ -420,7 +420,7 @@
         })
         .catch(err => {
             console.error(err);
-            alert('L\u1ed7i h\u1ec7 th\u1ed1ng khi c\u1eadp nh\u1eadt tr\u1ea1ng th\u00e1i s\u1ef1 c\u1ed1!');
+            alert('Lỗi hệ thống khi cập nhật trạng thái sự cố!');
         });
     }
 </script>

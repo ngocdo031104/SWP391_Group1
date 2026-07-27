@@ -729,28 +729,28 @@
                     <div style="font-weight:600;">\${incident.tourName}</div>
                 </div>
                 <div>
-                    <div style="font-size:12px;color:var(--gray-500);">Ng\u00e0y kh\u1edfi h\u00e0nh</div>
+                    <div style="font-size:12px;color:var(--gray-500);">Ngày khởi hành</div>
                     <div style="font-weight:600;">\${incident.departureDate ? new Date(incident.departureDate).toLocaleDateString('vi-VN') : 'N/A'}</div>
                 </div>
                 <div>
-                    <div style="font-size:12px;color:var(--gray-500);">Ng\u01b0\u1eddi b\u00e1o c\u00e1o</div>
+                    <div style="font-size:12px;color:var(--gray-500);">Người báo cáo</div>
                     <div style="font-weight:600;">\${incident.reportedByName}</div>
                 </div>
                 <div>
-                    <div style="font-size:12px;color:var(--gray-500);">Guide ph\u1ee5 tr\u00e1ch</div>
-                    <div style="font-weight:600;">\${incident.guideName || 'Ch\u01b0a c\u00f3'}</div>
+                    <div style="font-size:12px;color:var(--gray-500);">Guide phụ trách</div>
+                    <div style="font-weight:600;">\${incident.guideName || 'Chưa có'}</div>
                 </div>
                 <div>
-                    <div style="font-size:12px;color:var(--gray-500);">Ng\u00e0y b\u00e1o c\u00e1o</div>
+                    <div style="font-size:12px;color:var(--gray-500);">Ngày báo cáo</div>
                     <div style="font-weight:600;">\${incident.createdAt ? new Date(incident.createdAt).toLocaleString('vi-VN') : 'N/A'}</div>
                 </div>
                 <div>
-                    <div style="font-size:12px;color:var(--gray-500);">Tr\u1ea1ng th\u00e1i</div>
+                    <div style="font-size:12px;color:var(--gray-500);">Trạng thái</div>
                     <div style="font-weight:600;">
-                        \${incident.status === 'Open' ? '<span style="color:var(--danger);">M\u1edbi b\u00e1o c\u00e1o</span>' : ''}
-                        \${incident.status === 'Investigating' ? '<span style="color:var(--warning);">\u0110ang x\u1eed l\u00fd</span>' : ''}
-                        \${incident.status === 'Resolved' ? '<span style="color:var(--success);">\u0110\u00e3 x\u1eed l\u00fd</span>' : ''}
-                        \${incident.status === 'Dismissed' ? '<span style="color:var(--gray-500);">\u0110\u00e3 b\u1ecf qua</span>' : ''}
+                        \${incident.status === 'Open' ? '<span style="color:var(--danger);">Mới báo cáo</span>' : ''}
+                        \${incident.status === 'Investigating' ? '<span style="color:var(--warning);">Đang xử lý</span>' : ''}
+                        \${incident.status === 'Resolved' ? '<span style="color:var(--success);">Đã xử lý</span>' : ''}
+                        \${incident.status === 'Dismissed' ? '<span style="color:var(--gray-500);">Đã bỏ qua</span>' : ''}
                     </div>
                 </div>
             </div>
@@ -799,7 +799,7 @@
                             })
                             .catch(err => {
                                 console.error(err);
-                                alert('\u0110\u00e3 x\u1ea3y ra l\u1ed7i!');
+                                alert('Đã xảy ra lỗi!');
                             });
                     }
 

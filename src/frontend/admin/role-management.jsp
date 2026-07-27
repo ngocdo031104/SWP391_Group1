@@ -316,16 +316,16 @@
     ];
 
     const moduleNames = {
-        'Tour Management': 'Qu\u1ea3n l\u00fd Tour',
-        'Booking Management': 'Qu\u1ea3n l\u00fd Booking',
-        'User Management': 'Qu\u1ea3n l\u00fd Ng\u01b0\u1eddi d\u00f9ng',
-        'Role Management': 'Qu\u1ea3n l\u00fd Vai tr\u00f2',
-        'Matching Management': 'Qu\u1ea3n l\u00fd Gh\u00e9p \u0111\u00f4i b\u1ea1n \u0111\u1ed3ng h\u00e0nh',
-        'Request Management': 'Qu\u1ea3n l\u00fd Y\u00eau c\u1ea7u k\u1ebft n\u1ed1i',
-        'Review Management': 'Qu\u1ea3n l\u00fd \u0110\u00e1nh gi\u00e1',
-        'Payment Management': 'Qu\u1ea3n l\u00fd Thanh to\u00e1n',
-        'System Settings': 'B\u00e1o c\u00e1o h\u1ec7 th\u1ed1ng',
-        'Content Management': 'Qu\u1ea3n l\u00fd N\u1ed9i dung'
+        'Tour Management': 'Quản lý Tour',
+        'Booking Management': 'Quản lý Booking',
+        'User Management': 'Quản lý Người dùng',
+        'Role Management': 'Quản lý Vai trò',
+        'Matching Management': 'Quản lý Ghép đôi bạn đồng hành',
+        'Request Management': 'Quản lý Yêu cầu kết nối',
+        'Review Management': 'Quản lý Đánh giá',
+        'Payment Management': 'Quản lý Thanh toán',
+        'System Settings': 'Báo cáo hệ thống',
+        'Content Management': 'Quản lý Nội dung'
     };
 
     const displayModules = Object.keys(moduleNames);
@@ -345,7 +345,7 @@
 
     // openCreateRoleModal &#226;&#8364;&#8221; m&#225;&#187;&#376; modal t&#225;&#186;&#161;o vai tr&#258;&#178;, reset form v&#225;&#187;&#129; ch&#225;&#186;&#191; &#196;&#8216;&#225;&#187;&#8482; create.
     function openCreateRoleModal() {
-        document.getElementById('roleModalTitle').textContent = 'T\u1ea1o Vai Tr\u00f2';
+        document.getElementById('roleModalTitle').textContent = 'Tạo Vai Trò';
         document.getElementById('roleActionInput').value = 'createRole';
         document.getElementById('roleIdInput').value = '';
         document.getElementById('roleNameInput').value = '';
@@ -356,15 +356,15 @@
     // openEditRoleModal &#226;&#8364;&#8221; m&#225;&#187;&#376; modal s&#225;&#187;&#173;a vai tr&#258;&#178; d&#225;&#187;&#177;a tr&#258;&#170;n vai tr&#258;&#178; &#196;&#8216;ang &#196;&#8216;&#198;&#176;&#225;&#187;&#163;c ch&#225;&#187;&#141;n trong sidebar.
     function openEditRoleModal() {
         if (!currentRoleId) {
-            showToast('warning', 'Vui l\u00f2ng ch\u1ecdn m\u1ed9t vai tr\u00f2 \u0111\u1ec3 s\u1eeda.');
+            showToast('warning', 'Vui lòng chọn một vai trò để sửa.');
             return;
         }
         const item = document.querySelector('.role-item.active');
         if (!item) {
-            showToast('warning', 'Kh\u00f4ng t\u00ecm th\u1ea5y th\u00f4ng tin vai tr\u00f2 \u0111ang ch\u1ecdn.');
+            showToast('warning', 'Không tìm thấy thông tin vai trò đang chọn.');
             return;
         }
-        document.getElementById('roleModalTitle').textContent = 'S\u1eeda Vai Tr\u00f2';
+        document.getElementById('roleModalTitle').textContent = 'Sửa Vai Trò';
         document.getElementById('roleActionInput').value = 'updateRole';
         document.getElementById('roleIdInput').value = item.dataset.roleId || '';
         document.getElementById('roleNameInput').value = item.dataset.roleName || '';
@@ -375,7 +375,7 @@
     // openDeleteRoleModal &#226;&#8364;&#8221; m&#225;&#187;&#376; modal x&#258;&#161;c nh&#225;&#186;&#173;n x&#258;&#179;a vai tr&#258;&#178; &#196;&#8216;ang ch&#225;&#187;&#141;n.
     function openDeleteRoleModal() {
         if (!currentRoleId) {
-            showToast('warning', 'Vui l\u00f2ng ch\u1ecdn m\u1ed9t vai tr\u00f2 \u0111\u1ec3 x\u00f3a.');
+            showToast('warning', 'Vui lòng chọn một vai trò để xóa.');
             return;
         }
         document.getElementById('deleteRoleIdInput').value = currentRoleId;
@@ -384,7 +384,7 @@
 
     function selectRole(roleId, el) {
         if (hasUnsavedChanges()) {
-            if (!confirm("B\u1ea1n c\u00f3 thay \u0111\u1ed5i ch\u01b0a \u0111\u01b0\u1ee3c l\u01b0u. B\u1ea1n c\u00f3 ch\u1eafc mu\u1ed1n chuy\u1ec3n \u0111\u1ed5i vai tr\u00f2?")) {
+            if (!confirm("Bạn có thay đổi chưa được lưu. Bạn có chắc muốn chuyển đổi vai trò?")) {
                 return;
             }
         }
@@ -490,7 +490,7 @@
     }
 
     function restoreDefaults() {
-        if (confirm("Kh\u00f4i ph\u1ee5c quy\u1ec1n m\u1eb3c \u0111\u1ecbnh cho vai tr\u00f2 n\u00e0y? T\u1ea5t c\u1ea3 d\u1eef li\u1ec7u ch\u01b0a l\u01b0u s\u1ebd m\u1ea5t.")) {
+        if (confirm("Khôi phục quyền mẳc định cho vai trò này? Tất cả dữ liệu chưa lưu sẽ mất.")) {
             document.querySelectorAll('#matrixBody input[type="checkbox"]').forEach(cb => cb.checked = false);
             checkUnsaved();
         }
@@ -500,14 +500,14 @@
     function openRoleModal(mode) {
         const el = document.querySelector('.role-item.active');
         if (mode === 'create') {
-            document.getElementById('roleModalTitle').innerText = 'T\u1ea1o Vai Tr\u00f2 M\u1edbi';
+            document.getElementById('roleModalTitle').innerText = 'Tạo Vai Trò Mới';
             document.getElementById('roleActionInput').value = 'createRole';
             document.getElementById('roleIdInput').value = '';
             document.getElementById('roleNameInput').value = '';
             document.getElementById('roleDescInput').value = '';
         } else {
-            if (!el) return showToast('warning', 'Vui l\u00f2ng ch\u1ecdn vai tr\u00f2 \u0111\u1ec3 s\u1eeda');
-            document.getElementById('roleModalTitle').innerText = 'S\u1eeda Vai Tr\u00f2';
+            if (!el) return showToast('warning', 'Vui lòng chọn vai trò để sửa');
+            document.getElementById('roleModalTitle').innerText = 'Sửa Vai Trò';
             document.getElementById('roleActionInput').value = 'updateRole';
             document.getElementById('roleIdInput').value = el.dataset.roleId;
             document.getElementById('roleNameInput').value = el.dataset.roleName;
@@ -517,7 +517,7 @@
     }
 
     function confirmDeleteRole() {
-        if (!currentRoleId) return showToast('warning', 'Vui l\u00f2ng ch\u1ecdn vai tr\u00f2 \u0111\u1ec3 x\u00f3a');
+        if (!currentRoleId) return showToast('warning', 'Vui lòng chọn vai trò để xóa');
         document.getElementById('deleteRoleIdInput').value = currentRoleId;
         document.getElementById('deleteModal').style.display = 'block';
     }
@@ -537,7 +537,7 @@
         });
     }
 
-    // Toasts \u0097 tr\u00e1nh template literal c\u00f3 dollar-brace v\u00ec JSP EL parser s? c? parse v\u00e0 g\u00e2y 500.
+    // Toasts  tránh template literal có dollar-brace vì JSP EL parser s? c? parse và gây 500.
     function showToast(type, msg) {
         const container = document.getElementById('toast-container');
         const toast = document.createElement('div');
@@ -564,7 +564,7 @@
         
         const btn = document.getElementById('savePermBtn');
         btn.disabled = true;
-        btn.innerText = '\u00d2ang l\u01b0u...';
+        btn.innerText = 'Òang lưu...';
         
         const form = document.getElementById('permissionForm');
         const formData = new FormData(form);
@@ -578,22 +578,22 @@
         .then(response => response.json())
         .then(data => {
             if(data.success) {
-                showToast('success', 'C\u1eadp nh\u1eadt ph\u00e2n quy\u1ec1n th\u00e0nh c\u00f4ng');
+                showToast('success', 'Cập nhật phân quyền thành công');
                 const newPerms = [];
                 formData.getAll('permissions[]').forEach(val => newPerms.push(parseInt(val)));
                 rolePermissionsMap[currentRoleId] = newPerms;
                 initialPermissions = [...newPerms];
                 checkUnsaved();
             } else {
-                showToast('error', 'Kh\u00f4ng th\u1ec3 c\u1eadp nh\u1eadt ph\u00e2n quy\u1ec1n: ' + data.message);
+                showToast('error', 'Không thể cập nhật phân quyền: ' + data.message);
             }
         })
         .catch(err => {
-            showToast('error', '\u0110\u00e3 x\u1ea3y ra l\u1ed7i m\u1ea1ng!');
+            showToast('error', 'Đã xảy ra lỗi mạng!');
         })
         .finally(() => {
             btn.disabled = false;
-            btn.innerText = 'L\u01b0u thay \u0111\u1ed5i';
+            btn.innerText = 'Lưu thay đổi';
         });
     }
 

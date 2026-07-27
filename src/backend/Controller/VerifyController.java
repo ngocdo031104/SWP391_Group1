@@ -45,14 +45,14 @@ public class VerifyController extends HttpServlet {
                     session.removeAttribute("verify_email");
                     session.removeAttribute("verify_otp");
                     
-                    request.setAttribute("successMessage", "X\u00e1c th\u1ef1c th\u00e0nh c\u00f4ng! Vui l\u00f2ng \u0111\u0103ng nh\u1eadp.");
+                    request.setAttribute("successMessage", "Xác thực thành công! Vui lòng đăng nhập.");
                     request.getRequestDispatcher("/views/login.jsp").forward(request, response);
                     return;
                 } else {
-                    request.setAttribute("errorMessage", "M\u00e3 x\u00e1c th\u1ef1c kh\u00f4ng \u0111\u00fang. Vui l\u00f2ng th\u1eed l\u1ea1i.");
+                    request.setAttribute("errorMessage", "Mã xác thực không đúng. Vui lòng thử lại.");
                 }
             } else {
-                request.setAttribute("errorMessage", "Phi\u00ean x\u00e1c th\u1ef1c \u0111\u00e3 h\u1ebft h\u1ea1n. Vui l\u00f2ng \u0111\u0103ng k\u00fd l\u1ea1i.");
+                request.setAttribute("errorMessage", "Phiên xác thực đã hết hạn. Vui lòng đăng ký lại.");
             }
         }
         

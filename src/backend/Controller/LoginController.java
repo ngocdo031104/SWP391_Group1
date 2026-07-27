@@ -90,7 +90,7 @@ public class LoginController extends HttpServlet {
 
             request.setAttribute(
                     "errorMessage",
-                    "Email kh\u00f4ng \u0111\u01b0\u1ee3c \u0111\u1ec3 tr\u1ed1ng"
+                    "Email không được để trống"
             );
 
             request.getRequestDispatcher("/views/login.jsp")
@@ -103,7 +103,7 @@ public class LoginController extends HttpServlet {
 
             request.setAttribute(
                     "errorMessage",
-                    "M\u1eadt kh\u1ea9u kh\u00f4ng \u0111\u01b0\u1ee3c \u0111\u1ec3 tr\u1ed1ng"
+                    "Mật khẩu không được để trống"
             );
 
             request.getRequestDispatcher("/views/login.jsp")
@@ -113,7 +113,7 @@ public class LoginController extends HttpServlet {
 
         try {
 
-            // Hash password tr\u01b0\u1edbc khi so s\u00e1nh DB
+            // Hash password trước khi so sánh DB
             String passwordHash =
                     PasswordUtil.hashPassword(password);
 
@@ -124,7 +124,7 @@ public class LoginController extends HttpServlet {
 
                 request.setAttribute(
                         "errorMessage",
-                        "Email ho\u1eb7c m\u1eadt kh\u1ea9u kh\u00f4ng \u0111\u00fang"
+                        "Email hoặc mật khẩu không đúng"
                 );
 
                 request.getRequestDispatcher("/views/login.jsp")
@@ -135,7 +135,7 @@ public class LoginController extends HttpServlet {
             if (!user.isIsVerified()) {
                 request.setAttribute(
                         "errorMessage",
-                        "T\u00e0i kho\u1ea3n ch\u01b0a \u0111\u01b0\u1ee3c x\u00e1c th\u1ef1c. Vui l\u00f2ng ki\u1ec3m tra email c\u1ee7a b\u1ea1n \u0111\u1ec3 l\u1ea5y m\u00e3 x\u00e1c nh\u1eadn."
+                        "Tài khoản chưa được xác thực. Vui lòng kiểm tra email của bạn để lấy mã xác nhận."
                 );
 
                 request.getRequestDispatcher("/views/login.jsp")
@@ -143,7 +143,7 @@ public class LoginController extends HttpServlet {
                 return;
             }
 
-            // T\u1ea1o Session
+            // Tạo Session
             HttpSession session =
                     request.getSession(true);
 
@@ -218,7 +218,7 @@ public class LoginController extends HttpServlet {
 
             request.setAttribute(
                     "errorMessage",
-                    "C\u00f3 l\u1ed7i x\u1ea3y ra khi \u0111\u0103ng nh\u1eadp"
+                    "Có lỗi xảy ra khi đăng nhập"
             );
 
             request.getRequestDispatcher("/views/login.jsp")

@@ -655,14 +655,14 @@
                     imgUrl = t.getMediaList().get(0).getMediaUrl();
                 } else {
                     String dest = t.getDestination().toLowerCase();
-                    if (dest.contains("\u0111\u00e0 n\u1eb5ng")) imgUrl = "assets/images/tour_danang.png";
-                    else if (dest.contains("ph\u00fa qu\u1ed1c")) imgUrl = "assets/images/tour_phuquoc.png";
-                    else if (dest.contains("h\u1ea1 long")) imgUrl = "assets/images/tour_halong.png";
-                    else if (dest.contains("h\u1ed9i an")) imgUrl = "assets/images/tour_hoian.png";
-                    else if (dest.contains("\u0111\u00e0 l\u1ea1t")) imgUrl = "assets/images/tour_dalat.png";
+                    if (dest.contains("đà nẵng")) imgUrl = "assets/images/tour_danang.png";
+                    else if (dest.contains("phú quốc")) imgUrl = "assets/images/tour_phuquoc.png";
+                    else if (dest.contains("hạ long")) imgUrl = "assets/images/tour_halong.png";
+                    else if (dest.contains("hội an")) imgUrl = "assets/images/tour_hoian.png";
+                    else if (dest.contains("đà lạt")) imgUrl = "assets/images/tour_dalat.png";
                     else if (dest.contains("sa pa") || dest.contains("sapa")) imgUrl = "assets/images/tour_sapa.png";
                     else if (dest.contains("nha trang")) imgUrl = "assets/images/tour_nhatrang.png";
-                    else if (dest.contains("h\u00e0 giang")) imgUrl = "assets/images/tour_hagiang.png";
+                    else if (dest.contains("hà giang")) imgUrl = "assets/images/tour_hagiang.png";
                 }
                 
                 // Map category
@@ -674,13 +674,13 @@
                 else if (t.getCategoryId() == 5) catStr = "luxury";
                 
                 // Get seats and departure city
-                // D\u01b0\u01a1ng: fallback d\u00f9ng Tour.MaxParticipants \u0111\u1ec3 \u0111\u1ed3ng b\u1ed9 v\u1edbi trang booking-create.
+                // Dương: fallback dùng Tour.MaxParticipants để đồng bộ với trang booking-create.
                 int tourMaxParts = t.getMaxParticipants() > 0 ? t.getMaxParticipants() : 10;
                 int seatsLeft = tourMaxParts;
                 int seatsTotal = tourMaxParts;
                 String departureCity = t.getDepartureCity();
                 if (departureCity == null || departureCity.trim().isEmpty()) {
-                    departureCity = "H\u00e0 N\u1ed9i";
+                    departureCity = "Hà Nội";
                 }
 
                 if (t.getSchedules() != null && !t.getSchedules().isEmpty()) {
@@ -692,30 +692,30 @@
                 String diffStr = "easy";
                 String dl = t.getDifficultyLevel() != null ? t.getDifficultyLevel().toLowerCase() : "";
                 if (dl.contains("trung") || dl.contains("medium")) diffStr = "medium";
-                else if (dl.contains("kh\u00f3") || dl.contains("hard") || dl.contains("th\u1eed th\u00e1ch")) diffStr = "hard";
+                else if (dl.contains("khó") || dl.contains("hard") || dl.contains("thử thách")) diffStr = "hard";
                 
                 // Map pins coordinates
                 String lat = "48%";
                 String lng = "50%";
                 String destName = t.getDestination();
-                if (destName.contains("\u0110\u00e0 N\u1eb5ng")) { lat = "45%"; lng = "52%"; }
-                else if (destName.contains("Ph\u00fa Qu\u1ed1c")) { lat = "88%"; lng = "25%"; }
-                else if (destName.contains("H\u1ea1 Long")) { lat = "18%"; lng = "47%"; }
-                else if (destName.contains("H\u1ed9i An")) { lat = "48%"; lng = "54%"; }
-                else if (destName.contains("\u0110\u00e0 L\u1ea1t")) { lat = "72%"; lng = "48%"; }
+                if (destName.contains("Đà Nẵng")) { lat = "45%"; lng = "52%"; }
+                else if (destName.contains("Phú Quốc")) { lat = "88%"; lng = "25%"; }
+                else if (destName.contains("Hạ Long")) { lat = "18%"; lng = "47%"; }
+                else if (destName.contains("Hội An")) { lat = "48%"; lng = "54%"; }
+                else if (destName.contains("Đà Lạt")) { lat = "72%"; lng = "48%"; }
                 else if (destName.contains("Sa Pa") || destName.contains("Sapa")) { lat = "10%"; lng = "28%"; }
                 else if (destName.contains("Nha Trang")) { lat = "65%"; lng = "55%"; }
-                else if (destName.contains("H\u00e0 Giang")) { lat = "5%"; lng = "35%"; }
-                else if (destName.contains("Hu\u1ebf")) { lat = "38%"; lng = "46%"; }
-                else if (destName.contains("H\u00e0 N\u1ed9i")) { lat = "15%"; lng = "38%"; }
+                else if (destName.contains("Hà Giang")) { lat = "5%"; lng = "35%"; }
+                else if (destName.contains("Huế")) { lat = "38%"; lng = "46%"; }
+                else if (destName.contains("Hà Nội")) { lat = "15%"; lng = "38%"; }
                 
-                // L\u1ea5y th\u00f4ng tin H\u01b0\u1edbng d\u1eabn vi\u00ean th\u1ef1c t\u1ebf t\u1eeb l\u1ecbch kh\u1edfi h\u00e0nh \u0111\u1ea7u ti\u00ean c\u1ee7a Tour
-                String guideName = "Ch\u01b0a ph\u00e2n c\u00f4ng";
+                // Lấy thông tin Hướng dẫn viên thực tế từ lịch khởi hành đầu tiên của Tour
+                String guideName = "Chưa phân công";
                 String guideAvatar = "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80";
                 double guideRating = 4.8;
                 int guideToursLed = 15;
                 int guideExp = 3;
-                String guideBio = "H\u01b0\u1edbng d\u1eabn vi\u00ean chuy\u00ean nghi\u1ec7p s\u1ebd \u0111\u1ed3ng h\u00e0nh v\u00e0 h\u1ed7 tr\u1ee3 b\u1ea1n su\u1ed1t h\u00e0nh tr\u00ecnh kh\u00e1m ph\u00e1.";
+                String guideBio = "Hướng dẫn viên chuyên nghiệp sẽ đồng hành và hỗ trợ bạn suốt hành trình khám phá.";
                 
                 if (t.getSchedules() != null && !t.getSchedules().isEmpty()) {
                     TourSchedule sched = t.getSchedules().get(0);
@@ -754,7 +754,7 @@
             seatsLeft: <%= seatsLeft %>,
             seatsTotal: <%= seatsTotal %>,
             maxParticipants: <%= t.getMaxParticipants() %>,
-            languages: "<%= t.getLanguages() != null && !t.getLanguages().trim().isEmpty() ? t.getLanguages().replace("\"", "\\\"") : "Ti\u1ebfng Vi\u1ec7t" %>",
+            languages: "<%= t.getLanguages() != null && !t.getLanguages().trim().isEmpty() ? t.getLanguages().replace("\"", "\\\"") : "Tiếng Việt" %>",
             photos: [
                 <%
                 if (t.getTourId() == activeTour.getTourId()) {
@@ -797,14 +797,14 @@
 <script>
     window.itinerariesData = {};
 
-    // L\u00dd DO V\u00c0 CH\u1ee8C N\u00e0NG C\u1ee6A \u0110O\u1ea0N D\u01af\u1edaI \u0110\u00c2Y:
-    // - D\u1eef li\u1ec7u l\u1ecbch tr\u00ecnh (TourItinerary) c\u1ea7n \u0111\u01b0\u1ee3c chuy\u1ec3n sang m\u00f4i tr\u01b0\u1eddng Client (JavaScript)
-    //   \u0111\u1ec3 detail.js v\u1ebd tr\u1ee5c th\u1eddi gian (Timeline) \u0111\u1ed9ng.
-    // - \u0110o\u1ea1n code Java \u1edf d\u01b0\u1edbi s\u1ebd ki\u1ec3m tra xem Tour n\u00e0y \u0111\u00e3 c\u00f3 L\u1ecbch tr\u00ecnh chi ti\u1ebft trong DB ch\u01b0a:
-    //   + N\u1ebfu C\u00d3: L\u1eb7p qua t\u1eebng ng\u00e0y, t\u1ef1 \u0111\u1ed9ng g\u00e1n icon (plane, ship, hotel, camera...) d\u1ef1a v\u00e0o ti\u00eau \u0111\u1ec1 ng\u00e0y \u0111\u00f3,
-    //     chuy\u1ec3n c\u00e1c k\u00fd t\u1ef1 xu\u1ed1ng d\u00f2ng th\u00e0nh kho\u1ea3ng tr\u1eafng v\u00e0 xu\u1ea5t ra d\u1ea1ng m\u1ea3ng JS Object.
-    //   + N\u1ebfu KH\u00d4NG C\u00d3: Th\u1eed ph\u00e2n t\u00edch chu\u1ed7i v\u0103n b\u1ea3n Itinerary c\u0169 trong b\u1ea3ng Tour l\u00e0m fallback.
-    //   + N\u1ebfu c\u1ea3 hai tr\u1ed1ng: Gi\u1eef nguy\u00ean m\u1ea3ng m\u1eb7c \u0111\u1ecbnh \u0111\u00e3 \u0111\u1ecbnh ngh\u0129a t\u0129nh \u1edf tr\u00ean.
+    // LÝ DO VÀ CHỨC NàNG CỦA ĐOẠN DƯỚI ĐÂY:
+    // - Dữ liệu lịch trình (TourItinerary) cần được chuyển sang môi trường Client (JavaScript)
+    //   để detail.js vẽ trục thời gian (Timeline) động.
+    // - Đoạn code Java ở dưới sẽ kiểm tra xem Tour này đã có Lịch trình chi tiết trong DB chưa:
+    //   + Nếu CÓ: Lặp qua từng ngày, tự động gán icon (plane, ship, hotel, camera...) dựa vào tiêu đề ngày đó,
+    //     chuyển các ký tự xuống dòng thành khoảng trắng và xuất ra dạng mảng JS Object.
+    //   + Nếu KHÔNG CÓ: Thử phân tích chuỗi văn bản Itinerary cũ trong bảng Tour làm fallback.
+    //   + Nếu cả hai trống: Giữ nguyên mảng mặc định đã định nghĩa tĩnh ở trên.
     <%
         if (activeTour != null) {
             List<TourItinerary> its = activeTour.getItineraries();
@@ -814,22 +814,22 @@
         <%
             for (int k = 0; k < its.size(); k++) {
                 TourItinerary it = its.get(k);
-                // M\u1eb7c \u0111\u1ecbnh l\u00e0 icon "activity" (ho\u1ea1t \u0111\u1ed9ng chung)
+                // Mặc định là icon "activity" (hoạt động chung)
                 String iconName = it.getImageUrl() != null && !it.getImageUrl().trim().isEmpty() ? it.getImageUrl() : "activity";
                 
-                // Quy t\u1eafc g\u00e1n t\u1ef1 \u0111\u1ed9ng Icon chuy\u00ean nghi\u1ec7p d\u1ef1a theo t\u1eeb kh\u00f3a trong ti\u00eau \u0111\u1ec1
+                // Quy tắc gán tự động Icon chuyên nghiệp dựa theo từ khóa trong tiêu đề
                 String tL = it.getTitle().toLowerCase();
-                if (tL.contains("bay") || tL.contains("plane") || tL.contains("ti\u1ec5n") || tL.contains("s\u00e2n bay")) iconName = "plane";
-                else if (tL.contains("t\u00e0u") || tL.contains("boat") || tL.contains("cruise") || tL.contains("du thuy\u1ec1n") || tL.contains("can\u00f4")) iconName = "ship";
-                else if (tL.contains("leo") || tL.contains("trek") || tL.contains("chinh ph\u1ee5c") || tL.contains("\u0111\u1ec9nh") || tL.contains("n\u00fai")) iconName = "mountain";
-                else if (tL.contains("kh\u00e1ch s\u1ea1n") || tL.contains("hotel") || tL.contains("resort") || tL.contains("nh\u1eadn ph\u00f2ng")) iconName = "hotel";
-                else if (tL.contains("ch\u1ee5p \u1ea3nh") || tL.contains("check") || tL.contains("quay")) iconName = "camera";
-                else if (tL.contains("t\u1ef1 do") || tL.contains("free") || tL.contains("vui ch\u01a1i") || tL.contains("l\u1ec5 h\u1ed9i")) iconName = "sparkles";
-                else if (tL.contains("\u0111\u00f3n") || tL.contains("ch\u00e0o")) iconName = "map-pin";
+                if (tL.contains("bay") || tL.contains("plane") || tL.contains("tiễn") || tL.contains("sân bay")) iconName = "plane";
+                else if (tL.contains("tàu") || tL.contains("boat") || tL.contains("cruise") || tL.contains("du thuyền") || tL.contains("canô")) iconName = "ship";
+                else if (tL.contains("leo") || tL.contains("trek") || tL.contains("chinh phục") || tL.contains("đỉnh") || tL.contains("núi")) iconName = "mountain";
+                else if (tL.contains("khách sạn") || tL.contains("hotel") || tL.contains("resort") || tL.contains("nhận phòng")) iconName = "hotel";
+                else if (tL.contains("chụp ảnh") || tL.contains("check") || tL.contains("quay")) iconName = "camera";
+                else if (tL.contains("tự do") || tL.contains("free") || tL.contains("vui chơi") || tL.contains("lễ hội")) iconName = "sparkles";
+                else if (tL.contains("đón") || tL.contains("chào")) iconName = "map-pin";
         %>
         { 
             day: <%= it.getDayNumber() %>, 
-            // Thay th\u1ebf k\u00fd t\u1ef1 nh\u00e1y k\u00e9p b\u1eb1ng nh\u00e1y k\u00e9p escape v\u00e0 b\u1ecf k\u00fd t\u1ef1 xu\u1ed1ng d\u00f2ng \u0111\u1ec3 tr\u00e1nh l\u1ed7i c\u00fa ph\u00e1p JavaScript
+            // Thay thế ký tự nháy kép bằng nháy kép escape và bỏ ký tự xuống dòng để tránh lỗi cú pháp JavaScript
             title: "<%= it.getTitle().replace("\"", "\\\"").replace("\r", "").replace("\n", " ") %>", 
             desc: "<%= it.getDescription() != null ? it.getDescription().replace("\"", "\\\"").replace("\r", "").replace("\n", " ") : "" %>", 
             icon: "<%= iconName %>" 
@@ -840,15 +840,15 @@
     ];
     <%
             } else if (activeTour.getItinerary() != null && !activeTour.getItinerary().trim().isEmpty()) {
-                // Fallback n\u1ebfu tour ch\u1ec9 l\u01b0u chu\u1ed7i m\u00f4 t\u1ea3 g\u1ed9p trong tr\u01b0\u1eddng Itinerary c\u1ee7a b\u1ea3ng Tour
+                // Fallback nếu tour chỉ lưu chuỗi mô tả gộp trong trường Itinerary của bảng Tour
                 String itin = activeTour.getItinerary().trim();
                 if (itin.startsWith("[")) {
-                    // N\u1ebfu l\u00e0 chu\u1ed7i JSON s\u1eb5n
+                    // Nếu là chuỗi JSON sẵn
     %>
     window.itinerariesData[<%= activeTour.getTourId() %>] = <%= itin %>;
     <%
                 } else {
-                    // N\u1ebfu l\u00e0 chu\u1ed7i v\u0103n b\u1ea3n d\u00f2ng th\u01b0\u1eddng, t\u1ef1 \u0111\u1ed9ng ph\u00e2n t\u00e1ch b\u1eb1ng d\u1ea5u xu\u1ed1ng d\u00f2ng v\u00e0 d\u1ea5u hai ch\u1ea5m ho\u1eb7c g\u1ea1ch ngang
+                    // Nếu là chuỗi văn bản dòng thường, tự động phân tách bằng dấu xuống dòng và dấu hai chấm hoặc gạch ngang
                     String[] lines = itin.split("\n");
     %>
     window.itinerariesData[<%= activeTour.getTourId() %>] = [
@@ -883,14 +883,14 @@
     %>
 
 
-    // Thanh to\u00e1n \u0111\u01b0\u1ee3c qu\u1ea3n l\u00fd ngo\u00e0i h\u1ec7 th\u1ed1ng.
+    // Thanh toán được quản lý ngoài hệ thống.
 
 
-    // \u0110\u00e1nh gi\u00e1 \u0111\u00e3 \u0111\u01b0\u1ee3c n\u1ea1p v\u00e0 k\u1ebft xu\u1ea5t tr\u1ef1c ti\u1ebfp b\u1eb1ng m\u00e3 ngu\u1ed3n JSP \u1edf ph\u00eda tr\u00ean, kh\u00f4ng s\u1eed d\u1ee5ng javascript.
+    // Đánh giá đã được nạp và kết xuất trực tiếp bằng mã nguồn JSP ở phía trên, không sử dụng javascript.
 </script>
 
 <script>
-    // \u2500\u2500 Safety net: n\u1ebfu footer.jsp ch\u01b0a k\u1ecbp \u0111\u1ecbnh ngh\u0129a showToast (cache, l\u1ed7i include), v\u1eabn c\u00f3 b\u1ea3n fallback \u2500\u2500
+    // ── Safety net: nếu footer.jsp chưa kịp định nghĩa showToast (cache, lỗi include), vẫn có bản fallback ──
     (function () {
         if (typeof window.showToast === 'function') return;
         window.showToast = function (message, type) {

@@ -379,7 +379,7 @@
                             <script>
                                 lucide.createIcons();
 
-                                // Auto-dismiss toast sau 4 gi\u00e2y
+                                // Auto-dismiss toast sau 4 giây
                                 const toast = document.getElementById('toastMsg');
                                 if (toast) setTimeout(() => toast.style.display = 'none', 4000);
 

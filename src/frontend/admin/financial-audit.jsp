@@ -347,12 +347,12 @@
 
         function exportPDF(table, filename) {
             if (!window.html2pdf) {
-                alert('Th\u01b0 vi\u1ec7n PDF \u0111ang t\u1ea3i, vui l\u00f2ng th\u1eed l\u1ea1i!');
+                alert('Thư viện PDF đang tải, vui lòng thử lại!');
                 return;
             }
             
             let container = document.createElement('div');
-            container.innerHTML = '<h2 style="text-align:center; font-family: sans-serif; margin-bottom: 20px;">Nh\u1eadt K\u00fd Ki\u1ec3m To\u00e1n T\u00e0i Ch\u00ednh</h2>' + table.outerHTML;
+            container.innerHTML = '<h2 style="text-align:center; font-family: sans-serif; margin-bottom: 20px;">Nhật Ký Kiểm Toán Tài Chính</h2>' + table.outerHTML;
             container.style.padding = '20px';
             container.style.backgroundColor = 'white';
             container.style.fontFamily = 'sans-serif';
@@ -369,7 +369,7 @@
         }
         
         function downloadFile(content, filename, mimeType) {
-            let blob = new Blob(['\ufeff' + content], { type: mimeType + ';charset=utf-8;' });
+            let blob = new Blob(['﻿' + content], { type: mimeType + ';charset=utf-8;' });
             let link = document.createElement("a");
             if (link.download !== undefined) {
                 let url = URL.createObjectURL(blob);

@@ -224,20 +224,20 @@
         .then(data => {
             if (data.status === "success") {
                 btn.setAttribute("data-checked", newChecked ? "true" : "false");
-                btn.innerText = newChecked ? "H\u1ee7y check-in" : "\u0110i\u1ec3m danh";
+                btn.innerText = newChecked ? "Hủy check-in" : "Điểm danh";
                 btn.style.background = newChecked ? "#ef4444" : "#10b981";
                 
                 const statusCell = document.getElementById(`status-cell-${participantId}`);
                 if (newChecked) {
                     statusCell.innerHTML = `
                         <span class="badge-status checked-in" style="background: #d1fae5; color: #065f46; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; display: inline-flex; align-items: center; gap: 4px;">
-                            <i class="fa fa-circle-check"></i> \u0110\u00e3 check-in (` + data.checkInTime + `)
+                            <i class="fa fa-circle-check"></i> Đã check-in (` + data.checkInTime + `)
                         </span>
                     `;
                 } else {
                     statusCell.innerHTML = `
                         <span class="badge-status pending" style="background: #f1f5f9; color: #64748b; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; display: inline-flex; align-items: center; gap: 4px;">
-                            <i class="fa-regular fa-clock"></i> Ch\u01b0a \u0111i\u1ec3m danh
+                            <i class="fa-regular fa-clock"></i> Chưa điểm danh
                         </span>
                     `;
                 }
@@ -248,7 +248,7 @@
         })
         .catch(err => {
             console.error(err);
-            alert("L\u1ed7i k\u1ebft n\u1ed1i khi th\u1ef1c hi\u1ec7n \u0111i\u1ec3m danh!");
+            alert("Lỗi kết nối khi thực hiện điểm danh!");
         });
     }
 

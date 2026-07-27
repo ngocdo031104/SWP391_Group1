@@ -564,13 +564,13 @@
         })
         .catch(err => {
             console.error(err);
-            alert('L\u1ed7i h\u1ec7 th\u1ed1ng khi c\u1eadp nh\u1eadt tr\u1ea1ng th\u00e1i!');
+            alert('Lỗi hệ thống khi cập nhật trạng thái!');
         });
     }
 </script>
 
 <script>
-    // Fetch s\u1ed1 l\u01b0\u1ee3ng th\u00f4ng b\u00e1o ch\u01b0a \u0111\u1ecdc cho Guide
+    // Fetch số lượng thông báo chưa đọc cho Guide
     (function() {
         var badge = document.getElementById('guide-notif-count');
         if (!badge) return;

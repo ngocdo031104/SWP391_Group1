@@ -340,14 +340,14 @@
                     imgUrl = t.getMediaList().get(0).getMediaUrl();
                 } else {
                     String dest = t.getDestination().toLowerCase();
-                    if (dest.contains("\u0111\u00e0 n\u1eb5ng")) imgUrl = "assets/images/tour_danang.png";
-                    else if (dest.contains("ph\u00fa qu\u1ed1c")) imgUrl = "assets/images/tour_phuquoc.png";
-                    else if (dest.contains("h\u1ea1 long")) imgUrl = "assets/images/tour_halong.png";
-                    else if (dest.contains("h\u1ed9i an")) imgUrl = "assets/images/tour_hoian.png";
-                    else if (dest.contains("\u0111\u00e0 l\u1ea1t")) imgUrl = "assets/images/tour_dalat.png";
+                    if (dest.contains("đà nẵng")) imgUrl = "assets/images/tour_danang.png";
+                    else if (dest.contains("phú quốc")) imgUrl = "assets/images/tour_phuquoc.png";
+                    else if (dest.contains("hạ long")) imgUrl = "assets/images/tour_halong.png";
+                    else if (dest.contains("hội an")) imgUrl = "assets/images/tour_hoian.png";
+                    else if (dest.contains("đà lạt")) imgUrl = "assets/images/tour_dalat.png";
                     else if (dest.contains("sa pa") || dest.contains("sapa")) imgUrl = "assets/images/tour_sapa.png";
                     else if (dest.contains("nha trang")) imgUrl = "assets/images/tour_nhatrang.png";
-                    else if (dest.contains("h\u00e0 giang")) imgUrl = "assets/images/tour_hagiang.png";
+                    else if (dest.contains("hà giang")) imgUrl = "assets/images/tour_hagiang.png";
                 }
                 
                 // Map category
@@ -359,13 +359,13 @@
                 else if (t.getCategoryId() == 5) catStr = "luxury";
                 
                 // Get seats and departure city
-                // D\u01b0\u01a1ng: fallback d\u00f9ng Tour.MaxParticipants \u0111\u1ec3 \u0111\u1ed3ng b\u1ed9 v\u1edbi trang booking-create.
+                // Dương: fallback dùng Tour.MaxParticipants để đồng bộ với trang booking-create.
                 int tourMaxParts = t.getMaxParticipants() > 0 ? t.getMaxParticipants() : 10;
                 int seatsLeft = tourMaxParts;
                 int seatsTotal = tourMaxParts;
                 String departureCity = t.getDepartureCity();
                 if (departureCity == null || departureCity.trim().isEmpty()) {
-                    departureCity = "H\u00e0 N\u1ed9i";
+                    departureCity = "Hà Nội";
                 }
 
                 if (t.getSchedules() != null && !t.getSchedules().isEmpty()) {
@@ -377,22 +377,22 @@
                 String diffStr = "easy";
                 String dl = t.getDifficultyLevel() != null ? t.getDifficultyLevel().toLowerCase() : "";
                 if (dl.contains("trung") || dl.contains("medium")) diffStr = "medium";
-                else if (dl.contains("kh\u00f3") || dl.contains("hard") || dl.contains("th\u1eed th\u00e1ch")) diffStr = "hard";
+                else if (dl.contains("khó") || dl.contains("hard") || dl.contains("thử thách")) diffStr = "hard";
                 
                 // Map pins coordinates
                 String lat = "48%";
                 String lng = "50%";
                 String destName = t.getDestination();
-                if (destName.contains("\u0110\u00e0 N\u1eb5ng")) { lat = "45%"; lng = "52%"; }
-                else if (destName.contains("Ph\u00fa Qu\u1ed1c")) { lat = "88%"; lng = "25%"; }
-                else if (destName.contains("H\u1ea1 Long")) { lat = "18%"; lng = "47%"; }
-                else if (destName.contains("H\u1ed9i An")) { lat = "48%"; lng = "54%"; }
-                else if (destName.contains("\u0110\u00e0 L\u1ea1t")) { lat = "72%"; lng = "48%"; }
+                if (destName.contains("Đà Nẵng")) { lat = "45%"; lng = "52%"; }
+                else if (destName.contains("Phú Quốc")) { lat = "88%"; lng = "25%"; }
+                else if (destName.contains("Hạ Long")) { lat = "18%"; lng = "47%"; }
+                else if (destName.contains("Hội An")) { lat = "48%"; lng = "54%"; }
+                else if (destName.contains("Đà Lạt")) { lat = "72%"; lng = "48%"; }
                 else if (destName.contains("Sa Pa") || destName.contains("Sapa")) { lat = "10%"; lng = "28%"; }
                 else if (destName.contains("Nha Trang")) { lat = "65%"; lng = "55%"; }
-                else if (destName.contains("H\u00e0 Giang")) { lat = "5%"; lng = "35%"; }
-                else if (destName.contains("Hu\u1ebf")) { lat = "38%"; lng = "46%"; }
-                else if (destName.contains("H\u00e0 N\u1ed9i")) { lat = "15%"; lng = "38%"; }
+                else if (destName.contains("Hà Giang")) { lat = "5%"; lng = "35%"; }
+                else if (destName.contains("Huế")) { lat = "38%"; lng = "46%"; }
+                else if (destName.contains("Hà Nội")) { lat = "15%"; lng = "38%"; }
                 
                 // No mock guides needed
         %>

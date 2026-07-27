@@ -604,7 +604,7 @@
         document.getElementById('cancelModal').style.display = 'none';
         document.body.style.overflow = '';
     }
-    // \u0110\u00f3ng modal khi click ra ngo\u00e0i
+    // Đóng modal khi click ra ngoài
     document.getElementById('cancelModal').addEventListener('click', function(e) {
         if(e.target === this) {
             closeCancelModal();

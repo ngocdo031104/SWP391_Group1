@@ -752,7 +752,7 @@
                             function openAssignModal(scheduleId, tourName, departureDate) {
                                 document.getElementById('modal-schedule-id').value = scheduleId;
                                 document.getElementById('modal-tour-name').textContent = tourName;
-                                document.getElementById('modal-departure-date').textContent = 'Ng\u00e0y kh\u1edfi h\u00e0nh: ' + formatDate(departureDate);
+                                document.getElementById('modal-departure-date').textContent = 'Ngày khởi hành: ' + formatDate(departureDate);
                                 document.getElementById('modal-guide-select').value = '';
                                 document.getElementById('modal-notes').value = '';
                                 document.getElementById('assignModal').classList.add('open');
@@ -768,7 +768,7 @@
                                 const notes = document.getElementById('modal-notes').value;
 
                                 if (!guideId) {
-                                    alert('Vui l\u00f2ng ch\u1ecdn h\u01b0\u1edbng d\u1eabn vi\u00ean!');
+                                    alert('Vui lòng chọn hướng dẫn viên!');
                                     return;
                                 }
 
@@ -795,7 +795,7 @@
                                     })
                                     .catch(err => {
                                         console.error(err);
-                                        alert('\u0110\u00e3 x\u1ea3y ra l\u1ed7i khi ph\u00e2n c\u00f4ng!');
+                                        alert('Đã xảy ra lỗi khi phân công!');
                                     });
                             }
 
@@ -808,10 +808,10 @@
                                 fetch('${pageContext.request.contextPath}/staff/tour-assignments?action=details&scheduleId=' + scheduleId)
                                     .then(res => res.text())
                                     .then(html => {
-                                        content.innerHTML = '<div style="padding:20px;text-align:center;color:var(--gray-500);">\u0110ang t\u1ea3i...</div>';
+                                        content.innerHTML = '<div style="padding:20px;text-align:center;color:var(--gray-500);">Đang tải...</div>';
                                     })
                                     .catch(err => {
-                                        content.innerHTML = '<div style="padding:20px;color:var(--danger);">L\u1ed7i khi t\u1ea3i chi ti\u1ebft</div>';
+                                        content.innerHTML = '<div style="padding:20px;color:var(--danger);">Lỗi khi tải chi tiết</div>';
                                     });
                             }
 
@@ -820,7 +820,7 @@
                             }
 
                             function unassignGuide(scheduleId, guideId) {
-                                if (!confirm('B\u1ea1n c\u00f3 ch\u1eafc mu\u1ed1n h\u1ee7y ph\u00e2n c\u00f4ng guide n\u00e0y?')) return;
+                                if (!confirm('Bạn có chắc muốn hủy phân công guide này?')) return;
 
                                 const params = new URLSearchParams();
                                 params.append('action', 'unassign');
@@ -843,7 +843,7 @@
                                     })
                                     .catch(err => {
                                         console.error(err);
-                                        alert('\u0110\u00e3 x\u1ea3y ra l\u1ed7i!');
+                                        alert('Đã xảy ra lỗi!');
                                     });
                             }
 
