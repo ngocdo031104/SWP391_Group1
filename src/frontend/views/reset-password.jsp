@@ -3,7 +3,7 @@
     Tác giả: Đỗ Vũ Minh Ngọc
     MSSV: HE182479
 --%>
-&#65279;<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
+﻿<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <!DOCTYPE html>
@@ -11,7 +11,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>T&#7841;o M&#7853;t Kh&#7849;u M&#7899;i &#8212; TourBuddy</title>
+  <title>Tạo Mật Khẩu Mới — TourBuddy</title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/tourbuddy.css?v=1.4">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
@@ -21,39 +21,39 @@
 </head>
 <body>
 
-<!-- Thanh &#273;i&#7873;u h&#432;&#7899;ng (Navbar) -->
+<!-- Thanh điều hướng (Navbar) -->
 <nav class="navbar">
   <a href="${pageContext.request.contextPath}/home" class="logo" id="nav-logo">
     <div class="logo-icon">T</div>
     <span>TourBuddy</span>
   </a>
   <div class="navbar-nav">
-    <a href="${pageContext.request.contextPath}/home">Trang Ch&#7911;</a>
-    <a href="${pageContext.request.contextPath}/login">&#272;&#259;ng Nh&#7853;p</a>
+    <a href="${pageContext.request.contextPath}/home">Trang Chủ</a>
+    <a href="${pageContext.request.contextPath}/login">Đăng Nhập</a>
   </div>
 </nav>
 
-<!-- B&#7889; c&#7909;c trang x&#225;c th&#7921;c -->
+<!-- Bố cục trang xác thực -->
 <div class="auth-wrapper" style="padding-top:68px">
 
-  <!-- C&#7897;t tr&#225;i: H&#236;nh &#7843;nh gi&#7899;i thi&#7879;u -->
+  <!-- Cột trái: Hình ảnh giới thiệu -->
   <div class="auth-hero">
     <div class="auth-hero-content">
-      <h1>B&#7843;o m&#7853;t<br><em>T&#224;i kho&#7843;n</em></h1>
-      <p>T&#7841;o m&#7897;t m&#7853;t kh&#7849;u m&#7899;i m&#7841;nh m&#7869; v&#224; d&#7877; nh&#7899; &#273;&#7875; b&#7843;o v&#7879; t&#224;i kho&#7843;n TourBuddy c&#7911;a b&#7841;n.</p>
+      <h1>Bảo mật<br><em>Tài khoản</em></h1>
+      <p>Tạo một mật khẩu mới mạnh mẽ và dễ nhớ để bảo vệ tài khoản TourBuddy của bạn.</p>
     </div>
   </div>
 
-  <!-- C&#7897;t ph&#7843;i: Khung nh&#7853;p li&#7879;u -->
+  <!-- Cột phải: Khung nhập liệu -->
   <div class="auth-panel">
     <div class="auth-form-wrap fade-up">
 
-      <h2 class="auth-title fade-up fade-up-1">T&#7841;o m&#7853;t kh&#7849;u m&#7899;i</h2>
+      <h2 class="auth-title fade-up fade-up-1">Tạo mật khẩu mới</h2>
       <p class="auth-subtitle fade-up fade-up-2">
-        Vui l&#242;ng nh&#7853;p m&#7853;t kh&#7849;u m&#7899;i c&#7911;a b&#7841;n b&#234;n d&#432;&#7899;i. M&#7853;t kh&#7849;u ph&#7843;i c&#243; &#237;t nh&#7845;t 8 k&#253; t&#7921;.
+        Vui lòng nhập mật khẩu mới của bạn bên dưới. Mật khẩu phải có ít nhất 8 ký tự.
       </p>
 
-      <!-- Hi&#7875;n th&#7883; th&#244;ng b&#225;o l&#7895;i t&#7915; Server -->
+      <!-- Hiển thị thông báo lỗi từ Server -->
       <c:if test="${not empty errorMessage}">
         <div class="alert alert-error fade-up">
           <i class="fa fa-circle-exclamation"></i> ${errorMessage}
@@ -66,15 +66,15 @@
         <input type="hidden" name="token" value="${token}">
 
         <div class="form-group">
-          <label class="form-label" for="newPassword">M&#7853;t kh&#7849;u m&#7899;i</label>
+          <label class="form-label" for="newPassword">Mật khẩu mới</label>
           <div class="input-icon-wrap">
             <i class="fa fa-lock icon"></i>
             <input type="password" id="newPassword" name="newPassword"
                    class="form-control"
-                   placeholder="T&#7889;i thi&#7875;u 8 k&#253; t&#7921;"
+                   placeholder="Tối thiểu 8 ký tự"
                    required minlength="8"
                    oninput="checkStrength(this.value)">
-            <button type="button" class="toggle-pwd" onclick="togglePwd('newPassword','toggleIcon1')" aria-label="Hi&#7879;n m&#7853;t kh&#7849;u">
+            <button type="button" class="toggle-pwd" onclick="togglePwd('newPassword','toggleIcon1')" aria-label="Hiện mật khẩu">
               <i id="toggleIcon1" class="fa fa-eye"></i>
             </button>
           </div>
@@ -87,22 +87,22 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label" for="confirmPassword">X&#225;c nh&#7853;n m&#7853;t kh&#7849;u</label>
+          <label class="form-label" for="confirmPassword">Xác nhận mật khẩu</label>
           <div class="input-icon-wrap">
             <i class="fa fa-lock icon"></i>
             <input type="password" id="confirmPassword" name="confirmPassword"
                    class="form-control"
-                   placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"
+                   placeholder="••••••••"
                    required>
-            <button type="button" class="toggle-pwd" onclick="togglePwd('confirmPassword','toggleIcon2')" aria-label="Hi&#7879;n m&#7853;t kh&#7849;u">
+            <button type="button" class="toggle-pwd" onclick="togglePwd('confirmPassword','toggleIcon2')" aria-label="Hiện mật khẩu">
               <i id="toggleIcon2" class="fa fa-eye"></i>
             </button>
           </div>
-          <span class="form-error" id="pwdMatchErr" style="display:none"><i class="fa fa-triangle-exclamation"></i> M&#7853;t kh&#7849;u kh&#244;ng kh&#7899;p</span>
+          <span class="form-error" id="pwdMatchErr" style="display:none"><i class="fa fa-triangle-exclamation"></i> Mật khẩu không khớp</span>
         </div>
 
         <button type="submit" class="btn btn-primary btn-block btn-lg" id="submitBtn">
-          <i class="fa fa-check-circle"></i> &#272;&#7893;i M&#7853;t Kh&#7849;u
+          <i class="fa fa-check-circle"></i> Đổi Mật Khẩu
         </button>
 
       </form>

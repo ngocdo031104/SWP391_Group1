@@ -15,7 +15,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Qu&#7843;n L&#253; Ng&#432;&#7901;i D&#249;ng &#151; TourBuddy Admin</title>
+    <title>Quản Lý Người Dùng  TourBuddy Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-dashboard.css?v=1.3">
@@ -45,7 +45,7 @@
         .btn-outline { background: white; color: var(--gray-700); border: 1px solid var(--gray-200); }
         .btn-outline:hover { background: var(--gray-50); border-color: var(--gray-500); }
 
-        /* Sidebar override (users.jsp) &#8212; &#273;&#7843;m b&#7843;o ch&#7919; menu lu&#244;n &#273;&#7885;c &#273;&#432;&#7907;c */
+        /* Sidebar override (users.jsp) — đảm bảo chữ menu luôn đọc được */
         .sidebar-menu a { color: #cbd5e1 !important; opacity: 1 !important; }
         .sidebar-menu a:hover { color: #ffffff !important; background-color: rgba(255,255,255,0.05) !important; }
         .sidebar-menu li.active a { color: #38bdf8 !important; }
@@ -147,51 +147,51 @@
     <c:set var="activePage" value="users" scope="request" />
     <jsp:include page="sidebar.jsp" />
 
-    <!-- V&#249;ng n&#7897;i dung ch&#237;nh -->
+    <!-- Vùng nội dung chính -->
     <main class="main-content">
-        <!-- Ti&#234;u &#273;&#7873; tr&#234;n c&#249;ng -->
+        <!-- Tiêu đề trên cùng -->
         <header class="top-header" style="margin-bottom: 24px;">
             <div>
-                <h1 style="font-size: 26px; font-weight: 800; color: #c084fc; text-shadow: 0 0 16px rgba(192, 132, 252, 0.4); margin: 0 0 8px 0;">Danh s&#225;ch ng&#432;&#7901;i d&#249;ng</h1>
-                <p style="color: #cbd5e1; margin: 0; font-size: 14px;">Qu&#7843;n l&#253; t&#224;i kho&#7843;n ng&#432;&#7901;i d&#249;ng, h&#432;&#7899;ng d&#7851;n vi&#234;n, nh&#226;n vi&#234;n v&#224; qu&#7843;n tr&#7883; vi&#234;n trong h&#7879; th&#7889;ng.</p>
+                <h1 style="font-size: 26px; font-weight: 800; color: #c084fc; text-shadow: 0 0 16px rgba(192, 132, 252, 0.4); margin: 0 0 8px 0;">Danh sách người dùng</h1>
+                <p style="color: #cbd5e1; margin: 0; font-size: 14px;">Quản lý tài khoản người dùng, hướng dẫn viên, nhân viên và quản trị viên trong hệ thống.</p>
             </div>
             <div class="header-actions">
                 <button class="btn-modern btn-outline" onclick="window.location.reload()">
-                    <i data-lucide="refresh-cw" style="width: 16px;"></i> L&#224;m m&#7899;i
+                    <i data-lucide="refresh-cw" style="width: 16px;"></i> Làm mới
                 </button>
                 <button class="btn-modern btn-outline" id="exportUsersBtn">
-                    <i data-lucide="download" style="width: 16px;"></i> Xu&#7845;t d&#7919; li&#7879;u
+                    <i data-lucide="download" style="width: 16px;"></i> Xuất dữ liệu
                 </button>
             </div>
         </header>
 
-        <!-- L&#432;&#7899;i th&#7889;ng k&#234; t&#7893;ng quan -->
+        <!-- Lưới thống kê tổng quan -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-icon primary"><i data-lucide="users"></i></div>
                 <div class="stat-info">
-                    <h4 style="color: #9fa9cb !important;">T&#7893;ng ng&#432;&#7901;i d&#249;ng</h4>
+                    <h4 style="color: #9fa9cb !important;">Tổng người dùng</h4>
                     <div class="stat-value" style="color: #ffffff !important; font-weight: 800;">${totalUsers}</div>
                 </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon success"><i data-lucide="user-check"></i></div>
                 <div class="stat-info">
-                    <h4 style="color: #9fa9cb !important;">&#272;&#259;ng ho&#7841;t &#273;&#7897;ng</h4>
+                    <h4 style="color: #9fa9cb !important;">Đăng hoạt động</h4>
                     <div class="stat-value" style="color: #ffffff !important; font-weight: 800;">${activeUsers}</div>
                 </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon danger"><i data-lucide="lock"></i></div>
                 <div class="stat-info">
-                    <h4 style="color: #9fa9cb !important;">&#272;&#227; kh&#243;a</h4>
+                    <h4 style="color: #9fa9cb !important;">Đã khóa</h4>
                     <div class="stat-value" style="color: #ffffff !important; font-weight: 800;">${lockedUsers}</div>
                 </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon warning"><i data-lucide="briefcase"></i></div>
                 <div class="stat-info">
-                    <h4 style="color: #9fa9cb !important;">H&#432;&#7899;ng d&#7851;n vi&#234;n</h4>
+                    <h4 style="color: #9fa9cb !important;">Hướng dẫn viên</h4>
                     <div class="stat-value" style="color: #ffffff !important; font-weight: 800;">${guideUsers}</div>
                 </div>
             </div>
@@ -204,18 +204,18 @@
             </div>
         </div>
 
-        <!-- B&#7897; l&#7885;c v&#224; B&#7843;ng d&#7919; li&#7879;u -->
+        <!-- Bộ lọc và Bảng dữ liệu -->
         <div class="modern-card">
             <!-- Filter Bar -->
             <div style="padding: 20px 24px; border-bottom: 1px solid var(--gray-200);">
                 <div class="filter-bar" style="margin: 0;">
                     <div class="search-box">
                         <i data-lucide="search"></i>
-                        <input type="text" id="searchInput" placeholder="T&#236;m ki&#7871;m theo t&#234;n, email ho&#7863;c s&#7889; &#273;i&#7879;n tho&#7841;i...">
+                        <input type="text" id="searchInput" placeholder="Tìm kiếm theo tên, email hoặc số điện thoại...">
                     </div>
                     <div class="filter-group">
                         <select class="filter-select" id="roleFilter">
-                            <option value="all">T&#7855;t c&#7843; vai tr&#242;</option>
+                            <option value="all">Tắt cả vai trò</option>
                             <option value="Admin">Admin</option>
                             <option value="Customer">Customer</option>
                             <option value="Guide">Guide</option>
@@ -223,16 +223,16 @@
                             <option value="Accountant">Accountant</option>
                         </select>
                         <select class="filter-select" id="statusFilter">
-                            <option value="all">T&#7855;t c&#7843; tr&#7841;ng th&#225;i</option>
-                            <option value="active">Ho&#7841;t &#273;&#7897;ng</option>
-                            <option value="locked">&#272;&#227; kh&#243;a</option>
+                            <option value="all">Tắt cả trạng thái</option>
+                            <option value="active">Hoạt động</option>
+                            <option value="locked">Đã khóa</option>
                         </select>
                         <select class="filter-select">
-                            <option>Ng&#224;y tham gia (M&#7899;i l&#250;c)</option>
-                            <option>Th&#225;ng n&#224;y</option>
-                            <option>Tu&#7847;n n&#224;y</option>
+                            <option>Ngày tham gia (Mới lúc)</option>
+                            <option>Tháng này</option>
+                            <option>Tuần này</option>
                         </select>
-                        <button class="btn-modern btn-primary" onclick="applyFilters()" style="padding: 10px 20px; height: 42px;">L&#7885;c</button>
+                        <button class="btn-modern btn-primary" onclick="applyFilters()" style="padding: 10px 20px; height: 42px;">Lọc</button>
                     </div>
                 </div>
             </div>
@@ -240,27 +240,27 @@
             <!-- Bulk Actions -->
             <div class="bulk-actions" id="bulkActionsPanel">
                 <div style="font-weight: 600; color: var(--primary);">
-                    &#272;&#227; ch&#7885;n <span id="selectedCount">0</span> ng&#432;&#7901;i d&#249;ng
+                    Đã chọn <span id="selectedCount">0</span> người dùng
                 </div>
                 <div style="display: flex; gap: 8px;">
-                    <button class="btn-modern btn-outline" style="background: white;" onclick="openBulkRoleModal()"><i data-lucide="shield" style="width: 14px;"></i> G&#225;n vai tr&#242;</button>
-                    <button class="btn-modern btn-outline" style="background: white; color: var(--danger);" onclick="bulkToggleStatus(false)"><i data-lucide="lock" style="width: 14px;"></i> Kh&#243;a t&#224;i kho&#7843;n</button>
-                    <button class="btn-modern btn-outline" style="background: white; color: var(--success);" onclick="bulkToggleStatus(true)"><i data-lucide="unlock" style="width: 14px;"></i> M&#7903; kh&#243;a</button>
-                    <button class="btn-modern btn-primary" style="background: var(--danger);" onclick="bulkDeleteUsers()"><i data-lucide="trash-2" style="width: 14px;"></i> X&#243;a</button>
+                    <button class="btn-modern btn-outline" style="background: white;" onclick="openBulkRoleModal()"><i data-lucide="shield" style="width: 14px;"></i> Gán vai trò</button>
+                    <button class="btn-modern btn-outline" style="background: white; color: var(--danger);" onclick="bulkToggleStatus(false)"><i data-lucide="lock" style="width: 14px;"></i> Khóa tài khoản</button>
+                    <button class="btn-modern btn-outline" style="background: white; color: var(--success);" onclick="bulkToggleStatus(true)"><i data-lucide="unlock" style="width: 14px;"></i> Mở khóa</button>
+                    <button class="btn-modern btn-primary" style="background: var(--danger);" onclick="bulkDeleteUsers()"><i data-lucide="trash-2" style="width: 14px;"></i> Xóa</button>
                 </div>
             </div>
 
-            <!-- B&#7843;ng d&#7919; li&#7879;u ch&#237;nh -->
+            <!-- Bảng dữ liệu chính -->
             <div style="overflow-x: auto;">
                 <table class="modern-table" id="usersTable">
                     <thead>
                         <tr>
                             <th style="width: 40px;"><input type="checkbox" class="custom-checkbox" id="selectAll"></th>
-                            <th>Ng&#432;&#7901;i d&#249;ng</th>
-                            <th>Vai tr&#242;</th>
-                            <th>Tr&#7840;ng th&#193;i</th>
-                            <th>Ng&#224;y tham gia</th>
-                            <th style="text-align: right;">H&#192;NH &#272;&#7896;NG</th>
+                            <th>Người dùng</th>
+                            <th>Vai trò</th>
+                            <th>TrẠng thÁi</th>
+                            <th>Ngày tham gia</th>
+                            <th style="text-align: right;">HÀNH ĐỘNG</th>
                         </tr>
                     </thead>
                     <tbody id="usersTableBody">
@@ -291,10 +291,10 @@
                                 <td>
                                     <c:choose>
                                         <c:when test="${user.isActive}">
-                                            <span class="badge status-active"><div style="width:6px;height:6px;border-radius:50%;background:currentColor;"></div> Ho&#7841;t &#273;&#7897;ng</span>
+                                            <span class="badge status-active"><div style="width:6px;height:6px;border-radius:50%;background:currentColor;"></div> Hoạt động</span>
                                         </c:when>
                                         <c:otherwise>
-                                            <span class="badge status-locked"><div style="width:6px;height:6px;border-radius:50%;background:currentColor;"></div> &#272;&#227; kh&#243;a</span>
+                                            <span class="badge status-locked"><div style="width:6px;height:6px;border-radius:50%;background:currentColor;"></div> Đã khóa</span>
                                         </c:otherwise>
                                     </c:choose>
                                 </td>
@@ -303,17 +303,17 @@
                                 </td>
                                 <td>
                                     <div class="row-actions" style="justify-content: flex-end;">
-                                        <button class="action-icon" title="Xem chi ti&#7871;t" onclick="openDrawer('<c:out value='${user.userId}'/>')">
+                                        <button class="action-icon" title="Xem chi tiết" onclick="openDrawer('<c:out value='${user.userId}'/>')">
                                             <i data-lucide="eye" style="width: 18px;"></i>
                                         </button>
-                                        <button class="action-icon" title="S&#7917;a vai tr&#242;" onclick="openSingleRoleModal('<c:out value='${user.userId}'/>')">
+                                        <button class="action-icon" title="Sửa vai trò" onclick="openSingleRoleModal('<c:out value='${user.userId}'/>')">
                                             <i data-lucide="pencil" style="width: 18px;"></i>
                                         </button>
                                         <c:if test="${user.userId ne sessionScope.sessionUser.userId}">
                                             <form action="?action=toggleStatus" method="POST" style="margin:0;">
                                                 <input type="hidden" name="userId" value="<c:out value='${user.userId}'/>">
                                                 <input type="hidden" name="status" value="${!user.isActive}">
-                                                <button type="button" class="action-icon <c:out value='${user.isActive ? "danger" : ""}'/>" title="<c:out value='${user.isActive ? "Kh&#243;a t&#224;i kho&#7843;n" : "M&#7903; kh&#243;a"}'/>" onclick="confirmToggleStatus(this.form, ${user.isActive})">
+                                                <button type="button" class="action-icon <c:out value='${user.isActive ? "danger" : ""}'/>" title="<c:out value='${user.isActive ? "Khóa tài khoản" : "Mở khóa"}'/>" onclick="confirmToggleStatus(this.form, ${user.isActive})">
                                                     <i data-lucide="<c:out value='${user.isActive ? "lock" : "unlock"}'/>" style="width: 18px;"></i>
                                                 </button>
                                             </form>
@@ -333,14 +333,14 @@
 <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
 <div class="drawer" id="userDrawer">
     <div class="drawer-header">
-        <h3>H&#7891; S&#417; Ng&#432;&#7901;i D&#249;ng</h3>
+        <h3>Hồ Sơ Người Dùng</h3>
         <button class="drawer-close" onclick="closeDrawer()"><i data-lucide="x"></i></button>
     </div>
     <div class="drawer-body" id="drawerBody">
         <!-- Content will be loaded via AJAX -->
         <div style="text-align: center; padding: 40px; color: var(--gray-500);">
             <i data-lucide="loader-2" class="lucide-spin" style="width: 32px; height: 32px; animation: spin 1s linear infinite;"></i>
-            <p style="margin-top: 10px;">&#272;&#259;ng t&#7843;i th&#244;ng tin...</p>
+            <p style="margin-top: 10px;">Đăng tải thông tin...</p>
         </div>
     </div>
 </div>
@@ -348,7 +348,7 @@
 <!-- Bulk Role Modal -->
 <div class="drawer-overlay" id="bulkRoleOverlay" style="display: none; align-items: center; justify-content: center; z-index: 2000;">
     <div style="background: white; padding: 24px; border-radius: 12px; width: 400px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);">
-        <h3 style="margin: 0 0 16px 0; font-size: 18px; color: var(--gray-900);">G&#225;n vai tr&#242; h&#224;ng lo&#7841;t</h3>
+        <h3 style="margin: 0 0 16px 0; font-size: 18px; color: var(--gray-900);">Gán vai trò hàng loạt</h3>
         <form id="bulkRoleForm" action="?action=bulkAssignRole" method="POST">
             <div id="bulkRoleInputs"></div>
             <select name="newRoleId" class="filter-select" style="width: 100%; margin-bottom: 24px;">
@@ -359,8 +359,8 @@
                 <option value="5">Accountant</option>
             </select>
             <div style="display: flex; justify-content: flex-end; gap: 12px;">
-                <button type="button" class="btn-modern btn-outline" onclick="closeBulkRoleModal()">H&#7911;y</button>
-                <button type="submit" class="btn-modern btn-primary">L&#432;u thay &#273;&#7893;i</button>
+                <button type="button" class="btn-modern btn-outline" onclick="closeBulkRoleModal()">Hủy</button>
+                <button type="submit" class="btn-modern btn-primary">Lưu thay đổi</button>
             </div>
         </form>
     </div>
@@ -585,7 +585,7 @@
         drawerBody.innerHTML = `
             <div style="text-align: center; padding: 40px; color: var(--gray-500);">
                 <i data-lucide="loader-2" style="width: 32px; height: 32px; animation: spin 1s linear infinite;"></i>
-                <p style="margin-top: 10px;">&#272;&#259;ng t&#7843;i th&#244;ng tin...</p>
+                <p style="margin-top: 10px;">Đăng tải thông tin...</p>
             </div>
         `;
         lucide.createIcons();
@@ -651,7 +651,7 @@
                     </div>
                     <div class="stat-box">
                         <span class="num">\${stats.reviews}</span>
-                        <span class="label">&#272;&#225;nh gi&#225;</span>
+                        <span class="label">Đánh giá</span>
                     </div>
                     <div class="stat-box">
                         <span class="num">\${stats.companions}</span>

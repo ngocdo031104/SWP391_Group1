@@ -16,7 +16,7 @@
                     <head>
                         <meta charset="UTF-8">
                         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                        <title>Qu&#7843;n L&#253; Booking &#8212; TourBuddy Staff</title>
+                        <title>Quản Lý Booking — TourBuddy Staff</title>
                         <link
                             href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
                             rel="stylesheet">
@@ -37,10 +37,10 @@
                                         <div class="page-header" style="margin-bottom:24px;">
                                             <div>
                                                 <h1 style="margin:0;font-size:24px;font-weight:700;color:#0F172A;">
-                                                    Qu&#7843;n L&#253; Booking</h1>
-                                                <p style="margin:4px 0 0;color:#64748B;font-size:14px;">Xem v&#224;
-                                                    qu&#7843;n l&#253; to&#224;n b&#7897; &#273;&#417;n &#273;&#7863;t
-                                                    tour c&#7911;a h&#7879; th&#7889;ng</p>
+                                                    Quản Lý Booking</h1>
+                                                <p style="margin:4px 0 0;color:#64748B;font-size:14px;">Xem và
+                                                    quản lý toàn bộ đơn đặt
+                                                    tour của hệ thống</p>
                                             </div>
                                         </div>
 
@@ -62,7 +62,7 @@
                                                         <div class="stat-icon primary"><i
                                                                 data-lucide="clipboard-list"></i></div>
                                                         <div class="stat-info">
-                                                            <h4>T&#7893;ng Booking</h4>
+                                                            <h4>Tổng Booking</h4>
                                                             <div class="stat-value">${totalRecords}</div>
                                                         </div>
                                                     </div>
@@ -70,14 +70,14 @@
                                                         <div class="stat-icon success"><i
                                                                 data-lucide="check-circle"></i></div>
                                                         <div class="stat-info">
-                                                            <h4>&#272;ang hi&#7875;n th&#7883;</h4>
+                                                            <h4>Đang hiển thị</h4>
                                                             <div class="stat-value">${bookings.size()}</div>
                                                         </div>
                                                     </div>
                                                     <div class="stat-card">
                                                         <div class="stat-icon warning"><i data-lucide="clock"></i></div>
                                                         <div class="stat-info">
-                                                            <h4>Trang hi&#7879;n t&#7841;i</h4>
+                                                            <h4>Trang hiện tại</h4>
                                                             <div class="stat-value">${currentPage} / ${totalPages > 0 ?
                                                                 totalPages : 1}</div>
                                                         </div>
@@ -85,7 +85,7 @@
                                                     <div class="stat-card">
                                                         <div class="stat-icon danger"><i data-lucide="filter"></i></div>
                                                         <div class="stat-info">
-                                                            <h4>B&#7897; l&#7885;c</h4>
+                                                            <h4>Bộ lọc</h4>
                                                             <div class="stat-value" style="font-size:16px;">
                                                                 <c:choose>
                                                                     <c:when test="${statusFilter eq 'All'}">Tất cả
@@ -113,27 +113,27 @@
                                                             <div class="search-box">
                                                                 <i data-lucide="search"></i>
                                                                 <input type="text" name="keyword" value="${keyword}"
-                                                                    placeholder="T&#236;m theo m&#227; booking ho&#7863;c t&#234;n kh&#225;ch h&#224;ng..."
+                                                                    placeholder="Tìm theo mã booking hoặc tên khách hàng..."
                                                                     id="searchInput">
                                                             </div>
                                                             <div class="filter-group">
                                                                 <select name="status" class="filter-select"
                                                                     onchange="this.form.submit()">
                                                                     <option value="All" ${statusFilter eq 'All'
-                                                                        ? 'selected' : '' }>T&#7845;t c&#7843;
-                                                                        tr&#7841;ng th&#225;i</option>
+                                                                        ? 'selected' : '' }>Tất cả
+                                                                        trạng thái</option>
                                                                     <option value="Success" ${statusFilter eq 'Success'
-                                                                        ? 'selected' : '' }>&#9989; Th&#224;nh c&#244;ng
+                                                                        ? 'selected' : '' }>✅ Thành công
                                                                     </option>
                                                                     <option value="PendingPayment" ${statusFilter
-                                                                        eq 'PendingPayment' ? 'selected' : '' }>&#9203;
-                                                                        Ch&#7901; thanh to&#225;n</option>
+                                                                        eq 'PendingPayment' ? 'selected' : '' }>⏳
+                                                                        Chờ thanh toán</option>
                                                                     <option value="Cancelled" ${statusFilter
-                                                                        eq 'Cancelled' ? 'selected' : '' }>&#10060;
-                                                                        &#272;&#227; h&#7911;y</option>
+                                                                        eq 'Cancelled' ? 'selected' : '' }>❌
+                                                                        Đã hủy</option>
                                                                     <option value="Completed" ${statusFilter
-                                                                        eq 'Completed' ? 'selected' : '' }>&#9878;
-                                                                        &#272;&#227; ho&#224;n th&#224;nh</option>
+                                                                        eq 'Completed' ? 'selected' : '' }>⚖
+                                                                        Đã hoàn thành</option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -145,24 +145,24 @@
                                                                 <c:when test="${empty bookings}">
                                                                     <div class="empty-state">
                                                                         <i data-lucide="inbox"></i>
-                                                                        <h3>Kh&#244;ng c&#243; booking n&#224;o</h3>
-                                                                        <p>Th&#7917; thay &#273;&#7893;i b&#7897;
-                                                                            l&#7885;c ho&#7863;c t&#7915; kh&#243;a
-                                                                            t&#236;m ki&#7871;m</p>
+                                                                        <h3>Không có booking nào</h3>
+                                                                        <p>Thử thay đổi bộ
+                                                                            lọc hoặc từ khóa
+                                                                            tìm kiếm</p>
                                                                     </div>
                                                                 </c:when>
                                                                 <c:otherwise>
                                                                     <table class="modern-table">
                                                                         <thead>
                                                                             <tr>
-                                                                                <th>M&#227; Booking</th>
-                                                                                <th>Kh&#225;ch H&#224;ng</th>
+                                                                                <th>Mã Booking</th>
+                                                                                <th>Khách Hàng</th>
                                                                                 <th>Tour</th>
-                                                                                <th>Ng&#224;y KH</th>
-                                                                                <th>T&#7893;ng Ti&#7873;n</th>
-                                                                                <th>Tr&#7841;ng Th&#225;i</th>
+                                                                                <th>Ngày KH</th>
+                                                                                <th>Tổng Tiền</th>
+                                                                                <th>Trạng Thái</th>
                                                                                 <th style="text-align:center;">Thao
-                                                                                    T&#225;c</th>
+                                                                                    Tác</th>
                                                                             </tr>
                                                                         </thead>
                                                                         <tbody>
@@ -197,7 +197,7 @@
                                                                                             value="${b.totalAmount}"
                                                                                             type="number"
                                                                                             groupingUsed="true" />
-                                                                                        &#273;
+                                                                                        đ
                                                                                     </td>
                                                                                     <td>
                                                                                         <c:choose>
@@ -207,8 +207,8 @@
                                                                                                     class="badge badge-success"><i
                                                                                                         data-lucide="check"
                                                                                                         style="width:11px;height:11px;"></i>
-                                                                                                    Th&#224;nh
-                                                                                                    c&#244;ng</span>
+                                                                                                    Thành
+                                                                                                    công</span>
                                                                                             </c:when>
                                                                                             <c:when
                                                                                                 test="${b.status eq 'PendingPayment'}">
@@ -216,7 +216,7 @@
                                                                                                     class="badge badge-warning"><i
                                                                                                         data-lucide="clock"
                                                                                                         style="width:11px;height:11px;"></i>
-                                                                                                    Ch&#7901; TT</span>
+                                                                                                    Chờ TT</span>
                                                                                             </c:when>
                                                                                             <c:when
                                                                                                 test="${b.status eq 'Cancelled'}">
@@ -224,8 +224,8 @@
                                                                                                     class="badge badge-danger"><i
                                                                                                         data-lucide="x"
                                                                                                         style="width:11px;height:11px;"></i>
-                                                                                                    &#272;&#227;
-                                                                                                    h&#7911;y</span>
+                                                                                                    Đã
+                                                                                                    hủy</span>
                                                                                             </c:when>
                                                                                             <c:when
                                                                                                 test="${b.status eq 'Completed'}">
@@ -234,9 +234,9 @@
                                                                                                     style="background:#EDE9FE;color:#7C3AED;"><i
                                                                                                         data-lucide="flag"
                                                                                                         style="width:11px;height:11px;"></i>
-                                                                                                    &#272;&#227;
-                                                                                                    ho&#224;n
-                                                                                                    th&#224;nh</span>
+                                                                                                    Đã
+                                                                                                    hoàn
+                                                                                                    thành</span>
                                                                                             </c:when>
                                                                                             <c:otherwise>
                                                                                                 <span
@@ -250,18 +250,18 @@
                                                                                             <a href="${pageContext.request.contextPath}/staff/guests?action=details&scheduleId=${b.scheduleId}&bookingId=${b.bookingId}"
                                                                                                 class="action-btn"
                                                                                                 style="background:var(--primary-light); color:var(--primary); text-decoration:none;"
-                                                                                                title="Xem danh s&#225;ch h&#224;nh kh&#225;ch">
+                                                                                                title="Xem danh sách hành khách">
                                                                                                 <i data-lucide="users"
                                                                                                     style="width:12px;height:12px;"></i>
-                                                                                                Xem Kh&#225;ch
+                                                                                                Xem Khách
                                                                                             </a>
                                                                                             <button
                                                                                                 class="action-btn note"
                                                                                                 onclick="openNotifModal(${b.customer.userId}, '${fn:escapeXml(b.customer.fullName)}')"
-                                                                                                title="G&#7917;i th&#244;ng b&#225;o cho kh&#225;ch h&#224;ng n&#224;y">
+                                                                                                title="Gửi thông báo cho khách hàng này">
                                                                                                 <i data-lucide="bell"
                                                                                                     style="width:12px;height:12px;"></i>
-                                                                                                G&#7917;i TB
+                                                                                                Gửi TB
                                                                                             </button>
                                                                                         </div>
                                                                                     </td>
@@ -302,8 +302,8 @@
                                 <div class="modal-box">
                                     <div class="modal-header">
                                         <h3><i data-lucide="bell"
-                                                style="width:16px;height:16px;vertical-align:middle;"></i> G&#7917;i
-                                            Th&#244;ng B&#225;o</h3>
+                                                style="width:16px;height:16px;vertical-align:middle;"></i> Gửi
+                                            Thông Báo</h3>
                                         <button class="modal-close" onclick="closeNotifModal()">
                                             <i data-lucide="x"></i>
                                         </button>
@@ -317,59 +317,59 @@
 
                                         <div class="modal-body">
                                             <div class="form-group">
-                                                <label>Kh&#225;ch H&#224;ng</label>
+                                                <label>Khách Hàng</label>
                                                 <div id="modalCustomerName"
                                                     style="font-weight:600;color:var(--primary);font-size:15px;padding:8px 12px;background:var(--primary-light);border-radius:8px;">
                                                 </div>
                                             </div>
 
                                             <div class="form-group">
-                                                <label for="titleInput">Ti&#234;u &#272;&#7873; Th&#244;ng B&#225;o
+                                                <label for="titleInput">Tiêu Đề Thông Báo
                                                     *</label>
                                                 <input type="text" id="titleInput" name="title" required
                                                     class="form-control"
-                                                    placeholder="Nh&#7853;p ti&#234;u &#273;&#7873;...">
+                                                    placeholder="Nhập tiêu đề...">
                                             </div>
 
                                             <div class="form-group">
-                                                <label for="contentInput">N&#7897;i Dung *</label>
+                                                <label for="contentInput">Nội Dung *</label>
                                                 <textarea id="contentInput" name="content" required class="form-control"
-                                                    rows="4" placeholder="Nh&#7853;p n&#7897;i dung..."></textarea>
+                                                    rows="4" placeholder="Nhập nội dung..."></textarea>
                                             </div>
 
                                             <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
                                                 <div class="form-group">
-                                                    <label for="categoryInput">Th&#7875; Lo&#7841;i</label>
+                                                    <label for="categoryInput">Thể Loại</label>
                                                     <select id="categoryInput" name="category" required
                                                         class="form-control">
-                                                        <option value="Booking">&#272;&#7863;t ch&#7895;</option>
-                                                        <option value="System Announcement">Th&#244;ng b&#225;o h&#7879;
-                                                            th&#7889;ng</option>
-                                                        <option value="Payment">Thanh to&#225;n</option>
-                                                        <option value="Tour Update">C&#7853;p nh&#7853;t Tour</option>
-                                                        <option value="Promotion">Khuy&#7871;n m&#227;i</option>
+                                                        <option value="Booking">Đặt chỗ</option>
+                                                        <option value="System Announcement">Thông báo hệ
+                                                            thống</option>
+                                                        <option value="Payment">Thanh toán</option>
+                                                        <option value="Tour Update">Cập nhật Tour</option>
+                                                        <option value="Promotion">Khuyến mãi</option>
                                                     </select>
                                                 </div>
                                                 <div class="form-group">
-                                                    <label for="scheduledInput">L&#234;n L&#7883;ch <span
-                                                            style="font-weight:400;color:var(--gray-500);">(t&#249;y
-                                                            ch&#7885;n)</span></label>
+                                                    <label for="scheduledInput">Lên Lịch <span
+                                                            style="font-weight:400;color:var(--gray-500);">(tùy
+                                                            chọn)</span></label>
                                                     <input type="datetime-local" id="scheduledInput" name="scheduledAt"
                                                         class="form-control">
                                                 </div>
                                             </div>
                                             <div
                                                 style="font-size:12px;color:var(--gray-500);font-style:italic;margin-top:5px;">
-                                                * Th&#244;ng b&#225;o s&#7869; ch&#7881; &#273;&#432;&#7907;c g&#7917;i
-                                                qua h&#7879; th&#7889;ng (in-app).
+                                                * Thông báo sẽ chỉ được gửi
+                                                qua hệ thống (in-app).
                                             </div>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn-modern btn-outline"
-                                                onclick="closeNotifModal()">H&#7911;y</button>
+                                                onclick="closeNotifModal()">Hủy</button>
                                             <button type="submit" class="btn-modern btn-primary">
-                                                <i data-lucide="send" style="width:14px;height:14px;"></i> G&#7917;i
-                                                Th&#244;ng B&#225;o
+                                                <i data-lucide="send" style="width:14px;height:14px;"></i> Gửi
+                                                Thông Báo
                                             </button>
                                         </div>
                                     </form>

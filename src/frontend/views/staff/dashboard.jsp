@@ -19,7 +19,7 @@
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Staff Dashboard &#8212; TourBuddy</title>
+            <title>Staff Dashboard — TourBuddy</title>
             <link
                 href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
                 rel="stylesheet">
@@ -258,14 +258,14 @@
                             <%-- Welcome banner --%>
                                 <div class="welcome-banner">
                                     <div class="welcome-text">
-                                        <h2>Xin ch&#224;o, ${sessionScope.sessionUser.fullName}! &#128075;</h2>
-                                        <p>Ch&#224;o m&#7915;ng b&#7841;n quay l&#7841;i. H&#244;m nay c&#243;
-                                            <strong>${totalPending}</strong> booking &#273;ang ch&#7901; x&#7917;
-                                            l&#253;.</p>
+                                        <h2>Xin chào, ${sessionScope.sessionUser.fullName}! </h2>
+                                        <p>Chào mừng bạn quay lại. Hôm nay có
+                                            <strong>${totalPending}</strong> booking đang chờ xử
+                                            lý.</p>
                                     </div>
                                     <div class="welcome-badge">
                                         <i data-lucide="shield-check" style="width:16px;height:16px;"></i>
-                                        Nh&#226;n Vi&#234;n &#8212; Staff
+                                        Nhân Viên — Staff
                                     </div>
                                 </div>
 
@@ -275,7 +275,7 @@
                                             class="stat-card">
                                             <div class="stat-icon primary"><i data-lucide="clipboard-list"></i></div>
                                             <div class="stat-info">
-                                                <h4>T&#7893;ng Booking</h4>
+                                                <h4>Tổng Booking</h4>
                                                 <div class="stat-value">${totalAll}</div>
                                             </div>
                                         </a>
@@ -283,7 +283,7 @@
                                             class="stat-card">
                                             <div class="stat-icon success"><i data-lucide="check-circle"></i></div>
                                             <div class="stat-info">
-                                                <h4>Th&#224;nh C&#244;ng</h4>
+                                                <h4>Thành Công</h4>
                                                 <div class="stat-value">${totalSuccess}</div>
                                             </div>
                                         </a>
@@ -291,7 +291,7 @@
                                             class="stat-card">
                                             <div class="stat-icon warning"><i data-lucide="clock"></i></div>
                                             <div class="stat-info">
-                                                <h4>Ch&#7901; Thanh To&#225;n</h4>
+                                                <h4>Chờ Thanh Toán</h4>
                                                 <div class="stat-value">${totalPending}</div>
                                             </div>
                                         </a>
@@ -299,7 +299,7 @@
                                             class="stat-card">
                                             <div class="stat-icon danger"><i data-lucide="x-circle"></i></div>
                                             <div class="stat-info">
-                                                <h4>&#272;&#227; H&#7911;y</h4>
+                                                <h4>Đã Hủy</h4>
                                                 <div class="stat-value">${totalCancelled}</div>
                                             </div>
                                         </a>
@@ -308,7 +308,7 @@
                                     <%-- Quick actions --%>
                                         <h2
                                             style="margin:0 0 16px;font-size:18px;font-weight:600;color:var(--gray-900);">
-                                            Truy c&#7853;p nhanh</h2>
+                                            Truy cập nhanh</h2>
                                         <div class="quick-actions-grid">
                                             <a href="${pageContext.request.contextPath}/staff/bookings"
                                                 class="quick-card">
@@ -316,11 +316,11 @@
                                                     style="background:var(--primary-light);color:var(--primary);">
                                                     <i data-lucide="list-checks"></i>
                                                 </div>
-                                                <h3>Qu&#7843;n L&#253; Booking</h3>
-                                                <p>Xem to&#224;n b&#7897; danh s&#225;ch &#273;&#7863;t tour, l&#7885;c
-                                                    theo tr&#7841;ng th&#225;i v&#224; th&#234;m ghi ch&#250; v&#7853;n
-                                                    h&#224;nh.</p>
-                                                <span class="arrow">Xem t&#7845;t c&#7843; <i data-lucide="arrow-right"
+                                                <h3>Quản Lý Booking</h3>
+                                                <p>Xem toàn bộ danh sách đặt tour, lọc
+                                                    theo trạng thái và thêm ghi chú vận
+                                                    hành.</p>
+                                                <span class="arrow">Xem tất cả <i data-lucide="arrow-right"
                                                         style="width:14px;height:14px;"></i></span>
                                             </a>
 
@@ -330,11 +330,11 @@
                                                     style="background:var(--warning-light);color:var(--warning);">
                                                     <i data-lucide="bar-chart-3"></i>
                                                 </div>
-                                                <h3>Th&#7889;ng K&#234;</h3>
-                                                <p>Xem t&#7893;ng quan doanh thu, l&#432;&#7907;t &#273;&#7863;t tour
-                                                    v&#224; hi&#7879;u su&#7845;t v&#7853;n h&#224;nh c&#7911;a h&#7879;
-                                                    th&#7889;ng.</p>
-                                                <span class="arrow">Xem b&#225;o c&#225;o <i data-lucide="arrow-right"
+                                                <h3>Thống Kê</h3>
+                                                <p>Xem tổng quan doanh thu, lượt đặt tour
+                                                    và hiệu suất vận hành của hệ
+                                                    thống.</p>
+                                                <span class="arrow">Xem báo cáo <i data-lucide="arrow-right"
                                                         style="width:14px;height:14px;"></i></span>
                                             </a>
                                         </div>

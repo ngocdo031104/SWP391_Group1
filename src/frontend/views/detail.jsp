@@ -17,10 +17,10 @@
 <%@ page import="Entities.Review" %>
 <%@ page import="Entities.User" %>
 <%
-    // L&#221; DO V&#192; CH&#7912;C N&#224;NG C&#7910;A &#272;O&#7840;N CODE N&#192;Y:
-    // - extraCss: Thu&#7897;c t&#237;nh n&#224;y &#273;&#432;&#7907;c header.jsp &#273;&#7885;c &#273;&#7875; nh&#250;ng file CSS detail.css t&#432;&#417;ng &#7913;ng (t&#7841;o giao di&#7879;n ri&#234;ng cho trang chi ti&#7871;t).
-    // - activeTour: &#272;&#7889;i t&#432;&#7907;ng Tour ch&#237;nh &#273;&#432;&#7907;c Servlet DetailController.java n&#7841;p t&#7915; DB (b&#7857;ng tourDAO.getTourById(id))
-    //   v&#224; &#273;&#7849;y v&#224;o request attribute &#273;&#7875; JSP n&#224;y hi&#7875;n th&#7883; th&#244;ng tin &#273;&#7897;ng.
+    // LÝ DO VÀ CHỨC NàNG CỦA ĐOẠN CODE NÀY:
+    // - extraCss: Thuộc tính này được header.jsp đọc để nhúng file CSS detail.css tương ứng (tạo giao diện riêng cho trang chi tiết).
+    // - activeTour: Đối tượng Tour chính được Servlet DetailController.java nạp từ DB (bằng tourDAO.getTourById(id))
+    //   và đẩy vào request attribute để JSP này hiển thị thông tin động.
     request.setAttribute("extraCss", "css/detail.css");
     request.setAttribute("bodyClass", "detail-page");
     Tour activeTour = (Tour) request.getAttribute("tour");
@@ -50,8 +50,8 @@
     int activeSeatsLeft = 0;
     int totalSeatsAll = 0;
     if (activeTour != null) {
-        // D&#432;&#417;ng: T&#7893;ng ch&#7895; tr&#7889;ng & t&#7893;ng ch&#7895; l&#7845;y t&#7915; T&#7844;T C&#7842; schedule t&#432;&#417;ng lai
-        // (Tour c&#243; th&#7875; c&#243; nhi&#7873;u l&#7883;ch &#8212; ch&#7881; l&#7845;y l&#7883;ch &#273;&#7847;u ti&#234;n l&#224; sai cho hi&#7875;n th&#7883;)
+        // Dương: Tổng chỗ trống & tổng chỗ lấy từ TẤT CẢ schedule tương lai
+        // (Tour có thể có nhiều lịch — chỉ lấy lịch đầu tiên là sai cho hiển thị)
         if (activeTour.getSchedules() != null) {
             for (TourSchedule s : activeTour.getSchedules()) {
                 if ("Open".equalsIgnoreCase(s.getStatus())) {
@@ -61,12 +61,12 @@
             }
         }
     }
-    // D&#432;&#417;ng: Gi&#7899;i h&#7841;n s&#7889; ng&#432;&#7901;i t&#7889;i &#273;a c&#7911;a m&#7895;i &#273;o&#224;n l&#7845;y t&#7915; Tour.MaxParticipants (do admin c&#7845;u h&#236;nh khi t&#7841;o tour).
-    // Fallback 10 khi DB ch&#432;a set &#273;&#7875; kh&#7899;p v&#7899;i constraint c&#361; v&#224; tr&#225;nh hi&#7875;n th&#7883; r&#7895;ng.
+    // Dương: Giới hạn số người tối đa của mỗi đoàn lấy từ Tour.MaxParticipants (do admin cấu hình khi tạo tour).
+    // Fallback 10 khi DB chưa set để khớp với constraint cũ và tránh hiển thị rỗng.
     int maxParticipantsPerDeparture = (activeTour != null && activeTour.getMaxParticipants() > 0)
             ? activeTour.getMaxParticipants() : 10;
 %>
-<!-- Nh&#250;ng header d&#249;ng chung cho to&#224;n b&#7897; website, n&#7857;m trong th&#432; m&#7909;c web/common/ -->
+<!-- Nhúng header dùng chung cho toàn bộ website, nằm trong thư mục web/common/ -->
 <jsp:include page="/common/header.jsp" />
 
     <!-- TOUR TITLE & HEAD SECTION -->
@@ -74,24 +74,24 @@
         <div class="container">
             <!-- Breadcrumbs -->
             <div class="breadcrumbs">
-                <a href="${pageContext.request.contextPath}/home">Trang ch&#7911;</a> &gt; 
+                <a href="${pageContext.request.contextPath}/home">Trang chủ</a> &gt; 
                 <a href="${pageContext.request.contextPath}/tourdiscovery">Tours</a> &gt; 
-                <span id="breadcrumb-active">Chi ti&#7871;t Tour</span>
+                <span id="breadcrumb-active">Chi tiết Tour</span>
             </div>
 
             <!-- Title & Rating info -->
             <div class="tour-head-flex">
                 <div class="tour-head-left">
-                    <h1 id="detail-title">&#272;ang t&#7843;i t&#234;n tour...</h1>
+                    <h1 id="detail-title">Đang tải tên tour...</h1>
                     <div class="tour-meta-row">
                         <div class="tour-rating-stars">
                             <i data-lucide="star" class="star-filled"></i>
                             <strong id="detail-rating">0.0</strong> 
-                            <span id="detail-reviews-count">(0 &#273;&#225;nh gi&#225;)</span>
+                            <span id="detail-reviews-count">(0 đánh giá)</span>
                         </div>
                         <div class="tour-location-text">
                             <i data-lucide="map-pin"></i>
-                            <span id="detail-location-name">&#272;ang t&#7843;i &#273;&#7883;a &#273;i&#7875;m...</span>
+                            <span id="detail-location-name">Đang tải địa điểm...</span>
                         </div>
                         <div class="tour-badge-category">
                             <i data-lucide="tag"></i>
@@ -102,7 +102,7 @@
                 <!-- Action sharing / wishlist buttons -->
                 <div class="tour-head-actions">
                     <button class="btn btn-secondary btn-icon-text" id="share-btn">
-                        <i data-lucide="share-2"></i> Chia s&#7867;
+                        <i data-lucide="share-2"></i> Chia sẻ
                     </button>
                     <%
                         List<Integer> wishlistTourIds = (List<Integer>) request.getAttribute("wishlistTourIds");
@@ -110,9 +110,9 @@
                     %>
                     <button class="btn btn-secondary btn-icon-text btn-wishlist-detail <%= isWishlisted ? "active" : "" %>" id="wishlist-detail-btn" data-tour-id="<%= activeTour != null ? activeTour.getTourId() : "" %>">
                         <% if (isWishlisted) { %>
-                            <i data-lucide="heart" fill="currentColor"></i> &#272;&#227; l&#432;u Y&#234;u th&#237;ch
+                            <i data-lucide="heart" fill="currentColor"></i> Đã lưu Yêu thích
                         <% } else { %>
-                            <i data-lucide="heart"></i> L&#432;u v&#224;o Y&#234;u th&#237;ch
+                            <i data-lucide="heart"></i> Lưu vào Yêu thích
                         <% } %>
                     </button>
                 </div>
@@ -130,14 +130,14 @@
                         mainImgUrl = activeTour.getMediaList().get(0).getMediaUrl();
                     } else if (activeTour != null) {
                         String dest = activeTour.getDestination().toLowerCase();
-                        if (dest.contains("&#273;&#224; n&#7861;ng")) mainImgUrl = "assets/images/tour_danang.png";
-                        else if (dest.contains("ph&#250; qu&#7889;c")) mainImgUrl = "assets/images/tour_phuquoc.png";
-                        else if (dest.contains("h&#7841; long")) mainImgUrl = "assets/images/tour_halong.png";
-                        else if (dest.contains("h&#7897;i an")) mainImgUrl = "assets/images/tour_hoian.png";
-                        else if (dest.contains("&#273;&#224; l&#7841;t")) mainImgUrl = "assets/images/tour_dalat.png";
+                        if (dest.contains("đà nẵng")) mainImgUrl = "assets/images/tour_danang.png";
+                        else if (dest.contains("phú quốc")) mainImgUrl = "assets/images/tour_phuquoc.png";
+                        else if (dest.contains("hạ long")) mainImgUrl = "assets/images/tour_halong.png";
+                        else if (dest.contains("hội an")) mainImgUrl = "assets/images/tour_hoian.png";
+                        else if (dest.contains("đà lạt")) mainImgUrl = "assets/images/tour_dalat.png";
                         else if (dest.contains("sa pa") || dest.contains("sapa")) mainImgUrl = "assets/images/tour_sapa.png";
                         else if (dest.contains("nha trang")) mainImgUrl = "assets/images/tour_nhatrang.png";
-                        else if (dest.contains("h&#224; giang")) mainImgUrl = "assets/images/tour_hagiang.png";
+                        else if (dest.contains("hà giang")) mainImgUrl = "assets/images/tour_hagiang.png";
                     }
 
                     // Construct gallery images list
@@ -166,22 +166,22 @@
                     }
                 %>
                 <div class="gallery-item main-photo">
-                    <img src="<%= galleryImages.get(0) %>" alt="Tour ch&#237;nh" id="gallery-main-img">
+                    <img src="<%= galleryImages.get(0) %>" alt="Tour chính" id="gallery-main-img">
                 </div>
                 <!-- Sub photos (Right grid) -->
                 <div class="gallery-item sub-photo sub-1">
-                    <img src="<%= galleryImages.get(1) %>" alt="&#7842;nh ph&#7909; 1" class="gallery-thumb" data-index="1">
+                    <img src="<%= galleryImages.get(1) %>" alt="Ảnh phụ 1" class="gallery-thumb" data-index="1">
                 </div>
                 <div class="gallery-item sub-photo sub-2">
-                    <img src="<%= galleryImages.get(2) %>" alt="&#7842;nh ph&#7909; 2" class="gallery-thumb" data-index="2">
+                    <img src="<%= galleryImages.get(2) %>" alt="Ảnh phụ 2" class="gallery-thumb" data-index="2">
                 </div>
                 <div class="gallery-item sub-photo sub-3">
-                    <img src="<%= galleryImages.get(3) %>" alt="&#7842;nh ph&#7909; 3" class="gallery-thumb" data-index="3">
+                    <img src="<%= galleryImages.get(3) %>" alt="Ảnh phụ 3" class="gallery-thumb" data-index="3">
                 </div>
                 <div class="gallery-item sub-photo sub-4">
-                    <img src="<%= galleryImages.get(4) %>" alt="&#7842;nh ph&#7909; 4" class="gallery-thumb" data-index="4">
+                    <img src="<%= galleryImages.get(4) %>" alt="Ảnh phụ 4" class="gallery-thumb" data-index="4">
                     <button class="btn-all-photos" id="view-all-photos-btn">
-                        <i data-lucide="grid"></i> Xem T&#7845;t C&#7843; &#7842;nh
+                        <i data-lucide="grid"></i> Xem Tất Cả Ảnh
                     </button>
                 </div>
             </div>
@@ -200,36 +200,36 @@
                     <div class="highlight-item">
                         <div class="icon-wrapper"><i data-lucide="clock"></i></div>
                         <div class="item-text">
-                            <span class="label">Th&#7901;i l&#432;&#7907;ng</span>
-                            <strong id="hl-duration">&#272;ang t&#7843;i...</strong>
+                            <span class="label">Thời lượng</span>
+                            <strong id="hl-duration">Đang tải...</strong>
                         </div>
                     </div>
                     <div class="highlight-item">
                         <div class="icon-wrapper"><i data-lucide="users"></i></div>
                         <div class="item-text">
-                            <span class="label">Gi&#7899;i h&#7841;n &#273;o&#224;n</span>
-                            <strong id="hl-group-size" title="S&#7889; ng&#432;&#7901;i t&#7889;i &#273;a cho m&#7895;i &#273;o&#224;n kh&#7903;i h&#224;nh &#8212; do Admin c&#7845;u h&#236;nh khi t&#7841;o tour">T&#7889;i &#273;a <%= maxParticipantsPerDeparture %> kh&#225;ch/&#273;o&#224;n</strong>
+                            <span class="label">Giới hạn đoàn</span>
+                            <strong id="hl-group-size" title="Số người tối đa cho mỗi đoàn khởi hành — do Admin cấu hình khi tạo tour">Tối đa <%= maxParticipantsPerDeparture %> khách/đoàn</strong>
                         </div>
                     </div>
                     <div class="highlight-item">
                         <div class="icon-wrapper"><i data-lucide="ticket"></i></div>
                         <div class="item-text">
-                            <span class="label">Ch&#7895; tr&#7889;ng (t&#7845;t c&#7843; l&#7883;ch)</span>
-                            <strong id="hl-seats-left"><%= activeSeatsLeft %> Ch&#7895;</strong>
+                            <span class="label">Chỗ trống (tất cả lịch)</span>
+                            <strong id="hl-seats-left"><%= activeSeatsLeft %> Chỗ</strong>
                         </div>
                     </div>
                     <div class="highlight-item">
                         <div class="icon-wrapper"><i data-lucide="languages"></i></div>
                         <div class="item-text">
-                            <span class="label">Ng&#244;n ng&#7919;</span>
-                            <strong id="hl-languages">Ti&#7871;ng Vi&#7879;t / Anh</strong>
+                            <span class="label">Ngôn ngữ</span>
+                            <strong id="hl-languages">Tiếng Việt / Anh</strong>
                         </div>
                     </div>
                     <div class="highlight-item">
                         <div class="icon-wrapper"><i data-lucide="activity"></i></div>
                         <div class="item-text">
-                            <span class="label">M&#7913;c &#273;&#7897; v&#7853;n &#273;&#7897;ng</span>
-                            <strong id="hl-difficulty">&#272;ang t&#7843;i...</strong>
+                            <span class="label">Mức độ vận động</span>
+                            <strong id="hl-difficulty">Đang tải...</strong>
                         </div>
                     </div>
                 </div>
@@ -237,14 +237,14 @@
 
                 <!-- Tour Description -->
                 <div class="tour-description-section">
-                    <h3>Gi&#7899;i Thi&#7879;u H&#224;nh Tr&#236;nh</h3>
-                    <p id="tour-detail-desc">&#272;ang t&#7843;i n&#7897;i dung h&#224;nh tr&#236;nh...</p>
+                    <h3>Giới Thiệu Hành Trình</h3>
+                    <p id="tour-detail-desc">Đang tải nội dung hành trình...</p>
                 </div>
 
                 <!-- Itinerary Timeline Section -->
                 <div class="tour-itinerary-section">
-                    <h3>Chi Ti&#7871;t L&#7883;ch Tr&#236;nh T&#7915;ng Ng&#224;y</h3>
-                    <p class="itinerary-intro">Xem l&#7883;ch tr&#236;nh chi ti&#7871;t v&#224; h&#7845;p d&#7851;n &#273;&#432;&#7907;c thi&#7871;t k&#7871; chuy&#234;n nghi&#7879;p c&#7911;a ch&#250;ng t&#244;i.</p>
+                    <h3>Chi Tiết Lịch Trình Từng Ngày</h3>
+                    <p class="itinerary-intro">Xem lịch trình chi tiết và hấp dẫn được thiết kế chuyên nghiệp của chúng tôi.</p>
                     
                     <div class="itinerary-timeline" id="itinerary-timeline-container">
                         <!-- Populated dynamically via detail.js -->
@@ -252,22 +252,22 @@
                 </div>
 
                 <!-- Included / Excluded Services Card -->
-                <!-- L&#221; DO V&#192; CH&#7912;C N&#224;NG C&#7910;A &#272;O&#7840;N N&#192;Y:
-                     - Gi&#250;p ng&#432;&#7901;i d&#249;ng bi&#7871;t tour bao g&#7891;m nh&#7919;ng ti&#7879;n &#237;ch g&#236; (INCLUDED) v&#224; nh&#7919;ng g&#236; h&#7885; ph&#7843;i t&#7921; tr&#7843; chi ph&#237; (EXCLUDED).
-                     - T&#7843;i &#273;&#7897;ng t&#7915; b&#7843;ng TourInclusion th&#244;ng qua tour.getInclusions().
-                     - Ph&#226;n t&#225;ch l&#224;m hai c&#7897;t tr&#225;i v&#224; ph&#7843;i. N&#7871;u DB ch&#432;a c&#243; d&#7919; li&#7879;u, s&#7869; hi&#7875;n th&#7883; danh s&#225;ch t&#297;nh m&#7863;c &#273;&#7883;nh &#273;&#7875; gi&#7919; UI &#273;&#7865;p. -->
+                <!-- LÝ DO VÀ CHỨC NàNG CỦA ĐOẠN NÀY:
+                     - Giúp người dùng biết tour bao gồm những tiện ích gì (INCLUDED) và những gì họ phải tự trả chi phí (EXCLUDED).
+                     - Tải động từ bảng TourInclusion thông qua tour.getInclusions().
+                     - Phân tách làm hai cột trái và phải. Nếu DB chưa có dữ liệu, sẽ hiển thị danh sách tĩnh mặc định để giữ UI đẹp. -->
                 <div class="tour-services-card">
-                    <h3>D&#7883;ch V&#7909; Bao G&#7891;m & Lo&#7841;i Tr&#7915;</h3>
+                    <h3>Dịch Vụ Bao Gồm & Loại Trừ</h3>
                     <div class="services-split-grid">
                         <div class="services-column included">
-                            <h4><i data-lucide="check-circle" class="icon-included"></i> D&#7883;ch v&#7909; bao g&#7891;m</h4>
+                            <h4><i data-lucide="check-circle" class="icon-included"></i> Dịch vụ bao gồm</h4>
                             <ul class="services-list">
                                 <%
-                                    // L&#7845;y danh s&#225;ch d&#7883;ch v&#7909; &#273;i k&#232;m
+                                    // Lấy danh sách dịch vụ đi kèm
                                     List<TourInclusion> inclusions = activeTour.getInclusions();
                                     boolean hasIncluded = false;
                                     
-                                    // Duy&#7879;t danh s&#225;ch, l&#7885;c d&#7883;ch v&#7909; bao g&#7891;m (INCLUDED)
+                                    // Duyệt danh sách, lọc dịch vụ bao gồm (INCLUDED)
                                     if (inclusions != null) {
                                         for (TourInclusion inc : inclusions) {
                                             if ("INCLUDED".equalsIgnoreCase(inc.getInclusionType())) {
@@ -280,21 +280,21 @@
                                         }
                                     }
                                     
-                                    // Kh&#244;ng c&#243; d&#7919; li&#7879;u t&#7915; DB &#8594; hi&#7879;n th&#244;ng b&#225;o tr&#7889;ng
+                                    // Không có dữ liệu từ DB → hiện thông báo trống
                                     if (!hasIncluded) {
                                 %>
-                                <li style="color: var(--slate-400); font-style: italic;"><i data-lucide="info"></i> Ch&#432;a c&#243; th&#244;ng tin d&#7883;ch v&#7909; bao g&#7891;m.</li>
+                                <li style="color: var(--slate-400); font-style: italic;"><i data-lucide="info"></i> Chưa có thông tin dịch vụ bao gồm.</li>
                                 <%
                                     }
                                 %>
                             </ul>
                         </div>
                         <div class="services-column excluded">
-                            <h4><i data-lucide="x-circle" class="icon-excluded"></i> D&#7883;ch v&#7909; kh&#244;ng bao g&#7891;m</h4>
+                            <h4><i data-lucide="x-circle" class="icon-excluded"></i> Dịch vụ không bao gồm</h4>
                             <ul class="services-list">
                                 <%
                                     boolean hasExcluded = false;
-                                    // Duy&#7879;t danh s&#225;ch, l&#7885;c d&#7883;ch v&#7909; lo&#7841;i tr&#7915; (EXCLUDED)
+                                    // Duyệt danh sách, lọc dịch vụ loại trừ (EXCLUDED)
                                     if (inclusions != null) {
                                         for (TourInclusion inc : inclusions) {
                                             if ("EXCLUDED".equalsIgnoreCase(inc.getInclusionType())) {
@@ -307,10 +307,10 @@
                                         }
                                     }
                                     
-                                    // Kh&#244;ng c&#243; d&#7919; li&#7879;u t&#7915; DB &#8594; hi&#7879;n th&#244;ng b&#225;o tr&#7889;ng
+                                    // Không có dữ liệu từ DB → hiện thông báo trống
                                     if (!hasExcluded) {
                                 %>
-                                <li style="color: var(--slate-400); font-style: italic;"><i data-lucide="info"></i> Ch&#432;a c&#243; th&#244;ng tin d&#7883;ch v&#7909; kh&#244;ng bao g&#7891;m.</li>
+                                <li style="color: var(--slate-400); font-style: italic;"><i data-lucide="info"></i> Chưa có thông tin dịch vụ không bao gồm.</li>
                                 <%
                                     }
                                 %>
@@ -321,7 +321,7 @@
 
                 <!-- Reviews & Ratings Section -->
                 <div class="tour-reviews-section" id="reviews">
-                    <h3>&#272;&#225;nh Gi&#225; Th&#7921;c T&#7871; T&#7915; Du Kh&#225;ch</h3>
+                    <h3>Đánh Giá Thực Tế Từ Du Khách</h3>
                     
                     <div class="reviews-scorecard">
                         <div class="scorecard-left">
@@ -336,7 +336,7 @@
                                     }
                                 %>
                             </div>
-                            <span class="reviews-count-label" id="scorecard-total">D&#7921;a tr&#234;n <%= totalReviews %> &#273;&#225;nh gi&#225;</span>
+                            <span class="reviews-count-label" id="scorecard-total">Dựa trên <%= totalReviews %> đánh giá</span>
                         </div>
                         <div class="scorecard-right">
                             <%
@@ -344,7 +344,7 @@
                                     int percent = starPercentages[star];
                             %>
                             <div class="rating-bar-item" data-star="<%= star %>">
-                                <span><%= star %> &#9733;</span>
+                                <span><%= star %> ★</span>
                                 <div class="rating-bar-bg"><div class="rating-bar-fill" style="width: <%= percent %>%;"></div></div>
                                 <span class="rating-percent"><%= percent %>%</span>
                             </div>
@@ -378,8 +378,8 @@
                                     <img src="<%= avatar %>" alt="<%= rev.getCustomerName() %>" class="reviewer-avatar">
                                     <div class="reviewer-meta">
                                         <span class="reviewer-name"><%= rev.getCustomerName() %></span>
-                                        <span class="reviewer-date">&#272;&#259;ng ng&#224;y: <%= dateStr %></span>
-                                        <button class="btn-report-review" data-id="<%= rev.getReviewId() %>" style="background:none; border:none; color:#ea580c; cursor:pointer; font-size:0.75rem; margin-top:4px; display:inline-flex; align-items:center; gap:4px; padding:0; outline:none;"><i class="fa-solid fa-flag"></i> B&#225;o c&#225;o vi ph&#7841;m</button>
+                                        <span class="reviewer-date">Đăng ngày: <%= dateStr %></span>
+                                        <button class="btn-report-review" data-id="<%= rev.getReviewId() %>" style="background:none; border:none; color:#ea580c; cursor:pointer; font-size:0.75rem; margin-top:4px; display:inline-flex; align-items:center; gap:4px; padding:0; outline:none;"><i class="fa-solid fa-flag"></i> Báo cáo vi phạm</button>
                                     </div>
                                 </div>
                                 <div class="reviewer-actions">
@@ -391,7 +391,7 @@
                                     <% if (rev.isIsVerified()) { %>
                                     <div class="verified-badge">
                                         <i data-lucide="shield-check"></i>
-                                        <span>&#272;&#227; tr&#7843;i nghi&#7879;m</span>
+                                        <span>Đã trải nghiệm</span>
                                     </div>
                                     <% } %>
                                 </div>
@@ -406,22 +406,22 @@
                         %>
                         <div class="no-reviews-message" style="text-align: center; padding: 40px; color: var(--text-light); width: 100%;">
                             <i data-lucide="message-square" style="width: 48px; height: 48px; margin-bottom: 12px; color: var(--border-color); display: block; margin-left: auto; margin-right: auto;"></i>
-                            <p>Ch&#432;a c&#243; &#273;&#225;nh gi&#225; n&#224;o cho h&#224;nh tr&#236;nh n&#224;y. H&#227;y l&#224; ng&#432;&#7901;i &#273;&#7847;u ti&#234;n chia s&#7867; c&#7843;m nh&#7853;n!</p>
+                            <p>Chưa có đánh giá nào cho hành trình này. Hãy là người đầu tiên chia sẻ cảm nhận!</p>
                         </div>
                         <%
                             }
                         %>
                     </div>
 
-                    <!-- BI&#7874;U M&#7850;U &#272;&#224;NG K&#221; B&#204;NH LU&#7852;N / &#272;&#193;NH GI&#193; (ADD REVIEW FORM)
-                         L&#253; do t&#7841;i sao l&#7841;i ph&#7843;i l&#224;m nh&#432; v&#7853;y:
-                         - Cho ph&#233;p kh&#225;ch h&#224;ng chia s&#7867; c&#7843;m nh&#7853;n, b&#236;nh ch&#7885;n s&#7889; sao th&#7921;c t&#7871; t&#7915; 1-5.
-                         - Form post d&#7919; li&#7879;u tr&#7921;c ti&#7871;p l&#234;n DetailController (/detail) th&#244;ng qua ph&#432;&#417;ng th&#7913;c POST.
-                         - S&#7917; d&#7909;ng 2 hidden input &#273;&#7875; truy&#7873;n tourId (x&#225;c &#273;&#7883;nh tour &#273;&#432;&#7907;c review) v&#224; rating (sao).
-                         - T&#234;n c&#225;c th&#7867; input (name="name", name="email", name="content") tr&#249;ng kh&#7899;p v&#7899;i tham s&#7889;
-                           Servlet &#273;&#7885;c b&#7857;ng request.getParameter(). -->
+                    <!-- BIỂU MẪU ĐàNG KÝ BÌNH LUẬN / ĐÁNH GIÁ (ADD REVIEW FORM)
+                         Lý do tại sao lại phải làm như vậy:
+                         - Cho phép khách hàng chia sẻ cảm nhận, bình chọn số sao thực tế từ 1-5.
+                         - Form post dữ liệu trực tiếp lên DetailController (/detail) thông qua phương thức POST.
+                         - Sử dụng 2 hidden input để truyền tourId (xác định tour được review) và rating (sao).
+                         - Tên các thẻ input (name="name", name="email", name="content") trùng khớp với tham số
+                           Servlet đọc bằng request.getParameter(). -->
                     <div class="add-review-card">
-                        <h4>Chia S&#7867; Tr&#7843;i Nghi&#7879;m C&#7911;a B&#7841;n</h4>
+                        <h4>Chia Sẻ Trải Nghiệm Của Bạn</h4>
                         <% 
                             String reviewError = (String) session.getAttribute("reviewError");
                             String reviewSuccess = (String) session.getAttribute("reviewSuccess");
@@ -447,16 +447,16 @@
                             User currentUser = isLoggedIn ? (User) session.getAttribute("sessionUser") : null;
                             if (isLoggedIn && currentUser != null) {
                         %>
-                            <p>&#221; ki&#7871;n c&#7911;a b&#7841;n gi&#250;p c&#7897;ng &#273;&#7891;ng du l&#7883;ch c&#243; th&#234;m nh&#7919;ng quy&#7871;t &#273;&#7883;nh &#273;&#250;ng &#273;&#7855;n.</p>
+                            <p>Ý kiến của bạn giúp cộng đồng du lịch có thêm những quyết định đúng đắn.</p>
                             
                             <form class="add-review-form" id="new-review-form" action="${pageContext.request.contextPath}/detail" method="POST" enctype="multipart/form-data">
-                                <!-- L&#432;u ID c&#7911;a Tour &#273;&#7875; Controller bi&#7871;t c&#7847;n g&#225;n review n&#224;y cho tour n&#224;o -->
+                                <!-- Lưu ID của Tour để Controller biết cần gán review này cho tour nào -->
                                 <input type="hidden" name="tourId" value="<%= activeTour != null ? activeTour.getTourId() : 1 %>">
-                                <!-- L&#432;u s&#7889; sao &#273;&#225;nh gi&#225; (s&#7869; &#273;&#432;&#7907;c c&#7853;p nh&#7853;t b&#7857;ng JS khi ng&#432;&#7901;i d&#249;ng click v&#224;o c&#225;c ng&#244;i sao b&#234;n d&#432;&#7899;i) -->
+                                <!-- Lưu số sao đánh giá (sẽ được cập nhật bằng JS khi người dùng click vào các ngôi sao bên dưới) -->
                                 <input type="hidden" name="rating" id="review-rating-input" value="5">
                                 
                                 <div class="form-rating-selector">
-                                    <span>&#272;&#225;nh gi&#225; c&#7911;a b&#7841;n:</span>
+                                    <span>Đánh giá của bạn:</span>
                                     <div class="stars-selector-row" id="stars-selector">
                                         <span class="star-select" data-rating="1"><i data-lucide="star"></i></span>
                                         <span class="star-select" data-rating="2"><i data-lucide="star"></i></span>
@@ -468,58 +468,58 @@
                                 
                                 <div class="form-grid">
                                     <div class="form-group">
-                                        <label for="rev-name">H&#7885; & T&#234;n *</label>
+                                        <label for="rev-name">Họ & Tên *</label>
                                         <input type="text" id="rev-name" name="name" value="<%= currentUser.getFullName() %>" readonly style="background-color: var(--slate-100); cursor: not-allowed;" required>
                                     </div>
                                     <div class="form-group">
-                                        <label for="rev-email">Email (S&#7869; &#273;&#432;&#7907;c &#7849;n) *</label>
+                                        <label for="rev-email">Email (Sẽ được ẩn) *</label>
                                         <input type="email" id="rev-email" name="email" value="<%= currentUser.getEmail() %>" readonly style="background-color: var(--slate-100); cursor: not-allowed;" required>
                                     </div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="rev-text">B&#236;nh lu&#7853;n chi ti&#7871;t *</label>
-                                    <textarea id="rev-text" name="content" rows="4" placeholder="Chia s&#7867; v&#7873; l&#7883;ch tr&#236;nh, d&#7883;ch v&#7909; &#259;n u&#7889;ng, h&#432;&#7899;ng d&#7851;n vi&#234;n v&#224; ph&#432;&#417;ng ti&#7879;n di chuy&#7875;n..." required></textarea>
+                                    <label for="rev-text">Bình luận chi tiết *</label>
+                                    <textarea id="rev-text" name="content" rows="4" placeholder="Chia sẻ về lịch trình, dịch vụ ăn uống, hướng dẫn viên và phương tiện di chuyển..." required></textarea>
                                 </div>
 
                                 <div class="form-group">
-                                    <label>T&#7843;i l&#234;n h&#236;nh &#7843;nh chuy&#7871;n &#273;i</label>
+                                    <label>Tải lên hình ảnh chuyến đi</label>
                                     <div class="upload-simulator-btn" id="upload-sim-btn">
                                         <i data-lucide="camera"></i>
-                                        <span>Ch&#7885;n h&#236;nh &#7843;nh t&#7915; thi&#7871;t b&#7883; c&#7911;a b&#7841;n</span>
+                                        <span>Chọn hình ảnh từ thiết bị của bạn</span>
                                     </div>
                                     <input type="file" id="review-image-input" name="reviewImage" accept="image/*" style="display: none;">
                                     <div class="uploaded-images-preview" id="uploaded-images-preview-row"></div>
                                 </div>
 
-                                <button type="submit" class="btn btn-primary">G&#7917;i &#272;&#225;nh Gi&#225;</button>
+                                <button type="submit" class="btn btn-primary">Gửi Đánh Giá</button>
                             </form>
                         <% } else { %>
                             <div class="login-to-review-wrapper" style="text-align: center; padding: 2rem 1rem;">
                                 <i data-lucide="message-square" style="width: 3rem; height: 3rem; color: var(--slate-400); margin-bottom: 1rem; display: block; margin-left: auto; margin-right: auto;"></i>
-                                <p style="margin-bottom: 1.5rem; color: var(--slate-600);">Vui l&#242;ng &#273;&#259;ng nh&#7853;p t&#224;i kho&#7843;n &#273;&#7875; g&#7917;i &#273;&#225;nh gi&#225; v&#224; chia s&#7867; tr&#7843;i nghi&#7879;m chuy&#7871;n &#273;i c&#7911;a b&#7841;n.</p>
+                                <p style="margin-bottom: 1.5rem; color: var(--slate-600);">Vui lòng đăng nhập tài khoản để gửi đánh giá và chia sẻ trải nghiệm chuyến đi của bạn.</p>
                                 <a href="${pageContext.request.contextPath}/login" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; border-radius: 8px;">
-                                    <i data-lucide="log-in" style="width: 1.25rem; height: 1.25rem;"></i> &#272;&#259;ng Nh&#7853;p &#272;&#7875; &#272;&#225;nh Gi&#225;
+                                    <i data-lucide="log-in" style="width: 1.25rem; height: 1.25rem;"></i> Đăng Nhập Để Đánh Giá
                                 </a>
                             </div>
                         <% } %>
                     </div>
                 </div>
 
-                <!-- PH&#194;N H&#7878; C&#194;U H&#7886;I TH&#431;&#7900;NG G&#7862;P (FAQ SECTION)
-                     L&#253; do c&#7847;n thi&#7871;t k&#7871; nh&#432; th&#7871; n&#224;y:
-                     - Gi&#250;p hi&#7875;n th&#7883; b&#7897; FAQs &#273;&#432;&#7907;c qu&#7843;n l&#253; n&#259;ng &#273;&#7897;ng trong c&#417; s&#7903; d&#7919; li&#7879;u.
-                     - S&#7917; d&#7909;ng v&#242;ng l&#7863;p Java Scriplet &#273;&#7875; &#273;&#7885;c danh s&#225;ch List<TourFAQ> t&#7915; thu&#7897;c t&#237;nh faqs c&#7911;a activeTour.
-                     - N&#7871;u DB ch&#432;a &#273;&#432;&#7907;c c&#7845;u h&#236;nh c&#226;u h&#7887;i cho tour n&#224;y, hi&#7875;n th&#7883; 3 c&#226;u h&#7887;i m&#7863;c &#273;&#7883;nh l&#224;m d&#7921; ph&#242;ng (fallback) &#273;&#7875; giao di&#7879;n kh&#244;ng b&#7883; tr&#7889;ng. -->
+                <!-- PHÂN HỆ CÂU HỎI THƯỜNG GẶP (FAQ SECTION)
+                     Lý do cần thiết kế như thế này:
+                     - Giúp hiển thị bộ FAQs được quản lý năng động trong cơ sở dữ liệu.
+                     - Sử dụng vòng lặp Java Scriplet để đọc danh sách List<TourFAQ> từ thuộc tính faqs của activeTour.
+                     - Nếu DB chưa được cấu hình câu hỏi cho tour này, hiển thị 3 câu hỏi mặc định làm dự phòng (fallback) để giao diện không bị trống. -->
                 <div class="tour-faq-section">
-                    <h3>Nh&#7919;ng C&#226;u H&#7887;i Th&#432;&#7901;ng G&#7863;p</h3>
+                    <h3>Những Câu Hỏi Thường Gặp</h3>
                     
                     <div class="faq-accordion-wrapper">
                         <%
                             List<TourFAQ> faqs = activeTour != null ? activeTour.getFaqs() : null;
                             boolean hasFaqs = false;
                             
-                            // Duy&#7879;t qua danh s&#225;ch FAQs v&#224; xu&#7845;t m&#227; HTML &#273;&#7897;ng
+                            // Duyệt qua danh sách FAQs và xuất mã HTML động
                             if (faqs != null && !faqs.isEmpty()) {
                                 for (TourFAQ faq : faqs) {
                                     hasFaqs = true;
@@ -537,36 +537,36 @@
                                 }
                             }
                             
-                            // Ph&#7847;n hi&#7875;n th&#7883; fallback n&#7871;u DB tr&#7889;ng
+                            // Phần hiển thị fallback nếu DB trống
                             if (!hasFaqs) {
                         %>
                         <div class="faq-item">
                             <div class="faq-question">
-                                <h4>Ch&#237;nh s&#225;ch h&#7911;y tour du l&#7883;ch c&#7911;a TourBuddy nh&#432; th&#7871; n&#224;o?</h4>
+                                <h4>Chính sách hủy tour du lịch của TourBuddy như thế nào?</h4>
                                 <i data-lucide="chevron-down" class="faq-arrow"></i>
                             </div>
                             <div class="faq-answer">
-                                <p>B&#7841;n s&#7869; &#273;&#432;&#7907;c ho&#224;n ti&#7873;n 100% n&#7871;u h&#7911;y tour tr&#432;&#7899;c 7 ng&#224;y k&#7875; t&#7915; ng&#224;y kh&#7903;i h&#224;nh d&#7921; ki&#7871;n. Ho&#224;n ti&#7873;n 50% n&#7871;u h&#7911;y tr&#432;&#7899;c t&#7915; 3-6 ng&#224;y. H&#7911;y tour trong v&#242;ng 48 gi&#7901; tr&#432;&#7899;c gi&#7901; &#273;i s&#7869; kh&#244;ng &#273;&#432;&#7907;c ho&#224;n tr&#7843; chi ph&#237; theo quy &#273;&#7883;nh chung.</p>
+                                <p>Bạn sẽ được hoàn tiền 100% nếu hủy tour trước 7 ngày kể từ ngày khởi hành dự kiến. Hoàn tiền 50% nếu hủy trước từ 3-6 ngày. Hủy tour trong vòng 48 giờ trước giờ đi sẽ không được hoàn trả chi phí theo quy định chung.</p>
                             </div>
                         </div>
 
                         <div class="faq-item">
                             <div class="faq-question">
-                                <h4>T&#244;i c&#7847;n chu&#7849;n b&#7883; nh&#7919;ng h&#224;nh l&#253; c&#225; nh&#226;n g&#236; khi &#273;i tour leo n&#250;i/trekking?</h4>
+                                <h4>Tôi cần chuẩn bị những hành lý cá nhân gì khi đi tour leo núi/trekking?</h4>
                                 <i data-lucide="chevron-down" class="faq-arrow"></i>
                             </div>
                             <div class="faq-answer">
-                                <p>&#272;&#7889;i v&#7899;i c&#225;c tour v&#7853;n &#273;&#7897;ng trung b&#236;nh tr&#7903; l&#234;n (&#272;&#224; L&#7841;t, Sa Pa, H&#224; Giang), b&#7841;n n&#234;n mang theo gi&#224;y trekking chuy&#234;n d&#7909;ng c&#243; &#273;&#7897; b&#225;m cao, qu&#7847;n &#225;o ch&#7889;ng gi&#243; th&#7845;m h&#250;t m&#7891; h&#244;i t&#7889;t, m&#7897;t chai n&#432;&#7899;c c&#225; nh&#226;n, kem ch&#7889;ng n&#7855;ng, thu&#7889;c l&#225; c&#244;n tr&#249;ng v&#224; s&#7841;c d&#7921; ph&#242;ng.</p>
+                                <p>Đối với các tour vận động trung bình trở lên (Đà Lạt, Sa Pa, Hà Giang), bạn nên mang theo giày trekking chuyên dụng có độ bám cao, quần áo chống gió thấm hút mồ hôi tốt, một chai nước cá nhân, kem chống nắng, thuốc lá côn trùng và sạc dự phòng.</p>
                             </div>
                         </div>
 
                         <div class="faq-item">
                             <div class="faq-question">
-                                <h4>Tr&#7867; em c&#243; th&#7875; tham gia c&#225;c g&#243;i tour n&#224;y kh&#244;ng?</h4>
+                                <h4>Trẻ em có thể tham gia các gói tour này không?</h4>
                                 <i data-lucide="chevron-down" class="faq-arrow"></i>
                             </div>
                             <div class="faq-answer">
-                                <p>Tr&#7867; em t&#7915; 5 tu&#7893;i tr&#7903; l&#234;n c&#243; th&#7875; tham gia h&#7847;u h&#7871;t c&#225;c tour v&#259;n h&#243;a/bi&#7875;n &#273;&#7843;o. V&#7899;i c&#225;c tour th&#225;m hi&#7875;m v&#7853;n &#273;&#7897;ng m&#7841;nh (Fansipan trekking, H&#224; Giang), tr&#7867; em t&#7915; 12 tu&#7893;i tr&#7903; l&#234;n v&#224; c&#243; th&#7875; l&#7921;c t&#7889;t m&#7899;i &#273;&#432;&#7907;c khuy&#7871;n c&#225;o tham gia.</p>
+                                <p>Trẻ em từ 5 tuổi trở lên có thể tham gia hầu hết các tour văn hóa/biển đảo. Với các tour thám hiểm vận động mạnh (Fansipan trekking, Hà Giang), trẻ em từ 12 tuổi trở lên và có thể lực tốt mới được khuyến cáo tham gia.</p>
                             </div>
                         </div>
                         <%
@@ -589,22 +589,22 @@
                         <div class="payment-section-box" style="margin-top: 0;">
                             <div class="payment-trust-badge">
                                 <span class="trust-dot"></span>
-                                <span>C&#7893;ng &#273;&#259;ng k&#253; tr&#7921;c tuy&#7871;n ch&#237;nh th&#7913;c</span>
+                                <span>Cổng đăng ký trực tuyến chính thức</span>
                             </div>
                             <button type="button" class="btn btn-primary btn-payment-cta" id="go-payment-btn"
-                                    onclick="if (<%= isLoggedIn %>) { window.location.href='${pageContext.request.contextPath}/customer/booking/create?tourId=<%= activeTour != null ? activeTour.getTourId() : 1 %>' } else { alert('Vui l&#242;ng &#273;&#259;ng nh&#7853;p &#273;&#7875; th&#7921;c hi&#7879;n &#273;&#7863;t tour!'); window.location.href='${pageContext.request.contextPath}/login'; }">
+                                    onclick="if (<%= isLoggedIn %>) { window.location.href='${pageContext.request.contextPath}/customer/booking/create?tourId=<%= activeTour != null ? activeTour.getTourId() : 1 %>' } else { alert('Vui lòng đăng nhập để thực hiện đặt tour!'); window.location.href='${pageContext.request.contextPath}/login'; }">
                                 <span class="btn-payment-text">
                                     <i data-lucide="compass"></i>
-                                    &#272;&#259;ng k&#253; tham gia ngay
+                                    Đăng ký tham gia ngay
                                 </span>
                                 <i data-lucide="arrow-right" class="btn-payment-arrow"></i>
                             </button>
                             <div class="payment-trust-footer">
-                                <span class="trust-item"><i data-lucide="shield-check"></i> An to&#224;n</span>
-                                <span class="trust-divider">&#8226;</span>
-                                <span class="trust-item"><i data-lucide="zap"></i> Nhanh ch&#243;ng</span>
-                                <span class="trust-divider">&#8226;</span>
-                                <span class="trust-item"><i data-lucide="lock"></i> B&#7843;o m&#7853;t</span>
+                                <span class="trust-item"><i data-lucide="shield-check"></i> An toàn</span>
+                                <span class="trust-divider">•</span>
+                                <span class="trust-item"><i data-lucide="zap"></i> Nhanh chóng</span>
+                                <span class="trust-divider">•</span>
+                                <span class="trust-item"><i data-lucide="lock"></i> Bảo mật</span>
                             </div>
                         </div>
 
@@ -619,8 +619,8 @@
     <section class="section-padding related-tours-outer-section">
         <div class="container">
             <div class="section-header" style="text-align: left; margin-left: 0; margin-bottom: 2.5rem;">
-                <h2>H&#224;nh Tr&#236;nh T&#432;&#417;ng T&#7921; B&#7841;n S&#7869; Th&#237;ch</h2>
-                <p style="margin-left: 0; margin-right: auto;">Kh&#225;m ph&#225; th&#234;m c&#225;c &#273;&#7883;a danh du l&#7883;ch k&#7923; th&#250; c&#243; th&#7875; b&#7841;n s&#7869; mu&#7889;n th&#234;m v&#224;o danh s&#225;ch ti&#7871;p theo.</p>
+                <h2>Hành Trình Tương Tự Bạn Sẽ Thích</h2>
+                <p style="margin-left: 0; margin-right: auto;">Khám phá thêm các địa danh du lịch kỳ thú có thể bạn sẽ muốn thêm vào danh sách tiếp theo.</p>
             </div>
             
             <div class="tours-grid" id="related-tours-grid-container">
@@ -634,10 +634,10 @@
         <span class="lightbox-close" id="lightbox-close-btn">&times;</span>
         <button class="lightbox-nav-btn lightbox-prev" id="lightbox-prev-btn"><i data-lucide="chevron-left"></i></button>
         <div class="lightbox-content-wrapper">
-            <img src="" alt="&#7842;nh ph&#243;ng to" id="lightbox-expanded-img">
+            <img src="" alt="Ảnh phóng to" id="lightbox-expanded-img">
         </div>
         <button class="lightbox-nav-btn lightbox-next" id="lightbox-next-btn"><i data-lucide="chevron-right"></i></button>
-        <div class="lightbox-caption" id="lightbox-caption-txt">&#7842;nh tr&#236;nh chi&#7871;u</div>
+        <div class="lightbox-caption" id="lightbox-caption-txt">Ảnh trình chiếu</div>
     </div>
 
 <script>
@@ -919,9 +919,9 @@
 </script>
 
 <%
-    // CH&#7912;C N&#224;NG C&#7910;A &#272;O&#7840;N N&#192;Y:
-    // - extraScript: header/footer d&#249;ng chung s&#7869; &#273;&#7885;c thu&#7897;c t&#237;nh n&#224;y &#273;&#7875; t&#7921; &#273;&#7897;ng nh&#250;ng file JavaScript detail.js
-    //   &#7903; ph&#237;a cu&#7889;i trang, &#273;&#7843;m b&#7843;o trang HTML &#273;&#432;&#7907;c load xong h&#7871;t m&#7899;i ch&#7841;y script x&#7917; l&#253; giao di&#7879;n.
+    // CHỨC NàNG CỦA ĐOẠN NÀY:
+    // - extraScript: header/footer dùng chung sẽ đọc thuộc tính này để tự động nhúng file JavaScript detail.js
+    //   ở phía cuối trang, đảm bảo trang HTML được load xong hết mới chạy script xử lý giao diện.
 %>
 <% request.setAttribute("extraScript", "js/detail.js"); %>
 <jsp:include page="/common/footer.jsp" />
