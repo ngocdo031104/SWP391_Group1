@@ -136,8 +136,10 @@ public class RefundManagementController extends HttpServlet {
                     Payment refundPayment = new Payment();
                     refundPayment.setBookingId(bookingId);
                     refundPayment.setAmount(refundAmount);
-                    refundPayment.setPaymentMethod("Bank Transfer"); // Thông thường hoàn tiền qua chuyển khoản
+                    refundPayment.setPaymentMethod("BankTransfer"); // Thông thường hoàn tiền qua chuyển khoản (khớp với CHECK Constraint)
                     refundPayment.setTransactionRef(transactionRef != null ? transactionRef : "REFUND-" + requestId);
+                    refundPayment.setCurrency("VND");
+                    refundPayment.setPaidAt(new java.sql.Timestamp(System.currentTimeMillis()));
                     refundPayment.setStatus("Refunded");
                     paymentDAO.createPayment(refundPayment);
                     
