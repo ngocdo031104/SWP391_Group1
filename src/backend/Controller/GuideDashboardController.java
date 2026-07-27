@@ -59,7 +59,10 @@ public class GuideDashboardController extends HttpServlet {
         }
 
         User user = (User) session.getAttribute("sessionUser");
-        if (!"Guide".equals(user.getRole().getRoleName())) {
+        String roleName = (user != null && user.getRole() != null) ? user.getRole().getRoleName() : "";
+        boolean isAdminOrStaff = (user != null && (user.getRoleId() == 1 || user.getRoleId() == 2)) || "Admin".equalsIgnoreCase(roleName) || "Staff".equalsIgnoreCase(roleName);
+
+        if (!"Guide".equalsIgnoreCase(roleName) && !isAdminOrStaff) {
             response.sendRedirect(request.getContextPath() + "/home");
             return;
         }
@@ -106,7 +109,7 @@ public class GuideDashboardController extends HttpServlet {
                         }
                     }
 
-                    if (!isAssigned) {
+                    if (!isAssigned && !isAdminOrStaff) {
                         request.setAttribute("errorMessage", "Bạn không có quyền truy cập danh sách hành khách của lịch khởi hành này.");
                         request.setAttribute("assignments", assignments);
                         request.getRequestDispatcher("/views/guide/dashboard.jsp").forward(request, response);
@@ -256,7 +259,10 @@ public class GuideDashboardController extends HttpServlet {
         }
 
         User user = (User) session.getAttribute("sessionUser");
-        if (!"Guide".equals(user.getRole().getRoleName())) {
+        String roleName = (user != null && user.getRole() != null) ? user.getRole().getRoleName() : "";
+        boolean isAdminOrStaff = (user != null && (user.getRoleId() == 1 || user.getRoleId() == 2)) || "Admin".equalsIgnoreCase(roleName) || "Staff".equalsIgnoreCase(roleName);
+
+        if (!"Guide".equalsIgnoreCase(roleName) && !isAdminOrStaff) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             result.addProperty("status", "error");
             result.addProperty("message", "Bạn không có quyền thực hiện hành động này!");
@@ -333,23 +339,25 @@ public class GuideDashboardController extends HttpServlet {
             }
         }
 
-        // Kiểm tra bảo mật: Hướng dẫn viên chỉ có quyền thao tác trên lịch khởi hành của chính họ
+        // Kiểm tra bảo mật: Hướng dẫn viên chỉ có quyền thao tác trên lịch khởi hành của chính họ (Admin/Staff được quyền thao tác tất cả)
         GuideDAO guideDAO = new GuideDAO();
         try {
-            List<TourAssignment> assignments = guideDAO.getAssignmentsByGuideId(user.getUserId());
-            boolean isAssigned = false;
-            for (TourAssignment assignment : assignments) {
-                if (assignment.getScheduleId() == scheduleId) {
-                    isAssigned = true;
-                    break;
+            if (!isAdminOrStaff) {
+                List<TourAssignment> assignments = guideDAO.getAssignmentsByGuideId(user.getUserId());
+                boolean isAssigned = false;
+                for (TourAssignment assignment : assignments) {
+                    if (assignment.getScheduleId() == scheduleId) {
+                        isAssigned = true;
+                        break;
+                    }
                 }
-            }
-            if (!isAssigned) {
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                result.addProperty("status", "error");
-                result.addProperty("message", "Bạn không có quyền thao tác trên lịch khởi hành này!");
-                out.print(result.toString());
-                return;
+                if (!isAssigned) {
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    result.addProperty("status", "error");
+                    result.addProperty("message", "Bạn không có quyền thao tác trên lịch khởi hành này!");
+                    out.print(result.toString());
+                    return;
+                }
             }
 
             // Xử lý action updateIncidentStatus ngay tại đây
