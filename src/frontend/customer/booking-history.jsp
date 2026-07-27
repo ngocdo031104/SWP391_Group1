@@ -4,10 +4,16 @@
 <%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
 <%--
     Người làm: Dương
-    Ý nghĩa: Màn hình hiển thị lịch sử đặt tour của khách hàng.
+    Thời gian tạo: 04/06/2026
+    Chức năng: Màn hình lịch sử đặt tour của Khách hàng (UC9 - View Booking History).
+    Ý nghĩa: Hiển thị toàn bộ danh sách các booking (đã đặt, đang chờ, đã hủy) của khách hàng hiện tại.
+             Hỗ trợ lọc theo tên tour, khoảng ngày đặt và trạng thái booking.
+             Mỗi dòng có nút "Xem chi tiết" dẫn sang trang booking-detail.jsp.
 --%>
+<%-- Nhúng header dùng chung của toàn bộ website --%>
 <jsp:include page="/common/header.jsp"/>
 
+<%-- ===================== CSS ===================== --%>
 <style>
     body {
         padding-top: 80px;
@@ -16,12 +22,15 @@
         background: linear-gradient(135deg, #4f46e5, #3b82f6) !important;
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
     }
+
+    /* Vùng chứa toàn bộ nội dung lịch sử đặt tour */
     .history-container {
         max-width: 1200px;
         margin: 40px auto;
         padding: 0 20px;
     }
     
+    /* Tiêu đề trang */
     .history-header {
         margin-bottom: 30px;
         border-bottom: 2px solid #f1f5f9;
@@ -40,6 +49,7 @@
         margin-top: 5px;
     }
 
+    /* Bảng danh sách booking */
     .booking-table-wrapper {
         background: #ffffff;
         border-radius: 12px;
@@ -87,6 +97,7 @@
         color: #0f172a;
     }
 
+    /* Badge trạng thái booking */
     .booking-status {
         padding: 6px 12px;
         border-radius: 20px;
@@ -97,11 +108,13 @@
         display: inline-block;
     }
 
+    /* Màu sắc theo từng trạng thái booking */
     .status-pendingpayment { background: #fef3c7; color: #d97706; }
     .status-paid { background: #d1fae5; color: #059669; }
     .status-cancelled { background: #fee2e2; color: #dc2626; }
     .status-completed { background: #dbeafe; color: #2563eb; }
 
+    /* Nút xem chi tiết từng booking */
     .btn-view-detail {
         display: inline-flex;
         align-items: center;
@@ -121,6 +134,7 @@
         color: white;
     }
     
+    /* Trạng thái rỗng khi chưa có booking nào */
     .empty-state {
         text-align: center;
         padding: 60px 20px;
@@ -145,6 +159,7 @@
         margin-bottom: 20px;
     }
 
+    /* Responsive: trên màn hình nhỏ cuộn ngang bảng */
     @media (max-width: 768px) {
         .booking-table-wrapper {
             overflow-x: auto;
@@ -164,6 +179,7 @@
         }
     }
     
+    /* Khu vực form lọc tìm kiếm */
     .filter-container {
         background: #ffffff;
         padding: 20px;
@@ -240,7 +256,7 @@
         color: #1e293b;
     }
 
-    /* Autocomplete styles */
+    /* Dropdown gợi ý tên tour khi gõ tìm kiếm */
     .autocomplete-wrapper {
         position: relative;
         width: 100%;
@@ -273,14 +289,20 @@
     }
 </style>
 
+<%-- ===================== NỘI DUNG CHÍNH ===================== --%>
 <main class="history-container">
+
+    <%-- Tiêu đề trang --%>
     <div class="history-header">
         <h1>Lịch Sử Đặt Tour</h1>
         <p>Quản lý và theo dõi các chuyến đi của bạn</p>
     </div>
 
+    <%-- Form lọc: Tìm kiếm theo tên tour, ngày đặt và trạng thái booking --%>
     <div class="filter-container">
         <form action="${pageContext.request.contextPath}/customer/booking/history" method="get" class="filter-form" id="historyFilterForm">
+
+            <%-- Ô tìm kiếm tên tour có hỗ trợ autocomplete --%>
             <div class="filter-group" style="flex: 2;">
                 <label for="searchName">Tên Tour</label>
                 <div class="autocomplete-wrapper">
@@ -288,6 +310,8 @@
                     <div id="autocomplete-list" class="autocomplete-list"></div>
                 </div>
             </div>
+
+            <%-- Khoảng ngày đặt tour (từ ngày - đến ngày) --%>
             <div class="filter-group">
                 <label for="fromDate">Từ ngày (Ngày đặt)</label>
                 <input type="date" id="fromDate" name="fromDate" value="${fromDate}">
@@ -296,6 +320,8 @@
                 <label for="toDate">Đến ngày</label>
                 <input type="date" id="toDate" name="toDate" value="${toDate}">
             </div>
+
+            <%-- Lọc theo trạng thái booking --%>
             <div class="filter-group">
                 <label for="status">Trạng thái</label>
                 <select id="status" name="status">
@@ -305,6 +331,8 @@
                     <option value="Cancelled" ${status eq 'Cancelled' ? 'selected' : ''}>Đã hủy</option>
                 </select>
             </div>
+
+            <%-- Nút thực hiện lọc và nút xóa bộ lọc --%>
             <div class="filter-actions">
                 <button type="submit" class="btn-filter">
                     <i data-lucide="search" style="width: 16px; height: 16px;"></i> Lọc
@@ -316,7 +344,9 @@
         </form>
     </div>
 
+    <%-- Phần hiển thị kết quả --%>
     <c:choose>
+        <%-- Trường hợp chưa có booking nào: hiển thị trạng thái rỗng và gợi ý khám phá tour --%>
         <c:when test="${empty bookings}">
             <div class="empty-state">
                 <i data-lucide="calendar-x" style="width: 48px; height: 48px;"></i>
@@ -325,6 +355,8 @@
                 <a href="${pageContext.request.contextPath}/tourdiscovery" class="btn btn-view-detail">Khám phá Tour</a>
             </div>
         </c:when>
+
+        <%-- Trường hợp có dữ liệu: hiển thị bảng danh sách các booking --%>
         <c:otherwise>
             <div class="booking-table-wrapper">
                 <table class="booking-table">
@@ -339,22 +371,28 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <%-- Lặp qua từng booking và render thành 1 dòng trong bảng --%>
                         <c:forEach var="booking" items="${bookings}">
                             <tr>
+                                <%-- Mã đơn đặt tour --%>
                                 <td>
                                     <span class="booking-code">#${booking.bookingCode}</span>
                                 </td>
+                                <%-- Tên tour (lấy qua booking → schedule → tour) --%>
                                 <td>
                                     <span style="font-weight:500; color:#1e293b;">
                                         ${booking.schedule.tour.tourName}
                                     </span>
                                 </td>
+                                <%-- Ngày đặt tour --%>
                                 <td>
                                     <fmt:formatDate value="${booking.createdAt}" pattern="dd/MM/yyyy" />
                                 </td>
+                                <%-- Giờ đặt tour --%>
                                 <td>
                                     <fmt:formatDate value="${booking.createdAt}" pattern="HH:mm" />
                                 </td>
+                                <%-- Badge trạng thái hiển thị tên tiếng Việt tương ứng --%>
                                 <td>
                                     <span class="booking-status status-${booking.status.toLowerCase()}">
                                         <c:choose>
@@ -366,6 +404,7 @@
                                         </c:choose>
                                     </span>
                                 </td>
+                                <%-- Nút xem chi tiết dẫn sang trang booking-detail.jsp với bookingCode --%>
                                 <td style="text-align: right;">
                                     <a href="${pageContext.request.contextPath}/customer/booking/detail?code=${booking.bookingCode}" class="btn-view-detail">
                                         Xem chi tiết <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i>
@@ -380,10 +419,11 @@
     </c:choose>
 </main>
 
+<%-- ===================== JAVASCRIPT ===================== --%>
 <script>
     lucide.createIcons();
 
-    // Date validation before submit
+    // Kiểm tra khoảng ngày hợp lệ trước khi submit form lọc
     document.getElementById('historyFilterForm').addEventListener('submit', function(e) {
         const fromDateStr = document.getElementById('fromDate').value;
         const toDateStr = document.getElementById('toDate').value;
@@ -396,21 +436,22 @@
         }
     });
 
-    // Real-time filter table rows by tour name as user types
+    // Lọc bảng ngay trên client khi người dùng gõ tên tour (không cần reload trang)
     const searchInput = document.getElementById('searchName');
     const tableBody = document.querySelector('.booking-table tbody');
 
-    // Bỏ dấu tiếng Việt để tìm kiếm không phân biệt dấu
+    // Hàm chuẩn hóa chuỗi: bỏ dấu tiếng Việt để tìm kiếm không phân biệt dấu
     function removeDiacritics(str) {
-        return str.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D');
+        return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D');
     }
 
+    // Hàm ẩn/hiện các dòng trong bảng dựa theo từ khóa tìm kiếm
     function filterTableByTourName(keyword) {
         if (!tableBody) return;
         const rows = tableBody.querySelectorAll('tr');
         const normalizedKeyword = removeDiacritics(keyword.trim().toLowerCase());
         rows.forEach(function(row) {
-            // Tour name is the 2nd td
+            // Tên tour nằm ở cột thứ 2 (index 1) trong mỗi dòng
             const tourNameCell = row.querySelectorAll('td')[1];
             if (!tourNameCell) return;
             const normalizedTour = removeDiacritics(tourNameCell.textContent.trim().toLowerCase());
@@ -423,14 +464,15 @@
     }
 
     if (searchInput) {
-        // Run on page load in case search value is pre-filled
+        // Chạy lọc ngay khi trang được load với giá trị đã điền sẵn (nếu có)
         filterTableByTourName(searchInput.value);
 
+        // Lắng nghe sự kiện người dùng gõ vào ô tìm kiếm
         searchInput.addEventListener('input', function() {
             filterTableByTourName(this.value);
         });
     }
 </script>
 
+<%-- Nhúng footer dùng chung của toàn bộ website --%>
 <jsp:include page="/common/footer.jsp"/>
-

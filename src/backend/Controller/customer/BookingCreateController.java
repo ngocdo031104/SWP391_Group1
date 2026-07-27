@@ -58,7 +58,7 @@ public class BookingCreateController extends HttpServlet {
 
             // Dương làm đoạn này: màn booking dùng TourScheduleDAO để lấy trực tiếp các dòng TourSchedule theo TourID.
             // Mục đích là lấy DepartureDate từ đúng bảng lịch khởi hành, không phụ thuộc vào danh sách schedule nạp kèm trong TourDAO.
-            // BR-19 / BR-20: lọc bỏ các lịch có DepartureDate ở quá khứ để tránh khách chọn phải ngày đã qua.
+            //lọc bỏ các lịch có DepartureDate ở quá khứ để tránh khách chọn phải ngày đã qua.
             List<TourSchedule> bookingSchedules = tourScheduleDAO.getSchedulesByTourId(tourId, true);
             tour.setSchedules(bookingSchedules);
 
@@ -97,7 +97,6 @@ public class BookingCreateController extends HttpServlet {
         int tourId = BookingFlowSupport.parseInt(request.getParameter("tourId"), 0);
         int scheduleId = BookingFlowSupport.parseInt(request.getParameter("scheduleId"), 0);
         int participantCount = BookingFlowSupport.parseInt(request.getParameter("participantCount"), 1);
-        // Dương làm đoạn này: customerNote là ghi chú tự do của khách ở màn tạo booking.
         // Ghi chú không bắt buộc, được cắt độ dài để tránh lưu nội dung quá dài vào Booking.Notes.
         String customerNote = BookingFlowSupport.safeTrim(request.getParameter("customerNote"));
         if (customerNote.length() > 500) {
@@ -112,9 +111,9 @@ public class BookingCreateController extends HttpServlet {
             tourScheduleDAO = new TourScheduleDAO();
             Tour tour = tourDAO.getTourById(tourId);
             if (tour != null) {
-                // Dương làm đoạn này: đồng bộ danh sách lịch khi submit với danh sách đã hiển thị ở GET.
+                // đồng bộ danh sách lịch khi submit với danh sách đã hiển thị ở GET.
                 // Nhờ vậy khi form lỗi, JSP vẫn render lại đúng các lịch của tour đang đặt.
-                // BR-19 / BR-20: chỉ nạp lịch có DepartureDate >= hôm nay.
+                // chỉ nạp lịch có DepartureDate >= hôm nay.
                 tour.setSchedules(tourScheduleDAO.getSchedulesByTourId(tourId, true));
             }
             // selectedSchedule được lấy bằng ScheduleID + TourID để chắc chắn lịch khách chọn thuộc đúng tour hiện tại.
@@ -125,7 +124,7 @@ public class BookingCreateController extends HttpServlet {
                 forwardCreateError(request, response, tour, "Vui lòng chọn lịch khởi hành hợp lệ.");
                 return;
             }
-            // BR-19 / BR-20: server-side guard chặn đặt tour có ngày khởi hành ở quá khứ
+            // server-side guard chặn đặt tour có ngày khởi hành ở quá khứ
             // (dù DAO ở GET/POST đã lọc bỏ, khách vẫn có thể gửi scheduleId cũ qua DevTools).
             java.sql.Date departureDate = selectedSchedule.getDepartureDate();
             java.util.Calendar calNow = java.util.Calendar.getInstance();
@@ -140,7 +139,6 @@ public class BookingCreateController extends HttpServlet {
             }
             int maxParticipants = tour.getMaxParticipants() > 0 ? tour.getMaxParticipants() : 10;
             // Giới hạn số người đi theo tour.MaxParticipants (default fallback 10 khi DB chưa set).
-            // BR-x: chuẩn hoá từ fix cứng literal "10" trước đây sang đọc động theo từng tour.
             if (participantCount < 1 || participantCount > maxParticipants) {
                 forwardCreateError(request, response, tour,
                         "Số người tham gia phải từ 1 đến " + maxParticipants + ".");
@@ -159,7 +157,7 @@ public class BookingCreateController extends HttpServlet {
                 return;
             }
 
-            // BR-19 / BR-20: tour mạo hiểm (category 1 = Biển & Đảo, 2 = Núi & Rừng) không cho phép trẻ sơ sinh.
+            // our mạo hiểm (category 1 = Biển & Đảo, 2 = Núi & Rừng) không cho phép trẻ sơ sinh.
             // Lưu ý: priceInfant > 0 đã bị chặn phía admin (AdminSchedulePricingController),
             // nhưng đây là tầng bảo vệ cuối cùng phòng trường hợp admin bypass validation frontend.
             int tourCategoryId = tour.getCategoryId();

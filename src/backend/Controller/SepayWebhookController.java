@@ -126,7 +126,7 @@ public class SepayWebhookController extends HttpServlet {
                 couponDAO.updateCouponUsage(booking.getCouponId());
             }
 
-            // UC30: Tự động gửi thông báo in-app cho khách khi booking được xác nhận thanh toán.
+            // Tự động gửi thông báo in-app cho khách khi booking được xác nhận thanh toán.
             // Dùng NotificationDAO.insertNotification thay vì SendNotificationController vì đây là luồng server-to-server,
             // không có HTTP request của người dùng. Channel=SYSTEM để thông báo hiện trong chuông thông báo của khách.
             try {
