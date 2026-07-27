@@ -1,4 +1,4 @@
-﻿<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
+<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
@@ -331,7 +331,7 @@
                 <div class="card-header"><i data-lucide="map"></i> Thông tin Hành trình</div>
                 <div class="card-body">
                     <div class="tour-brief">
-                        <a href="${pageContext.request.contextPath}/customer/tourdetail?id=${booking.schedule.tour.tourId}" style="text-decoration:none;">
+                        <a href="${pageContext.request.contextPath}/detail?id=${booking.schedule.tour.tourId}" style="text-decoration:none;">
                             <h2>${booking.schedule.tour.tourName}</h2>
                         </a>
                     </div>
