@@ -15,13 +15,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ph&#226;n Quy&#7873;n &amp; Vai Tr&#242; &#151; TourBuddy Enterprise</title>
+    <title>Phân Quyền &amp; Vai Trò  TourBuddy Enterprise</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-dashboard.css?v=2.3">
     <style>
-        /* -- ROLE MANAGEMENT &#151; SPACE GLASSMORPHISM THEME -- */
+        /* -- ROLE MANAGEMENT  SPACE GLASSMORPHISM THEME -- */
         .permission-badge {
             display: inline-block; background: rgba(99,102,241,0.15); padding: 4px 8px; margin: 3px;
             border-radius: 6px; font-size: 12px; color: #818cf8;
@@ -69,16 +69,16 @@
 
     <main class="main-content theme-light">
         <header class="top-header">
-            <h1>Ph&#226;n Quy&#7873;n H&#7879; Th&#7889;ng</h1>
+            <h1>Phân Quyền Hệ Thống</h1>
             <div class="header-right">
                 <div class="header-search">
                     <i data-lucide="search"></i>
-                    <input type="text" id="searchInput" placeholder="T&#236;m ki&#7871;m vai tr&#242;...">
+                    <input type="text" id="searchInput" placeholder="Tìm kiếm vai trò...">
                 </div>
                 <div class="profile-user dropdown-trigger" style="cursor: pointer; position: relative;">
                     <div class="profile-meta" style="text-align: right; margin-right: 5px;">
                         <span class="name">${not empty sessionUser.fullName ? sessionUser.fullName : 'Admin'}</span>
-                        <span class="role">Qu&#7843;n tr&#7883; vi&#234;n</span>
+                        <span class="role">Quản trị viên</span>
                     </div>
                     <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80" alt="Avatar">
                 </div>
@@ -91,48 +91,48 @@
 
             <div class="role-management-container" style="display: flex; gap: 30px; margin-top: 20px; align-items: stretch; height: calc(100vh - 120px);">
                 
-                <!-- Khung b&#234;n tr&#225;i -->
+                <!-- Khung bên trái -->
                 <div class="left-panel" style="width: 280px; background: rgba(22, 25, 50, 0.58); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-radius: 16px; padding: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); display: flex; flex-direction: column; border: 1px solid rgba(139, 92, 246, 0.2);">
-                    <h3 style="color: #f8fafc; margin-top: 0; margin-bottom: 20px; font-size: 18px; font-weight: 600;">Danh s&#225;ch vai tr&#242;</h3>
+                    <h3 style="color: #f8fafc; margin-top: 0; margin-bottom: 20px; font-size: 18px; font-weight: 600;">Danh sách vai trò</h3>
                     
                     <div style="position: relative; margin-bottom: 15px;">
                         <i data-lucide="search" style="position: absolute; left: 12px; top: 10px; width: 16px; color: #9ca3af;"></i>
-                        <input type="text" id="roleSearch" placeholder="T&#236;m ki&#7871;m vai tr&#242;..." class="form-control" style="width: 100%; padding: 10px 10px 10px 35px;" onkeyup="filterRoles()">
+                        <input type="text" id="roleSearch" placeholder="Tìm kiếm vai trò..." class="form-control" style="width: 100%; padding: 10px 10px 10px 35px;" onkeyup="filterRoles()">
                     </div>
 
                     <div id="roleList" style="display: flex; flex-direction: column; gap: 8px; flex: 1; overflow-y: auto; margin-bottom: 15px; padding-right: 5px;">
                         <c:forEach var="role" items="${roles}">
                             <div class="role-item" data-role-id="${role.roleId}" data-role-name="${role.roleName}" data-role-desc="${role.description}" onclick="selectRole(${role.roleId}, this)" style="padding: 12px 15px; border-radius: 8px; background: rgba(255,255,255,0.03); color: #9fa9cb; cursor: pointer; border: 1px solid transparent; transition: all 0.2s; position: relative;">
                                 <div style="font-weight: 600; font-size: 15px;">${role.roleName}</div>
-                                <div style="font-size: 12px; color: #64748b; margin-top: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${empty role.description ? 'Ch&#432;a c&#243; m&#244; t&#7843;' : role.description}</div>
+                                <div style="font-size: 12px; color: #64748b; margin-top: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${empty role.description ? 'Chưa có mô tả' : role.description}</div>
                                 <div style="font-size: 11px; color: #94a3b8; margin-top: 6px;"><i data-lucide="users" style="width: 12px; height: 12px; vertical-align: middle;"></i> ${role.userCount} Users</div>
                             </div>
                         </c:forEach>
                     </div>
 
-                    <!-- role-actions: T&#7841;o / S&#7917;a / X&#243;a vai tr&#242; (UC19) -->
+                    <!-- role-actions: Tạo / Sửa / Xóa vai trò (UC19) -->
                     <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(139,92,246,0.15); display: flex; flex-direction: column; gap: 8px;">
                         <button type="button" onclick="openCreateRoleModal()" class="btn-forecast" style="width: 100%; padding: 10px; border-radius: 8px; font-weight: 600; cursor: pointer;">
-                            <i data-lucide="plus-circle" style="width: 16px; vertical-align: text-bottom;"></i> T&#7841;o vai tr&#242;
+                            <i data-lucide="plus-circle" style="width: 16px; vertical-align: text-bottom;"></i> Tạo vai trò
                         </button>
                         <button type="button" id="editRoleBtn" onclick="openEditRoleModal()" class="btn-cancel" style="width: 100%; padding: 10px; border-radius: 8px; font-weight: 600; cursor: pointer; border: 1px solid rgba(139,92,246,0.3);">
-                            <i data-lucide="edit-3" style="width: 16px; vertical-align: text-bottom;"></i> S&#7917;a vai tr&#242;
+                            <i data-lucide="edit-3" style="width: 16px; vertical-align: text-bottom;"></i> Sửa vai trò
                         </button>
                         <button type="button" id="deleteRoleBtn" onclick="openDeleteRoleModal()" class="btn-cancel" style="width: 100%; padding: 10px; border-radius: 8px; font-weight: 600; cursor: pointer; background: transparent; color: #EF4444;">
-                            <i data-lucide="trash-2" style="width: 16px; vertical-align: text-bottom;"></i> X&#243;a vai tr&#242;
+                            <i data-lucide="trash-2" style="width: 16px; vertical-align: text-bottom;"></i> Xóa vai trò
                         </button>
                     </div>
                 </div>
 
-                <!-- Khung b&#234;n ph&#7843;i -->
+                <!-- Khung bên phải -->
                 <div class="right-panel" style="flex: 1; background: rgba(22, 25, 50, 0.58); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-radius: 16px; padding: 25px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); border: 1px solid rgba(139, 92, 246, 0.2); display: flex; flex-direction: column;">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px;">
                         <div>
-                            <h3 style="color: #f8fafc; margin-top: 0; margin-bottom: 5px; font-size: 20px; font-weight: 600;">Ma tr&#7877;n ph&#226;n quy&#7873;n</h3>
-                            <p style="color: #9fa9cb; margin: 0; font-size: 14px;">Thi&#7871;t l&#7853;p quy&#7873;n truy c&#7853;p cho vai tr&#242; &#273;&#432;&#7901;c ch&#7885;n</p>
+                            <h3 style="color: #f8fafc; margin-top: 0; margin-bottom: 5px; font-size: 20px; font-weight: 600;">Ma trễn phân quyền</h3>
+                            <p style="color: #9fa9cb; margin: 0; font-size: 14px;">Thiết lập quyền truy cập cho vai trò đườc chọn</p>
                         </div>
                         <div id="unsavedBadge" style="display: none; background: #fef3c7; color: #d97706; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; align-items: center; gap: 6px;">
-                            <span style="font-size: 10px;">?</span> Ch&#432;a l&#432;u
+                            <span style="font-size: 10px;">?</span> Chưa lưu
                         </div>
                     </div>
                     
@@ -143,7 +143,7 @@
                             <table style="width: 100%; border-collapse: collapse;">
                                 <thead style="position: sticky; top: 0; background: rgba(15,17,35,0.98); z-index: 10; border-bottom: 2px solid rgba(139,92,246,0.25);">
                                     <tr>
-                                        <th style="padding: 15px; text-align: left; font-weight: 600; color: #9fa9cb;">Ch&#7913;c n&#259;ng</th>
+                                        <th style="padding: 15px; text-align: left; font-weight: 600; color: #9fa9cb;">Chức năng</th>
                                         <th style="padding: 15px; text-align: center; font-weight: 600; color: #9fa9cb;">
                                             <div style="display: flex; flex-direction: column; align-items: center; gap: 5px;">
                                                 Xem
@@ -152,7 +152,7 @@
                                         </th>
                                         <th style="padding: 15px; text-align: center; font-weight: 600; color: #9fa9cb;">
                                             <div style="display: flex; flex-direction: column; align-items: center; gap: 5px;">
-                                                Th&#234;m
+                                                Thêm
                                                 <input type="checkbox" class="custom-checkbox col-select" data-col="create" onchange="toggleColumn('create', this.checked)">
                                             </div>
                                         </th>
@@ -164,13 +164,13 @@
                                         </th>
                                         <th style="padding: 15px; text-align: center; font-weight: 600; color: #9fa9cb;">
                                             <div style="display: flex; flex-direction: column; align-items: center; gap: 5px;">
-                                                X&#243;a
+                                                Xóa
                                                 <input type="checkbox" class="custom-checkbox col-select" data-col="delete" onchange="toggleColumn('delete', this.checked)">
                                             </div>
                                         </th>
                                         <th style="padding: 15px; text-align: center; font-weight: 600; color: #9fa9cb;">
                                             <div style="display: flex; flex-direction: column; align-items: center; gap: 5px;">
-                                                Kh&#225;c
+                                                Khác
                                                 <input type="checkbox" class="custom-checkbox col-select" data-col="other" onchange="toggleColumn('other', this.checked)">
                                             </div>
                                         </th>
@@ -184,16 +184,16 @@
 
                         <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(139,92,246,0.15); display: flex; justify-content: flex-end; gap: 12px; align-items: center;">
                             <span id="unsavedText" style="color: #F59E0B; font-weight: 500; font-size: 14px; display: none; margin-right: 10px;">
-                                <i data-lucide="alert-triangle" style="width: 16px; vertical-align: text-bottom;"></i> B&#7841;n c&#243; thay &#273;&#7893;i ch&#432;a &#273;&#432;&#7903;c l&#432;u
+                                <i data-lucide="alert-triangle" style="width: 16px; vertical-align: text-bottom;"></i> Bạn có thay đổi chưa đưởc lưu
                             </span>
                             <button type="button" class="btn" id="cancelPermBtn" onclick="discardChanges()" style="background: transparent; color: #EF4444; border: 1px solid transparent; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background 0.2s;">
-                                H&#7911;y thay &#273;&#7893;i
+                                Hủy thay đổi
                             </button>
                             <button type="button" id="resetPermBtn" onclick="restoreDefaults()" class="btn-cancel" style="border: 1px solid rgba(139,92,246,0.3); padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer;">
-                                Kh&#244;i ph&#7909;c m&#7863;c &#273;&#7883;nh
+                                Khôi phục mặc định
                             </button>
                             <button type="submit" id="savePermBtn" class="btn btn-primary" style="width: auto; padding: 10px 25px;">
-                                L&#432;u thay &#273;&#7893;i
+                                Lưu thay đổi
                             </button>
                         </div>
                     </form>
@@ -203,28 +203,28 @@
     </main>
 </div>
 
-<!-- C&#225;c h&#7897;p tho&#7841;i popup -->
+<!-- Các hộp thoại popup -->
 <div id="roleModal" class="modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(15, 23, 42, 0.5); backdrop-filter: blur(4px);">
     <div class="modal-content" style="margin: 10% auto; padding: 30px; width: 400px;">
-        <h3 id="roleModalTitle" style="margin-top: 0; margin-bottom: 20px; color: #f8fafc; font-size: 20px; font-weight: 600;">T&#7841;o Vai Tr&#242;</h3>
+        <h3 id="roleModalTitle" style="margin-top: 0; margin-bottom: 20px; color: #f8fafc; font-size: 20px; font-weight: 600;">Tạo Vai Trò</h3>
         
         <form action="${pageContext.request.contextPath}/admin/roles" method="post">
             <input type="hidden" name="action" id="roleActionInput" value="createRole">
             <input type="hidden" id="roleIdInput" name="roleId" value="">
             
             <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #9fa9cb; font-size: 14px;">T&#234;n Vai Tr&#242; *</label>
+                <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #9fa9cb; font-size: 14px;">Tên Vai Trò *</label>
                 <input type="text" id="roleNameInput" name="roleName" required placeholder="VD: Content Manager" class="form-control" style="width: 100%;">
             </div>
             
             <div style="margin-bottom: 20px;">
-                <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #9fa9cb; font-size: 14px;">M&#244; T&#7843;</label>
-                <textarea id="roleDescInput" name="description" rows="3" placeholder="M&#244; t&#7843; ch&#7913;c n&#259;ng c&#7911;a vai tr&#242;..." class="form-control" style="width: 100%; resize: vertical;"></textarea>
+                <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #9fa9cb; font-size: 14px;">Mô Tả</label>
+                <textarea id="roleDescInput" name="description" rows="3" placeholder="Mô tả chức năng của vai trò..." class="form-control" style="width: 100%; resize: vertical;"></textarea>
             </div>
             
             <div style="display: flex; justify-content: flex-end; gap: 10px;">
-                <button type="button" onclick="closeModal('roleModal')" class="btn-cancel" style="padding: 10px 20px;">H&#7911;y</button>
-                <button type="submit" class="btn-forecast" style="width: auto; padding: 10px 20px;">L&#432;u</button>
+                <button type="button" onclick="closeModal('roleModal')" class="btn-cancel" style="padding: 10px 20px;">Hủy</button>
+                <button type="submit" class="btn-forecast" style="width: auto; padding: 10px 20px;">Lưu</button>
             </div>
         </form>
     </div>
@@ -235,15 +235,15 @@
         <div style="width: 50px; height: 50px; border-radius: 50%; background: #fee2e2; color: #ef4444; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
             <i data-lucide="alert-triangle" style="width: 24px; height: 24px;"></i>
         </div>
-        <h3 style="margin-top: 0; margin-bottom: 10px; color: #f8fafc; font-size: 20px; font-weight: 600;">X&#243;a vai tr&#242;?</h3>
-        <p style="color: #cbd5e1; margin-bottom: 25px; font-size: 15px;">B&#7841;n c&#243; ch&#7855;c ch&#7855;n mu&#7889;n x&#243;a vai tr&#242; n&#224;y? H&#224;nh &#273;&#7897;ng n&#224;y kh&#244;ng th&#7875; ho&#224;n t&#225;c.</p>
+        <h3 style="margin-top: 0; margin-bottom: 10px; color: #f8fafc; font-size: 20px; font-weight: 600;">Xóa vai trò?</h3>
+        <p style="color: #cbd5e1; margin-bottom: 25px; font-size: 15px;">Bạn có chắc chắn muốn xóa vai trò này? Hành động này không thể hoàn tác.</p>
         
         <form action="${pageContext.request.contextPath}/admin/roles" method="post" style="display: flex; justify-content: center; gap: 12px;">
             <input type="hidden" name="action" value="deleteRole">
             <input type="hidden" name="roleId" id="deleteRoleIdInput" value="">
             
-            <button type="button" onclick="closeModal('deleteModal')" class="btn-cancel" style="flex: 1; padding: 10px;">H&#7911;y</button>
-            <button type="submit" class="btn-submit" style="flex: 1; padding: 10px;">X&#243;a</button>
+            <button type="button" onclick="closeModal('deleteModal')" class="btn-cancel" style="flex: 1; padding: 10px;">Hủy</button>
+            <button type="submit" class="btn-submit" style="flex: 1; padding: 10px;">Xóa</button>
         </form>
     </div>
 </div>
@@ -343,7 +343,7 @@
     let currentRoleId = null;
     let initialPermissions = [];
 
-    // openCreateRoleModal &#226;&#8364;&#8221; m&#225;&#187;&#376; modal t&#225;&#186;&#161;o vai tr&#258;&#178;, reset form v&#225;&#187;&#129; ch&#225;&#186;&#191; &#196;&#8216;&#225;&#187;&#8482; create.
+    // openCreateRoleModal â€” má»Ÿ modal táº¡o vai trĂ², reset form vá» cháº¿ Ä‘á»™ create.
     function openCreateRoleModal() {
         document.getElementById('roleModalTitle').textContent = 'Tạo Vai Trò';
         document.getElementById('roleActionInput').value = 'createRole';
@@ -353,7 +353,7 @@
         document.getElementById('roleModal').style.display = 'block';
     }
 
-    // openEditRoleModal &#226;&#8364;&#8221; m&#225;&#187;&#376; modal s&#225;&#187;&#173;a vai tr&#258;&#178; d&#225;&#187;&#177;a tr&#258;&#170;n vai tr&#258;&#178; &#196;&#8216;ang &#196;&#8216;&#198;&#176;&#225;&#187;&#163;c ch&#225;&#187;&#141;n trong sidebar.
+    // openEditRoleModal â€” má»Ÿ modal sá»­a vai trĂ² dá»±a trĂªn vai trĂ² Ä‘ang Ä‘Æ°á»£c chá»n trong sidebar.
     function openEditRoleModal() {
         if (!currentRoleId) {
             showToast('warning', 'Vui lòng chọn một vai trò để sửa.');
@@ -372,7 +372,7 @@
         document.getElementById('roleModal').style.display = 'block';
     }
 
-    // openDeleteRoleModal &#226;&#8364;&#8221; m&#225;&#187;&#376; modal x&#258;&#161;c nh&#225;&#186;&#173;n x&#258;&#179;a vai tr&#258;&#178; &#196;&#8216;ang ch&#225;&#187;&#141;n.
+    // openDeleteRoleModal â€” má»Ÿ modal xĂ¡c nháº­n xĂ³a vai trĂ² Ä‘ang chá»n.
     function openDeleteRoleModal() {
         if (!currentRoleId) {
             showToast('warning', 'Vui lòng chọn một vai trò để xóa.');

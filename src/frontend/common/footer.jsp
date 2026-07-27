@@ -7,7 +7,7 @@
                     <div class="logo-icon">T</div>
                     <span>TourBuddy</span>
                 </a>
-                <p class="footer-desc">Ki&#7871;n t&#7841;o h&#224;nh tr&#236;nh du l&#7883;ch cao c&#7845;p v&#224; l&#7883;ch tr&#236;nh ngh&#7881; d&#432;&#7905;ng &#273;&#7863;t ri&#234;ng t&#7841;i nh&#7919;ng &#273;i&#7875;m &#273;&#7871;n tuy&#7879;t &#273;&#7865;p kh&#7855;p Vi&#7879;t Nam t&#7915; n&#259;m 2021.</p>
+                <p class="footer-desc">Kiến tạo hành trình du lịch cao cấp và lịch trình nghỉ dưỡng đặt riêng tại những điểm đến tuyệt đẹp khắp Việt Nam từ năm 2021.</p>
                 <div class="social-links">
                     <a href="https://facebook.com/TourBuddyVN" class="btn-icon" aria-label="Facebook"><i data-lucide="facebook"></i></a>
                     <a href="https://instagram.com/tourbuddy.vn" class="btn-icon" aria-label="Instagram"><i data-lucide="instagram"></i></a>
@@ -17,52 +17,52 @@
             </div>
 
             <div class="footer-col">
-                <h3>Kh&#225;m Ph&#225;</h3>
+                <h3>Khám Phá</h3>
                 <ul class="footer-links">
-                    <li><a href="${pageContext.request.contextPath}/tourdiscovery">G&#243;i Tour Cao C&#7845;p</a></li>
-                    <li><a href="${pageContext.request.contextPath}/tourdiscovery">&#272;i&#7875;m &#272;&#7871;n Hot</a></li>
-                    <li><a href="${pageContext.request.contextPath}/home#promotions">&#431;u &#272;&#227;i &#272;&#7863;c Bi&#7879;t</a></li>
-                    <li><a href="${pageContext.request.contextPath}/tourdiscovery?category=adventure">Tour M&#7841;o Hi&#7875;m</a></li>
+                    <li><a href="${pageContext.request.contextPath}/tourdiscovery">Gói Tour Cao Cấp</a></li>
+                    <li><a href="${pageContext.request.contextPath}/tourdiscovery">Điểm Đến Hot</a></li>
+                    <li><a href="${pageContext.request.contextPath}/home#promotions">Ưu Đãi Đặc Biệt</a></li>
+                    <li><a href="${pageContext.request.contextPath}/tourdiscovery?category=adventure">Tour Mạo Hiểm</a></li>
                 </ul>
             </div>
 
             <div class="footer-col">
-                <h3>H&#7895; Tr&#7907;</h3>
+                <h3>Hỗ Trợ</h3>
                 <ul class="footer-links">
-                    <li><a href="${pageContext.request.contextPath}/help">Trung T&#226;m Tr&#7907; Gi&#250;p</a></li>
-                    <li><a href="${pageContext.request.contextPath}/guide-booking">H&#432;&#7899;ng D&#7851;n &#272;&#7863;t Tour</a></li>
-                    <li><a href="${pageContext.request.contextPath}/policy/cancel">Ch&#237;nh S&#225;ch H&#7911;y</a></li>
-                    <li><a href="${pageContext.request.contextPath}/contact">Li&#234;n H&#7879; H&#7895; Tr&#7907;</a></li>
+                    <li><a href="${pageContext.request.contextPath}/help">Trung Tâm Trợ Giúp</a></li>
+                    <li><a href="${pageContext.request.contextPath}/guide-booking">Hướng Dẫn Đặt Tour</a></li>
+                    <li><a href="${pageContext.request.contextPath}/policy/cancel">Chính Sách Hủy</a></li>
+                    <li><a href="${pageContext.request.contextPath}/contact">Liên Hệ Hỗ Trợ</a></li>
                 </ul>
             </div>
 
             <div class="footer-col footer-newsletter">
-                <h3>&#272;&#259;ng K&#253; Nh&#7853;n Tin</h3>
-                <p>C&#7853;p nh&#7853;t m&#227; gi&#7843;m gi&#225;, flash sale v&#224; h&#224;nh tr&#236;nh m&#7899;i nh&#7845;t t&#7915; TourBuddy.</p>
+                <h3>Đăng Ký Nhận Tin</h3>
+                <p>Cập nhật mã giảm giá, flash sale và hành trình mới nhất từ TourBuddy.</p>
                 <form class="newsletter-form" id="newsletter-subscription-form">
-                    <input type="email" placeholder="Email c&#7911;a b&#7841;n" id="newsletter-email" required>
-                    <button type="submit" id="newsletter-submit-btn">&#272;&#259;ng K&#253;</button>
+                    <input type="email" placeholder="Email của bạn" id="newsletter-email" required>
+                    <button type="submit" id="newsletter-submit-btn">Đăng Ký</button>
                 </form>
             </div>
         </div>
 
         <div class="container footer-bottom">
-            <p>&copy; 2026 TourBuddy Ltd. B&#7843;o l&#432;u m&#7885;i quy&#7873;n. Thi&#7871;t k&#7871; theo ti&#234;u chu&#7849;n du l&#7883;ch cao c&#7845;p.</p>
+            <p>&copy; 2026 TourBuddy Ltd. Bảo lưu mọi quyền. Thiết kế theo tiêu chuẩn du lịch cao cấp.</p>
             <div class="footer-selectors">
                 <div class="selector-wrapper">
-                    <select id="lang-select" aria-label="Ch&#7885;n ng&#244;n ng&#7919;">
-                        <option value="vi" selected>Ti&#7871;ng Vi&#7879;t</option>
+                    <select id="lang-select" aria-label="Chọn ngôn ngữ">
+                        <option value="vi" selected>Tiếng Việt</option>
                         <option value="en">English (US)</option>
-                        <option value="jp">&#26085;&#26412;&#35486;</option>
-                        <option value="fr">Fran&#231;ais</option>
+                        <option value="jp">日本語</option>
+                        <option value="fr">Français</option>
                     </select>
                 </div>
                 <div class="selector-wrapper">
-                    <select id="curr-select" aria-label="Ch&#7885;n ti&#7873;n t&#7879;">
-                        <option value="vnd" selected>VND (&#8363;)</option>
+                    <select id="curr-select" aria-label="Chọn tiền tệ">
+                        <option value="vnd" selected>VND (₫)</option>
                         <option value="usd">USD ($)</option>
-                        <option value="eur">EUR (&#8364;)</option>
-                        <option value="jpy">JPY (&#165;)</option>
+                        <option value="eur">EUR (€)</option>
+                        <option value="jpy">JPY (¥)</option>
                     </select>
                 </div>
             </div>

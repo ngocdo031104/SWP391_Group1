@@ -15,7 +15,7 @@
             <head>
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Accountant Dashboard &#8212; TourBuddy</title>
+                <title>Accountant Dashboard — TourBuddy</title>
                 <link
                     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
                     rel="stylesheet">
@@ -455,27 +455,27 @@
                                     <%-- Welcome banner --%>
                                         <div class="welcome-banner">
                                             <div class="welcome-text">
-                                                <h2>Xin ch&#224;o, ${sessionScope.sessionUser.fullName}! &#128188;</h2>
-                                                <p>Qu&#7843;n l&#253; d&#242;ng ti&#7873;n v&#224; x&#7917; l&#253;
-                                                    c&#225;c y&#234;u c&#7847;u ho&#224;n ti&#7873;n c&#7911;a h&#7879;
-                                                    th&#7889;ng.</p>
+                                                <h2>Xin chào, ${sessionScope.sessionUser.fullName}! </h2>
+                                                <p>Quản lý dòng tiền và xử lý
+                                                    các yêu cầu hoàn tiền của hệ
+                                                    thống.</p>
                                             </div>
                                             <div class="welcome-badge">
                                                 <i data-lucide="calculator" style="width:16px;height:16px;"></i>
-                                                K&#7871; To&#225;n &#8212; Accountant
+                                                Kế Toán — Accountant
                                             </div>
                                         </div>
 
-                                        <%-- Alert n&#7871;u c&#243; refund ch&#7901; x&#7917; l&#253; --%>
+                                        <%-- Alert nếu có refund chờ xử lý --%>
                                             <c:if test="${pendingRefunds > 0}">
                                                 <div class="alert-pending">
                                                     <i data-lucide="alert-triangle"
                                                         style="width:20px;height:20px;color:#D97706;"></i>
-                                                    C&#243; <strong>${pendingRefunds}</strong> y&#234;u c&#7847;u
-                                                    ho&#224;n ti&#7873;n &#273;ang ch&#7901; b&#7841;n x&#7917; l&#253;.
+                                                    Có <strong>${pendingRefunds}</strong> yêu cầu
+                                                    hoàn tiền đang chờ bạn xử lý.
                                                     <a href="${pageContext.request.contextPath}/accountant/refunds"
                                                         style="margin-left:auto;color:#D97706;font-weight:600;text-decoration:underline;">
-                                                        X&#7917; l&#253; ngay &#8594;
+                                                        Xử lý ngay →
                                                     </a>
                                                 </div>
                                             </c:if>
@@ -487,9 +487,9 @@
                                                         <div class="stat-icon success"><i data-lucide="trending-up"></i>
                                                         </div>
                                                         <div class="stat-info">
-                                                            <h4>Giao D&#7883;ch Thu</h4>
+                                                            <h4>Giao Dịch Thu</h4>
                                                             <div class="stat-value" style="color:var(--success);">
-                                                                Ti&#7873;n V&#224;o</div>
+                                                                Tiền Vào</div>
                                                         </div>
                                                     </a>
                                                     <a href="${pageContext.request.contextPath}/accountant/payments?tab=out"
@@ -497,9 +497,9 @@
                                                         <div class="stat-icon danger"><i
                                                                 data-lucide="trending-down"></i></div>
                                                         <div class="stat-info">
-                                                            <h4>Giao D&#7883;ch Chi</h4>
+                                                            <h4>Giao Dịch Chi</h4>
                                                             <div class="stat-value" style="color:var(--danger);">
-                                                                Ti&#7873;n Ra</div>
+                                                                Tiền Ra</div>
                                                         </div>
                                                     </a>
                                                     <a href="${pageContext.request.contextPath}/accountant/refunds"
@@ -507,7 +507,7 @@
                                                         <div class="stat-icon warning"><i data-lucide="refresh-cw"></i>
                                                         </div>
                                                         <div class="stat-info">
-                                                            <h4>Ho&#224;n Ti&#7873;n Ch&#7901; Duy&#7879;t</h4>
+                                                            <h4>Hoàn Tiền Chờ Duyệt</h4>
                                                             <div class="stat-value">${pendingRefunds}</div>
                                                         </div>
                                                     </a>
@@ -516,7 +516,7 @@
                                                 <%-- Quick actions --%>
                                                     <h2
                                                         style="margin:0 0 16px;font-size:18px;font-weight:600;color:var(--gray-900);">
-                                                        Ch&#7913;c n&#259;ng ch&#237;nh</h2>
+                                                        Chức năng chính</h2>
                                                     <div class="quick-actions-grid">
                                                         <a href="${pageContext.request.contextPath}/accountant/payments"
                                                             class="quick-card">
@@ -524,11 +524,11 @@
                                                                 style="background:var(--success-light);color:var(--success);">
                                                                 <i data-lucide="credit-card"></i>
                                                             </div>
-                                                            <h3>Theo D&#245;i Thanh To&#225;n</h3>
-                                                            <p>Xem to&#224;n b&#7897; giao d&#7883;ch ti&#7873;n
-                                                                v&#224;o (Success) v&#224; ti&#7873;n ra (Refunded)
-                                                                c&#7911;a h&#7879; th&#7889;ng.</p>
-                                                            <span class="arrow">Xem giao d&#7883;ch <i
+                                                            <h3>Theo Dõi Thanh Toán</h3>
+                                                            <p>Xem toàn bộ giao dịch tiền
+                                                                vào (Success) và tiền ra (Refunded)
+                                                                của hệ thống.</p>
+                                                            <span class="arrow">Xem giao dịch <i
                                                                     data-lucide="arrow-right"
                                                                     style="width:14px;height:14px;"></i></span>
                                                         </a>
@@ -539,11 +539,11 @@
                                                                 style="background:var(--danger-light);color:var(--danger);">
                                                                 <i data-lucide="rotate-ccw"></i>
                                                             </div>
-                                                            <h3>X&#7917; L&#253; Ho&#224;n Ti&#7873;n</h3>
-                                                            <p>Duy&#7879;t ho&#7863;c t&#7915; ch&#7889;i c&#225;c
-                                                                y&#234;u c&#7847;u h&#7911;y tour v&#224; th&#7921;c
-                                                                hi&#7879;n ho&#224;n ti&#7873;n cho kh&#225;ch.</p>
-                                                            <span class="arrow">X&#7917; l&#253; ngay <i
+                                                            <h3>Xử Lý Hoàn Tiền</h3>
+                                                            <p>Duyệt hoặc từ chối các
+                                                                yêu cầu hủy tour và thực
+                                                                hiện hoàn tiền cho khách.</p>
+                                                            <span class="arrow">Xử lý ngay <i
                                                                     data-lucide="arrow-right"
                                                                     style="width:14px;height:14px;"></i></span>
                                                         </a>
@@ -554,11 +554,11 @@
                                                                 style="background:var(--warning-light);color:var(--warning);">
                                                                 <i data-lucide="bar-chart-2"></i>
                                                             </div>
-                                                            <h3>Th&#7889;ng K&#234; Doanh Thu</h3>
-                                                            <p>Xem b&#225;o c&#225;o doanh thu, xu h&#432;&#7899;ng
-                                                                t&#224;i ch&#237;nh v&#224; c&#225;c ch&#7881; s&#7889;
+                                                            <h3>Thống Kê Doanh Thu</h3>
+                                                            <p>Xem báo cáo doanh thu, xu hướng
+                                                                tài chính và các chỉ số
                                                                 kinh doanh.</p>
-                                                            <span class="arrow">Xem b&#225;o c&#225;o <i
+                                                            <span class="arrow">Xem báo cáo <i
                                                                     data-lucide="arrow-right"
                                                                     style="width:14px;height:14px;"></i></span>
                                                         </a>

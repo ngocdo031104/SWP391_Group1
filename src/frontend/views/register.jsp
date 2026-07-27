@@ -3,10 +3,10 @@
     Tác giả: Đỗ Vũ Minh Ngọc
     MSSV: HE182479
 --%>
-&#65279;<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
+﻿<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 <%-- 
     Document   : register.jsp
-    Purpose    : Trang &#273;&#259;ng k&#253; t&#224;i kho&#7843;n cho ng&#432;&#7901;i d&#249;ng m&#7899;i (Customer). Cung c&#7845;p form nh&#7853;p li&#7879;u c&#243; x&#225;c th&#7921;c ph&#237;a client.
+    Purpose    : Trang đăng ký tài khoản cho người dùng mới (Customer). Cung cấp form nhập liệu có xác thực phía client.
 --%>
 
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
@@ -15,7 +15,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>&#272;&#259;ng K&#253; &#8212; TourBuddy</title>
+  <title>Đăng Ký — TourBuddy</title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/tourbuddy.css?v=1.4">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
@@ -74,34 +74,34 @@
     <span>TourBuddy</span>
   </a>
   <div class="navbar-nav">
-    <a href="${pageContext.request.contextPath}/home">Trang Ch&#7911;</a>
-    <a href="${pageContext.request.contextPath}/login">&#272;&#259;ng Nh&#7853;p</a>
-    <a href="${pageContext.request.contextPath}/register" class="active">&#272;&#259;ng K&#253;</a>
+    <a href="${pageContext.request.contextPath}/home">Trang Chủ</a>
+    <a href="${pageContext.request.contextPath}/login">Đăng Nhập</a>
+    <a href="${pageContext.request.contextPath}/register" class="active">Đăng Ký</a>
   </div>
 </nav>
 
 <div class="auth-wrapper" style="padding-top:68px">
 
-  <!-- C&#7897;t tr&#225;i: H&#236;nh &#7843;nh gi&#7899;i thi&#7879;u -->
+  <!-- Cột trái: Hình ảnh giới thiệu -->
   <div class="auth-hero">
     <div class="auth-hero-content">
-      <h1>Tham gia c&#7897;ng &#273;&#7891;ng <em>du l&#7883;ch</em></h1>
-      <p>T&#7841;o t&#224;i kho&#7843;n mi&#7877;n ph&#237;, k&#7871;t n&#7889;i v&#7899;i b&#7841;n &#273;&#7891;ng h&#224;nh v&#224; &#273;&#7863;t tour ch&#7881; trong v&#224;i ph&#250;t.</p>
+      <h1>Tham gia cộng đồng <em>du lịch</em></h1>
+      <p>Tạo tài khoản miễn phí, kết nối với bạn đồng hành và đặt tour chỉ trong vài phút.</p>
       <div class="auth-hero-badges">
-        <span><i class="fa fa-shield-halved"></i> Thanh to&#225;n an to&#224;n</span>
-        <span><i class="fa fa-headset"></i> H&#7895; tr&#7907; 24/7</span>
-        <span><i class="fa fa-ticket"></i> Ho&#224;n ti&#7873;n d&#7877; d&#224;ng</span>
+        <span><i class="fa fa-shield-halved"></i> Thanh toán an toàn</span>
+        <span><i class="fa fa-headset"></i> Hỗ trợ 24/7</span>
+        <span><i class="fa fa-ticket"></i> Hoàn tiền dễ dàng</span>
       </div>
     </div>
   </div>
 
-  <!-- Khung b&#234;n ph&#7843;i -->
+  <!-- Khung bên phải -->
   <div class="auth-panel" style="align-items:flex-start;padding-top:52px">
     <div class="auth-form-wrap fade-up" style="max-width:460px">
 
-      <h2 class="auth-title fade-up fade-up-1">T&#7841;o t&#224;i kho&#7843;n</h2>
+      <h2 class="auth-title fade-up fade-up-1">Tạo tài khoản</h2>
       <p class="auth-subtitle fade-up fade-up-2">
-        &#272;&#227; c&#243; t&#224;i kho&#7843;n? <a href="${pageContext.request.contextPath}/login">&#272;&#259;ng nh&#7853;p</a>
+        Đã có tài khoản? <a href="${pageContext.request.contextPath}/login">Đăng nhập</a>
       </p>
 
       <c:if test="${not empty errorMessage}">
@@ -110,21 +110,21 @@
         </div>
       </c:if>
 
-      <!-- Thanh ti&#7871;n tr&#236;nh c&#225;c b&#432;&#7899;c -->
+      <!-- Thanh tiến trình các bước -->
       <div class="step-indicator fade-up fade-up-2">
         <div>
           <div class="step-dot active" id="sd1">1</div>
-          <div class="step-name">T&#224;i kho&#7843;n</div>
+          <div class="step-name">Tài khoản</div>
         </div>
         <div class="step-line" id="sl1"></div>
         <div>
           <div class="step-dot" id="sd2">2</div>
-          <div class="step-name">Th&#244;ng tin</div>
+          <div class="step-name">Thông tin</div>
         </div>
         <div class="step-line" id="sl2"></div>
         <div>
           <div class="step-dot" id="sd3">3</div>
-          <div class="step-name">X&#225;c nh&#7853;n</div>
+          <div class="step-name">Xác nhận</div>
         </div>
       </div>
 
@@ -132,7 +132,7 @@
       method="post"
       id="regForm">
 
-        <!-- B&#432;&#7899;c 1: Th&#244;ng tin t&#224;i kho&#7843;n -->
+        <!-- Bước 1: Thông tin tài khoản -->
         <div class="step-block active fade-up fade-up-3" id="step1">
 
           <div class="form-group">
@@ -151,44 +151,44 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="password">M&#7853;t kh&#7849;u *</label>
+            <label class="form-label" for="password">Mật khẩu *</label>
             <div class="input-icon-wrap">
               <i class="fa fa-lock icon"></i>
               <input type="password" id="password" name="password"
                      class="form-control ${not empty passwordError ? 'is-invalid' : ''}"
-                     placeholder="T&#7889;i thi&#7875;u 8 k&#253; t&#7921;"
+                     placeholder="Tối thiểu 8 ký tự"
                      required minlength="8" autocomplete="new-password"
                      oninput="checkStrength(this.value)">
               <button type="button" class="toggle-pwd"
                       onclick="togglePwd('password','ti1')"><i id="ti1" class="fa fa-eye"></i></button>
             </div>
-            <!-- Thanh &#273;o &#273;&#7897; m&#7841;nh m&#7853;t kh&#7849;u -->
+            <!-- Thanh đo độ mạnh mật khẩu -->
             <div class="strength-bar">
               <div class="strength-seg" id="seg1"></div>
               <div class="strength-seg" id="seg2"></div>
               <div class="strength-seg" id="seg3"></div>
               <div class="strength-seg" id="seg4"></div>
             </div>
-            <div class="strength-label" id="strengthLabel">Nh&#7853;p m&#7853;t kh&#7849;u &#273;&#7875; ki&#7875;m tra &#273;&#7897; m&#7841;nh</div>
+            <div class="strength-label" id="strengthLabel">Nhập mật khẩu để kiểm tra độ mạnh</div>
             <span class="form-error" id="pwdError" style="display:none; margin-top:4px;"></span>
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="confirmPassword">X&#225;c nh&#7853;n m&#7853;t kh&#7849;u *</label>
+            <label class="form-label" for="confirmPassword">Xác nhận mật khẩu *</label>
             <div class="input-icon-wrap">
               <i class="fa fa-lock icon"></i>
               <input type="password" id="confirmPassword" name="confirmPassword"
                      class="form-control"
-                     placeholder="Nh&#7853;p l&#7841;i m&#7853;t kh&#7849;u"
+                     placeholder="Nhập lại mật khẩu"
                      required autocomplete="new-password">
               <button type="button" class="toggle-pwd"
                       onclick="togglePwd('confirmPassword','ti2')"><i id="ti2" class="fa fa-eye"></i></button>
             </div>
-            <span class="form-error" id="confirmError" style="display:none">M&#7853;t kh&#7849;u kh&#244;ng kh&#7899;p</span>
+            <span class="form-error" id="confirmError" style="display:none">Mật khẩu không khớp</span>
           </div>
 
           <button type="button" class="btn btn-primary btn-block" onclick="nextStep(1)">
-            Ti&#7871;p theo <i class="fa fa-arrow-right"></i>
+            Tiếp theo <i class="fa fa-arrow-right"></i>
           </button>
         </div>
 
@@ -197,18 +197,18 @@
 
           <div class="form-grid">
             <div class="form-group">
-              <label class="form-label" for="fullName">H&#7885; v&#224; t&#234;n *</label>
+              <label class="form-label" for="fullName">Họ và tên *</label>
               <div class="input-icon-wrap">
                 <i class="fa fa-user icon"></i>
                 <input type="text" id="fullName" name="fullName"
                        class="form-control ${not empty nameError ? 'is-invalid' : ''}"
-                       placeholder="Nguy&#7877;n V&#259;n A"
+                       placeholder="Nguyễn Văn A"
                        value="${not empty param.fullName ? param.fullName : ''}"
                        required maxlength="100">
               </div>
             </div>
             <div class="form-group">
-              <label class="form-label" for="phone">S&#7889; &#273;i&#7879;n tho&#7841;i</label>
+              <label class="form-label" for="phone">Số điện thoại</label>
               <div class="input-icon-wrap">
                 <i class="fa fa-phone icon"></i>
                 <input type="tel" id="phone" name="phone"
@@ -224,7 +224,7 @@
               </div>
             </div>
             <div class="form-group">
-              <label class="form-label" for="dob">Ng&#224;y sinh</label>
+              <label class="form-label" for="dob">Ngày sinh</label>
               <div class="input-icon-wrap">
                 <i class="fa fa-calendar icon"></i>
                 <input type="date" id="dob" name="dob"
@@ -237,7 +237,7 @@
               </div>
             </div>
             <div class="form-group">
-              <label class="form-label" for="gender">Gi&#7899;i t&#237;nh</label>
+              <label class="form-label" for="gender">Giới tính</label>
               <select id="gender"
         name="gender"
         class="form-control ${not empty genderError ? 'is-invalid' : ''}"
@@ -245,20 +245,20 @@
                   <c:if test="${not empty genderError}">
     <span class="form-error">${genderError}</span>
 </c:if>
-                <option value="">-- Ch&#7885;n --</option>
+                <option value="">-- Chọn --</option>
                 <option value="Male"   ${param.gender eq 'Male'   ? 'selected' : ''}>Nam</option>
-                <option value="Female" ${param.gender eq 'Female' ? 'selected' : ''}>N&#7919;</option>
-                <option value="Other"  ${param.gender eq 'Other'  ? 'selected' : ''}>Kh&#225;c</option>
+                <option value="Female" ${param.gender eq 'Female' ? 'selected' : ''}>Nữ</option>
+                <option value="Other"  ${param.gender eq 'Other'  ? 'selected' : ''}>Khác</option>
               </select>
             </div>
           </div>
 
           <div style="display:flex;gap:10px;margin-top:8px">
             <button type="button" class="btn btn-outline btn-block" onclick="prevStep(2)">
-              <i class="fa fa-arrow-left"></i> Quay l&#7841;i
+              <i class="fa fa-arrow-left"></i> Quay lại
             </button>
             <button type="button" class="btn btn-primary btn-block" onclick="nextStep(2)">
-              Ti&#7871;p theo <i class="fa fa-arrow-right"></i>
+              Tiếp theo <i class="fa fa-arrow-right"></i>
             </button>
           </div>
         </div>
@@ -272,21 +272,21 @@
             <div class="form-check">
               <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
               <label class="form-check-label" for="agreeTerms">
-                T&#244;i &#273;&#7891;ng &#253; v&#7899;i <a href="${pageContext.request.contextPath}/terms">&#272;i&#7873;u kho&#7843;n d&#7883;ch v&#7909;</a>
-                v&#224; <a href="${pageContext.request.contextPath}/privacy">Ch&#237;nh s&#225;ch b&#7843;o m&#7853;t</a> c&#7911;a TourBuddy
+                Tôi đồng ý với <a href="${pageContext.request.contextPath}/terms">Điều khoản dịch vụ</a>
+                và <a href="${pageContext.request.contextPath}/privacy">Chính sách bảo mật</a> của TourBuddy
               </label>
             </div>
             <span class="form-error" id="termsError" style="display:none">
-              Vui l&#242;ng &#273;&#7891;ng &#253; &#273;i&#7873;u kho&#7843;n &#273;&#7875; ti&#7871;p t&#7909;c
+              Vui lòng đồng ý điều khoản để tiếp tục
             </span>
           </div>
 
           <div style="display:flex;gap:10px">
             <button type="button" class="btn btn-outline btn-block" onclick="prevStep(3)">
-              <i class="fa fa-arrow-left"></i> Quay l&#7841;i
+              <i class="fa fa-arrow-left"></i> Quay lại
             </button>
             <button type="submit" class="btn btn-accent btn-block" id="submitBtn">
-              <i class="fa fa-check-circle"></i> T&#7841;o t&#224;i kho&#7843;n
+              <i class="fa fa-check-circle"></i> Tạo tài khoản
             </button>
           </div>
         </div>
@@ -294,9 +294,9 @@
       </form>
 
       <div class="auth-footer-links" style="margin-top:20px">
-        <a href="#">&#272;i&#7873;u kho&#7843;n d&#7883;ch v&#7909;</a><span>&#183;</span>
-        <a href="#">B&#7843;o m&#7853;t</a><span>&#183;</span>
-        <a href="#">H&#7895; tr&#7907;</a>
+        <a href="#">Điều khoản dịch vụ</a><span>·</span>
+        <a href="#">Bảo mật</a><span>·</span>
+        <a href="#">Hỗ trợ</a>
       </div>
 
     </div>

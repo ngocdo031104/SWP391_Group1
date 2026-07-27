@@ -12,7 +12,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nh&#7853;t K&#253; S&#7921; C&#7889; &#8212; TourBuddy</title>
+    <title>Nhật Ký Sự Cố — TourBuddy</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/tourbuddy.css?v=1.4">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
@@ -170,14 +170,14 @@
     <span>TourBuddy (Guide)</span>
   </a>
   <div class="navbar-nav" style="display:flex;align-items:center;gap:20px;">
-    <a href="${pageContext.request.contextPath}/guide/dashboard" class="active">L&#7883;ch D&#7851;n &#272;o&#224;n</a>
-    <a href="${pageContext.request.contextPath}/guide/profile">H&#7891; S&#417;</a>
-    <a href="${pageContext.request.contextPath}/customer/notifications" class="guide-notif-bell" id="guide-notif-btn" title="Th&#244;ng b&#225;o">
+    <a href="${pageContext.request.contextPath}/guide/dashboard" class="active">Lịch Dẫn Đoàn</a>
+    <a href="${pageContext.request.contextPath}/guide/profile">Hồ Sơ</a>
+    <a href="${pageContext.request.contextPath}/customer/notifications" class="guide-notif-bell" id="guide-notif-btn" title="Thông báo">
       <i class="fa-regular fa-bell"></i>
       <span class="notif-badge" id="guide-notif-count"></span>
     </a>
     <a href="${pageContext.request.contextPath}/logout" style="color:var(--clr-error)">
-      <i class="fa fa-right-from-bracket"></i> &#272;&#259;ng xu&#7845;t
+      <i class="fa fa-right-from-bracket"></i> Đăng xuất
     </a>
   </div>
 </nav>
@@ -185,35 +185,35 @@
 <div class="dashboard-wrapper">
     <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
         <a href="${pageContext.request.contextPath}/guide/dashboard" class="btn btn-outline btn-sm">
-            <i class="fa fa-arrow-left"></i> Quay l&#7841;i
+            <i class="fa fa-arrow-left"></i> Quay lại
         </a>
         <button class="btn btn-primary btn-sm" onclick="openIncidentModal()" style="font-weight: 600;">
-            <i class="fa fa-plus"></i> B&#225;o C&#225;o S&#7921; C&#7889; M&#7899;i
+            <i class="fa fa-plus"></i> Báo Cáo Sự Cố Mới
         </button>
     </div>
 
     <div class="card fade-up">
         <div class="card-header">
-            <h3><i class="fa fa-triangle-exclamation" style="margin-right:8px;color:var(--clr-primary)"></i> Nh&#7853;t K&#253; S&#7921; C&#7889; Tour</h3>
+            <h3><i class="fa fa-triangle-exclamation" style="margin-right:8px;color:var(--clr-primary)"></i> Nhật Ký Sự Cố Tour</h3>
         </div>
         <div class="card-body">
             
             <c:if test="${not empty assignment}">
                 <div class="tour-info-grid">
                     <div class="info-item">
-                        <span class="info-label">T&#234;n Tour</span>
+                        <span class="info-label">Tên Tour</span>
                         <span class="info-value"><c:out value="${assignment.schedule.tour.tourName}" /></span>
                     </div>
                     <div class="info-item">
-                        <span class="info-label">&#272;i&#7875;m &#272;&#7871;n</span>
+                        <span class="info-label">Điểm Đến</span>
                         <span class="info-value"><c:out value="${assignment.schedule.tour.destination}" /></span>
                     </div>
                     <div class="info-item">
-                        <span class="info-label">Ng&#224;y Kh&#7903;i H&#224;nh</span>
+                        <span class="info-label">Ngày Khởi Hành</span>
                         <span class="info-value"><fmt:formatDate value="${assignment.schedule.departureDate}" pattern="dd/MM/yyyy" /></span>
                     </div>
                     <div class="info-item">
-                        <span class="info-label">Tr&#7841;ng Th&#225;i Tour</span>
+                        <span class="info-label">Trạng Thái Tour</span>
                         <span class="info-value" style="font-weight:bold; color:var(--clr-primary)"><c:out value="${assignment.schedule.status}" /></span>
                     </div>
                 </div>
@@ -223,7 +223,7 @@
                 <c:when test="${empty incidents}">
                     <div class="empty-state" style="text-align:center; padding: 40px 20px;">
                         <i class="fa fa-shield" style="font-size: 3rem; color: var(--clr-border); margin-bottom: 16px;"></i>
-                        <p style="color: var(--clr-muted); font-size: 0.95rem;">Chuy&#7871;n &#273;i n&#224;y hi&#7879;n t&#7841;i ch&#432;a ghi nh&#7853;n s&#7921; c&#7889; n&#224;o ph&#225;t sinh.</p>
+                        <p style="color: var(--clr-muted); font-size: 0.95rem;">Chuyến đi này hiện tại chưa ghi nhận sự cố nào phát sinh.</p>
                     </div>
                 </c:when>
                 <c:otherwise>
@@ -231,13 +231,13 @@
                         <table class="table-custom">
                             <thead>
                                 <tr>
-                                    <th style="width: 80px; text-align: center;">M&#227; s&#7921; c&#7889;</th>
-                                    <th>Ti&#234;u &#272;&#7873;</th>
-                                    <th>Th&#7901;i Gian B&#225;o C&#225;o</th>
-                                    <th style="width: 140px;">M&#7913;c &#272;&#7897;</th>
-                                    <th style="width: 140px;">Tr&#7841;ng Th&#225;i</th>
-                                    <th>M&#244; T&#7843; Chi Ti&#7871;t</th>
-                                    <th style="width: 140px; text-align: center;">H&#224;nh &#272;&#7897;ng</th>
+                                    <th style="width: 80px; text-align: center;">Mã sự cố</th>
+                                    <th>Tiêu Đề</th>
+                                    <th>Thời Gian Báo Cáo</th>
+                                    <th style="width: 140px;">Mức Độ</th>
+                                    <th style="width: 140px;">Trạng Thái</th>
+                                    <th>Mô Tả Chi Tiết</th>
+                                    <th style="width: 140px; text-align: center;">Hành Động</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -249,32 +249,32 @@
                                         <td>
                                             <c:choose>
                                                 <c:when test="${inc.severity == 'Low'}">
-                                                    <span class="badge-severity severity-low">Th&#7845;p</span>
+                                                    <span class="badge-severity severity-low">Thấp</span>
                                                 </c:when>
                                                 <c:when test="${inc.severity == 'Medium'}">
-                                                    <span class="badge-severity severity-medium">Trung b&#236;nh</span>
+                                                    <span class="badge-severity severity-medium">Trung bình</span>
                                                 </c:when>
                                                 <c:when test="${inc.severity == 'High'}">
                                                     <span class="badge-severity severity-high">Cao</span>
                                                 </c:when>
                                                 <c:when test="${inc.severity == 'Critical'}">
-                                                    <span class="badge-severity severity-critical"><i class="fa fa-triangle-exclamation"></i> Nghi&#234;m tr&#7885;ng</span>
+                                                    <span class="badge-severity severity-critical"><i class="fa fa-triangle-exclamation"></i> Nghiêm trọng</span>
                                                 </c:when>
                                             </c:choose>
                                         </td>
                                         <td>
                                             <c:choose>
                                                 <c:when test="${inc.status == 'Open'}">
-                                                    <span class="badge-status status-open">&#272;ang m&#7903;</span>
+                                                    <span class="badge-status status-open">Đang mở</span>
                                                 </c:when>
                                                 <c:when test="${inc.status == 'InProgress'}">
-                                                    <span class="badge-status status-inprogress">&#272;ang x&#7917; l&#253;</span>
+                                                    <span class="badge-status status-inprogress">Đang xử lý</span>
                                                 </c:when>
                                                 <c:when test="${inc.status == 'Resolved'}">
-                                                    <span class="badge-status status-resolved">&#272;&#227; gi&#7843;i quy&#7871;t</span>
+                                                    <span class="badge-status status-resolved">Đã giải quyết</span>
                                                 </c:when>
                                                 <c:when test="${inc.status == 'Closed'}">
-                                                    <span class="badge-status status-closed">&#272;&#227; &#273;&#243;ng</span>
+                                                    <span class="badge-status status-closed">Đã đóng</span>
                                                 </c:when>
                                             </c:choose>
                                         </td>
@@ -283,11 +283,11 @@
                                             <c:choose>
                                                 <c:when test="${inc.status == 'Open' || inc.status == 'InProgress'}">
                                                     <button class="btn btn-outline btn-sm" onclick="resolveIncident(${inc.incidentId})" style="padding: 6px 12px; font-size: 0.8rem; border-color: #10b981; color: #10b981; font-weight: bold; background: transparent; cursor: pointer;">
-                                                        <i class="fa fa-check"></i> Gi&#7843;i quy&#7871;t
+                                                        <i class="fa fa-check"></i> Giải quyết
                                                     </button>
                                                 </c:when>
                                                 <c:otherwise>
-                                                    <span style="color: #94a3b8; font-size: 0.85rem;"><i class="fa fa-circle-check"></i> Ho&#224;n t&#7845;t</span>
+                                                    <span style="color: #94a3b8; font-size: 0.85rem;"><i class="fa fa-circle-check"></i> Hoàn tất</span>
                                                 </c:otherwise>
                                             </c:choose>
                                         </td>
@@ -303,37 +303,37 @@
     </div>
 </div>
 
-<!-- Modal b&#225;o c&#225;o s&#7921; c&#7889; m&#7899;i -->
+<!-- Modal báo cáo sự cố mới -->
 <div class="incident-modal" id="incident-modal">
     <div class="incident-modal-content">
         <div class="incident-modal-header">
-            <h4>B&#225;o c&#225;o s&#7921; c&#7889; m&#7899;i</h4>
+            <h4>Báo cáo sự cố mới</h4>
             <button class="incident-modal-close" onclick="closeIncidentModal()">&times;</button>
         </div>
         <div class="incident-modal-body">
             <div class="form-group">
-                <label for="incident-title">Ti&#234;u &#273;&#7873; s&#7921; c&#7889; *</label>
-                <input type="text" id="incident-title" class="form-input" placeholder="V&#237; d&#7909;: H&#7887;ng xe di chuy&#7875;n, Kh&#225;ch &#273;i l&#7841;c...">
+                <label for="incident-title">Tiêu đề sự cố *</label>
+                <input type="text" id="incident-title" class="form-input" placeholder="Ví dụ: Hỏng xe di chuyển, Khách đi lạc...">
             </div>
 
             <div class="form-group">
-                <label for="incident-severity">M&#7913;c &#273;&#7897; &#7843;nh h&#432;&#7903;ng *</label>
+                <label for="incident-severity">Mức độ ảnh hưởng *</label>
                 <select id="incident-severity" class="form-select">
-                    <option value="Low">Low (Th&#7845;p - Kh&#244;ng &#7843;nh h&#432;&#7903;ng nhi&#7873;u)</option>
-                    <option value="Medium" selected>Medium (Trung b&#236;nh - &#7842;nh h&#432;&#7903;ng l&#7883;ch tr&#236;nh nh&#7865;)</option>
-                    <option value="High">High (Cao - C&#7847;n can thi&#7879;p g&#7845;p)</option>
-                    <option value="Critical">Critical (Nghi&#234;m tr&#7885;ng - Nguy hi&#7875;m t&#237;nh m&#7841;ng/t&#224;i s&#7843;n)</option>
+                    <option value="Low">Low (Thấp - Không ảnh hưởng nhiều)</option>
+                    <option value="Medium" selected>Medium (Trung bình - Ảnh hưởng lịch trình nhẹ)</option>
+                    <option value="High">High (Cao - Cần can thiệp gấp)</option>
+                    <option value="Critical">Critical (Nghiêm trọng - Nguy hiểm tính mạng/tài sản)</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label for="incident-desc">M&#244; t&#7843; chi ti&#7871;t s&#7921; c&#7889; *</label>
-                <textarea id="incident-desc" class="form-textarea" rows="4" placeholder="M&#244; t&#7843; di&#7877;n bi&#7871;n c&#7909; th&#7875;, v&#7883; tr&#237; x&#7843;y ra, s&#7889; ng&#432;&#7901;i &#7843;nh h&#432;&#7903;ng..."></textarea>
+                <label for="incident-desc">Mô tả chi tiết sự cố *</label>
+                <textarea id="incident-desc" class="form-textarea" rows="4" placeholder="Mô tả diễn biến cụ thể, vị trí xảy ra, số người ảnh hưởng..."></textarea>
             </div>
 
             <div class="form-actions">
-                <button class="btn btn-outline btn-sm" onclick="closeIncidentModal()" style="font-weight: 600;">H&#7911;y b&#7887;</button>
-                <button class="btn btn-primary btn-sm" onclick="submitIncident()" style="font-weight: 600;">G&#7917;i b&#225;o c&#225;o</button>
+                <button class="btn btn-outline btn-sm" onclick="closeIncidentModal()" style="font-weight: 600;">Hủy bỏ</button>
+                <button class="btn btn-primary btn-sm" onclick="submitIncident()" style="font-weight: 600;">Gửi báo cáo</button>
             </div>
         </div>
     </div>

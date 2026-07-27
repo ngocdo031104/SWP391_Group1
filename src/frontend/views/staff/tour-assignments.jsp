@@ -17,7 +17,7 @@
                     <head>
                         <meta charset="UTF-8">
                         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                        <title>Ph&#226;n C&#244;ng Guide - Staff Dashboard</title>
+                        <title>Phân Công Guide - Staff Dashboard</title>
                         <link
                             href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
                             rel="stylesheet">
@@ -453,9 +453,9 @@
 
                                         <div class="page-header">
                                             <div>
-                                                <h1>Ph&#226;n C&#244;ng Guide</h1>
-                                                <p>Qu&#7843;n l&#253; ph&#226;n c&#244;ng h&#432;&#7899;ng d&#7851;n
-                                                    vi&#234;n cho c&#225;c tour</p>
+                                                <h1>Phân Công Guide</h1>
+                                                <p>Quản lý phân công hướng dẫn
+                                                    viên cho các tour</p>
                                             </div>
                                         </div>
 
@@ -474,29 +474,29 @@
                                             <div class="tab active" onclick="showTab('unassigned')">
                                                 <i data-lucide="user-plus"
                                                     style="width:16px;height:16px;vertical-align:middle;margin-right:4px;"></i>
-                                                Tour Ch&#432;a C&#243; Guide (${unassignedSchedules.size()})
+                                                Tour Chưa Có Guide (${unassignedSchedules.size()})
                                             </div>
                                             <div class="tab" onclick="showTab('assignments')">
                                                 <i data-lucide="list-checks"
                                                     style="width:16px;height:16px;vertical-align:middle;margin-right:4px;"></i>
-                                                L&#7883;ch S&#7917; Ph&#226;n C&#244;ng (${assignments.size()})
+                                                Lịch Sử Phân Công (${assignments.size()})
                                             </div>
                                         </div>
 
-                                        <!-- Tab: Tour ch&#432;a c&#243; guide -->
+                                        <!-- Tab: Tour chưa có guide -->
                                         <div id="tab-unassigned" class="tab-content">
                                             <div class="card">
                                                 <div class="card-header">
                                                     <h3><i data-lucide="calendar-x" style="color:var(--warning);"></i>
-                                                        Danh S&#225;ch Tour Ch&#432;a C&#243; Guide</h3>
+                                                        Danh Sách Tour Chưa Có Guide</h3>
                                                 </div>
                                                 <div class="card-body" style="padding:0;">
                                                     <c:choose>
                                                         <c:when test="${empty unassignedSchedules}">
                                                             <div class="empty-state">
                                                                 <i data-lucide="check-circle-2"></i>
-                                                                <p>T&#7845;t c&#7843; tour &#273;&#227; c&#243;
-                                                                    h&#432;&#7899;ng d&#7851;n vi&#234;n!</p>
+                                                                <p>Tất cả tour đã có
+                                                                    hướng dẫn viên!</p>
                                                             </div>
                                                         </c:when>
                                                         <c:otherwise>
@@ -504,12 +504,12 @@
                                                                 <thead>
                                                                     <tr>
                                                                         <th>Tour</th>
-                                                                        <th>Ng&#224;y Kh&#7903;i H&#224;nh</th>
-                                                                        <th>Ng&#224;y V&#7873;</th>
-                                                                        <th>Gi&#225;</th>
-                                                                        <th>Tr&#7841;ng Th&#225;i</th>
-                                                                        <th style="text-align:center;">H&#224;nh
-                                                                            &#272;&#7897;ng</th>
+                                                                        <th>Ngày Khởi Hành</th>
+                                                                        <th>Ngày Về</th>
+                                                                        <th>Giá</th>
+                                                                        <th>Trạng Thái</th>
+                                                                        <th style="text-align:center;">Hành
+                                                                            Động</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -537,7 +537,7 @@
                                                                             <td>
                                                                                 <fmt:formatNumber
                                                                                     value="${schedule.priceAdult}"
-                                                                                    type="number" /> &#273;
+                                                                                    type="number" /> đ
                                                                             </td>
                                                                             <td>
                                                                                 <span
@@ -550,7 +550,7 @@
                                                                                     onclick="openAssignModal(${schedule.scheduleId}, '${schedule.tour.tourName}', '${schedule.departureDate}')">
                                                                                     <i data-lucide="user-plus"
                                                                                         style="width:14px;height:14px;"></i>
-                                                                                    G&#225;n Guide
+                                                                                    Gán Guide
                                                                                 </button>
                                                                             </td>
                                                                         </tr>
@@ -563,20 +563,20 @@
                                             </div>
                                         </div>
 
-                                        <!-- Tab: L&#7883;ch s&#7917; ph&#226;n c&#244;ng -->
+                                        <!-- Tab: Lịch sử phân công -->
                                         <div id="tab-assignments" class="tab-content" style="display:none;">
                                             <div class="card">
                                                 <div class="card-header">
                                                     <h3><i data-lucide="history" style="color:var(--primary);"></i>
-                                                        L&#7883;ch S&#7917; Ph&#226;n C&#244;ng Guide</h3>
+                                                        Lịch Sử Phân Công Guide</h3>
                                                 </div>
                                                 <div class="card-body" style="padding:0;">
                                                     <c:choose>
                                                         <c:when test="${empty assignments}">
                                                             <div class="empty-state">
                                                                 <i data-lucide="inbox"></i>
-                                                                <p>Ch&#432;a c&#243; l&#7883;ch s&#7917; ph&#226;n
-                                                                    c&#244;ng n&#224;o.</p>
+                                                                <p>Chưa có lịch sử phân
+                                                                    công nào.</p>
                                                             </div>
                                                         </c:when>
                                                         <c:otherwise>
@@ -584,12 +584,12 @@
                                                                 <thead>
                                                                     <tr>
                                                                         <th>Tour</th>
-                                                                        <th>H&#432;&#7899;ng D&#7851;n Vi&#234;n</th>
-                                                                        <th>Ng&#224;y Kh&#7903;i H&#224;nh</th>
-                                                                        <th>Ng&#432;&#7901;i Ph&#226;n C&#244;ng</th>
-                                                                        <th>Ng&#224;y Ph&#226;n C&#244;ng</th>
-                                                                        <th style="text-align:center;">H&#224;nh
-                                                                            &#272;&#7897;ng</th>
+                                                                        <th>Hướng Dẫn Viên</th>
+                                                                        <th>Ngày Khởi Hành</th>
+                                                                        <th>Người Phân Công</th>
+                                                                        <th>Ngày Phân Công</th>
+                                                                        <th style="text-align:center;">Hành
+                                                                            Động</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -629,8 +629,8 @@
                                                                                     pattern="dd/MM/yyyy" />
                                                                             </td>
                                                                             <td>${assignment.assignedByName != null ?
-                                                                                assignment.assignedByName : 'H&#7879;
-                                                                                th&#7889;ng'}</td>
+                                                                                assignment.assignedByName : 'Hệ
+                                                                                thống'}</td>
                                                                             <td>
                                                                                 <fmt:formatDate
                                                                                     value="${assignment.assignedAt}"
@@ -641,14 +641,14 @@
                                                                                     onclick="viewDetails(${assignment.scheduleId})">
                                                                                     <i data-lucide="eye"
                                                                                         style="width:14px;height:14px;"></i>
-                                                                                    Chi ti&#7871;t
+                                                                                    Chi tiết
                                                                                 </button>
                                                                                 <button class="btn btn-outline btn-sm"
                                                                                     style="color:var(--danger);border-color:var(--danger-light);"
                                                                                     onclick="unassignGuide(${assignment.scheduleId}, ${assignment.guideId})">
                                                                                     <i data-lucide="user-minus"
                                                                                         style="width:14px;height:14px;"></i>
-                                                                                    H&#7911;y
+                                                                                    Hủy
                                                                                 </button>
                                                                             </td>
                                                                         </tr>
@@ -665,13 +665,13 @@
                                 </main>
                         </div>
 
-                        <!-- Modal G&#225;n Guide -->
+                        <!-- Modal Gán Guide -->
                         <div class="modal-overlay" id="assignModal">
                             <div class="modal-box">
                                 <div class="modal-header">
                                     <h3><i data-lucide="user-plus"
-                                            style="vertical-align:middle;margin-right:8px;"></i>Ph&#226;n C&#244;ng
-                                        H&#432;&#7899;ng D&#7851;n Vi&#234;n</h3>
+                                            style="vertical-align:middle;margin-right:8px;"></i>Phân Công
+                                        Hướng Dẫn Viên</h3>
                                     <button class="modal-close" onclick="closeAssignModal()"><i
                                             data-lucide="x"></i></button>
                                 </div>
@@ -685,9 +685,9 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label>Ch&#7885;n H&#432;&#7899;ng D&#7851;n Vi&#234;n *</label>
+                                        <label>Chọn Hướng Dẫn Viên *</label>
                                         <select id="modal-guide-select" class="form-control" required>
-                                            <option value="">-- Ch&#7885;n Guide --</option>
+                                            <option value="">-- Chọn Guide --</option>
                                             <c:forEach var="guide" items="${guides}">
                                                 <option value="${guide.user.userId}">${guide.user.fullName} (ID:
                                                     #${guide.user.userId})</option>
@@ -696,35 +696,35 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label>Ghi Ch&#250;</label>
+                                        <label>Ghi Chú</label>
                                         <textarea id="modal-notes" class="form-control" rows="3"
-                                            placeholder="Nh&#7853;p ghi ch&#250; ph&#226;n c&#244;ng (t&#249;y ch&#7885;n)..."></textarea>
+                                            placeholder="Nhập ghi chú phân công (tùy chọn)..."></textarea>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button class="btn btn-outline" onclick="closeAssignModal()">H&#7911;y</button>
+                                    <button class="btn btn-outline" onclick="closeAssignModal()">Hủy</button>
                                     <button class="btn btn-primary" onclick="submitAssignment()">
-                                        <i data-lucide="check" style="width:14px;height:14px;"></i> X&#225;c Nh&#7853;n
-                                        Ph&#226;n C&#244;ng
+                                        <i data-lucide="check" style="width:14px;height:14px;"></i> Xác Nhận
+                                        Phân Công
                                     </button>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Modal Chi Ti&#7871;t -->
+                        <!-- Modal Chi Tiết -->
                         <div class="modal-overlay" id="detailModal">
                             <div class="modal-box" style="width:600px;">
                                 <div class="modal-header">
                                     <h3><i data-lucide="info" style="vertical-align:middle;margin-right:8px;"></i>Chi
-                                        Ti&#7871;t Ph&#226;n C&#244;ng</h3>
+                                        Tiết Phân Công</h3>
                                     <button class="modal-close" onclick="closeDetailModal()"><i
                                             data-lucide="x"></i></button>
                                 </div>
                                 <div class="modal-body" id="detail-content">
-                                    <!-- N&#7897;i dung s&#7869; &#273;&#432;&#7907;c load &#273;&#7897;ng -->
+                                    <!-- Nội dung sẽ được load động -->
                                 </div>
                                 <div class="modal-footer">
-                                    <button class="btn btn-outline" onclick="closeDetailModal()">&#272;&#243;ng</button>
+                                    <button class="btn btn-outline" onclick="closeDetailModal()">Đóng</button>
                                 </div>
                             </div>
                         </div>
