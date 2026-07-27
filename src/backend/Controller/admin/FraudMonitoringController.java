@@ -1,6 +1,6 @@
 /*
- * Li\u00ean quan \u0111\u1ebfn UCs: Monitor Fraudulent Transactions
- * T\u00e1c gi\u1ea3: \u0110\u1ed7 V\u0169 Minh Ng\u1ecdc
+ * Liên quan đến UCs: Monitor Fraudulent Transactions
+ * Tác giả: Đỗ Vũ Minh Ngọc
  * MSSV: HE182479
  */
 package Controller.admin;
@@ -117,7 +117,7 @@ public class FraudMonitoringController extends HttpServlet {
             }
         }
         
-        // Chuy\u1ec3n h\u01b0\u1edbng v\u1ec1 trang danh s\u00e1ch (GET)
+        // Chuyển hướng về trang danh sách (GET)
         String referer = request.getHeader("Referer");
         if (referer != null) {
             response.sendRedirect(referer);

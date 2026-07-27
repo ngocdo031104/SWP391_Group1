@@ -31,13 +31,19 @@ import java.io.File;
 @WebServlet(name = "AdminMediaController", urlPatterns = {"/admin/media"})
 @MultipartConfig(
     fileSizeThreshold = 1024 * 1024 * 2, // 2 MB
-    maxFileSize = 1024 * 1024 * 10,      // 10 MB limit for single file
-    maxRequestSize = 1024 * 1024 * 50    // 50 MB limit for total request
+    maxFileSize = 1024 * 1024 * 10,      // Giới hạn 10 MB cho mỗi file tải lên
+    maxRequestSize = 1024 * 1024 * 50    // Giới hạn 50 MB cho tổng dung lượng request
 )
 public class AdminMediaController extends HttpServlet {
 
     private static final Logger LOGGER = Logger.getLogger(AdminMediaController.class.getName());
 
+    /**
+     * Xử lý yêu cầu HTTP GET.
+     * 1. Kiểm tra quyền của người dùng (chỉ cho phép Admin hoặc Super Admin).
+     * 2. Nếu là yêu cầu AJAX lấy danh sách media của Tour (action = getMedia), trả về JSON chứa danh sách TourMedia.
+     * 3. Nếu là tải trang thông thường, lấy danh sách tất cả các tour để đổ vào dropdown và chuyển hướng đến trang JSP quản lý media.
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -45,7 +51,7 @@ public class AdminMediaController extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
         
-        // 1. Kiểm tra quyền Admin
+        // 1. Kiểm tra quyền Admin từ session
         User sessionUser = (User) request.getSession().getAttribute("sessionUser");
         String userRole = (String) request.getSession().getAttribute("userRole");
         if (sessionUser == null) {
@@ -57,6 +63,7 @@ public class AdminMediaController extends HttpServlet {
             return;
         }
 
+        // 2. Xử lý yêu cầu AJAX lấy danh sách phương tiện (hình ảnh/video) của tour cụ thể
         String ajax = request.getParameter("ajax");
         if ("true".equalsIgnoreCase(ajax)) {
             response.setContentType("application/json;charset=UTF-8");
@@ -73,7 +80,7 @@ public class AdminMediaController extends HttpServlet {
                     JsonArray jsonArray = new JsonArray();
                     for (TourMedia m : mediaList) {
                         JsonObject mJson = gson.toJsonTree(m).getAsJsonObject();
-                        // Trả về thời gian định dạng chuỗi
+                        // Định dạng lại ngày đăng dạng chuỗi YYYY-MM-DD
                         mJson.addProperty("uploadedStr", m.getUploadedAt().toString().split(" ")[0]);
                         mJson.addProperty("uploaderName", m.getUploaderName() != null ? m.getUploaderName() : "Hệ thống");
                         jsonArray.add(mJson);
@@ -95,7 +102,7 @@ public class AdminMediaController extends HttpServlet {
             }
         }
 
-        // Tải trang bình thường (Forwarding)
+        // 3. Tải trang bình thường: Lấy danh sách tất cả các Tour để hiển thị trên bộ lọc trang quản trị media
         TourDAO tourDAO = null;
         try {
             tourDAO = new TourDAO();
@@ -110,6 +117,10 @@ public class AdminMediaController extends HttpServlet {
         request.getRequestDispatcher("/admin/media.jsp").forward(request, response);
     }
 
+    /**
+     * Xử lý yêu cầu HTTP POST để chỉnh sửa dữ liệu phương tiện (Thêm, Sửa, Xóa, Bật/Tắt hiển thị, Đổi thứ tự).
+     * Phản hồi luôn trả về ở định dạng JSON chứa trạng thái (success/error) và thông điệp kết quả.
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -117,7 +128,7 @@ public class AdminMediaController extends HttpServlet {
         response.setContentType("application/json;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
 
-        // Kiểm tra quyền Admin
+        // 1. Kiểm tra quyền Admin trước khi thực hiện các thay đổi
         User sessionUser = (User) request.getSession().getAttribute("sessionUser");
         String userRole = (String) request.getSession().getAttribute("userRole");
         if (sessionUser == null || (sessionUser.getRoleId() != 1 && !"Admin".equals(userRole))) {
@@ -132,19 +143,21 @@ public class AdminMediaController extends HttpServlet {
         JsonObject result = new JsonObject();
         Gson gson = new Gson();
 
+        // 2. Xử lý Thêm hoặc Sửa thông tin Media (Hỗ trợ cả tải ảnh từ máy tính hoặc dùng URL có sẵn)
         if ("addMedia".equalsIgnoreCase(action) || "editMedia".equalsIgnoreCase(action)) {
             TourMediaDAO mediaDAO = null;
             try {
                 mediaDAO = new TourMediaDAO();
                 
                 int tourId = parseInt(request.getParameter("tourId"), 0);
-                String mediaSource = request.getParameter("mediaSource"); // "url" or "local"
+                String mediaSource = request.getParameter("mediaSource"); // Nguồn file: "url" (đường dẫn web) hoặc "local" (tải tệp)
                 String mediaUrl = request.getParameter("mediaUrl");
-                String mediaType = request.getParameter("mediaType"); // Image, Video
-                String caption = request.getParameter("caption");
-                int sortOrder = parseInt(request.getParameter("sortOrder"), 0);
-                boolean isVisible = "true".equalsIgnoreCase(request.getParameter("isVisible"));
+                String mediaType = request.getParameter("mediaType"); // Loại tệp: Image hoặc Video
+                String caption = request.getParameter("caption"); // Chú thích cho ảnh
+                int sortOrder = parseInt(request.getParameter("sortOrder"), 0); // Thứ tự hiển thị
+                boolean isVisible = "true".equalsIgnoreCase(request.getParameter("isVisible")); // Trạng thái hiển thị công khai
 
+                // Xử lý lưu trữ tệp tin tải lên từ máy tính (local upload)
                 if ("local".equalsIgnoreCase(mediaSource)) {
                     Part filePart = request.getPart("mediaFile");
                     if (filePart != null && filePart.getSize() > 0) {
@@ -153,7 +166,9 @@ public class AdminMediaController extends HttpServlet {
                         if (submittedName != null && submittedName.contains(".")) {
                             ext = submittedName.substring(submittedName.lastIndexOf("."));
                         }
+                        // Tạo tên file độc nhất để tránh trùng lặp
                         String uniqueName = "tour_" + tourId + "_" + System.currentTimeMillis() + ext;
+                        // Thư mục lưu trữ vật lý trong máy chủ: assets/images
                         String uploadDir = request.getServletContext().getRealPath("") + File.separator + "assets" + File.separator + "images";
                         File dir = new File(uploadDir);
                         if (!dir.exists()) {
@@ -161,10 +176,11 @@ public class AdminMediaController extends HttpServlet {
                         }
                         String filePath = uploadDir + File.separator + uniqueName;
                         filePart.write(filePath);
-                        mediaUrl = "assets/images/" + uniqueName;
+                        mediaUrl = "assets/images/" + uniqueName; // Đường dẫn tương đối lưu vào DB
                     }
                 }
 
+                // Kiểm tra dữ liệu đầu vào bắt buộc
                 if (tourId <= 0 || mediaUrl == null || mediaUrl.trim().isEmpty() || mediaType == null) {
                     result.addProperty("status", "error");
                     result.addProperty("message", "Vui lòng nhập đầy đủ thông tin hợp lệ (Đường dẫn Media URL hoặc Tệp tải lên không được để trống).");
@@ -180,9 +196,11 @@ public class AdminMediaController extends HttpServlet {
 
                     boolean success = false;
                     if ("addMedia".equalsIgnoreCase(action)) {
+                        // Gọi DAO thêm mới một phương tiện vào tour
                         int newId = mediaDAO.insertMedia(media);
                         success = newId > 0;
                     } else {
+                        // Gọi DAO cập nhật một phương tiện đã tồn tại
                         int mediaId = parseInt(request.getParameter("mediaId"), 0);
                         media.setMediaId(mediaId);
                         success = mediaDAO.updateMedia(media);
@@ -203,7 +221,9 @@ public class AdminMediaController extends HttpServlet {
             } finally {
                 if (mediaDAO != null) mediaDAO.close();
             }
-        } else if ("deleteMedia".equalsIgnoreCase(action)) {
+        } 
+        // 3. Xử lý yêu cầu Xóa phương tiện
+        else if ("deleteMedia".equalsIgnoreCase(action)) {
             TourMediaDAO mediaDAO = null;
             try {
                 mediaDAO = new TourMediaDAO();
@@ -223,7 +243,9 @@ public class AdminMediaController extends HttpServlet {
             } finally {
                 if (mediaDAO != null) mediaDAO.close();
             }
-        } else if ("toggleVisibility".equalsIgnoreCase(action)) {
+        } 
+        // 4. Xử lý yêu cầu bật/tắt hiển thị ẩn danh của hình ảnh/video đối với khách hàng
+        else if ("toggleVisibility".equalsIgnoreCase(action)) {
             TourMediaDAO mediaDAO = null;
             try {
                 mediaDAO = new TourMediaDAO();
@@ -244,7 +266,9 @@ public class AdminMediaController extends HttpServlet {
             } finally {
                 if (mediaDAO != null) mediaDAO.close();
             }
-        } else if ("updateSortOrder".equalsIgnoreCase(action)) {
+        } 
+        // 5. Cập nhật thứ tự sắp xếp của phương tiện để hiển thị đẹp hơn trên slide ảnh ở trang chi tiết tour
+        else if ("updateSortOrder".equalsIgnoreCase(action)) {
             TourMediaDAO mediaDAO = null;
             try {
                 mediaDAO = new TourMediaDAO();
@@ -275,6 +299,9 @@ public class AdminMediaController extends HttpServlet {
         }
     }
 
+    /**
+     * Phương thức bổ trợ (Helper method) chuyển chuỗi dạng String thành số nguyên int một cách an toàn.
+     */
     private int parseInt(String value, int defaultVal) {
         try {
             if (value != null && !value.trim().isEmpty()) {
