@@ -1,5 +1,13 @@
 package Model;
 
+/**
+ * HÀM: TourDAO (Data Access Object)
+ * - Tác dụng: Lớp trung gian giữa Controller và Database. Chứa tất cả các câu SQL
+ *   thao tác với các bảng liên quan đến Tour: Tour, TourCategory, TourMedia, TourSchedule,
+ *   TourItinerary, TourInclusion, TourFAQ, Review, Coupon, DestinationInfo, GuideProfile.
+ * - Nối đi đâu: Được gọi bởi các Controller (HomeController, TourDiscoveryController,
+ *   DetailController, AdminTourController, ...) thông qua các method public.
+ */
 import Entities.Tour;
 import Entities.TourCategory;
 import Entities.TourMedia;
@@ -300,6 +308,15 @@ public class TourDAO extends DBContext {
         return list;
     }
 
+    /**
+     * HÀM: getMediaForTour (private helper)
+     * - Tác dụng: Lấy danh sách media (ảnh/video) của 1 tour, sắp xếp theo SortOrder tăng dần.
+     * - Tham số:
+     *   + tourId: ID của tour cần lấy media.
+     *   + onlyFirst: true = lấy 1 ảnh đầu tiên (thumbnail cho card danh sách),
+     *                false = lấy toàn bộ (slideshow trang chi tiết).
+     * - Nối đi đâu: Được gọi bởi getFeaturedTours(), searchTours(), getTourById().
+     */
     private List<TourMedia> getMediaForTour(int tourId, boolean onlyFirst) {
         List<TourMedia> list = new ArrayList<>();
         String sql = "SELECT MediaID, TourID, MediaURL, MediaType, Caption, SortOrder, IsVisible FROM TourMedia "
@@ -329,6 +346,14 @@ public class TourDAO extends DBContext {
         return list;
     }
 
+    /**
+     * HÀM: mapTour (private helper)
+     * - Tác dụng: Chuyển đổi 1 dòng trong ResultSet -> đối tượng Tour.
+     *   Đây là helper dùng chung để tránh lặp code map field khi có nhiều câu SELECT.
+     * - Đặc biệt: Có xử lý linh hoạt (columnExists) cho các cột tuỳ chọn như TotalSeats,
+     *   AvailableSeats, NextDeparture (chỉ có ở getAllToursAdmin).
+     * - Nối đi đâu: Được gọi bởi getFeaturedTours(), searchTours(), getTourById(), getAllToursAdmin().
+     */
     private Tour mapTour(ResultSet rs) throws SQLException {
         Tour tour = new Tour();
         tour.setTourId(rs.getInt("TourID"));
@@ -607,6 +632,12 @@ public class TourDAO extends DBContext {
         return list;
     }
 
+    /**
+     * HÀM: getTopDestinations
+     * - Tác dụng: Đếm số tour theo từng Destination, gộp nhóm trùng tên thành DestinationInfo.
+     *   Tự động map tên điểm đến với ảnh đại diện tương ứng (Hạ Long, Đà Nẵng, Phú Quốc, ...).
+     * - Nối đi đâu: Được gọi bởi HomeController để hiển thị section "Điểm Đến Hot" ở trang chủ.
+     */
     public List<DestinationInfo> getTopDestinations() {
         List<DestinationInfo> list = new ArrayList<>();
         String sql = "SELECT Destination, COUNT(*) as TourCount FROM Tour WHERE Status = 'Active' AND IsDeleted = 0 GROUP BY Destination";
@@ -855,6 +886,13 @@ public class TourDAO extends DBContext {
         return list;
     }
 
+    /**
+     * HÀM: getCouponByCode
+     * - Tác dụng: Tra cứu 1 mã giảm giá theo mã code (chỉ lấy mã đang hoạt động và còn hạn).
+     * - Tham số: code - mã coupon khách nhập vào (VD: "SUMMER2026").
+     * - Trả về: Coupon nếu hợp lệ, null nếu không tồn tại / hết hạn / bị vô hiệu.
+     * - Nối đi đâu: Được gọi từ controller xử lý đặt tour (Booking) khi khách áp dụng coupon.
+     */
     public Coupon getCouponByCode(String code) {
         if (code == null || code.trim().isEmpty()) return null;
         String sql = "SELECT CouponID, CouponCode, DiscountType, DiscountValue, MinOrderAmount, MaxUses, UsedCount, StartDate, EndDate, IsActive, CreatedBy, CreatedAt "
@@ -894,6 +932,13 @@ public class TourDAO extends DBContext {
         return null;
     }
 
+    /**
+     * HÀM: getDistinctDestinations
+     * - Tác dụng: Lấy danh sách các điểm đến DUY NHẤT đang có tour Active để phục vụ autocomplete
+     *   cho ô tìm kiếm ở trang Tour Discovery.
+     * - Lưu ý: Nếu Destination có dạng "Hạ Long, Quảng Ninh" thì chỉ lấy phần "Hạ Long".
+     * - Nối đi đâu: TourDiscoveryController -> truyền vào datalist autocomplete.
+     */
     public List<String> getDistinctDestinations() {
         List<String> list = new ArrayList<>();
         String sql = "SELECT DISTINCT Destination FROM Tour WHERE Status = 'Active' AND IsDeleted = 0";
@@ -914,6 +959,11 @@ public class TourDAO extends DBContext {
         return list;
     }
 
+    /**
+     * HÀM: getDistinctDepartureCities
+     * - Tác dụng: Lấy danh sách các thành phố khởi hành DUY NHẤT đang có tour Active.
+     * - Nối đi đâu: TourDiscoveryController -> render checkbox lọc "Điểm khởi hành" ở sidebar.
+     */
     public List<String> getDistinctDepartureCities() {
         List<String> list = new ArrayList<>();
         String sql = "SELECT DISTINCT DepartureCity FROM Tour WHERE Status = 'Active' AND IsDeleted = 0";
@@ -937,6 +987,14 @@ public class TourDAO extends DBContext {
      * Inserts a new Tour into the database.
      * @param tour Tour entity to insert
      * @return generated TourID or -1 if failed
+     */
+    /**
+     * HÀM: insertTour
+     * - Tác dụng: INSERT 1 tour mới vào bảng Tour (không bao gồm Inclusion/Itinerary).
+     * - Tham số: tour - đối tượng Tour cần lưu (không cần có tourId).
+     * - Trả về: tourId mới được sinh tự động (IDENTITY) nếu thành công, -1 nếu lỗi.
+     * - Đặc biệt: Status mặc định "Draft" nếu null. Latitude/Longitude/CreatedBy = null -> setNull cho SQL.
+     * - Nối đi đâu: AdminTourController.doPost() với action="add".
      */
     public int insertTour(Tour tour) {
         String sql = "INSERT INTO Tour (CategoryID, TourName, Description, Destination, DurationDays, Itinerary, DifficultyLevel, BasePrice, MaxParticipants, Status, IsFeatured, Languages, GroupSizeMin, GroupSizeMax, DepartureCity, Latitude, Longitude, VideoURL, CreatedBy, CreatedAt, UpdatedAt) "
@@ -981,6 +1039,13 @@ public class TourDAO extends DBContext {
      * @param tour Tour entity to update
      * @return true if successful, false otherwise
      */
+    /**
+     * HÀM: updateTour
+     * - Tác dụng: UPDATE toàn bộ thông tin của 1 tour đã có (trừ CreatedAt/CreatedBy).
+     * - Tham số: tour - đối tượng Tour cần cập nhật (phải có tourId).
+     * - Trả về: true nếu có ít nhất 1 dòng bị ảnh hưởng, false nếu lỗi hoặc không tìm thấy tour.
+     * - Nối đi đâu: AdminTourController.doPost() với action="edit".
+     */
     public boolean updateTour(Tour tour) {
         String sql = "UPDATE Tour SET CategoryID = ?, TourName = ?, Description = ?, Destination = ?, DurationDays = ?, Itinerary = ?, DifficultyLevel = ?, BasePrice = ?, MaxParticipants = ?, Status = ?, IsFeatured = ?, Languages = ?, GroupSizeMin = ?, GroupSizeMax = ?, DepartureCity = ?, Latitude = ?, Longitude = ?, VideoURL = ?, UpdatedAt = GETDATE() "
                    + "WHERE TourID = ?";
@@ -1017,6 +1082,13 @@ public class TourDAO extends DBContext {
      * @param tourId ID of the tour to delete
      * @return true if successful
      */
+    /**
+     * HÀM: deleteTour
+     * - Tác dụng: SOFT DELETE - không xóa vật lý, chỉ set Status='Inactive' và IsDeleted=1.
+     *   Lý do: bảo toàn lịch sử booking + tránh lỗi FK constraint.
+     * - Trả về: true nếu cập nhật được, false nếu lỗi.
+     * - Nối đi đâu: AdminTourController.doPost() với action="delete".
+     */
     public boolean deleteTour(int tourId) {
         String sql = "UPDATE Tour SET Status = 'Inactive', IsDeleted = 1, UpdatedAt = GETDATE() WHERE TourID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -1030,6 +1102,13 @@ public class TourDAO extends DBContext {
 
     /**
      * Quick update status (Active, Draft, Disabled)
+     */
+    /**
+     * HÀM: updateTourStatus
+     * - Tác dụng: Cập nhật NHANH 1 field Status của Tour (Active / Draft / Disabled) mà không cần
+     *   load toàn bộ thông tin tour. Dùng cho chức năng bật/tắt nhanh ở bảng quản lý.
+     * - Trả về: true nếu cập nhật được, false nếu lỗi.
+     * - Nối đi đâu: AdminTourController.doPost() với action="toggle-status".
      */
     public boolean updateTourStatus(int tourId, String status) {
         String sql = "UPDATE Tour SET Status = ?, UpdatedAt = GETDATE() WHERE TourID = ?";
@@ -1045,6 +1124,13 @@ public class TourDAO extends DBContext {
 
     /**
      * Get all tours for admin panel (including draft, disabled, active)
+     */
+    /**
+     * HÀM: getAllToursAdmin
+     * - Tác dụng: Lấy TOÀN BỘ tour (gồm cả Active, Draft, Disabled) để hiển thị bảng quản lý.
+     *   Khác với searchTours: KHÔNG lọc theo Status, lấy cả tour đã tạo nháp.
+     * - Bổ sung 3 cột tính sẵn: TotalSeats, AvailableSeats, NextDeparture (subquery).
+     * - Nối đi đâu: AdminTourController.doGet() (action mặc định) -> trả JSON cho trang tourmanagement.jsp.
      */
     public List<Tour> getAllToursAdmin() {
         List<Tour> list = new ArrayList<>();
@@ -1080,6 +1166,14 @@ public class TourDAO extends DBContext {
     /**
      * Get monthly revenue for the last 6 months dynamically from Booking table
      */
+    /**
+     * HÀM: getMonthlyRevenueLast6Months
+     * - Tác dụng: Tính doanh thu 6 tháng gần nhất (bao gồm tháng hiện tại) để vẽ biểu đồ line chart.
+     *   Mảng trả về có đúng 6 phần tử, index 0 = tháng cách đây 5 tháng, index 5 = tháng hiện tại.
+     *   Tháng nào không có booking -> giá trị = 0.
+     * - Loại trừ: booking Status IN ('Cancelled', 'Failed', 'Refunded').
+     * - Nối đi đâu: AdminTourController.doGet() -> JSON root.monthlyRevenue cho dashboard.jsp.
+     */
     public double[] getMonthlyRevenueLast6Months() {
         double[] revenue = new double[6];
         java.util.Calendar cal = java.util.Calendar.getInstance();
@@ -1114,6 +1208,11 @@ public class TourDAO extends DBContext {
      * Includes PendingPayment (holds), Success, Confirmed, Completed.
      * Excludes only Cancelled, Failed, Refunded.
      */
+    /**
+     * HÀM: getTotalRevenue
+     * - Tác dụng: Tính tổng doanh thu TỪ TRƯỚC ĐẾN NAY của tất cả booking (trừ Cancelled/Failed/Refunded).
+     * - Nối đi đâu: AdminTourController.doGet() -> JSON root.totalRevenue cho dashboard.jsp.
+     */
     public long getTotalRevenue() {
         String sql = "SELECT ISNULL(SUM(TotalAmount), 0) as Total FROM Booking "
                    + "WHERE Status NOT IN ('Cancelled', 'Failed', 'Refunded')";
@@ -1130,6 +1229,16 @@ public class TourDAO extends DBContext {
 
     /**
      * Delete and insert batch of inclusions for a tour to synchronize them.
+     */
+    /**
+     * HÀM: saveTourInclusions
+     * - Tác dụng: Đồng bộ danh sách dịch vụ kèm theo (bao gồm/loại trừ) cho 1 tour bằng chiến lược
+     *   delete-then-insert: xóa hết row cũ của tourId, sau đó insert lại theo danh sách mới.
+     * - Tham số:
+     *   + tourId: ID của tour cần đồng bộ.
+     *   + inclusions: List dịch vụ mới (null hoặc rỗng = xóa hết).
+     * - Trả về: true nếu thành công, false nếu lỗi khi xóa.
+     * - Nối đi đâu: Được gọi bởi AdminTourController.doPost() sau khi insert/update Tour thành công.
      */
     public boolean saveTourInclusions(int tourId, List<TourInclusion> inclusions) {
         // 1. Delete existing inclusions

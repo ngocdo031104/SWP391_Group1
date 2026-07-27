@@ -17,7 +17,7 @@
                     <head>
                         <meta charset="UTF-8">
                         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                        <title>C&#7853;p Nh&#7853;t Tr&#7841;ng Th&#225;i Tour - Staff Dashboard</title>
+                        <title>Cập Nhật Trạng Thái Tour - Staff Dashboard</title>
                         <link
                             href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
                             rel="stylesheet">
@@ -460,18 +460,18 @@
 
                                         <c:choose>
                                             <c:when test="${not empty logs}">
-                                                <%-- Chi ti&#7871;t logs c&#7911;a m&#7897;t schedule --%>
+                                                <%-- Chi tiết logs của một schedule --%>
                                                     <div class="breadcrumb">
                                                         <a href="${pageContext.request.contextPath}/staff/tour-status">
                                                             <i data-lucide="arrow-left"
                                                                 style="width:16px;height:16px;vertical-align:middle;margin-right:4px;"></i>
-                                                            Quay l&#7841;i danh s&#225;ch
+                                                            Quay lại danh sách
                                                         </a>
                                                     </div>
 
                                                     <div class="page-header">
                                                         <div>
-                                                            <h1>Nh&#7853;t K&#253; V&#7853;n H&#224;nh</h1>
+                                                            <h1>Nhật Ký Vận Hành</h1>
                                                             <p>${schedule.tour.tourName} -
                                                                 <fmt:formatDate value="${schedule.departureDate}"
                                                                     pattern="dd/MM/yyyy" />
@@ -483,16 +483,16 @@
                                                         <div class="card-header">
                                                             <h3><i data-lucide="clock-rotate-left"
                                                                     style="color:var(--primary);"></i> Timeline
-                                                                Ho&#7841;t &#272;&#7897;ng</h3>
+                                                                Hoạt Động</h3>
                                                         </div>
                                                         <div class="card-body">
                                                             <c:choose>
                                                                 <c:when test="${empty logs}">
                                                                     <div class="empty-state">
                                                                         <i data-lucide="clock"></i>
-                                                                        <p>Ch&#432;a c&#243; ho&#7841;t &#273;&#7897;ng
-                                                                            n&#224;o &#273;&#432;&#7907;c ghi
-                                                                            nh&#7853;n.</p>
+                                                                        <p>Chưa có hoạt động
+                                                                            nào được ghi
+                                                                            nhận.</p>
                                                                     </div>
                                                                 </c:when>
                                                                 <c:otherwise>
@@ -518,12 +518,12 @@
 
                                             </c:when>
                                             <c:otherwise>
-                                                <%-- Danh s&#225;ch tours c&#243; guide --%>
+                                                <%-- Danh sách tours có guide --%>
                                                     <div class="page-header">
                                                         <div>
-                                                            <h1>C&#7853;p Nh&#7853;t Tr&#7841;ng Th&#225;i Tour</h1>
-                                                            <p>Xem v&#224; c&#7853;p nh&#7853;t tr&#7841;ng th&#225;i
-                                                                v&#7853;n h&#224;nh c&#7911;a c&#225;c tour</p>
+                                                            <h1>Cập Nhật Trạng Thái Tour</h1>
+                                                            <p>Xem và cập nhật trạng thái
+                                                                vận hành của các tour</p>
                                                         </div>
                                                     </div>
 
@@ -536,16 +536,16 @@
                                                     <div class="card">
                                                         <div class="card-header">
                                                             <h3><i data-lucide="activity"
-                                                                    style="color:var(--primary);"></i> Danh S&#225;ch
-                                                                Tour &#272;ang Ho&#7841;t &#272;&#7897;ng</h3>
+                                                                    style="color:var(--primary);"></i> Danh Sách
+                                                                Tour Đang Hoạt Động</h3>
                                                         </div>
                                                         <div class="card-body" style="padding:0;">
                                                             <c:choose>
                                                                 <c:when test="${empty schedules}">
                                                                     <div class="empty-state">
                                                                         <i data-lucide="package"></i>
-                                                                        <p>Ch&#432;a c&#243; tour n&#224;o c&#243;
-                                                                            h&#432;&#7899;ng d&#7851;n vi&#234;n.</p>
+                                                                        <p>Chưa có tour nào có
+                                                                            hướng dẫn viên.</p>
                                                                     </div>
                                                                 </c:when>
                                                                 <c:otherwise>
@@ -553,13 +553,13 @@
                                                                         <thead>
                                                                             <tr>
                                                                                 <th>Tour</th>
-                                                                                <th>Ng&#224;y Kh&#7903;i H&#224;nh</th>
-                                                                                <th>Ng&#224;y V&#7873;</th>
-                                                                                <th>H&#432;&#7899;ng D&#7851;n Vi&#234;n
+                                                                                <th>Ngày Khởi Hành</th>
+                                                                                <th>Ngày Về</th>
+                                                                                <th>Hướng Dẫn Viên
                                                                                 </th>
-                                                                                <th>Tr&#7841;ng Th&#225;i</th>
-                                                                                <th style="text-align:center;">H&#224;nh
-                                                                                    &#272;&#7897;ng</th>
+                                                                                <th>Trạng Thái</th>
+                                                                                <th style="text-align:center;">Hành
+                                                                                    Động</th>
                                                                             </tr>
                                                                         </thead>
                                                                         <tbody>
@@ -602,8 +602,8 @@
                                                                                             </c:when>
                                                                                             <c:otherwise>
                                                                                                 <span
-                                                                                                    style="color:var(--gray-500);font-style:italic;">Ch&#432;a
-                                                                                                    c&#243;</span>
+                                                                                                    style="color:var(--gray-500);font-style:italic;">Chưa
+                                                                                                    có</span>
                                                                                             </c:otherwise>
                                                                                         </c:choose>
                                                                                     </td>
@@ -614,38 +614,38 @@
                                                                                             <c:when
                                                                                                 test="${ts == 'Preparing'}">
                                                                                                 <span
-                                                                                                    class="status-badge status-preparing">Chu&#7849;n
-                                                                                                    b&#7883;</span>
+                                                                                                    class="status-badge status-preparing">Chuẩn
+                                                                                                    bị</span>
                                                                                             </c:when>
                                                                                             <c:when
                                                                                                 test="${ts == 'Scheduled'}">
                                                                                                 <span
-                                                                                                    class="status-badge status-scheduled">&#272;&#227;
-                                                                                                    l&#234;n
-                                                                                                    l&#7883;ch</span>
+                                                                                                    class="status-badge status-scheduled">Đã
+                                                                                                    lên
+                                                                                                    lịch</span>
                                                                                             </c:when>
                                                                                             <c:when
                                                                                                 test="${ts == 'InProgress'}">
                                                                                                 <span
-                                                                                                    class="status-badge status-inprogress">&#272;ang
-                                                                                                    &#273;i</span>
+                                                                                                    class="status-badge status-inprogress">Đang
+                                                                                                    đi</span>
                                                                                             </c:when>
                                                                                             <c:when
                                                                                                 test="${ts == 'Completed'}">
                                                                                                 <span
-                                                                                                    class="status-badge status-completed">Ho&#224;n
-                                                                                                    th&#224;nh</span>
+                                                                                                    class="status-badge status-completed">Hoàn
+                                                                                                    thành</span>
                                                                                             </c:when>
                                                                                             <c:when
                                                                                                 test="${ts == 'Cancelled'}">
                                                                                                 <span
-                                                                                                    class="status-badge status-cancelled">&#272;&#227;
-                                                                                                    h&#7911;y</span>
+                                                                                                    class="status-badge status-cancelled">Đã
+                                                                                                    hủy</span>
                                                                                             </c:when>
                                                                                             <c:otherwise>
                                                                                                 <span
-                                                                                                    class="status-badge status-preparing">Chu&#7849;n
-                                                                                                    b&#7883;</span>
+                                                                                                    class="status-badge status-preparing">Chuẩn
+                                                                                                    bị</span>
                                                                                             </c:otherwise>
                                                                                         </c:choose>
                                                                                     </td>
@@ -662,7 +662,7 @@
                                                                                             onclick="openStatusModal(${schedule.scheduleId}, '${schedule.tourStatus}', '${schedule.tour.tourName}')">
                                                                                             <i data-lucide="edit"
                                                                                                 style="width:14px;height:14px;"></i>
-                                                                                            C&#7853;p nh&#7853;t
+                                                                                            Cập nhật
                                                                                         </button>
                                                                                     </td>
                                                                                 </tr>
@@ -680,13 +680,13 @@
                                 </main>
                         </div>
 
-                        <!-- Modal C&#7853;p nh&#7853;t tr&#7841;ng th&#225;i -->
+                        <!-- Modal Cập nhật trạng thái -->
                         <div class="modal-overlay" id="statusModal">
                             <div class="modal-box">
                                 <div class="modal-header">
                                     <h3><i data-lucide="edit"
-                                            style="vertical-align:middle;margin-right:8px;"></i>C&#7853;p Nh&#7853;t
-                                        Tr&#7841;ng Th&#225;i Tour</h3>
+                                            style="vertical-align:middle;margin-right:8px;"></i>Cập Nhật
+                                        Trạng Thái Tour</h3>
                                     <button class="modal-close" onclick="closeStatusModal()"><i
                                             data-lucide="x"></i></button>
                                 </div>
@@ -698,27 +698,27 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="modal-status-select">Tr&#7841;ng Th&#225;i M&#7899;i *</label>
+                                        <label for="modal-status-select">Trạng Thái Mới *</label>
                                         <select id="modal-status-select" class="form-control">
-                                            <option value="Preparing">Chu&#7849;n b&#7883; (Preparing)</option>
-                                            <option value="Scheduled">&#272;&#227; l&#234;n l&#7883;ch (Scheduled)
+                                            <option value="Preparing">Chuẩn bị (Preparing)</option>
+                                            <option value="Scheduled">Đã lên lịch (Scheduled)
                                             </option>
-                                            <option value="InProgress">&#272;ang di&#7877;n ra (InProgress)</option>
-                                            <option value="Completed">Ho&#224;n th&#224;nh (Completed)</option>
-                                            <option value="Cancelled">&#272;&#227; h&#7911;y (Cancelled)</option>
+                                            <option value="InProgress">Đang diễn ra (InProgress)</option>
+                                            <option value="Completed">Hoàn thành (Completed)</option>
+                                            <option value="Cancelled">Đã hủy (Cancelled)</option>
                                         </select>
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="modal-notes">Ghi Ch&#250;</label>
+                                        <label for="modal-notes">Ghi Chú</label>
                                         <textarea id="modal-notes" class="form-control" rows="3"
-                                            placeholder="Nh&#7853;p ghi ch&#250; v&#7853;n h&#224;nh..."></textarea>
+                                            placeholder="Nhập ghi chú vận hành..."></textarea>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button class="btn btn-outline" onclick="closeStatusModal()">H&#7911;y</button>
+                                    <button class="btn btn-outline" onclick="closeStatusModal()">Hủy</button>
                                     <button class="btn btn-primary" onclick="submitStatusUpdate()">
-                                        <i data-lucide="check" style="width:14px;height:14px;"></i> X&#225;c Nh&#7853;n
+                                        <i data-lucide="check" style="width:14px;height:14px;"></i> Xác Nhận
                                     </button>
                                 </div>
                             </div>
@@ -729,8 +729,8 @@
                             <div class="modal-box" style="width:600px;">
                                 <div class="modal-header">
                                     <h3><i data-lucide="clock-rotate-left"
-                                            style="vertical-align:middle;margin-right:8px;"></i>Nh&#7853;t K&#253;
-                                        V&#7853;n H&#224;nh</h3>
+                                            style="vertical-align:middle;margin-right:8px;"></i>Nhật Ký
+                                        Vận Hành</h3>
                                     <button class="modal-close" onclick="closeLogsModal()"><i
                                             data-lucide="x"></i></button>
                                 </div>
@@ -738,11 +738,11 @@
                                     <div style="text-align:center;padding:40px;color:var(--gray-500);">
                                         <i data-lucide="loader-2"
                                             style="animation:spin 1s linear infinite;width:24px;height:24px;"></i>
-                                        <p style="margin-top:10px;">&#272;ang t&#7843;i...</p>
+                                        <p style="margin-top:10px;">Đang tải...</p>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button class="btn btn-outline" onclick="closeLogsModal()">&#272;&#243;ng</button>
+                                    <button class="btn btn-outline" onclick="closeLogsModal()">Đóng</button>
                                 </div>
                             </div>
                         </div>
@@ -806,12 +806,12 @@
                                     })
                                     .catch(err => {
                                         console.error(err);
-                                        alert('\u0110\u00e3 x\u1ea3y ra l\u1ed7i!');
+                                        alert('Đã xảy ra lỗi!');
                                     });
                             }
 
                             function openLogsModal(scheduleId, tourName) {
-                                document.getElementById('logs-content').innerHTML = '<div style="text-align:center;padding:40px;color:var(--gray-500);"><i data-lucide="loader-2" style="animation:spin 1s linear infinite;width:24px;height:24px;"></i><p style="margin-top:10px;">\u0110ang t\u1ea3i...</p></div>';
+                                document.getElementById('logs-content').innerHTML = '<div style="text-align:center;padding:40px;color:var(--gray-500);"><i data-lucide="loader-2" style="animation:spin 1s linear infinite;width:24px;height:24px;"></i><p style="margin-top:10px;">Đang tải...</p></div>';
                                 lucide.createIcons();
                                 document.getElementById('logsModal').classList.add('open');
 
@@ -823,7 +823,7 @@
                                         return fetch('${pageContext.request.contextPath}/staff/tour-status?action=logs&scheduleId=' + scheduleId);
                                     })
                                     .catch(err => {
-                                        document.getElementById('logs-content').innerHTML = '<div style="text-align:center;padding:40px;color:var(--danger);"><i data-lucide="alert-circle"></i><p style="margin-top:10px;">L\u1ed7i khi t\u1ea3i nh\u1eadt k\u00fd</p></div>';
+                                        document.getElementById('logs-content').innerHTML = '<div style="text-align:center;padding:40px;color:var(--danger);"><i data-lucide="alert-circle"></i><p style="margin-top:10px;">Lỗi khi tải nhật ký</p></div>';
                                         lucide.createIcons();
                                     });
                             }

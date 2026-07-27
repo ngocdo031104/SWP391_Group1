@@ -3,7 +3,7 @@
     Tác giả: Đỗ Vũ Minh Ngọc
     MSSV: HE182479
 --%>
-&#65279;<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
+﻿<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <!DOCTYPE html>
@@ -11,10 +11,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>X&#225;c th&#7921;c t&#224;i kho&#7843;n | TourBuddy</title>
-    <!-- Th&#432; vi&#7879;n icon FontAwesome -->
+    <title>Xác thực tài khoản | TourBuddy</title>
+    <!-- Thư viện icon FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Ph&#244;ng ch&#7919; Google Fonts -->
+    <!-- Phông chữ Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -148,10 +148,10 @@
     <div class="auth-container">
         <div class="auth-card">
             <a href="${pageContext.request.contextPath}/home" class="auth-logo">TourBuddy.</a>
-            <h1 class="auth-title">X&#225;c th&#7921;c Email</h1>
+            <h1 class="auth-title">Xác thực Email</h1>
             <p class="auth-desc">
-                Ch&#250;ng t&#244;i &#273;&#227; g&#7917;i m&#7897;t m&#227; x&#225;c nh&#7853;n g&#7891;m 6 ch&#7919; s&#7889; &#273;&#7871;n email <strong>${sessionScope.verify_email}</strong>. 
-                Vui l&#242;ng ki&#7875;m tra h&#7897;p th&#432; &#273;&#7871;n (ho&#7863;c th&#432; m&#7909;c Spam) v&#224; nh&#7853;p m&#227; v&#224;o b&#234;n d&#432;&#7899;i.
+                Chúng tôi đã gửi một mã xác nhận gồm 6 chữ số đến email <strong>${sessionScope.verify_email}</strong>. 
+                Vui lòng kiểm tra hộp thư đến (hoặc thư mục Spam) và nhập mã vào bên dưới.
             </p>
 
             <c:if test="${not empty errorMessage}">
@@ -162,17 +162,17 @@
 
             <c:if test="${not empty sessionScope.emailError}">
                 <div class="alert alert-error">
-                    <i class="fa fa-exclamation-triangle"></i> L&#7895;i h&#7879; th&#7889;ng g&#7917;i mail: ${sessionScope.emailError}
-                    <br><small>(Vui l&#242;ng ch&#7909;p l&#7841;i th&#244;ng b&#225;o n&#224;y g&#7917;i cho t&#244;i &#273;&#7875; t&#244;i kh&#7855;c ph&#7909;c!)</small>
+                    <i class="fa fa-exclamation-triangle"></i> Lỗi hệ thống gửi mail: ${sessionScope.emailError}
+                    <br><small>(Vui lòng chụp lại thông báo này gửi cho tôi để tôi khắc phục!)</small>
                 </div>
             </c:if>
 
             <form action="${pageContext.request.contextPath}/verify" method="POST">
                 <div class="form-group">
-                    <label class="form-label" for="otp">M&#227; x&#225;c nh&#7853;n (OTP)</label>
+                    <label class="form-label" for="otp">Mã xác nhận (OTP)</label>
                     <input type="text" id="otp" name="otp" class="form-control" placeholder="123456" maxlength="6" required pattern="[0-9]{6}">
                 </div>
-                <button type="submit" class="btn btn-primary">X&#225;c th&#7921;c t&#224;i kho&#7843;n</button>
+                <button type="submit" class="btn btn-primary">Xác thực tài khoản</button>
             </form>
         </div>
     </div>

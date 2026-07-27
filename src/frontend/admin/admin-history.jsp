@@ -10,7 +10,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>L&#7883;ch S&#7917; Qu&#7843;n Tr&#7883; &#151; TourBuddy Enterprise</title>
+    <title>Lịch Sử Quản Trị  TourBuddy Enterprise</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -26,21 +26,21 @@
 
     <main class="main-content theme-light">
         <header class="top-header">
-            <h1>L&#7883;ch S&#7917; Qu&#7843;n Tr&#7883; H&#7879; Th&#7889;ng</h1>
+            <h1>Lịch Sử Quản Trị Hệ Thống</h1>
         </header>
 
         <section class="view-panel active">
             <div class="content-card">
                 <div class="card-header">
-                     <h3 class="card-title">Nh&#7853;t k&#253; ho&#7841;t &#273;&#7897;ng</h3>
+                     <h3 class="card-title">Nhật ký hoạt động</h3>
                 </div>
                 <div class="card-body table-responsive" style="padding: 0;">
                     <table class="admin-table">
                         <thead>
                             <tr>
-                                <th>Th&#7901;i Gian</th>
-                                <th>Lo&#7841;i H&#7841;nh &#272;&#7897;ng</th>
-                                <th>Chi Ti&#7871;t</th>
+                                <th>Thời Gian</th>
+                                <th>Loại Hạnh Động</th>
+                                <th>Chi Tiết</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -55,7 +55,7 @@
                             </c:forEach>
                             <c:if test="${empty logs}">
                                 <tr>
-                                     <td colspan="3" style="text-align: center; padding: 20px;">Kh&#244;ng c&#243; d&#7919; li&#7879;u l&#7883;ch s&#7917;.</td>
+                                     <td colspan="3" style="text-align: center; padding: 20px;">Không có dữ liệu lịch sử.</td>
                                 </tr>
                             </c:if>
                         </tbody>

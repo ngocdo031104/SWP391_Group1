@@ -15,7 +15,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ki&#7875;m Duy&#7879;t N&#7899;i Dung &#151; TourBuddy Enterprise</title>
+    <title>Kiểm Duyệt Nới Dung  TourBuddy Enterprise</title>
     <!-- Outfit & Inter Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
     <!-- Lucide Icons & FontAwesome CDNs -->
@@ -25,7 +25,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-dashboard.css?v=2.3">
     
     <style>
-        /* -- MODERATION PAGE &#151; SPACE GLASSMORPHISM THEME -- */
+        /* -- MODERATION PAGE  SPACE GLASSMORPHISM THEME -- */
         .moderation-tabs {
             display: flex; gap: 12px;
             border-bottom: 1px solid rgba(139,92,246,0.2);
@@ -216,13 +216,13 @@
                         <thead>
                             <tr>
                                 <th>ID Log</th>
-                                <th>Lo&#7841;i n&#7899;i dung</th>
-                                <th>ID n&#7899;i dung</th>
-                                <th>Thao t&#225;c</th>
-                                <th>L&#253; do ki&#7875;m duy&#7879;t</th>
-                                <th>Ng&#432;&#7901;i th&#7921;c hi&#7879;n</th>
-                                <th>Th&#7901;i gian</th>
-                                <th style="text-align: center;">H&#192;NH &#272;&#7896;NG</th>
+                                <th>Loại nới dung</th>
+                                <th>ID nới dung</th>
+                                <th>Thao tác</th>
+                                <th>Lý do kiểm duyệt</th>
+                                <th>Người thực hiện</th>
+                                <th>Thời gian</th>
+                                <th style="text-align: center;">HÀNH ĐỘNG</th>
                             </tr>
                         </thead>
                         <tbody id="history-tbody">
@@ -239,25 +239,25 @@
 <div class="modal" id="reason-modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h3>X&#225;c nh&#7853;n &#7843;n n&#7899;i dung</h3>
+            <h3>Xác nhận ản nới dung</h3>
             <button class="modal-close" id="btn-close-modal">&times;</button>
         </div>
         <div class="modal-body">
             <div class="form-group">
-                <label for="moderation-reason">L&#253; do &#7843;n n&#7899;i dung</label>
+                <label for="moderation-reason">Lý do ản nới dung</label>
                 <select id="moderation-reason" class="form-control" style="margin-bottom: 12px;">
-                    <option value="Spam / N&#7899;i dung qu&#7843;ng c&#225;o tr&#225;i ph&#233;p">Spam / N&#7899;i dung qu&#7843;ng c&#225;o tr&#225;i ph&#233;p</option>
-                    <option value="Ng&#244;n t&#7913; k&#237;ch &#273;&#7897;ng th&#249; &#273;&#7883;ch / Nh&#7841;y c&#7843;m / X&#250;c ph&#7841;m">Ng&#244;n t&#7913; k&#237;ch &#273;&#7897;ng th&#249; &#273;&#7883;ch / Nh&#7841;y c&#7843;m / X&#250;c ph&#7841;m</option>
-                    <option value="Th&#244;ng tin sai l&#7883;ch / G&#226;y hi&#7875;u l&#7887;m">Th&#244;ng tin sai l&#7883;ch / G&#226;y hi&#7875;u l&#7887;m</option>
-                    <option value="Vi ph&#7841;m ch&#237;nh s&#225;ch c&#7897;ng &#271;&#7891;ng">Vi ph&#7841;m ch&#237;nh s&#225;ch c&#7897;ng &#271;&#7891;ng</option>
-                    <option value="Kh&#225;c">L&#253; do kh&#225;c...</option>
+                    <option value="Spam / Nới dung quảng cáo trái phép">Spam / Nới dung quảng cáo trái phép</option>
+                    <option value="Ngôn tứ kích động thù địch / Nhạy cảm / Xúc phạm">Ngôn tứ kích động thù địch / Nhạy cảm / Xúc phạm</option>
+                    <option value="Thông tin sai lịch / Gây hiểu lỏm">Thông tin sai lịch / Gây hiểu lỏm</option>
+                    <option value="Vi phạm chính sách cộng ďồng">Vi phạm chính sách cộng ďồng</option>
+                    <option value="Khác">Lý do khác...</option>
                 </select>
-                <input type="text" id="moderation-reason-custom" class="form-control" placeholder="Nh&#7853;p chi ti&#7871;t l&#253; do &#7843;n..." style="display: none;">
+                <input type="text" id="moderation-reason-custom" class="form-control" placeholder="Nhập chi tiết lý do ản..." style="display: none;">
             </div>
         </div>
         <div class="modal-footer">
-            <button class="btn-cancel" id="btn-cancel-modal">H&#7911;y b&#7887;</button>
-            <button class="btn-submit" id="btn-confirm-hide">&#7848;n n&#7899;i dung</button>
+            <button class="btn-cancel" id="btn-cancel-modal">Hủy bỏ</button>
+            <button class="btn-submit" id="btn-confirm-hide">Ẩn nới dung</button>
         </div>
     </div>
 </div>
