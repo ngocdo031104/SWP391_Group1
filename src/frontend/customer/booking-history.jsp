@@ -1,4 +1,4 @@
-﻿<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
+<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" language="java" %>
 
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
@@ -9,6 +9,13 @@
 <jsp:include page="/common/header.jsp"/>
 
 <style>
+    body {
+        padding-top: 80px;
+    }
+    .header {
+        background: linear-gradient(135deg, #4f46e5, #3b82f6) !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+    }
     .history-container {
         max-width: 1200px;
         margin: 40px auto;
