@@ -688,7 +688,7 @@ public class TourDAO extends DBContext {
      */
     public List<Review> getReviewsByTourId(int tourId) {
         List<Review> list = new ArrayList<>();
-        String sql = "SELECT r.ReviewID, r.TourID, r.BookingID, r.CustomerID, r.Rating, r.Content, r.IsVisible, r.CreatedAt, r.UpdatedAt, r.ImageURL, "
+        String sql = "SELECT r.ReviewID, r.TourID, r.BookingID, r.CustomerID, r.Rating, r.Content, r.IsVisible, r.CreatedAt, r.UpdatedAt, "
                    + "u.FullName, p.AvatarURL, "
                    + "CASE WHEN b.Status = 'Completed' THEN 1 ELSE 0 END as IsVerified "
                    + "FROM Review r "
@@ -711,7 +711,6 @@ public class TourDAO extends DBContext {
                     rev.setIsVisible(rs.getBoolean("IsVisible"));
                     rev.setCreatedAt(rs.getTimestamp("CreatedAt"));
                     rev.setUpdatedAt(rs.getTimestamp("UpdatedAt"));
-                    rev.setImageUrl(rs.getString("ImageURL"));
                     rev.setCustomerName(rs.getString("FullName"));
                     rev.setCustomerAvatar(rs.getString("AvatarURL"));
                     rev.setIsVerified(rs.getBoolean("IsVerified"));
@@ -735,6 +734,56 @@ public class TourDAO extends DBContext {
      */
     public boolean insertReview(String name, String email, int tourId, int rating, String content) {
         return insertReview(name, email, tourId, rating, content, null);
+    }
+
+    /**
+     * Kiểm tra người dùng đã hoàn thành chuyến đi của tour này hay chưa.
+     * Kiểm tra bao gồm:
+     * - Trạng thái Booking b.Status = 'Completed'
+     * - Trạng thái Lịch khởi hành s.Status = 'Completed' hoặc s.TourStatus = 'Completed'
+     * - Nhật ký vận hành TourStatus có bản ghi 'Completed'
+     * - Ngày về của lịch khởi hành s.ReturnDate đã qua (<= ngày hiện tại)
+     */
+    public boolean hasCompletedBooking(int userId, int tourId) {
+        String sql = "SELECT COUNT(*) FROM Booking b JOIN TourSchedule s ON b.ScheduleID = s.ScheduleID WHERE b.CustomerID = ? AND s.TourID = ? AND b.Status != 'Cancelled' "
+                   + "AND ( "
+                   + "   b.Status = 'Completed' "
+                   + "   OR s.Status = 'Completed' "
+                   + "   OR s.TourStatus = 'Completed' "
+                   + "   OR s.ReturnDate <= CAST(GETDATE() AS DATE) "
+                   + "   OR EXISTS (SELECT 1 FROM TourStatus tst WHERE tst.ScheduleID = s.ScheduleID AND tst.Status = 'Completed') "
+                   + ")";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ps.setInt(2, tourId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, "hasCompletedBooking failed", ex);
+        }
+        return false;
+    }
+
+    /**
+     * Kiểm tra người dùng đã từng gửi đánh giá cho tour này hay chưa.
+     */
+    public boolean hasUserReviewed(int userId, int tourId) {
+        String sql = "SELECT COUNT(*) FROM Review WHERE CustomerID = ? AND TourID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ps.setInt(2, tourId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, "hasUserReviewed failed", ex);
+        }
+        return false;
     }
 
     public boolean insertReview(String name, String email, int tourId, int rating, String content, String imageUrl) {
@@ -771,9 +820,16 @@ public class TourDAO extends DBContext {
             Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        // Bước 2: Tìm booking thỏa mãn điều kiện đã hoàn thành (Status = 'Completed') của tour này
+        // Bước 2: Tìm booking thỏa mãn điều kiện chuyến đi đã hoàn thành của tour này
         int bookingId = -1;
-        String findBookingSql = "SELECT b.BookingID FROM Booking b JOIN TourSchedule s ON b.ScheduleID = s.ScheduleID WHERE b.CustomerID = ? AND s.TourID = ? AND b.Status = 'Completed'";
+        String findBookingSql = "SELECT TOP 1 b.BookingID FROM Booking b JOIN TourSchedule s ON b.ScheduleID = s.ScheduleID WHERE b.CustomerID = ? AND s.TourID = ? AND b.Status != 'Cancelled' "
+                              + "AND ( "
+                              + "   b.Status = 'Completed' "
+                              + "   OR s.Status = 'Completed' "
+                              + "   OR s.TourStatus = 'Completed' "
+                              + "   OR s.ReturnDate <= CAST(GETDATE() AS DATE) "
+                              + "   OR EXISTS (SELECT 1 FROM TourStatus tst WHERE tst.ScheduleID = s.ScheduleID AND tst.Status = 'Completed') "
+                              + ")";
         try (PreparedStatement ps = connection.prepareStatement(findBookingSql)) {
             ps.setInt(1, userId);
             ps.setInt(2, tourId);
@@ -786,20 +842,34 @@ public class TourDAO extends DBContext {
             Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        // Nếu không tìm thấy bất kỳ booking nào ở trạng thái Completed -> Từ chối đánh giá
+        // Nếu không tìm thấy booking thỏa điều kiện trên, thử lấy booking mới nhất của khách cho tour này (nếu có)
+        if (bookingId == -1) {
+            String fallbackBookingSql = "SELECT TOP 1 b.BookingID FROM Booking b JOIN TourSchedule s ON b.ScheduleID = s.ScheduleID WHERE b.CustomerID = ? AND s.TourID = ? AND b.Status != 'Cancelled'";
+            try (PreparedStatement ps = connection.prepareStatement(fallbackBookingSql)) {
+                ps.setInt(1, userId);
+                ps.setInt(2, tourId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        bookingId = rs.getInt("BookingID");
+                    }
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(TourDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
         if (bookingId == -1) {
             return false;
         }
         
         // Bước 3: Chèn trực tiếp đánh giá vào bảng Review
-        String insertReviewSql = "INSERT INTO Review (TourID, BookingID, CustomerID, Rating, Content, IsVisible, CreatedAt, UpdatedAt, ImageURL) VALUES (?, ?, ?, ?, ?, 1, SYSDATETIME(), SYSDATETIME(), ?)";
+        String insertReviewSql = "INSERT INTO Review (TourID, BookingID, CustomerID, Rating, Content, IsVisible, CreatedAt, UpdatedAt) VALUES (?, ?, ?, ?, ?, 1, SYSDATETIME(), SYSDATETIME())";
         try (PreparedStatement ps = connection.prepareStatement(insertReviewSql)) {
             ps.setInt(1, tourId);
             ps.setInt(2, bookingId);
             ps.setInt(3, userId);
             ps.setInt(4, rating);
             ps.setString(5, content);
-            ps.setString(6, imageUrl);
             int rows = ps.executeUpdate();
             return rows > 0;
         } catch (SQLException ex) {

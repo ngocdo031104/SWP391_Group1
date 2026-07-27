@@ -89,14 +89,21 @@ public class DetailController extends HttpServlet {
                 List<Coupon> activeCoupons = tourDAO.getActiveCoupons(10);
                 request.setAttribute("activeCoupons", activeCoupons);
                 
-                // 5. Nạp danh sách các ID Tour trong Wishlist nếu người dùng đã đăng nhập, phục vụ thả tim nhanh
+                // 5. Nạp danh sách các ID Tour trong Wishlist & Kiểm tra quyền đánh giá tour của user
                 Entities.User sessionUser = (Entities.User) request.getSession().getAttribute("sessionUser");
+                boolean hasCompletedBooking = false;
+                boolean hasUserReviewed = false;
                 if (sessionUser != null) {
                     Model.WishlistDAO wishlistDAO = new Model.WishlistDAO();
                     List<Integer> wishlistTourIds = wishlistDAO.getWishlistTourIds(sessionUser.getUserId());
                     request.setAttribute("wishlistTourIds", wishlistTourIds);
                     wishlistDAO.close();
+
+                    hasCompletedBooking = tourDAO.hasCompletedBooking(sessionUser.getUserId(), id);
+                    hasUserReviewed = tourDAO.hasUserReviewed(sessionUser.getUserId(), id);
                 }
+                request.setAttribute("hasCompletedBooking", hasCompletedBooking);
+                request.setAttribute("hasUserReviewed", hasUserReviewed);
                 
                 // Chuyển tiếp yêu cầu sang trang hiển thị chi tiết tour
                 request.getRequestDispatcher("/views/detail.jsp").forward(request, response);
@@ -186,7 +193,14 @@ public class DetailController extends HttpServlet {
         TourDAO tourDAO = null;
         try {
             tourDAO = new TourDAO();
-            if (content == null || content.trim().isEmpty()) {
+            boolean hasCompletedBooking = tourDAO.hasCompletedBooking(sessionUser.getUserId(), tourId);
+            boolean hasUserReviewed = tourDAO.hasUserReviewed(sessionUser.getUserId(), tourId);
+
+            if (!hasCompletedBooking) {
+                session.setAttribute("reviewError", "Gửi đánh giá thất bại. Bạn chỉ có thể gửi đánh giá sau khi chuyến đi của tour này đã hoàn thành (Trạng thái chuyến đi: Completed)!");
+            } else if (hasUserReviewed) {
+                session.setAttribute("reviewError", "Gửi đánh giá thất bại. Bạn đã gửi đánh giá cho tour này trước đó rồi!");
+            } else if (content == null || content.trim().isEmpty()) {
                 session.setAttribute("reviewError", "Vui lòng nhập nội dung đánh giá!");
             } else if (name == null || name.trim().isEmpty() || email == null || email.trim().isEmpty()) {
                 session.setAttribute("reviewError", "Vui lòng cung cấp đầy đủ họ tên và email!");
@@ -194,9 +208,9 @@ public class DetailController extends HttpServlet {
                 // Gọi DAO ghi nhận đánh giá của người dùng
                 boolean success = tourDAO.insertReview(name.trim(), email.trim(), tourId, rating, content.trim(), imageUrl);
                 if (success) {
-                    session.setAttribute("reviewSuccess", "Cảm ơn bạn đã gửi đánh giá! Đang chờ ban quản trị kiểm duyệt.");
+                    session.setAttribute("reviewSuccess", "Cảm ơn bạn đã gửi đánh giá! Đánh giá của bạn đã được ghi nhận.");
                 } else {
-                    session.setAttribute("reviewError", "Gửi đánh giá thất bại. Bạn chỉ được phép đánh giá một lần duy nhất cho mỗi tour sau khi đã hoàn thành chuyến đi!");
+                    session.setAttribute("reviewError", "Gửi đánh giá thất bại. Bạn chỉ được phép gửi đánh giá sau khi đã hoàn thành chuyến đi này (Trạng thái: Completed)!");
                 }
             }
         } catch (Exception e) {
