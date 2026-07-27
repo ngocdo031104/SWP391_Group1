@@ -16,7 +16,7 @@
                 <head>
                     <meta charset="UTF-8">
                     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Theo D&#245;i D&#242;ng Ti&#7873;n &#8212; TourBuddy</title>
+                    <title>Theo Dõi Dòng Tiền — TourBuddy</title>
                     <link
                         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
                         rel="stylesheet">
@@ -421,10 +421,10 @@
                                             <div>
                                                 <h1
                                                     style="margin:0;font-size:24px;font-weight:700;color:var(--gray-900);">
-                                                    Theo D&#245;i D&#242;ng Ti&#7873;n</h1>
+                                                    Theo Dõi Dòng Tiền</h1>
                                                 <p style="margin:4px 0 0;color:var(--gray-500);font-size:14px;">
-                                                    Qu&#7843;n l&#253; to&#224;n b&#7897; giao d&#7883;ch Thu - Chi
-                                                    c&#7911;a h&#7879; th&#7889;ng</p>
+                                                    Quản lý toàn bộ giao dịch Thu - Chi
+                                                    của hệ thống</p>
                                             </div>
                                         </div>
 
@@ -434,9 +434,9 @@
                                                     <div class="stat-icon success"><i data-lucide="arrow-down-left"></i>
                                                     </div>
                                                     <div class="stat-info">
-                                                        <h4>T&#7893;ng Thu (Kh&#225;ch thanh to&#225;n)</h4>
+                                                        <h4>Tổng Thu (Khách thanh toán)</h4>
                                                         <div class="stat-value" style="color:var(--success);">+
-                                                            <fmt:formatNumber value="${totalIn}" type="number" /> &#273;
+                                                            <fmt:formatNumber value="${totalIn}" type="number" /> đ
                                                         </div>
                                                     </div>
                                                 </div>
@@ -444,20 +444,20 @@
                                                     <div class="stat-icon danger"><i data-lucide="arrow-up-right"></i>
                                                     </div>
                                                     <div class="stat-info">
-                                                        <h4>T&#7893;ng Chi (Ho&#224;n ti&#7873;n)</h4>
+                                                        <h4>Tổng Chi (Hoàn tiền)</h4>
                                                         <div class="stat-value" style="color:var(--danger);">-
                                                             <fmt:formatNumber value="${totalOut}" type="number" />
-                                                            &#273;
+                                                            đ
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="stat-card">
                                                     <div class="stat-icon primary"><i data-lucide="wallet"></i></div>
                                                     <div class="stat-info">
-                                                        <h4>Doanh Thu R&#242;ng</h4>
+                                                        <h4>Doanh Thu Ròng</h4>
                                                         <div class="stat-value">
                                                             <fmt:formatNumber value="${netRevenue}" type="number" />
-                                                            &#273;
+                                                            đ
                                                         </div>
                                                     </div>
                                                 </div>
@@ -472,26 +472,26 @@
                                                         <div class="search-box">
                                                             <i data-lucide="search"></i>
                                                             <input type="text" name="keyword" value="${keyword}"
-                                                                placeholder="T&#236;m m&#227; GD, m&#227; booking, t&#234;n kh&#225;ch...">
+                                                                placeholder="Tìm mã GD, mã booking, tên khách...">
                                                         </div>
                                                         <div class="filter-group">
                                                             <span
-                                                                style="font-size:14px;color:var(--gray-500);font-weight:500;">T&#7915;:</span>
+                                                                style="font-size:14px;color:var(--gray-500);font-weight:500;">Từ:</span>
                                                             <input type="date" name="dateFrom" value="${dateFrom}"
                                                                 class="date-input">
                                                             <span
-                                                                style="font-size:14px;color:var(--gray-500);font-weight:500;">&#272;&#7871;n:</span>
+                                                                style="font-size:14px;color:var(--gray-500);font-weight:500;">Đến:</span>
                                                             <input type="date" name="dateTo" value="${dateTo}"
                                                                 class="date-input">
                                                             <button type="submit" class="btn-modern btn-primary">
                                                                 <i data-lucide="filter"
-                                                                    style="width:16px;height:16px;"></i> L&#7885;c
+                                                                    style="width:16px;height:16px;"></i> Lọc
                                                             </button>
                                                             <c:if
                                                                 test="${not empty keyword || not empty dateFrom || not empty dateTo}">
                                                                 <a href="${pageContext.request.contextPath}/accountant/payments?tab=${activeTab}"
-                                                                    class="btn-modern btn-outline">X&#243;a
-                                                                    l&#7885;c</a>
+                                                                    class="btn-modern btn-outline">Xóa
+                                                                    lọc</a>
                                                             </c:if>
                                                         </div>
                                                     </div>
@@ -501,13 +501,13 @@
                                                     <div class="tabs">
                                                         <a href="${pageContext.request.contextPath}/accountant/payments?tab=in"
                                                             class="tab-btn in ${activeTab eq 'in' ? 'active' : ''}">
-                                                            <i data-lucide="trending-up"></i> Ti&#7873;n V&#224;o
-                                                            (&#272;&#227; Thu)
+                                                            <i data-lucide="trending-up"></i> Tiền Vào
+                                                            (Đã Thu)
                                                         </a>
                                                         <a href="${pageContext.request.contextPath}/accountant/payments?tab=out"
                                                             class="tab-btn out ${activeTab eq 'out' ? 'active' : ''}">
-                                                            <i data-lucide="trending-down"></i> Ti&#7873;n Ra
-                                                            (&#272;&#227; Ho&#224;n)
+                                                            <i data-lucide="trending-down"></i> Tiền Ra
+                                                            (Đã Hoàn)
                                                         </a>
                                                     </div>
 
@@ -517,23 +517,23 @@
                                                                 <c:when test="${empty payments}">
                                                                     <div class="empty-state">
                                                                         <i data-lucide="search-x"></i>
-                                                                        <h3>Kh&#244;ng t&#236;m th&#7845;y giao
-                                                                            d&#7883;ch n&#224;o</h3>
-                                                                        <p>H&#227;y th&#7917; thay &#273;&#7893;i
-                                                                            b&#7897; l&#7885;c ho&#7863;c t&#7915;
-                                                                            kh&#243;a t&#236;m ki&#7871;m.</p>
+                                                                        <h3>Không tìm thấy giao
+                                                                            dịch nào</h3>
+                                                                        <p>Hãy thử thay đổi
+                                                                            bộ lọc hoặc từ
+                                                                            khóa tìm kiếm.</p>
                                                                     </div>
                                                                 </c:when>
                                                                 <c:otherwise>
                                                                     <table class="modern-table">
                                                                         <thead>
                                                                             <tr>
-                                                                                <th>M&#227; Giao D&#7883;ch</th>
-                                                                                <th>Booking / Kh&#225;ch H&#224;ng</th>
-                                                                                <th>S&#7889; Ti&#7873;n (VN&#272;)</th>
-                                                                                <th>Ph&#432;&#417;ng Th&#7913;c</th>
-                                                                                <th>Tr&#7841;ng Th&#225;i</th>
-                                                                                <th>Th&#7901;i Gian</th>
+                                                                                <th>Mã Giao Dịch</th>
+                                                                                <th>Booking / Khách Hàng</th>
+                                                                                <th>Số Tiền (VNĐ)</th>
+                                                                                <th>Phương Thức</th>
+                                                                                <th>Trạng Thái</th>
+                                                                                <th>Thời Gian</th>
                                                                             </tr>
                                                                         </thead>
                                                                         <tbody>
@@ -561,7 +561,7 @@
                                                                                                 <fmt:formatNumber
                                                                                                     value="${p.amount}"
                                                                                                     type="number" />
-                                                                                                &#273;
+                                                                                                đ
                                                                                             </span>
                                                                                         </c:if>
                                                                                         <c:if
@@ -570,7 +570,7 @@
                                                                                                 <fmt:formatNumber
                                                                                                     value="${p.amount}"
                                                                                                     type="number" />
-                                                                                                &#273;
+                                                                                                đ
                                                                                             </span>
                                                                                         </c:if>
                                                                                     </td>
@@ -585,8 +585,8 @@
                                                                                                 class="badge badge-success"><i
                                                                                                     data-lucide="check"
                                                                                                     style="width:12px;height:12px;"></i>
-                                                                                                Th&#224;nh
-                                                                                                c&#244;ng</span>
+                                                                                                Thành
+                                                                                                công</span>
                                                                                         </c:if>
                                                                                         <c:if
                                                                                             test="${p.status eq 'Refunded'}">
@@ -594,8 +594,8 @@
                                                                                                 class="badge badge-danger"><i
                                                                                                     data-lucide="corner-down-left"
                                                                                                     style="width:12px;height:12px;"></i>
-                                                                                                &#272;&#227; ho&#224;n
-                                                                                                tr&#7843;</span>
+                                                                                                Đã hoàn
+                                                                                                trả</span>
                                                                                         </c:if>
                                                                                     </td>
                                                                                     <td>

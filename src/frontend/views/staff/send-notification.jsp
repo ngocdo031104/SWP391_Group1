@@ -13,7 +13,7 @@
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>G&#7917;i Th&#244;ng B&#225;o &#8212; TourBuddy Staff</title>
+            <title>Gửi Thông Báo — TourBuddy Staff</title>
             <link
                 href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
                 rel="stylesheet">
@@ -193,13 +193,13 @@
                             <div class="page-header"
                                 style="margin-bottom: 28px; display: flex; align-items: center; justify-content: space-between;">
                                 <div>
-                                    <h1 style="margin:0;font-size:24px;font-weight:700;color:var(--gray-900);">G&#7917;i
-                                        Th&#244;ng B&#225;o</h1>
-                                    <p style="margin:4px 0 0;color:var(--gray-500);font-size:14px;">G&#7917;i th&#244;ng
-                                        b&#225;o in-app ho&#7863;c email &#273;&#7871;n kh&#225;ch h&#224;ng</p>
+                                    <h1 style="margin:0;font-size:24px;font-weight:700;color:var(--gray-900);">Gửi
+                                        Thông Báo</h1>
+                                    <p style="margin:4px 0 0;color:var(--gray-500);font-size:14px;">Gửi thông
+                                        báo in-app hoặc email đến khách hàng</p>
                                 </div>
                                 <a href="${pageContext.request.contextPath}/staff/bookings" class="btn-secondary">
-                                    <i data-lucide="arrow-left" style="width:15px;height:15px;"></i> Quay l&#7841;i
+                                    <i data-lucide="arrow-left" style="width:15px;height:15px;"></i> Quay lại
                                     Booking
                                 </a>
                             </div>
@@ -221,66 +221,66 @@
                                 <form action="${pageContext.request.contextPath}/staff/send-notification" method="POST">
 
                                     <div class="form-group">
-                                        <label for="userIds">Ch&#7885;n Kh&#225;ch H&#224;ng</label>
+                                        <label for="userIds">Chọn Khách Hàng</label>
                                         <select name="userIds" id="userIds" multiple required class="form-control">
                                             <c:forEach var="customer" items="${customers}">
                                                 <option value="${customer.userId}">${customer.fullName}
                                                     (${customer.email})</option>
                                             </c:forEach>
                                         </select>
-                                        <p class="form-hint">Gi&#7919; <kbd>Ctrl</kbd> (ho&#7863;c <kbd>&#8984;</kbd>
-                                            tr&#234;n Mac) &#273;&#7875; ch&#7885;n nhi&#7873;u kh&#225;ch h&#224;ng.
+                                        <p class="form-hint">Giữ <kbd>Ctrl</kbd> (hoặc <kbd>⌘</kbd>
+                                            trên Mac) để chọn nhiều khách hàng.
                                         </p>
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="title">Ti&#234;u &#272;&#7873; Th&#244;ng B&#225;o *</label>
+                                        <label for="title">Tiêu Đề Thông Báo *</label>
                                         <input type="text" name="title" id="title" required class="form-control"
-                                            placeholder="Nh&#7853;p ti&#234;u &#273;&#7873; th&#244;ng b&#225;o...">
+                                            placeholder="Nhập tiêu đề thông báo...">
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="content">N&#7897;i Dung *</label>
+                                        <label for="content">Nội Dung *</label>
                                         <textarea name="content" id="content" required class="form-control"
-                                            placeholder="Nh&#7853;p n&#7897;i dung th&#244;ng b&#225;o..."></textarea>
+                                            placeholder="Nhập nội dung thông báo..."></textarea>
                                     </div>
 
                                     <div class="form-row">
                                         <div class="form-group">
-                                            <label for="category">Th&#7875; Lo&#7841;i</label>
+                                            <label for="category">Thể Loại</label>
                                             <select name="category" id="category" required class="form-control">
-                                                <option value="System Announcement">Th&#244;ng b&#225;o h&#7879;
-                                                    th&#7889;ng</option>
-                                                <option value="Booking">&#272;&#7863;t ch&#7895;</option>
-                                                <option value="Payment">Thanh to&#225;n</option>
-                                                <option value="Tour Update">C&#7853;p nh&#7853;t Tour</option>
-                                                <option value="Promotion">Khuy&#7871;n m&#227;i</option>
-                                                <option value="Account Activity">Ho&#7841;t &#273;&#7897;ng t&#224;i
-                                                    kho&#7843;n</option>
+                                                <option value="System Announcement">Thông báo hệ
+                                                    thống</option>
+                                                <option value="Booking">Đặt chỗ</option>
+                                                <option value="Payment">Thanh toán</option>
+                                                <option value="Tour Update">Cập nhật Tour</option>
+                                                <option value="Promotion">Khuyến mãi</option>
+                                                <option value="Account Activity">Hoạt động tài
+                                                    khoản</option>
                                             </select>
                                         </div>
                                         <div class="form-group">
-                                            <label for="channel">K&#234;nh G&#7917;i</label>
+                                            <label for="channel">Kênh Gửi</label>
                                             <select name="channel" id="channel" required class="form-control">
-                                                <option value="SYSTEM">Ch&#7881; H&#7879; Th&#7889;ng</option>
-                                                <option value="EMAIL">Ch&#7881; Email</option>
-                                                <option value="BOTH" selected>H&#7879; Th&#7889;ng &amp; Email</option>
+                                                <option value="SYSTEM">Chỉ Hệ Thống</option>
+                                                <option value="EMAIL">Chỉ Email</option>
+                                                <option value="BOTH" selected>Hệ Thống &amp; Email</option>
                                             </select>
                                         </div>
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="scheduledAt">L&#234;n L&#7883;ch G&#7917;i <span
-                                                style="font-weight:400;color:var(--gray-500);">(&#273;&#7875;
-                                                tr&#7889;ng n&#7871;u mu&#7889;n g&#7917;i ngay)</span></label>
+                                        <label for="scheduledAt">Lên Lịch Gửi <span
+                                                style="font-weight:400;color:var(--gray-500);">(để
+                                                trống nếu muốn gửi ngay)</span></label>
                                         <input type="datetime-local" name="scheduledAt" id="scheduledAt"
                                             class="form-control">
                                     </div>
 
                                     <div style="display:flex;gap:12px;margin-top:8px;">
                                         <button type="submit" class="btn-submit">
-                                            <i data-lucide="send" style="width:16px;height:16px;"></i> G&#7917;i
-                                            Th&#244;ng B&#225;o
+                                            <i data-lucide="send" style="width:16px;height:16px;"></i> Gửi
+                                            Thông Báo
                                         </button>
                                     </div>
                                 </form>
