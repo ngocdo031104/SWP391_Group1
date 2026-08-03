@@ -103,7 +103,7 @@ public class MatchingDAO extends DBContext {
         return false;
     }
 
-    public List<MatchedUser> getTopMatches(int currentUserId) {
+    public List<MatchedUser> getTopMatches(int currentUserId, String searchLocation, String searchInterests, String searchName) {
         TravelPreference myPref = getPreference(currentUserId);
         List<MatchedUser> matches = new ArrayList<>();
         
@@ -125,17 +125,46 @@ public class MatchingDAO extends DBContext {
                    + "FROM [User] u "
                    + "LEFT JOIN UserProfile p ON u.UserID = p.UserID "
                    + "LEFT JOIN TravelPreference t ON u.UserID = t.UserId "
-                   + "WHERE u.UserID != ? AND u.RoleID = 4 AND u.IsActive = 1 "
-                   + "AND u.UserID NOT IN ("
-                   + "  SELECT ReceiverId FROM BuddyRequest WHERE SenderId = ? AND Status IN ('Pending', 'Accepted') "
-                   + "  UNION "
-                   + "  SELECT SenderId FROM BuddyRequest WHERE ReceiverId = ? AND Status IN ('Pending', 'Accepted')"
-                   + ")";
+                   + "WHERE u.UserID != ? AND u.RoleID = 4 AND u.IsActive = 1 ";
+                   
+        if (searchLocation != null && !searchLocation.trim().isEmpty()) {
+            sql += "AND (p.Address LIKE ? OR t.Destination LIKE ?) ";
+        }
+        if (searchInterests != null && !searchInterests.trim().isEmpty()) {
+            sql += "AND (t.Tags LIKE ? OR t.ActivityPreferences LIKE ?) ";
+        }
+        if (searchName != null && !searchName.trim().isEmpty()) {
+            sql += "AND u.FullName LIKE ? ";
+        }
+        
+        sql += "AND u.UserID NOT IN ("
+             + "  SELECT ReceiverId FROM BuddyRequest WHERE SenderId = ? AND Status IN ('Pending', 'Accepted') "
+             + "  UNION "
+             + "  SELECT SenderId FROM BuddyRequest WHERE ReceiverId = ? AND Status IN ('Pending', 'Accepted')"
+             + ")";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, currentUserId);
-            ps.setInt(2, currentUserId);
-            ps.setInt(3, currentUserId);
+            int paramIndex = 1;
+            ps.setInt(paramIndex++, currentUserId);
+            
+            if (searchLocation != null && !searchLocation.trim().isEmpty()) {
+                String locPattern = "%" + searchLocation.trim() + "%";
+                ps.setString(paramIndex++, locPattern);
+                ps.setString(paramIndex++, locPattern);
+            }
+            if (searchInterests != null && !searchInterests.trim().isEmpty()) {
+                String intPattern = "%" + searchInterests.trim() + "%";
+                ps.setString(paramIndex++, intPattern);
+                ps.setString(paramIndex++, intPattern);
+            }
+            if (searchName != null && !searchName.trim().isEmpty()) {
+                String namePattern = "%" + searchName.trim() + "%";
+                ps.setString(paramIndex++, namePattern);
+            }
+            
+            ps.setInt(paramIndex++, currentUserId);
+            ps.setInt(paramIndex++, currentUserId);
+            
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
