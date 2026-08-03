@@ -59,7 +59,11 @@ public class BuddyController extends HttpServlet {
                 myPref.setLanguages("Tiếng Việt");
             }
             
-            List<MatchedUser> topMatches = matchingDAO.getTopMatches(currentUserId);
+            String searchLocation = request.getParameter("searchLocation");
+            String searchInterests = request.getParameter("searchInterests");
+            String searchName = request.getParameter("searchName");
+            
+            List<MatchedUser> topMatches = matchingDAO.getTopMatches(currentUserId, searchLocation, searchInterests, searchName);
             
             // Tính toán phần trăm hoàn thiện hồ sơ
             int completeness = 40;
@@ -71,6 +75,9 @@ public class BuddyController extends HttpServlet {
             request.setAttribute("myPref", myPref);
             request.setAttribute("topMatches", topMatches);
             request.setAttribute("completeness", completeness);
+            request.setAttribute("searchLocation", searchLocation);
+            request.setAttribute("searchInterests", searchInterests);
+            request.setAttribute("searchName", searchName);
             
             // Lấy danh sách yêu cầu ghép cặp cho các tab
             List<BuddyRequest> receivedRequests = buddyRequestDAO.getReceivedRequests(currentUserId);

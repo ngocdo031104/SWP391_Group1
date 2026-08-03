@@ -564,6 +564,49 @@
         line-height: 1.6;
         margin-bottom: 20px;
     }
+    
+    /* Search Filter Form */
+    .filter-form {
+        background: white;
+        padding: 16px 20px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        border: 1px solid #e2e8f0;
+        margin-bottom: 20px;
+        display: flex;
+        gap: 16px;
+        align-items: flex-end;
+        flex-wrap: wrap;
+    }
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-width: 200px;
+    }
+    .filter-group label {
+        font-size: 13px;
+        font-weight: 600;
+        color: #475569;
+        margin-bottom: 6px;
+    }
+    .filter-group input {
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 10px 12px;
+        font-size: 14px;
+        color: #0f172a;
+        transition: border-color 0.2s;
+    }
+    .filter-group input:focus {
+        outline: none;
+        border-color: #5b21b6;
+        box-shadow: 0 0 0 2px rgba(91, 33, 182, 0.1);
+    }
+    .filter-actions {
+        display: flex;
+        gap: 10px;
+    }
 </style>
 
 <main style="min-height: 80vh; padding-top: 120px; padding-bottom: 60px;">
@@ -597,6 +640,30 @@
 
                 <!-- Tab: Khám phá bạn đồng hành -->
                 <div class="buddy-tab-content active" id="buddy-tab-discover">
+                    
+                    <form action="${pageContext.request.contextPath}/customer/buddies" method="GET" class="filter-form">
+                        <div class="filter-group">
+                            <label for="searchName">Tên người dùng</label>
+                            <input type="text" id="searchName" name="searchName" value="${searchName}" placeholder="VD: Nguyễn Văn A...">
+                        </div>
+                        <div class="filter-group">
+                            <label for="searchLocation">Khu vực / Địa điểm</label>
+                            <input type="text" id="searchLocation" name="searchLocation" value="${searchLocation}" placeholder="VD: Đà Nẵng, Hà Nội...">
+                        </div>
+                        <div class="filter-group">
+                            <label for="searchInterests">Sở thích / Phong cách</label>
+                            <input type="text" id="searchInterests" name="searchInterests" value="${searchInterests}" placeholder="VD: Foodie, Culture, Bơi lội...">
+                        </div>
+                        <div class="filter-actions">
+                            <button type="submit" class="btn-action btn-action-primary" style="height: 42px;">
+                                <i data-lucide="search" style="width: 16px;"></i> Lọc kết quả
+                            </button>
+                            <a href="${pageContext.request.contextPath}/customer/buddies" class="btn-action btn-action-secondary" style="height: 42px; text-decoration: none;">
+                                Khôi phục
+                            </a>
+                        </div>
+                    </form>
+
                     <div class="matches-header">
                         <h3>Gợi ý hàng đầu cho bạn <i data-lucide="info" style="width: 16px; color: #94a3b8;"></i></h3>
                         <div style="display: flex; align-items: center; gap: 20px;">
